@@ -1,0 +1,1526 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SkillBridge Competency Management Platform</title>
+
+    <!-- Required: Main JS Script -->
+    <script type="module" src="scripts/main.js" data-tiramai="web-gen"></script>
+
+    <!-- Required: TailwindCSS -->
+    <script src="./lib/tailwindcss/tailwindcss.js" fetchpriority="high" data-tiramai="web-gen"></script>
+
+    <!-- Required: Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest" data-tiramai="web-gen"></script>
+
+    <!-- Required: Favicon -->
+    <link rel="icon" href="assets/imgs/logo.ico" type="image/x-icon" data-tiramai="web-gen"/>
+
+    <!-- ECharts Support (for charts/graphs) -->
+    <script defer src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js" data-tiramai="web-gen"></script>
+
+    <!-- Markdown Support (for content rendering) -->
+    <script defer src="https://cdn.jsdelivr.net/npm/marked/marked.min.js" data-tiramai="web-gen"></script>
+
+    <!-- Tailwind Configuration -->
+    <script data-tiramai="web-gen">
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#1e293b',
+                        secondary: '#475569',
+                        accent: '#2563eb',
+                        gold: '#CBA35C',
+                        success: '#16A34A',
+                        warning: '#D97706',
+                        error: '#DC2626',
+                        info: '#0EA5E9',
+                        neutral: {
+                            50: '#F8FAFC',
+                            100: '#F1F5F9',
+                            200: '#E2E8F0',
+                            400: '#94A3B8',
+                            700: '#334155',
+                            900: '#0F172A',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['IBM Plex Sans', '-apple-system', 'Segoe UI', 'Roboto', 'Helvetica Neue', 'Arial', 'sans-serif'],
+                        mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', 'Liberation Mono', 'Courier New', 'monospace']
+                    },
+                    boxShadow: {
+                        sm: '0 1px 2px rgba(15,23,42,0.06)',
+                        DEFAULT: '0 2px 8px rgba(15,23,42,0.08)',
+                        lg: '0 8px 24px rgba(15,23,42,0.12)',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-neutral-50 min-h-screen text-neutral-700 font-sans">
+    <!-- Top Navigation -->
+    <header class="fixed top-0 left-0 right-0 bg-white border-b border-neutral-200 flex items-center justify-between px-6 py-4 z-30 h-16">
+        <div class="flex items-center gap-4">
+            <button id="mobile-menu-btn" class="md:hidden p-2 hover:bg-neutral-100 rounded-md transition-colors duration-150">
+                <i data-lucide="menu" class="w-6 h-6 text-secondary"></i>
+            </button>
+            <div class="flex items-center gap-3">
+                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 400 400" fill="none" class="h-8 w-8">
+                    <rect x="100" y="100" width="200" height="200" rx="16" stroke="#1e293b" stroke-width="16" fill="none"/>
+                    <path d="M150 250V170c0-11 9-20 20-20h60c11 0 20 9 20 20v80" stroke="#2563eb" stroke-width="14" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                    <circle cx="200" cy="170" r="18" stroke="#1e293b" stroke-width="12" fill="none"/>
+                    <path d="M150 250h100m-60-30h20" stroke="#2563eb" stroke-width="12" stroke-linecap="round" fill="none"/>
+                    <path d="M170 220v0" stroke="#1e293b" stroke-width="12" stroke-linecap="round"/>
+                    <path d="M230 220v0" stroke="#1e293b" stroke-width="12" stroke-linecap="round"/>
+                </svg>
+                <span class="text-xl font-semibold text-primary">SkillBridge Competency Management Platform</span>
+            </div>
+        </div>
+        <div class="flex items-center gap-4">
+            <!-- User Profile Dropdown -->
+            <div class="relative">
+                <button id="user-profile-btn" class="flex items-center gap-3 p-2 hover:bg-neutral-100 rounded-md transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2">
+                    <div class="flex flex-col items-end">
+                        <span id="user-name" class="text-sm font-medium text-neutral-700">Loading...</span>
+                        <span id="user-role" class="text-xs text-neutral-400">System Admin</span>
+                    </div>
+                    <div class="w-8 h-8 bg-accent rounded-full flex items-center justify-center">
+                        <i data-lucide="user" class="w-4 h-4 text-white"></i>
+                    </div>
+                </button>
+                <!-- Dropdown Menu -->
+                <div id="user-dropdown" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg border border-neutral-200 z-40">
+                    <div class="py-2">
+                        <button id="sign-out-btn" class="w-full px-4 py-2 text-left text-sm text-neutral-700 hover:bg-neutral-50 flex items-center gap-2">
+                            <i data-lucide="log-out" class="w-4 h-4"></i>
+                            Sign Out
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="flex pt-16">
+        <!-- Side Navigation -->
+        <aside id="sidebar" class="w-64 bg-white border-r border-neutral-200 h-[calc(100vh-4rem)] sticky top-16 overflow-y-auto hidden md:block">
+            <nav class="p-4 space-y-1">
+                <!-- Analytics Hub -->
+                <a href="analytics_hub.html" data-page="analytics_hub" class="nav-item flex items-center gap-3 px-3 py-2 text-sm rounded-md hover:bg-neutral-100 transition-colors duration-150 text-neutral-700">
+                    <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
+                    <span>Analytics Hub</span>
+                </a>
+
+                <!-- Organization Management Section -->
+                <div class="pt-4">
+                    <h3 class="px-3 text-xs font-semibold text-secondary uppercase tracking-wide mb-2">Organization</h3>
+                    <a href="org_configuration.html" data-page="org_configuration" class="nav-item flex items-center gap-3 px-3 py-2 text-sm rounded-md hover:bg-neutral-100 transition-colors duration-150 text-neutral-700">
+                        <i data-lucide="building-2" class="w-5 h-5"></i>
+                        <span>Org Configuration</span>
+                    </a>
+                    <a href="org_settings_versioned.html" data-page="org_settings_versioned" class="nav-item flex items-center gap-3 px-3 py-2 text-sm rounded-md hover:bg-neutral-100 transition-colors duration-150 text-neutral-700">
+                        <i data-lucide="history" class="w-5 h-5"></i>
+                        <span>Org Settings</span>
+                    </a>
+                </div>
+
+                <!-- Core Management Section -->
+                <div class="pt-4">
+                    <h3 class="px-3 text-xs font-semibold text-secondary uppercase tracking-wide mb-2">Core Management</h3>
+                    <a href="skill_framework.html" data-page="skill_framework" class="nav-item flex items-center gap-3 px-3 py-2 text-sm rounded-md hover:bg-neutral-100 transition-colors duration-150 text-neutral-700">
+                        <i data-lucide="book-open" class="w-5 h-5"></i>
+                        <span>Skill Framework</span>
+                    </a>
+                    <a href="employees_hierarchy.html" data-page="employees_hierarchy" class="nav-item flex items-center gap-3 px-3 py-2 text-sm rounded-md hover:bg-neutral-100 transition-colors duration-150 text-neutral-700">
+                        <i data-lucide="users" class="w-5 h-5"></i>
+                        <span>Employees & Hierarchy</span>
+                    </a>
+                    <a href="training_management.html" data-page="training_management" class="nav-item flex items-center gap-3 px-3 py-2 text-sm rounded-md hover:bg-neutral-100 transition-colors duration-150 text-neutral-700">
+                        <i data-lucide="calendar" class="w-5 h-5"></i>
+                        <span>Training Management</span>
+                    </a>
+                </div>
+
+                <!-- Operations Section -->
+                <div class="pt-4">
+                    <h3 class="px-3 text-xs font-semibold text-secondary uppercase tracking-wide mb-2">Operations</h3>
+                    <a href="disputes_center.html" data-page="disputes_center" class="nav-item flex items-center gap-3 px-3 py-2 text-sm rounded-md hover:bg-neutral-100 transition-colors duration-150 text-neutral-700">
+                        <i data-lucide="gavel" class="w-5 h-5"></i>
+                        <span>Disputes Center</span>
+                    </a>
+                    <a href="assessment_viewer.html" data-page="assessment_viewer" class="nav-item flex items-center gap-3 px-3 py-2 text-sm rounded-md hover:bg-neutral-100 transition-colors duration-150 text-neutral-700">
+                        <i data-lucide="file-text" class="w-5 h-5"></i>
+                        <span>Assessment Viewer</span>
+                    </a>
+                    <a href="audit_log_viewer.html" data-page="audit_log_viewer" class="nav-item flex items-center gap-3 px-3 py-2 text-sm rounded-md hover:bg-neutral-100 transition-colors duration-150 text-neutral-700">
+                        <i data-lucide="file-search" class="w-5 h-5"></i>
+                        <span>Audit Log Viewer</span>
+                    </a>
+                </div>
+            </nav>
+
+            <!-- Footer -->
+            <div class="absolute bottom-6 w-full text-center text-xs text-neutral-400 bg-white px-4">
+                Made with ❤️ by TiramAi
+            </div>
+        </aside>
+
+        <!-- Mobile Navigation Overlay -->
+        <div id="mobile-nav-overlay" class="hidden fixed inset-0 z-40 md:hidden">
+            <div class="fixed inset-0 bg-neutral-900 bg-opacity-50" id="mobile-nav-backdrop"></div>
+            <aside class="fixed left-0 top-16 h-[calc(100vh-4rem)] w-64 bg-white border-r border-neutral-200 overflow-y-auto">
+                <nav class="p-4 space-y-1">
+                    <!-- Same navigation structure as desktop -->
+                    <a href="analytics_hub.html" data-page="analytics_hub" class="nav-item flex items-center gap-3 px-3 py-2 text-sm rounded-md hover:bg-neutral-100 transition-colors duration-150 text-neutral-700">
+                        <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
+                        <span>Analytics Hub</span>
+                    </a>
+                    
+                    <div class="pt-4">
+                        <h3 class="px-3 text-xs font-semibold text-secondary uppercase tracking-wide mb-2">Organization</h3>
+                        <a href="org_configuration.html" data-page="org_configuration" class="nav-item flex items-center gap-3 px-3 py-2 text-sm rounded-md hover:bg-neutral-100 transition-colors duration-150 text-neutral-700">
+                            <i data-lucide="building-2" class="w-5 h-5"></i>
+                            <span>Org Configuration</span>
+                        </a>
+                        <a href="org_settings_versioned.html" data-page="org_settings_versioned" class="nav-item flex items-center gap-3 px-3 py-2 text-sm rounded-md hover:bg-neutral-100 transition-colors duration-150 text-neutral-700">
+                            <i data-lucide="history" class="w-5 h-5"></i>
+                            <span>Org Settings</span>
+                        </a>
+                    </div>
+
+                    <div class="pt-4">
+                        <h3 class="px-3 text-xs font-semibold text-secondary uppercase tracking-wide mb-2">Core Management</h3>
+                        <a href="skill_framework.html" data-page="skill_framework" class="nav-item flex items-center gap-3 px-3 py-2 text-sm rounded-md hover:bg-neutral-100 transition-colors duration-150 text-neutral-700">
+                            <i data-lucide="book-open" class="w-5 h-5"></i>
+                            <span>Skill Framework</span>
+                        </a>
+                        <a href="employees_hierarchy.html" data-page="employees_hierarchy" class="nav-item flex items-center gap-3 px-3 py-2 text-sm rounded-md hover:bg-neutral-100 transition-colors duration-150 text-neutral-700">
+                            <i data-lucide="users" class="w-5 h-5"></i>
+                            <span>Employees & Hierarchy</span>
+                        </a>
+                        <a href="training_management.html" data-page="training_management" class="nav-item flex items-center gap-3 px-3 py-2 text-sm rounded-md hover:bg-neutral-100 transition-colors duration-150 text-neutral-700">
+                            <i data-lucide="calendar" class="w-5 h-5"></i>
+                            <span>Training Management</span>
+                        </a>
+                    </div>
+
+                    <div class="pt-4">
+                        <h3 class="px-3 text-xs font-semibold text-secondary uppercase tracking-wide mb-2">Operations</h3>
+                        <a href="disputes_center.html" data-page="disputes_center" class="nav-item flex items-center gap-3 px-3 py-2 text-sm rounded-md hover:bg-neutral-100 transition-colors duration-150 text-neutral-700">
+                            <i data-lucide="gavel" class="w-5 h-5"></i>
+                            <span>Disputes Center</span>
+                        </a>
+                        <a href="assessment_viewer.html" data-page="assessment_viewer" class="nav-item flex items-center gap-3 px-3 py-2 text-sm rounded-md hover:bg-neutral-100 transition-colors duration-150 text-neutral-700">
+                            <i data-lucide="file-text" class="w-5 h-5"></i>
+                            <span>Assessment Viewer</span>
+                        </a>
+                        <a href="audit_log_viewer.html" data-page="audit_log_viewer" class="nav-item flex items-center gap-3 px-3 py-2 text-sm rounded-md hover:bg-neutral-100 transition-colors duration-150 text-neutral-700">
+                            <i data-lucide="file-search" class="w-5 h-5"></i>
+                            <span>Audit Log Viewer</span>
+                        </a>
+                    </div>
+                </nav>
+            </aside>
+        </div>
+
+        <!-- Main Content -->
+        <main id="pageContent" class="flex-1 p-6 overflow-y-auto max-w-[1440px] mx-auto">
+            
+<!-- Page Header -->
+<div class="mb-6">
+  <h1 class="text-[clamp(1.5rem,2.5vw,2rem)] leading-10 font-bold text-primary">Org Configuration</h1>
+  <p class="text-sm text-secondary mt-2">Manage organizational structure and cycles in one workspace with full auditability.</p>
+</div>
+
+<!-- Tab Navigation and Shared Controls -->
+<div class="bg-white rounded-md border border-neutral-200 p-6 mb-6">
+  <!-- Tab Headers -->
+  <div class="flex items-center justify-between mb-6">
+    <div class="flex space-x-1 border-b border-neutral-200">
+      <button id="tab-departments" class="tab-btn px-4 py-2 text-sm font-medium border-b-2 border-accent text-accent">
+        Departments
+      </button>
+      <button id="tab-cycles" class="tab-btn px-4 py-2 text-sm font-medium border-b-2 border-transparent text-secondary hover:text-neutral-700">
+        Assessment Cycles
+      </button>
+    </div>
+    
+    <!-- Add Button -->
+    <button id="add-btn" class="inline-flex items-center justify-center gap-2 bg-accent text-white rounded-md px-4 py-2 hover:bg-[#1d4ed8] focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2">
+      <i data-lucide="plus" class="w-4 h-4"></i>
+      <span id="add-btn-text">Add Department</span>
+    </button>
+  </div>
+  
+  <!-- Shared Search Bar -->
+  <div class="relative">
+    <i data-lucide="search" class="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-neutral-400"></i>
+    <input 
+      id="search-input" 
+      type="text" 
+      placeholder="Search departments..."
+      class="w-full pl-10 pr-4 py-2 border border-neutral-200 rounded-md focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 text-sm"
+    />
+  </div>
+</div>
+
+<!-- Departments Tab Content -->
+<div id="departments-content" class="bg-white rounded-md border border-neutral-200">
+  <!-- Loading Skeleton -->
+  <div id="departments-loading" class="p-6">
+    <div class="space-y-4">
+      <div class="animate-pulse flex space-x-4">
+        <div class="flex-1 space-y-2">
+          <div class="h-4 bg-neutral-200 rounded w-3/4"></div>
+          <div class="h-4 bg-neutral-200 rounded w-1/2"></div>
+        </div>
+      </div>
+      <div class="animate-pulse flex space-x-4">
+        <div class="flex-1 space-y-2">
+          <div class="h-4 bg-neutral-200 rounded w-2/3"></div>
+          <div class="h-4 bg-neutral-200 rounded w-1/3"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Table Container -->
+  <div id="departments-table-container" class="hidden overflow-x-auto">
+    <table class="w-full">
+      <thead class="bg-neutral-50 sticky top-0">
+        <tr class="text-secondary text-xs">
+          <th class="text-left px-6 py-3 border-b border-neutral-200">Name</th>
+          <th class="text-left px-6 py-3 border-b border-neutral-200">Description</th>
+          <th class="text-left px-6 py-3 border-b border-neutral-200">Status</th>
+          <th class="text-left px-6 py-3 border-b border-neutral-200">Usage</th>
+          <th class="text-left px-6 py-3 border-b border-neutral-200">Created</th>
+          <th class="text-left px-6 py-3 border-b border-neutral-200">Actions</th>
+        </tr>
+      </thead>
+      <tbody id="departments-tbody" class="text-sm">
+        <!-- Dynamic content -->
+      </tbody>
+    </table>
+  </div>
+  
+  <!-- Empty State -->
+  <div id="departments-empty" class="hidden p-12 text-center">
+    <i data-lucide="building-2" class="w-12 h-12 text-neutral-400 mx-auto mb-4"></i>
+    <h3 class="text-lg font-semibold text-neutral-700 mb-2">No departments found</h3>
+    <p class="text-neutral-400 mb-4">Create your first department to get started.</p>
+    <button class="bg-accent text-white rounded-md px-4 py-2 hover:bg-[#1d4ed8]">Add Department</button>
+  </div>
+</div>
+
+<!-- Assessment Cycles Tab Content -->
+<div id="cycles-content" class="hidden bg-white rounded-md border border-neutral-200">
+  <!-- Loading Skeleton -->
+  <div id="cycles-loading" class="p-6">
+    <div class="space-y-4">
+      <div class="animate-pulse flex space-x-4">
+        <div class="flex-1 space-y-2">
+          <div class="h-4 bg-neutral-200 rounded w-3/4"></div>
+          <div class="h-4 bg-neutral-200 rounded w-1/2"></div>
+        </div>
+      </div>
+      <div class="animate-pulse flex space-x-4">
+        <div class="flex-1 space-y-2">
+          <div class="h-4 bg-neutral-200 rounded w-2/3"></div>
+          <div class="h-4 bg-neutral-200 rounded w-1/3"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Table Container -->
+  <div id="cycles-table-container" class="hidden overflow-x-auto">
+    <table class="w-full">
+      <thead class="bg-neutral-50 sticky top-0">
+        <tr class="text-secondary text-xs">
+          <th class="text-left px-6 py-3 border-b border-neutral-200">Name</th>
+          <th class="text-left px-6 py-3 border-b border-neutral-200">Period</th>
+          <th class="text-left px-6 py-3 border-b border-neutral-200">State</th>
+          <th class="text-left px-6 py-3 border-b border-neutral-200">Status</th>
+          <th class="text-left px-6 py-3 border-b border-neutral-200">Created</th>
+          <th class="text-left px-6 py-3 border-b border-neutral-200">Actions</th>
+        </tr>
+      </thead>
+      <tbody id="cycles-tbody" class="text-sm">
+        <!-- Dynamic content -->
+      </tbody>
+    </table>
+  </div>
+  
+  <!-- Empty State -->
+  <div id="cycles-empty" class="hidden p-12 text-center">
+    <i data-lucide="calendar" class="w-12 h-12 text-neutral-400 mx-auto mb-4"></i>
+    <h3 class="text-lg font-semibold text-neutral-700 mb-2">No assessment cycles found</h3>
+    <p class="text-neutral-400 mb-4">Create your first assessment cycle to get started.</p>
+    <button class="bg-accent text-white rounded-md px-4 py-2 hover:bg-[#1d4ed8]">Add Cycle</button>
+  </div>
+</div>
+
+<!-- Client-side Pagination -->
+<div class="flex items-center justify-between mt-6 text-sm text-secondary">
+  <div id="pagination-info">
+    Showing 0 of 0 items
+  </div>
+  <div class="flex items-center gap-2">
+    <button id="prev-page" class="px-3 py-1 border border-neutral-200 rounded-md hover:bg-neutral-50 disabled:opacity-50 disabled:cursor-not-allowed">
+      <i data-lucide="chevron-left" class="w-4 h-4"></i>
+    </button>
+    <span id="current-page" class="px-3 py-1">1</span>
+    <button id="next-page" class="px-3 py-1 border border-neutral-200 rounded-md hover:bg-neutral-50 disabled:opacity-50 disabled:cursor-not-allowed">
+      <i data-lucide="chevron-right" class="w-4 h-4"></i>
+    </button>
+  </div>
+</div>
+
+<!-- Add/Edit Department Modal -->
+<div id="department-modal" class="hidden fixed inset-0 z-50 overflow-y-auto">
+  <div class="fixed inset-0 bg-black/50 backdrop-blur-sm" id="department-modal-backdrop"></div>
+  <div class="flex items-center justify-center min-h-screen px-4">
+    <div class="relative bg-white rounded-lg shadow-lg max-w-md w-full p-6">
+      <div class="flex items-center justify-between mb-4">
+        <h3 id="department-modal-title" class="text-lg font-semibold text-primary">Add Department</h3>
+        <button id="department-modal-close" class="text-neutral-400 hover:text-neutral-600">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+      
+      <form id="department-form" class="space-y-4">
+        <div>
+          <label class="block text-secondary text-xs mb-1">Name *</label>
+          <input 
+            id="department-name" 
+            type="text" 
+            required
+            class="w-full border border-neutral-200 rounded-md px-3 py-2 text-neutral-700 focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2"
+            placeholder="Engineering"
+          />
+          <p id="department-name-error" class="hidden mt-1 text-xs text-error"></p>
+        </div>
+        
+        <div>
+          <label class="block text-secondary text-xs mb-1">Description</label>
+          <textarea 
+            id="department-description" 
+            class="w-full border border-neutral-200 rounded-md px-3 py-2 text-neutral-700 focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2"
+            placeholder="Software development and engineering"
+            rows="3"
+          ></textarea>
+        </div>
+        
+        <div>
+          <label class="block text-secondary text-xs mb-1">Status</label>
+          <select 
+            id="department-status" 
+            class="w-full border border-neutral-200 rounded-md px-3 py-2 text-neutral-700 focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2"
+          >
+            <option value="active">Active</option>
+            <option value="inactive">Inactive</option>
+          </select>
+        </div>
+        
+        <div class="flex gap-3 pt-4">
+          <button 
+            type="submit" 
+            class="flex-1 bg-accent text-white rounded-md px-4 py-2 hover:bg-[#1d4ed8] focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2"
+          >
+            Save Department
+          </button>
+          <button 
+            type="button" 
+            id="department-cancel"
+            class="bg-white text-primary border border-neutral-200 rounded-md px-4 py-2 hover:bg-neutral-50 focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2"
+          >
+            Cancel
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Add/Edit Assessment Cycle Modal -->
+<div id="cycle-modal" class="hidden fixed inset-0 z-50 overflow-y-auto">
+  <div class="fixed inset-0 bg-black/50 backdrop-blur-sm" id="cycle-modal-backdrop"></div>
+  <div class="flex items-center justify-center min-h-screen px-4">
+    <div class="relative bg-white rounded-lg shadow-lg max-w-md w-full p-6">
+      <div class="flex items-center justify-between mb-4">
+        <h3 id="cycle-modal-title" class="text-lg font-semibold text-primary">Add Assessment Cycle</h3>
+        <button id="cycle-modal-close" class="text-neutral-400 hover:text-neutral-600">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+      
+      <form id="cycle-form" class="space-y-4">
+        <div>
+          <label class="block text-secondary text-xs mb-1">Name *</label>
+          <input 
+            id="cycle-name" 
+            type="text" 
+            required
+            class="w-full border border-neutral-200 rounded-md px-3 py-2 text-neutral-700 focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2"
+            placeholder="Q1 2024 Assessment"
+          />
+          <p id="cycle-name-error" class="hidden mt-1 text-xs text-error"></p>
+        </div>
+        
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-secondary text-xs mb-1">Start Date *</label>
+            <input 
+              id="cycle-start-date" 
+              type="date" 
+              required
+              class="w-full border border-neutral-200 rounded-md px-3 py-2 text-neutral-700 focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2"
+            />
+            <p id="cycle-start-error" class="hidden mt-1 text-xs text-error"></p>
+          </div>
+          
+          <div>
+            <label class="block text-secondary text-xs mb-1">End Date *</label>
+            <input 
+              id="cycle-end-date" 
+              type="date" 
+              required
+              class="w-full border border-neutral-200 rounded-md px-3 py-2 text-neutral-700 focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2"
+            />
+            <p id="cycle-end-error" class="hidden mt-1 text-xs text-error"></p>
+          </div>
+        </div>
+        
+        <div>
+          <label class="block text-secondary text-xs mb-1">Status</label>
+          <select 
+            id="cycle-status" 
+            class="w-full border border-neutral-200 rounded-md px-3 py-2 text-neutral-700 focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2"
+          >
+            <option value="active">Active</option>
+            <option value="inactive">Inactive</option>
+          </select>
+        </div>
+        
+        <div id="cycle-warning" class="hidden p-3 bg-warning/10 border border-warning/20 rounded-md">
+          <div class="flex gap-2">
+            <i data-lucide="alert-triangle" class="w-4 h-4 text-warning flex-shrink-0 mt-0.5"></i>
+            <div class="text-xs text-warning">
+              Modifying dates of an active cycle may impact ongoing assessments.
+            </div>
+          </div>
+        </div>
+        
+        <div class="flex gap-3 pt-4">
+          <button 
+            type="submit" 
+            class="flex-1 bg-accent text-white rounded-md px-4 py-2 hover:bg-[#1d4ed8] focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2"
+          >
+            Save Cycle
+          </button>
+          <button 
+            type="button" 
+            id="cycle-cancel"
+            class="bg-white text-primary border border-neutral-200 rounded-md px-4 py-2 hover:bg-neutral-50 focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2"
+          >
+            Cancel
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Deactivate Department Confirmation Modal -->
+<div id="deactivate-modal" class="hidden fixed inset-0 z-50 overflow-y-auto">
+  <div class="fixed inset-0 bg-black/50 backdrop-blur-sm" id="deactivate-modal-backdrop"></div>
+  <div class="flex items-center justify-center min-h-screen px-4">
+    <div class="relative bg-white rounded-lg shadow-lg max-w-md w-full p-6">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="text-lg font-semibold text-primary">Deactivate Department</h3>
+        <button id="deactivate-modal-close" class="text-neutral-400 hover:text-neutral-600">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+      
+      <div class="mb-4">
+        <div class="flex gap-2 mb-3">
+          <i data-lucide="alert-triangle" class="w-5 h-5 text-warning flex-shrink-0"></i>
+          <div>
+            <p class="text-sm text-neutral-700">
+              Employees will remain linked but this department will be hidden from selectors.
+            </p>
+          </div>
+        </div>
+        
+        <div>
+          <label class="block text-secondary text-xs mb-1">Reason (optional)</label>
+          <textarea 
+            id="deactivate-reason" 
+            class="w-full border border-neutral-200 rounded-md px-3 py-2 text-neutral-700 focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2"
+            placeholder="Reason for deactivation..."
+            rows="3"
+          ></textarea>
+        </div>
+      </div>
+      
+      <div class="flex gap-3">
+        <button 
+          id="confirm-deactivate" 
+          class="flex-1 bg-error text-white rounded-md px-4 py-2 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-error focus:ring-offset-2"
+        >
+          Deactivate
+        </button>
+        <button 
+          id="cancel-deactivate"
+          class="bg-white text-primary border border-neutral-200 rounded-md px-4 py-2 hover:bg-neutral-50 focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2"
+        >
+          Cancel
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+        </main>
+    </div>
+
+    <!-- Required: JavaScript -->
+    <script type="module" data-tiramai="web-gen">
+        import { showToast, showLoader, hideLoader, env } from "./scripts/main.js";
+        import { auth, db, storage } from "./scripts/firebase.js";
+        import { onAuthStateChanged, getAuth, signOut } from 'https://www.gstatic.com/firebasejs/10.12.4/firebase-auth.js';
+        import { doc, getDoc } from 'https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js';
+
+        // Initialize Lucide icons
+        lucide.createIcons();
+
+        // Auth state management
+        let currentUser = null;
+
+        // Initialize auth state listener
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                currentUser = user;
+                await loadUserProfile(user);
+            } else {
+                // Redirect to auth page if not authenticated
+                window.location.href = 'auth.html';
+            }
+        });
+
+        // Load user profile data
+        async function loadUserProfile(user) {
+            try {
+                const userDoc = await getDoc(doc(db, 'users', user.uid));
+                
+                if (userDoc.exists()) {
+                    const userData = userDoc.data();
+                    const fullName = `${userData.firstName || ''} ${userData.lastName || ''}`.trim();
+                    document.getElementById('user-name').textContent = fullName || user.email;
+                } else {
+                    // Fallback to email if no user doc exists
+                    document.getElementById('user-name').textContent = user.email;
+                }
+            } catch (error) {
+                console.error('Error loading user profile:', error);
+                // Fallback to email on error
+                document.getElementById('user-name').textContent = user.email;
+            }
+        }
+
+        // User dropdown functionality
+        const userProfileBtn = document.getElementById('user-profile-btn');
+        const userDropdown = document.getElementById('user-dropdown');
+        const signOutBtn = document.getElementById('sign-out-btn');
+
+        userProfileBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            userDropdown.classList.toggle('hidden');
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', () => {
+            userDropdown.classList.add('hidden');
+        });
+
+        // Sign out functionality
+        signOutBtn.addEventListener('click', async () => {
+            try {
+                await signOut(auth);
+                window.location.href = 'auth.html';
+            } catch (error) {
+                console.error('Error signing out:', error);
+                showToast('Error signing out', 'error');
+            }
+        });
+
+        // Mobile navigation
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const mobileNavOverlay = document.getElementById('mobile-nav-overlay');
+        const mobileNavBackdrop = document.getElementById('mobile-nav-backdrop');
+
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileNavOverlay.classList.remove('hidden');
+        });
+
+        mobileNavBackdrop.addEventListener('click', () => {
+            mobileNavOverlay.classList.add('hidden');
+        });
+
+        // Close mobile nav on navigation
+        document.querySelectorAll('#mobile-nav-overlay .nav-item').forEach(link => {
+            link.addEventListener('click', () => {
+                mobileNavOverlay.classList.add('hidden');
+            });
+        });
+
+        // Active navigation state
+        function updateActiveNavState() {
+            const currentPath = window.location.pathname;
+            const pageName = currentPath.replace('/', '').replace('.html', '');
+            
+            // Remove active state from all nav items
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('bg-accent', 'text-white');
+                item.classList.add('text-neutral-700');
+            });
+
+            // Add active state to current page
+            document.querySelectorAll(`[data-page="${pageName}"]`).forEach(item => {
+                item.classList.add('bg-accent', 'text-white');
+                item.classList.remove('text-neutral-700');
+            });
+        }
+
+        // Update active state on load
+        updateActiveNavState();
+
+        // Update active state on navigation (for SPA behavior)
+        window.addEventListener('popstate', updateActiveNavState);
+    </script>
+
+    
+<script id="data-script" type="module" data-tiramai="web-gen">
+import { onAuthStateChanged, getAuth } from 'https://www.gstatic.com/firebasejs/10.12.4/firebase-auth.js';
+import { 
+  collection, getDocs, setDoc, addDoc, doc, getDoc, updateDoc, deleteDoc, 
+  query, where, orderBy, limit, startAfter, endBefore, onSnapshot, Timestamp,
+  getCountFromServer, enableIndexedDbPersistence
+} from "https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js";
+import { auth, getDb } from "./scripts/firebase.js";
+import { showToast, showLoader, hideLoader } from "./scripts/main.js";
+
+const db = getDb();
+
+// Auth check
+onAuthStateChanged(auth, user => {
+  if (!user) location.href = "auth.html?redirect=" + encodeURIComponent(location.pathname);
+});
+
+// State management
+let currentTab = 'departments';
+let currentUser = null;
+let currentEditId = null;
+let departmentsData = [];
+let cyclesData = [];
+let filteredDepartments = [];
+let filteredCycles = [];
+let currentPage = 1;
+const itemsPerPage = 10;
+
+// URL parameter handling
+const urlParams = new URLSearchParams(window.location.search);
+const activeTab = urlParams.get('activeTab');
+if (activeTab === 'cycles') {
+  currentTab = 'cycles';
+}
+
+// Initialize page
+document.addEventListener('DOMContentLoaded', async () => {
+  lucide.createIcons();
+  
+  // Set initial tab
+  if (currentTab === 'cycles') {
+    switchTab('cycles');
+  } else {
+    switchTab('departments');
+  }
+  
+  // Get current user
+  currentUser = auth.currentUser;
+  
+  // Load data
+  await funInitialLoad();
+  
+  // Setup event listeners
+  setupEventListeners();
+});
+
+// Event listeners setup
+function setupEventListeners() {
+  // Tab switching
+  document.getElementById('tab-departments')?.addEventListener('click', () => switchTab('departments'));
+  document.getElementById('tab-cycles')?.addEventListener('click', () => switchTab('cycles'));
+  
+  // Add button
+  document.getElementById('add-btn')?.addEventListener('click', () => {
+    if (currentTab === 'departments') {
+      openDepartmentModal();
+    } else {
+      openCycleModal();
+    }
+  });
+  
+  // Search
+  const searchInput = document.getElementById('search-input');
+  let searchTimeout;
+  searchInput?.addEventListener('input', (e) => {
+    clearTimeout(searchTimeout);
+    searchTimeout = setTimeout(() => {
+      performSearch(e.target.value);
+    }, 300);
+  });
+  
+  // Pagination
+  document.getElementById('prev-page')?.addEventListener('click', () => {
+    if (currentPage > 1) {
+      currentPage--;
+      renderCurrentTab();
+    }
+  });
+  
+  document.getElementById('next-page')?.addEventListener('click', () => {
+    const totalPages = Math.ceil(getCurrentData().length / itemsPerPage);
+    if (currentPage < totalPages) {
+      currentPage++;
+      renderCurrentTab();
+    }
+  });
+  
+  // Modal event listeners
+  setupModalEventListeners();
+}
+
+function setupModalEventListeners() {
+  // Department modal
+  document.getElementById('department-modal-close')?.addEventListener('click', closeDepartmentModal);
+  document.getElementById('department-modal-backdrop')?.addEventListener('click', closeDepartmentModal);
+  document.getElementById('department-cancel')?.addEventListener('click', closeDepartmentModal);
+  document.getElementById('department-form')?.addEventListener('submit', handleDepartmentSubmit);
+  
+  // Cycle modal
+  document.getElementById('cycle-modal-close')?.addEventListener('click', closeCycleModal);
+  document.getElementById('cycle-modal-backdrop')?.addEventListener('click', closeCycleModal);
+  document.getElementById('cycle-cancel')?.addEventListener('click', closeCycleModal);
+  document.getElementById('cycle-form')?.addEventListener('submit', handleCycleSubmit);
+  
+  // Date validation for cycle
+  document.getElementById('cycle-start-date')?.addEventListener('change', validateCycleDates);
+  document.getElementById('cycle-end-date')?.addEventListener('change', validateCycleDates);
+  
+  // Deactivate modal
+  document.getElementById('deactivate-modal-close')?.addEventListener('click', closeDeactivateModal);
+  document.getElementById('deactivate-modal-backdrop')?.addEventListener('click', closeDeactivateModal);
+  document.getElementById('cancel-deactivate')?.addEventListener('click', closeDeactivateModal);
+  document.getElementById('confirm-deactivate')?.addEventListener('click', handleDeactivateDepartment);
+}
+
+// Initial data load
+async function funInitialLoad() {
+  try {
+    await Promise.all([
+      funLoadDepartments(),
+      funLoadCycles()
+    ]);
+    
+    renderCurrentTab();
+  } catch (error) {
+    console.error('Error loading initial data:', error);
+    showToast('Failed to load data', 'error');
+  }
+}
+
+// Load departments
+async function funLoadDepartments() {
+  try {
+    const q = query(
+      collection(db, 'departments'),
+      orderBy('createdAt', 'desc')
+    );
+    
+    const snapshot = await getDocs(q);
+    departmentsData = snapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    }));
+    
+    // Load employee counts
+    await funLoadDepartmentUsageCounts();
+    
+    filteredDepartments = [...departmentsData];
+  } catch (error) {
+    console.error('Error loading departments:', error);
+    throw error;
+  }
+}
+
+// Load department usage counts
+async function funLoadDepartmentUsageCounts() {
+  try {
+    const promises = departmentsData.map(async (dept) => {
+      const countQuery = query(
+        collection(db, 'employees'),
+        where('departmentId', '==', dept.id),
+        where('status', '==', 'active')
+      );
+      
+      const countSnapshot = await getCountFromServer(countQuery);
+      dept.employeeCount = countSnapshot.data().count;
+    });
+    
+    await Promise.all(promises);
+  } catch (error) {
+    console.error('Error loading department usage counts:', error);
+  }
+}
+
+// Load assessment cycles
+async function funLoadCycles() {
+  try {
+    const q = query(
+      collection(db, 'assessmentCycles'),
+      orderBy('createdAt', 'desc')
+    );
+    
+    const snapshot = await getDocs(q);
+    cyclesData = snapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data(),
+      cycleState: computeCycleState(doc.data())
+    }));
+    
+    filteredCycles = [...cyclesData];
+  } catch (error) {
+    console.error('Error loading cycles:', error);
+    throw error;
+  }
+}
+
+// Compute cycle state
+function computeCycleState(cycle) {
+  if (!cycle.startDate || !cycle.endDate) return 'Unknown';
+  
+  const now = new Date();
+  const startDate = new Date(cycle.startDate);
+  const endDate = new Date(cycle.endDate);
+  
+  if (now < startDate) return 'Upcoming';
+  if (now >= startDate && now <= endDate) return 'Current';
+  return 'Closed';
+}
+
+// Tab switching
+function switchTab(tab) {
+  currentTab = tab;
+  currentPage = 1;
+  
+  // Update tab buttons
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.classList.remove('border-accent', 'text-accent');
+    btn.classList.add('border-transparent', 'text-secondary');
+  });
+  
+  const activeTabBtn = document.getElementById(`tab-${tab}`);
+  activeTabBtn?.classList.remove('border-transparent', 'text-secondary');
+  activeTabBtn?.classList.add('border-accent', 'text-accent');
+  
+  // Update add button text
+  const addBtnText = document.getElementById('add-btn-text');
+  const searchInput = document.getElementById('search-input');
+  
+  if (tab === 'departments') {
+    addBtnText.textContent = 'Add Department';
+    searchInput.placeholder = 'Search departments...';
+    
+    document.getElementById('departments-content')?.classList.remove('hidden');
+    document.getElementById('cycles-content')?.classList.add('hidden');
+  } else {
+    addBtnText.textContent = 'Add Cycle';
+    searchInput.placeholder = 'Search cycles...';
+    
+    document.getElementById('departments-content')?.classList.add('hidden');
+    document.getElementById('cycles-content')?.classList.remove('hidden');
+  }
+  
+  renderCurrentTab();
+}
+
+// Search functionality
+function performSearch(searchTerm) {
+  const term = searchTerm.toLowerCase().trim();
+  
+  if (currentTab === 'departments') {
+    filteredDepartments = departmentsData.filter(dept => 
+      dept.name?.toLowerCase().includes(term) ||
+      dept.description?.toLowerCase().includes(term)
+    );
+  } else {
+    filteredCycles = cyclesData.filter(cycle => 
+      cycle.name?.toLowerCase().includes(term)
+    );
+  }
+  
+  currentPage = 1;
+  renderCurrentTab();
+}
+
+// Render current tab
+function renderCurrentTab() {
+  if (currentTab === 'departments') {
+    renderDepartments();
+  } else {
+    renderCycles();
+  }
+  
+  updatePagination();
+  lucide.createIcons();
+}
+
+// Render departments
+function renderDepartments() {
+  const tableContainer = document.getElementById('departments-table-container');
+  const loadingContainer = document.getElementById('departments-loading');
+  const emptyContainer = document.getElementById('departments-empty');
+  const tbody = document.getElementById('departments-tbody');
+  
+  loadingContainer?.classList.add('hidden');
+  
+  if (filteredDepartments.length === 0) {
+    tableContainer?.classList.add('hidden');
+    emptyContainer?.classList.remove('hidden');
+    return;
+  }
+  
+  emptyContainer?.classList.add('hidden');
+  tableContainer?.classList.remove('hidden');
+  
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const pageData = filteredDepartments.slice(startIndex, endIndex);
+  
+  tbody.innerHTML = pageData.map(dept => `
+    <tr class="odd:bg-white even:bg-neutral-50 hover:bg-neutral-50">
+      <td class="px-6 py-3 text-neutral-700 font-medium">${dept.name || 'N/A'}</td>
+      <td class="px-6 py-3 text-neutral-700">${dept.description || 'N/A'}</td>
+      <td class="px-6 py-3">
+        <span class="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full ${
+          dept.status === 'active' 
+            ? 'text-success bg-success/10' 
+            : 'text-neutral-400 bg-neutral-100'
+        }">
+          <span class="h-1.5 w-1.5 rounded-full ${
+            dept.status === 'active' ? 'bg-success' : 'bg-neutral-400'
+          }"></span>
+          ${dept.status || 'N/A'}
+        </span>
+      </td>
+      <td class="px-6 py-3 text-neutral-700">
+        ${dept.employeeCount !== undefined ? `${dept.employeeCount} employees` : 'N/A'}
+      </td>
+      <td class="px-6 py-3 text-neutral-700">
+        ${dept.createdAt ? formatDate(dept.createdAt) : 'N/A'}
+      </td>
+      <td class="px-6 py-3">
+        <div class="flex items-center gap-2">
+          <button 
+            onclick="editDepartment('${dept.id}')"
+            class="p-1 text-neutral-400 hover:text-accent"
+            title="Edit"
+          >
+            <i data-lucide="edit-2" class="w-4 h-4"></i>
+          </button>
+          <button 
+            onclick="openDeactivateModal('${dept.id}', '${dept.name}')"
+            class="p-1 text-neutral-400 hover:text-error"
+            title="Deactivate"
+            ${dept.status === 'inactive' ? 'style="opacity: 0.5; cursor: not-allowed;"' : ''}
+          >
+            <i data-lucide="trash-2" class="w-4 h-4"></i>
+          </button>
+          <button 
+            onclick="viewAuditLog('department', '${dept.id}')"
+            class="p-1 text-neutral-400 hover:text-info"
+            title="Audit Trail"
+          >
+            <i data-lucide="history" class="w-4 h-4"></i>
+          </button>
+        </div>
+      </td>
+    </tr>
+  `).join('');
+}
+
+// Render cycles
+function renderCycles() {
+  const tableContainer = document.getElementById('cycles-table-container');
+  const loadingContainer = document.getElementById('cycles-loading');
+  const emptyContainer = document.getElementById('cycles-empty');
+  const tbody = document.getElementById('cycles-tbody');
+  
+  loadingContainer?.classList.add('hidden');
+  
+  if (filteredCycles.length === 0) {
+    tableContainer?.classList.add('hidden');
+    emptyContainer?.classList.remove('hidden');
+    return;
+  }
+  
+  emptyContainer?.classList.add('hidden');
+  tableContainer?.classList.remove('hidden');
+  
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const pageData = filteredCycles.slice(startIndex, endIndex);
+  
+  tbody.innerHTML = pageData.map(cycle => `
+    <tr class="odd:bg-white even:bg-neutral-50 hover:bg-neutral-50">
+      <td class="px-6 py-3 text-neutral-700 font-medium">${cycle.name || 'N/A'}</td>
+      <td class="px-6 py-3 text-neutral-700">
+        ${cycle.startDate ? formatDate(cycle.startDate) : 'N/A'} - 
+        ${cycle.endDate ? formatDate(cycle.endDate) : 'N/A'}
+      </td>
+      <td class="px-6 py-3">
+        <span class="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full ${getCycleStateClass(cycle.cycleState)}">
+          <span class="h-1.5 w-1.5 rounded-full ${getCycleStateDotClass(cycle.cycleState)}"></span>
+          ${cycle.cycleState}
+        </span>
+      </td>
+      <td class="px-6 py-3">
+        <span class="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full ${
+          cycle.status === 'active' 
+            ? 'text-success bg-success/10' 
+            : 'text-neutral-400 bg-neutral-100'
+        }">
+          <span class="h-1.5 w-1.5 rounded-full ${
+            cycle.status === 'active' ? 'bg-success' : 'bg-neutral-400'
+          }"></span>
+          ${cycle.status || 'N/A'}
+        </span>
+      </td>
+      <td class="px-6 py-3 text-neutral-700">
+        ${cycle.createdAt ? formatDate(cycle.createdAt) : 'N/A'}
+      </td>
+      <td class="px-6 py-3">
+        <div class="flex items-center gap-2">
+          <button 
+            onclick="editCycle('${cycle.id}')"
+            class="p-1 text-neutral-400 hover:text-accent"
+            title="Edit"
+          >
+            <i data-lucide="edit-2" class="w-4 h-4"></i>
+          </button>
+          <button 
+            onclick="viewAuditLog('assessment', '${cycle.id}')"
+            class="p-1 text-neutral-400 hover:text-info"
+            title="Audit Trail"
+          >
+            <i data-lucide="history" class="w-4 h-4"></i>
+          </button>
+        </div>
+      </td>
+    </tr>
+  `).join('');
+}
+
+// Get cycle state styling classes
+function getCycleStateClass(state) {
+  switch (state) {
+    case 'Current': return 'text-success bg-success/10';
+    case 'Upcoming': return 'text-info bg-info/10';
+    case 'Closed': return 'text-neutral-400 bg-neutral-100';
+    default: return 'text-neutral-400 bg-neutral-100';
+  }
+}
+
+function getCycleStateDotClass(state) {
+  switch (state) {
+    case 'Current': return 'bg-success';
+    case 'Upcoming': return 'bg-info';
+    case 'Closed': return 'bg-neutral-400';
+    default: return 'bg-neutral-400';
+  }
+}
+
+// Update pagination
+function updatePagination() {
+  const data = getCurrentData();
+  const totalItems = data.length;
+  const totalPages = Math.ceil(totalItems / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage + 1;
+  const endIndex = Math.min(currentPage * itemsPerPage, totalItems);
+  
+  document.getElementById('pagination-info').textContent = 
+    totalItems > 0 ? `Showing ${startIndex} to ${endIndex} of ${totalItems} items` : 'Showing 0 of 0 items';
+  
+  document.getElementById('current-page').textContent = `${currentPage} of ${totalPages || 1}`;
+  
+  document.getElementById('prev-page').disabled = currentPage <= 1;
+  document.getElementById('next-page').disabled = currentPage >= totalPages;
+}
+
+function getCurrentData() {
+  return currentTab === 'departments' ? filteredDepartments : filteredCycles;
+}
+
+// Modal functions
+function openDepartmentModal(editId = null) {
+  currentEditId = editId;
+  const modal = document.getElementById('department-modal');
+  const title = document.getElementById('department-modal-title');
+  const form = document.getElementById('department-form');
+  
+  if (editId) {
+    title.textContent = 'Edit Department';
+    const dept = departmentsData.find(d => d.id === editId);
+    if (dept) {
+      document.getElementById('department-name').value = dept.name || '';
+      document.getElementById('department-description').value = dept.description || '';
+      document.getElementById('department-status').value = dept.status || 'active';
+    }
+  } else {
+    title.textContent = 'Add Department';
+    form.reset();
+  }
+  
+  modal?.classList.remove('hidden');
+  document.getElementById('department-name')?.focus();
+}
+
+function closeDepartmentModal() {
+  document.getElementById('department-modal')?.classList.add('hidden');
+  document.getElementById('department-form')?.reset();
+  clearValidationErrors('department');
+  currentEditId = null;
+}
+
+function openCycleModal(editId = null) {
+  currentEditId = editId;
+  const modal = document.getElementById('cycle-modal');
+  const title = document.getElementById('cycle-modal-title');
+  const form = document.getElementById('cycle-form');
+  const warningDiv = document.getElementById('cycle-warning');
+  
+  if (editId) {
+    title.textContent = 'Edit Assessment Cycle';
+    const cycle = cyclesData.find(c => c.id === editId);
+    if (cycle) {
+      document.getElementById('cycle-name').value = cycle.name || '';
+      document.getElementById('cycle-start-date').value = cycle.startDate ? cycle.startDate.split('T')[0] : '';
+      document.getElementById('cycle-end-date').value = cycle.endDate ? cycle.endDate.split('T')[0] : '';
+      document.getElementById('cycle-status').value = cycle.status || 'active';
+      
+      // Show warning for active cycles
+      if (cycle.cycleState === 'Current') {
+        warningDiv?.classList.remove('hidden');
+      }
+    }
+  } else {
+    title.textContent = 'Add Assessment Cycle';
+    form.reset();
+    warningDiv?.classList.add('hidden');
+  }
+  
+  modal?.classList.remove('hidden');
+  document.getElementById('cycle-name')?.focus();
+}
+
+function closeCycleModal() {
+  document.getElementById('cycle-modal')?.classList.add('hidden');
+  document.getElementById('cycle-form')?.reset();
+  document.getElementById('cycle-warning')?.classList.add('hidden');
+  clearValidationErrors('cycle');
+  currentEditId = null;
+}
+
+function openDeactivateModal(deptId, deptName) {
+  const dept = departmentsData.find(d => d.id === deptId);
+  if (!dept || dept.status === 'inactive') return;
+  
+  currentEditId = deptId;
+  document.getElementById('deactivate-modal')?.classList.remove('hidden');
+  document.getElementById('deactivate-reason')?.focus();
+}
+
+function closeDeactivateModal() {
+  document.getElementById('deactivate-modal')?.classList.add('hidden');
+  document.getElementById('deactivate-reason').value = '';
+  currentEditId = null;
+}
+
+// Form submission handlers
+async function handleDepartmentSubmit(e) {
+  e.preventDefault();
+  clearValidationErrors('department');
+  
+  const name = document.getElementById('department-name').value.trim();
+  const description = document.getElementById('department-description').value.trim();
+  const status = document.getElementById('department-status').value;
+  
+  // Validation
+  if (!name) {
+    showValidationError('department-name', 'Name is required');
+    return;
+  }
+  
+  // Check uniqueness among active departments
+  const existingDept = departmentsData.find(d => 
+    d.id !== currentEditId &&
+    d.name?.toLowerCase() === name.toLowerCase() &&
+    d.status === 'active'
+  );
+  
+  if (existingDept) {
+    showValidationError('department-name', 'A department with this name already exists');
+    return;
+  }
+  
+  try {
+    showLoader();
+    
+    const now = new Date().toISOString();
+    const deptData = {
+      name,
+      description,
+      status,
+      updatedBy: currentUser?.uid || 'system',
+      updatedAt: now
+    };
+    
+    if (currentEditId) {
+      // Update existing
+      await updateDoc(doc(db, 'departments', currentEditId), deptData);
+      showToast('Department updated successfully');
+    } else {
+      // Create new
+      deptData.createdBy = currentUser?.uid || 'system';
+      deptData.createdAt = now;
+      
+      await addDoc(collection(db, 'departments'), deptData);
+      showToast('Department created successfully');
+    }
+    
+    closeDepartmentModal();
+    await funLoadDepartments();
+    renderCurrentTab();
+    
+  } catch (error) {
+    console.error('Error saving department:', error);
+    showToast('Failed to save department', 'error');
+  } finally {
+    hideLoader();
+  }
+}
+
+async function handleCycleSubmit(e) {
+  e.preventDefault();
+  clearValidationErrors('cycle');
+  
+  const name = document.getElementById('cycle-name').value.trim();
+  const startDate = document.getElementById('cycle-start-date').value;
+  const endDate = document.getElementById('cycle-end-date').value;
+  const status = document.getElementById('cycle-status').value;
+  
+  // Validation
+  if (!name) {
+    showValidationError('cycle-name', 'Name is required');
+    return;
+  }
+  
+  if (!startDate) {
+    showValidationError('cycle-start', 'Start date is required');
+    return;
+  }
+  
+  if (!endDate) {
+    showValidationError('cycle-end', 'End date is required');
+    return;
+  }
+  
+  if (new Date(startDate) > new Date(endDate)) {
+    showValidationError('cycle-end', 'End date must be after start date');
+    return;
+  }
+  
+  // Check for overlapping active cycles with same name
+  const overlapping = cyclesData.find(c => 
+    c.id !== currentEditId &&
+    c.name?.toLowerCase() === name.toLowerCase() &&
+    c.status === 'active' &&
+    (
+      (new Date(startDate) >= new Date(c.startDate) && new Date(startDate) <= new Date(c.endDate)) ||
+      (new Date(endDate) >= new Date(c.startDate) && new Date(endDate) <= new Date(c.endDate)) ||
+      (new Date(startDate) <= new Date(c.startDate) && new Date(endDate) >= new Date(c.endDate))
+    )
+  );
+  
+  if (overlapping) {
+    showValidationError('cycle-name', 'Date range overlaps with an existing active cycle with the same name');
+    return;
+  }
+  
+  try {
+    showLoader();
+    
+    const now = new Date().toISOString();
+    const cycleData = {
+      name,
+      startDate: new Date(startDate).toISOString(),
+      endDate: new Date(endDate).toISOString(),
+      status,
+      updatedBy: currentUser?.uid || 'system',
+      updatedAt: now
+    };
+    
+    if (currentEditId) {
+      // Update existing
+      await updateDoc(doc(db, 'assessmentCycles', currentEditId), cycleData);
+      showToast('Assessment cycle updated successfully');
+    } else {
+      // Create new
+      cycleData.createdBy = currentUser?.uid || 'system';
+      cycleData.createdAt = now;
+      
+      await addDoc(collection(db, 'assessmentCycles'), cycleData);
+      showToast('Assessment cycle created successfully');
+    }
+    
+    closeCycleModal();
+    await funLoadCycles();
+    renderCurrentTab();
+    
+  } catch (error) {
+    console.error('Error saving cycle:', error);
+    showToast('Failed to save cycle', 'error');
+  } finally {
+    hideLoader();
+  }
+}
+
+async function handleDeactivateDepartment() {
+  if (!currentEditId) return;
+  
+  const reason = document.getElementById('deactivate-reason').value.trim();
+  
+  try {
+    showLoader();
+    
+    const now = new Date().toISOString();
+    const updateData = {
+      status: 'inactive',
+      updatedBy: currentUser?.uid || 'system',
+      updatedAt: now
+    };
+    
+    await updateDoc(doc(db, 'departments', currentEditId), updateData);
+    
+    // Optional: Log the reason in audit log if provided
+    if (reason) {
+      // This would be handled by the audit system
+    }
+    
+    showToast('Department deactivated successfully');
+    closeDeactivateModal();
+    
+    await funLoadDepartments();
+    renderCurrentTab();
+    
+  } catch (error) {
+    console.error('Error deactivating department:', error);
+    showToast('Failed to deactivate department', 'error');
+  } finally {
+    hideLoader();
+  }
+}
+
+// Validation helpers
+function showValidationError(fieldId, message) {
+  const errorElement = document.getElementById(`${fieldId}-error`);
+  if (errorElement) {
+    errorElement.textContent = message;
+    errorElement.classList.remove('hidden');
+  }
+  
+  const field = document.getElementById(fieldId);
+  field?.classList.add('border-error');
+  field?.focus();
+}
+
+function clearValidationErrors(prefix) {
+  document.querySelectorAll(`[id^="${prefix}-"][id$="-error"]`).forEach(el => {
+    el.classList.add('hidden');
+    el.textContent = '';
+  });
+  
+  document.querySelectorAll(`[id^="${prefix}-"]`).forEach(el => {
+    el.classList.remove('border-error');
+  });
+}
+
+function validateCycleDates() {
+  const startDate = document.getElementById('cycle-start-date').value;
+  const endDate = document.getElementById('cycle-end-date').value;
+  
+  clearValidationErrors('cycle');
+  
+  if (startDate && endDate && new Date(startDate) > new Date(endDate)) {
+    showValidationError('cycle-end', 'End date must be after start date');
+  }
+}
+
+// Navigation functions
+window.editDepartment = function(id) {
+  openDepartmentModal(id);
+};
+
+window.editCycle = function(id) {
+  openCycleModal(id);
+};
+
+window.openDeactivateModal = openDeactivateModal;
+
+window.viewAuditLog = function(entityType, entityId) {
+  const returnTo = encodeURIComponent(window.location.pathname + window.location.search);
+  window.location.href = `audit_log_viewer.html?entityType=${entityType}&entityId=${entityId}&returnTo=${returnTo}`;
+};
+
+// Utility functions
+function formatDate(dateString) {
+  if (!dateString) return 'N/A';
+  
+  try {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-IN', {
+      day: '2-digit',
+      month: '2-digit', 
+      year: 'numeric'
+    });
+  } catch (error) {
+    return 'N/A';
+  }
+}
+
+// Handle authentication state changes
+onAuthStateChanged(auth, user => {
+  currentUser = user;
+  if (!user) {
+    window.location.href = "auth.html?redirect=" + encodeURIComponent(window.location.pathname);
+  }
+});
+</script>
+
+</body>
+</html>

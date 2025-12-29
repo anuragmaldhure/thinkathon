@@ -1,0 +1,1620 @@
+<html lang="en"><head>
+    <meta charset="UTF-8">
+    <title>SkillBridge Admin Portal</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Always add this import for data grid implementation - Important -->
+    <script src="https://tiramai-grid-lib.tiram.app/tiramai-grid.umd.js"></script>
+    <style type="text/tailwindcss">
+      @theme {
+        /* Brand Colors from SkillBridge Design System */
+        --color-primary: #1E40AF; /* Primary blue for navigation, CTAs */
+        --color-secondary: #059669; /* Success/progress green */
+        --color-accent: #F59E0B; /* Training/notification amber */
+        --color-surface: #FFFFFF; /* Cards, modals, form containers */
+        --color-background: #F8FAFC; /* Main background */
+        --color-border: #E2E8F0; /* Dividers, borders */
+        --color-error: #DC2626; /* Error states */
+
+        /* Layout Constants */
+        --header-height: 4rem; /* 64px header */
+        --sidebar-width: 16rem; /* 256px sidebar */
+
+        /* Typography Scale */
+        --text-xs: 12px;
+        --text-sm: 14px;
+        --text-base: 14px;
+        --text-lg: 16px;
+        --text-xl: 18px;
+        --text-2xl: 20px;
+        --text-3xl: 24px;
+        --text-4xl: 30px;
+        --text-5xl: 36px;
+        --text-6xl: 48px;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+      }
+      ::-webkit-scrollbar-track {
+        background: #f1f1f1;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+        border-radius: 4px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: #94a3b8;
+      }
+
+      .app-header {
+        height: var(--header-height, 4rem);
+      }
+      .app-sidebar {
+        top: var(--header-height, 4rem);
+        width: var(--sidebar-width, 16rem);
+        height: calc(100vh - var(--header-height, 4rem));
+        overflow-y: auto;
+        overflow-x: hidden;
+      }
+      .app-main {
+        margin-top: var(--header-height, 4rem);
+        min-height: calc(100vh - var(--header-height, 4rem));
+      }
+      @media (min-width: 768px) {
+        .app-main {
+          margin-left: var(--sidebar-width, 16rem);
+        }
+      }
+
+      body.sidebar-open {
+        overflow: hidden;
+      }
+
+      @media (max-width: 767px) {
+        .app-sidebar {
+          left: calc(-1 * var(--sidebar-width, 16rem));
+          transition: left 0.3s ease-in-out;
+        }
+        .app-sidebar.open {
+          left: 0;
+        }
+      }
+
+      .nav-link.active {
+        background: #1E40AF;
+        color: white;
+      }
+      .nav-link.active:hover {
+        background: #1E40AF;
+        opacity: 0.9;
+      }
+
+      .popover {
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(-8px);
+        transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out,
+          visibility 0.2s ease-in-out;
+      }
+      .popover.visible {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+      }
+
+      .sidebar-backdrop {
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+      }
+      .sidebar-backdrop.active {
+        opacity: 1;
+        visibility: visible;
+      }
+
+      button,
+      a {
+        font-size: 14px;
+      }
+    </style>
+  <title>Training Session Details - SkillBridge</title></head>
+  <body class="bg-slate-50 text-gray-800 overflow-x-hidden">
+    <header class="app-header fixed top-0 left-0 right-0 bg-white border-b border-slate-200 z-40">
+      <div class="h-full max-w-[1920px] mx-auto px-4 md:px-6 flex justify-between items-center">
+        <div class="flex items-center gap-3">
+          <button id="mobileMenuToggle" class="flex items-center justify-center w-10 h-10 rounded text-gray-500 hover:bg-gray-100 hover:text-gray-900 transition-all duration-200 cursor-pointer border-0 bg-transparent md:hidden focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-700 focus-visible:outline-offset-2" aria-label="Toggle navigation menu" aria-expanded="false">
+            <i data-lucide="menu" class="w-6 h-6"></i>
+          </button>
+
+          <div class="flex items-center gap-3">
+            <div class="w-8 h-8">
+              <svg viewBox="0 0 400 400" width="32" height="32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <g>
+                  <path d="M80 230 Q200 80 320 230" stroke="#1E40AF" stroke-width="26" fill="none" stroke-linecap="round"></path>
+                  <rect x="95" y="230" width="24" height="80" rx="8" fill="#059669"></rect>
+                  <rect x="281" y="230" width="24" height="80" rx="8" fill="#059669"></rect>
+                  <rect x="189" y="196" width="22" height="114" rx="7" fill="#1E40AF"></rect>
+                  <circle cx="130" cy="180" r="15" fill="#1E40AF"></circle>
+                  <circle cx="270" cy="180" r="15" fill="#1E40AF"></circle>
+                  <circle cx="200" cy="106" r="17" fill="#059669"></circle>
+                  <rect x="192" y="126" width="16" height="36" rx="6" fill="#059669"></rect>
+                </g>
+              </svg>
+            </div>
+            <h1 class="text-lg md:text-xl font-bold text-gray-900">
+              SkillBridge
+            </h1>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-2 md:gap-3">
+          <button id="userProfileButton" class="flex items-center gap-3 px-3 py-2 rounded-lg border border-transparent hover:bg-gray-50 hover:border-gray-200 transition-all duration-200 cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-700 focus-visible:outline-offset-2" aria-label="User profile menu" aria-expanded="false" aria-haspopup="true">
+            <div id="userAvatar" class="w-8 h-8 bg-blue-700 text-white rounded-full flex items-center justify-center text-sm font-semibold shrink-0"></div>
+            <div class="hidden sm:flex flex-col items-start max-w-[150px]">
+              <div id="userName" class="text-sm font-medium text-gray-900 truncate w-full"></div>
+            </div>
+            <i data-lucide="chevron-down" class="w-4 h-4 text-gray-500 hidden sm:block"></i>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <div id="userProfilePopover" class="popover fixed top-[4.5rem] right-4 md:right-6 w-72 bg-white border border-gray-200 rounded-lg shadow-xl z-50" role="dialog" aria-labelledby="popoverUserName" data-portal="body">
+      <div class="p-4">
+        <div class="flex items-center gap-3 pb-3 mb-3 border-b border-gray-100">
+          <div id="popoverUserAvatar" class="w-8 h-8 bg-blue-700 text-white rounded-full flex items-center justify-center text-sm font-semibold shrink-0"></div>
+          <div class="flex-1 min-w-0">
+            <div id="popoverUserName" class="font-semibold text-gray-900 truncate"></div>
+            <div id="popoverUserEmail" class="text-xs text-gray-500 truncate"></div>
+          </div>
+        </div>
+
+        <div class="space-y-1">
+          <button id="signOutButton" class="w-full flex items-center gap-3 px-3 py-2 text-sm font-medium text-red-600 hover:bg-red-50 rounded transition-all duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-700 focus-visible:outline-offset-2">
+            <i data-lucide="log-out" class="w-4 h-4"></i>
+            Sign Out
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div id="sidebarBackdrop" class="sidebar-backdrop fixed inset-0 bg-black/50 z-20 md:hidden" style="top: var(--header-height, 4rem)"></div>
+
+    <aside id="sidebar" class="app-sidebar fixed left-0 bg-white border-r border-slate-200 overflow-y-auto z-30">
+      <nav class="p-4" role="navigation" aria-label="Main navigation">
+        <div class="py-6 border-b border-gray-100 first:pt-0 last:border-b-0">
+          <div class="px-4 pb-2 text-xs font-semibold uppercase tracking-wider text-gray-400">
+            Dashboard
+          </div>
+          <div class="space-y-1">
+            <a href="dashboard.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline active" data-page="dashboard">
+              <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
+              <span>Admin Dashboard</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="py-6 border-b border-gray-100 last:border-b-0">
+          <div class="px-4 pb-2 text-xs font-semibold uppercase tracking-wider text-gray-400">
+            Organization Setup
+          </div>
+          <div class="space-y-1">
+            <a href="departments_list.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline" data-page="departments">
+              <i data-lucide="building" class="w-5 h-5"></i>
+              <span>Departments</span>
+            </a>
+            <a href="assessment_cycles_list.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline" data-page="assessment_cycles">
+              <i data-lucide="calendar" class="w-5 h-5"></i>
+              <span>Assessment Cycles</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="py-6 border-b border-gray-100 last:border-b-0">
+          <div class="px-4 pb-2 text-xs font-semibold uppercase tracking-wider text-gray-400">
+            Competency Framework
+          </div>
+          <div class="space-y-1">
+            <a href="skill_categories_list.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline" data-page="skill_categories">
+              <i data-lucide="folder" class="w-5 h-5"></i>
+              <span>Skill Categories</span>
+            </a>
+            <a href="skill_criticalities_list.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline" data-page="skill_criticalities">
+              <i data-lucide="alert-triangle" class="w-5 h-5"></i>
+              <span>Criticality Levels</span>
+            </a>
+            <a href="skills_list.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline" data-page="skills">
+              <i data-lucide="star" class="w-5 h-5"></i>
+              <span>Skills</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="py-6 border-b border-gray-100 last:border-b-0">
+          <div class="px-4 pb-2 text-xs font-semibold uppercase tracking-wider text-gray-400">
+            People Management
+          </div>
+          <div class="space-y-1">
+            <a href="employees_list.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline" data-page="employees">
+              <i data-lucide="users" class="w-5 h-5"></i>
+              <span>Employees</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="py-6 border-b border-gray-100 last:border-b-0">
+          <div class="px-4 pb-2 text-xs font-semibold uppercase tracking-wider text-gray-400">
+            Training
+          </div>
+          <div class="space-y-1">
+            <a href="training_sessions_list.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline" data-page="training_sessions">
+              <i data-lucide="graduation-cap" class="w-5 h-5"></i>
+              <span>Training Sessions</span>
+            </a>
+            <a href="trainers_list.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline" data-page="trainers">
+              <i data-lucide="user-check" class="w-5 h-5"></i>
+              <span>Trainers</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="py-6 border-b border-gray-100 last:border-b-0">
+          <div class="px-4 pb-2 text-xs font-semibold uppercase tracking-wider text-gray-400">
+            Disputes
+          </div>
+          <div class="space-y-1">
+            <a href="disputes_list.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline" data-page="disputes">
+              <i data-lucide="message-circle" class="w-5 h-5"></i>
+              <span>Disputes</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="py-6 border-b border-gray-100 last:border-b-0">
+          <div class="px-4 pb-2 text-xs font-semibold uppercase tracking-wider text-gray-400">
+            Analytics
+          </div>
+          <div class="space-y-1">
+            <a href="analytics_skill_gap_heatmap.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline" data-page="skill_gap_heatmap">
+              <i data-lucide="map" class="w-5 h-5"></i>
+              <span>Skill Gap Heatmap</span>
+            </a>
+            <a href="analytics_tni_dashboard.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline" data-page="tni_dashboard">
+              <i data-lucide="target" class="w-5 h-5"></i>
+              <span>TNI Dashboard</span>
+            </a>
+            <a href="analytics_training_forecast.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline" data-page="training_forecast">
+              <i data-lucide="trending-up" class="w-5 h-5"></i>
+              <span>Training Demand Forecast</span>
+            </a>
+            <a href="analytics_assessment_completion.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline" data-page="assessment_completion">
+              <i data-lucide="check-circle" class="w-5 h-5"></i>
+              <span>Assessment Completion</span>
+            </a>
+            <a href="analytics_dispute_metrics.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline" data-page="dispute_metrics">
+              <i data-lucide="bar-chart-3" class="w-5 h-5"></i>
+              <span>Dispute Metrics</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="py-6">
+          <div class="px-4 pb-2 text-xs font-semibold uppercase tracking-wider text-gray-400">
+            Settings
+          </div>
+          <div class="space-y-1">
+            <a href="system_settings.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline" data-page="system_settings">
+              <i data-lucide="settings" class="w-5 h-5"></i>
+              <span>System Settings</span>
+            </a>
+          </div>
+        </div>
+      </nav>
+    </aside>
+
+    <main class="app-main max-w-7xl mx-auto p-4 md:p-6 lg:p-8" id="pageContent" role="main"><nav class="flex items-center space-x-2 text-sm text-gray-600 mb-6" aria-label="Breadcrumb">
+  <a href="training_sessions_list.html" class="hover:text-gray-900">Training</a>
+  <i data-lucide="chevron-right" class="w-4 h-4"></i>
+  <a href="training_sessions_list.html" class="hover:text-gray-900">Training Sessions</a>
+  <i data-lucide="chevron-right" class="w-4 h-4"></i>
+  <span id="sessionBreadcrumb" class="text-gray-900 font-medium">Loading...</span>
+</nav>
+
+<!-- Back Button -->
+<button onclick="history.back()" class="inline-flex items-center text-gray-600 hover:text-gray-900 mb-4 transition-colors">
+  <i data-lucide="arrow-left" class="w-4 h-4 mr-2"></i>
+  Back
+</button>
+
+<!-- Page Header -->
+<div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6">
+  <div class="flex-1 min-w-0 mb-4 sm:mb-0">
+    <h1 id="sessionTitle" class="text-2xl font-bold text-gray-900 mb-2">Loading...</h1>
+    <div class="flex flex-wrap items-center gap-2">
+      <span id="sessionStatusBadge" class="hidden inline-flex px-2 py-1 text-xs font-medium rounded-lg"></span>
+      <span id="sessionModeBadge" class="hidden inline-flex px-2 py-1 text-xs font-medium rounded-lg"></span>
+    </div>
+  </div>
+  <div class="flex flex-wrap gap-2">
+    <button id="editSessionBtn" onclick="funEditSession()" class="hidden inline-flex items-center px-4 py-2 text-sm font-medium text-blue-700 bg-white border border-blue-300 rounded-lg hover:bg-blue-50 transition-colors">
+      <i data-lucide="edit" class="w-4 h-4 mr-2"></i>
+      Edit
+    </button>
+    <button id="manageAttendeesBtn" onclick="funOpenManageAttendeesModal()" class="hidden inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-blue-700 rounded-lg hover:bg-blue-800 transition-colors">
+      <i data-lucide="users" class="w-4 h-4 mr-2"></i>
+      Manage Attendees
+    </button>
+    <button id="markCompleteBtn" onclick="funOpenMarkCompleteModal()" class="hidden inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 transition-colors">
+      <i data-lucide="check-circle" class="w-4 h-4 mr-2"></i>
+      Mark Complete
+    </button>
+    <button id="cancelSessionBtn" onclick="funOpenCancelModal()" class="hidden inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 transition-colors">
+      <i data-lucide="x-circle" class="w-4 h-4 mr-2"></i>
+      Cancel Session
+    </button>
+  </div>
+</div>
+
+<!-- Two Column Layout -->
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+  <!-- Session Details Card -->
+  <div class="bg-white rounded-lg shadow-sm border border-slate-200 p-6">
+    <h2 class="text-xl font-semibold text-gray-900 mb-4">Session Details</h2>
+    <dl class="space-y-4">
+      <div>
+        <dt class="text-sm font-medium text-gray-500">Skill</dt>
+        <dd><a id="skillLink" href="#" class="text-blue-700 hover:text-blue-900 font-medium">Loading...</a></dd>
+      </div>
+      <div>
+        <dt class="text-sm font-medium text-gray-500">Category</dt>
+        <dd id="categoryName" class="text-gray-900">Loading...</dd>
+      </div>
+      <div>
+        <dt class="text-sm font-medium text-gray-500">Criticality</dt>
+        <dd id="criticalityName" class="text-gray-900">Loading...</dd>
+      </div>
+      <div>
+        <dt class="text-sm font-medium text-gray-500">Current Benchmark</dt>
+        <dd id="benchmarkScore" class="text-gray-900">Loading...</dd>
+      </div>
+      <div>
+        <dt class="text-sm font-medium text-gray-500">Scheduled Date &amp; Time</dt>
+        <dd id="scheduledDateTime" class="text-gray-900">Loading...</dd>
+      </div>
+      <div id="endDateSection" class="hidden">
+        <dt class="text-sm font-medium text-gray-500">End Date &amp; Time</dt>
+        <dd id="endDateTime" class="text-gray-900">Loading...</dd>
+      </div>
+      <div>
+        <dt class="text-sm font-medium text-gray-500">Mode</dt>
+        <dd id="sessionMode" class="text-gray-900">Loading...</dd>
+      </div>
+      <div>
+        <dt class="text-sm font-medium text-gray-500">Capacity</dt>
+        <dd id="capacity" class="text-gray-900">Loading...</dd>
+      </div>
+      <div>
+        <dt class="text-sm font-medium text-gray-500">Status</dt>
+        <dd id="status" class="text-gray-900">Loading...</dd>
+      </div>
+      <div>
+        <dt class="text-sm font-medium text-gray-500">Created By</dt>
+        <dd id="createdBy" class="text-gray-900">Loading...</dd>
+      </div>
+      <div>
+        <dt class="text-sm font-medium text-gray-500">Created Date</dt>
+        <dd id="createdDate" class="text-gray-900">Loading...</dd>
+      </div>
+    </dl>
+  </div>
+
+  <!-- Trainer Information Card -->
+  <div class="bg-white rounded-lg shadow-sm border border-slate-200 p-6">
+    <h2 class="text-xl font-semibold text-gray-900 mb-4">Trainer Information</h2>
+    <dl class="space-y-4">
+      <div>
+        <dt class="text-sm font-medium text-gray-500">Trainer Type</dt>
+        <dd><span id="trainerTypeBadge" class="inline-flex px-2 py-1 text-xs font-medium rounded-lg">Loading...</span></dd>
+      </div>
+      <div>
+        <dt class="text-sm font-medium text-gray-500">Name</dt>
+        <dd><a id="trainerLink" href="#" class="text-blue-700 hover:text-blue-900 font-medium">Loading...</a></dd>
+      </div>
+      <div>
+        <dt class="text-sm font-medium text-gray-500">Email</dt>
+        <dd><a id="trainerEmail" href="#" class="text-blue-700 hover:text-blue-900">Loading...</a></dd>
+      </div>
+      <div id="internalTrainerInfo" class="hidden">
+        <dt class="text-sm font-medium text-gray-500">Job Title</dt>
+        <dd id="trainerJobTitle" class="text-gray-900">Loading...</dd>
+      </div>
+      <div id="internalTrainerDept" class="hidden">
+        <dt class="text-sm font-medium text-gray-500">Department</dt>
+        <dd id="trainerDepartment" class="text-gray-900">Loading...</dd>
+      </div>
+      <div id="externalTrainerContact" class="hidden space-y-4">
+        <div>
+          <dt class="text-sm font-medium text-gray-500">Phone</dt>
+          <dd id="trainerPhone" class="text-gray-900">Loading...</dd>
+        </div>
+        <div>
+          <dt class="text-sm font-medium text-gray-500">Address</dt>
+          <dd id="trainerAddress" class="text-gray-900">Loading...</dd>
+        </div>
+      </div>
+    </dl>
+  </div>
+</div>
+
+<!-- Attendees Section -->
+<div class="bg-white rounded-lg shadow-sm border border-slate-200 p-6 mb-8">
+  <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6">
+    <h2 id="attendeesTitle" class="text-xl font-semibold text-gray-900">Assigned Employees (0/0)</h2>
+    <div class="flex flex-wrap gap-2 mt-4 sm:mt-0">
+      <button id="addAttendeesBtn" onclick="funOpenManageAttendeesModal()" class="hidden inline-flex items-center px-4 py-2 text-sm font-medium text-blue-700 bg-white border border-blue-300 rounded-lg hover:bg-blue-50 transition-colors">
+        <i data-lucide="user-plus" class="w-4 h-4 mr-2"></i>
+        Add Attendees
+      </button>
+      <button onclick="funExportAttendeeList()" class="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+        <i data-lucide="download" class="w-4 h-4 mr-2"></i>
+        Export List
+      </button>
+    </div>
+  </div>
+  
+  <!-- Attendees Grid -->
+  <div id="attendeesGrid"></div>
+  
+  <!-- Empty State -->
+  <div id="attendeesEmptyState" class="hidden text-center py-12">
+    <i data-lucide="users" class="w-12 h-12 mx-auto text-gray-400 mb-4"></i>
+    <h3 class="text-lg font-medium text-gray-900 mb-2">No attendees assigned</h3>
+    <p class="text-gray-500 mb-4">Get started by adding employees to this training session.</p>
+    <button onclick="funOpenManageAttendeesModal()" class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-blue-700 rounded-lg hover:bg-blue-800">
+      <i data-lucide="user-plus" class="w-4 h-4 mr-2"></i>
+      Add Attendees
+    </button>
+  </div>
+</div>
+
+<!-- Session Feedback Section (if completed) -->
+<div id="feedbackSection" class="hidden bg-white rounded-lg shadow-sm border border-slate-200 p-6">
+  <h2 class="text-xl font-semibold text-gray-900 mb-4">Session Feedback</h2>
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <div class="text-center">
+      <div class="text-3xl font-bold text-green-600 mb-2" id="averageRating">0.0</div>
+      <div class="text-sm text-gray-500">Average Rating</div>
+      <div class="flex justify-center mt-2" id="ratingStars"></div>
+    </div>
+    <div class="text-center">
+      <div class="text-3xl font-bold text-blue-700 mb-2" id="feedbackCount">0</div>
+      <div class="text-sm text-gray-500">Total Feedback</div>
+    </div>
+    <div class="text-center">
+      <div class="text-3xl font-bold text-amber-500 mb-2" id="responseRate">0%</div>
+      <div class="text-sm text-gray-500">Response Rate</div>
+    </div>
+  </div>
+</div>
+
+<!-- Manage Attendees Modal -->
+<div id="manageAttendeesModal" data-portal="body" class="fixed inset-0 z-50 hidden">
+  <div class="flex items-center justify-center min-h-screen p-4 bg-black/50">
+    <div class="bg-white rounded-xl shadow-xl w-[min(92vw,64rem)] max-h-[90vh] overflow-y-auto">
+      <div class="px-6 py-4 border-b border-gray-200">
+        <div class="flex items-center justify-between">
+          <h3 class="text-lg font-semibold text-gray-900">Manage Attendees</h3>
+          <button onclick="funCloseManageAttendeesModal()" class="text-gray-400 hover:text-gray-600">
+            <i data-lucide="x" class="w-5 h-5"></i>
+          </button>
+        </div>
+        <div class="mt-2 text-sm text-gray-600">
+          <span id="capacityIndicator">Capacity: 0/0</span>
+        </div>
+      </div>
+      <div class="p-6">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <!-- Available Employees -->
+          <div>
+            <h4 class="text-sm font-medium text-gray-900 mb-3">Available Employees with Training Need</h4>
+            <div class="border border-gray-200 rounded-lg p-4 h-80 overflow-y-auto">
+              <div id="availableEmployeesList" class="space-y-2">
+                <!-- Populated by JavaScript -->
+              </div>
+              <div id="noAvailableEmployees" class="hidden text-center py-8 text-gray-500">
+                <i data-lucide="users" class="w-8 h-8 mx-auto mb-2 text-gray-400"></i>
+                <p>No employees with training needs available</p>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Assigned Employees -->
+          <div>
+            <h4 class="text-sm font-medium text-gray-900 mb-3">Currently Assigned</h4>
+            <div class="border border-gray-200 rounded-lg p-4 h-80 overflow-y-auto">
+              <div id="assignedEmployeesList" class="space-y-2">
+                <!-- Populated by JavaScript -->
+              </div>
+              <div id="noAssignedEmployees" class="hidden text-center py-8 text-gray-500">
+                <i data-lucide="user-x" class="w-8 h-8 mx-auto mb-2 text-gray-400"></i>
+                <p>No employees assigned yet</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="px-6 py-4 border-t border-gray-200 flex justify-end gap-3">
+        <button onclick="funCloseManageAttendeesModal()" class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+          Cancel
+        </button>
+        <button onclick="funSaveAttendeeChanges()" class="px-4 py-2 text-sm font-medium text-white bg-blue-700 rounded-lg hover:bg-blue-800 transition-colors">
+          Save Changes
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Cancel Session Modal -->
+<div id="cancelSessionModal" data-portal="body" class="fixed inset-0 z-50 hidden">
+  <div class="flex items-center justify-center min-h-screen p-4 bg-black/50">
+    <div class="bg-white rounded-xl shadow-xl w-[min(92vw,32rem)] max-h-[90vh] overflow-y-auto">
+      <div class="px-6 py-4 border-b border-gray-200">
+        <h3 class="text-lg font-semibold text-gray-900">Cancel Training Session</h3>
+      </div>
+      <div class="p-6">
+        <div class="flex items-start gap-3">
+          <div class="flex-shrink-0 w-8 h-8 bg-red-100 rounded-full flex items-center justify-center">
+            <i data-lucide="alert-triangle" class="w-4 h-4 text-red-600"></i>
+          </div>
+          <div class="flex-1">
+            <p class="text-gray-900 mb-4">Are you sure you want to cancel this training session?</p>
+            <div class="bg-gray-50 rounded-lg p-4 space-y-2 text-sm">
+              <div><strong>Skill:</strong> <span id="cancelModalSkill">Loading...</span></div>
+              <div><strong>Date:</strong> <span id="cancelModalDate">Loading...</span></div>
+              <div><strong>Attendees:</strong> <span id="cancelModalAttendees">0</span> assigned</div>
+            </div>
+            <p class="text-red-600 text-sm mt-4">This action cannot be undone. All attendees will be notified of the cancellation.</p>
+          </div>
+        </div>
+      </div>
+      <div class="px-6 py-4 border-t border-gray-200 flex justify-end gap-3">
+        <button onclick="funCloseCancelModal()" class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+          Keep Session
+        </button>
+        <button onclick="funConfirmCancelSession()" class="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 transition-colors">
+          Cancel Session
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Mark Complete Modal -->
+<div id="markCompleteModal" data-portal="body" class="fixed inset-0 z-50 hidden">
+  <div class="flex items-center justify-center min-h-screen p-4 bg-black/50">
+    <div class="bg-white rounded-xl shadow-xl w-[min(92vw,36rem)] max-h-[90vh] overflow-y-auto">
+      <div class="px-6 py-4 border-b border-gray-200">
+        <h3 class="text-lg font-semibold text-gray-900">Mark Session Complete</h3>
+      </div>
+      <div class="p-6">
+        <div class="flex items-start gap-3">
+          <div class="flex-shrink-0 w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
+            <i data-lucide="check-circle" class="w-4 h-4 text-green-600"></i>
+          </div>
+          <div class="flex-1">
+            <p class="text-gray-900 mb-4">Mark this training session as completed?</p>
+            <div class="bg-blue-50 rounded-lg p-4 space-y-2 text-sm">
+              <p class="font-medium text-blue-900 mb-2">This will:</p>
+              <ul class="space-y-1 text-blue-800">
+                <li class="flex items-start gap-2">
+                  <i data-lucide="check" class="w-3 h-3 mt-0.5 flex-shrink-0"></i>
+                  <span>Lock the session details</span>
+                </li>
+                <li class="flex items-start gap-2">
+                  <i data-lucide="check" class="w-3 h-3 mt-0.5 flex-shrink-0"></i>
+                  <span>Enable feedback collection from attendees</span>
+                </li>
+                <li class="flex items-start gap-2">
+                  <i data-lucide="check" class="w-3 h-3 mt-0.5 flex-shrink-0"></i>
+                  <span>Start the reassessment delay countdown for attended employees</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="px-6 py-4 border-t border-gray-200 flex justify-end gap-3">
+        <button onclick="funCloseMarkCompleteModal()" class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+          Cancel
+        </button>
+        <button onclick="funConfirmMarkComplete()" class="px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 transition-colors">
+          Mark Complete
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+</main>
+
+    <script src="app.js"></script>
+    <script src="app_data.js"></script>
+    <script id="container-script">
+      (function () {
+        const TemplateUtils = (window.TemplateUtils =
+          window.TemplateUtils || {});
+
+        TemplateUtils.UserUtils =
+          TemplateUtils.UserUtils ||
+          (function createUserUtils() {
+            return {
+              getCurrentUser() {
+                try {
+                  let currentUserId = localStorage.getItem("currentUserId");
+                  if (!currentUserId) {
+                    localStorage.setItem("currentUserId", "usr_001");
+                    currentUserId = "usr_001";
+                  }
+
+                  const users = JSON.parse(localStorage.getItem("users") || "[]");
+                  return users.find(user => user.id === currentUserId) || null;
+                } catch (error) {
+                  console.error("Error retrieving user data:", error);
+                  return null;
+                }
+              },
+              signOut() {
+                try {
+                  localStorage.removeItem("currentUserId");
+                  window.location.reload();
+                } catch (error) {
+                  console.error("Error signing out:", error);
+                }
+              },
+              getUserDisplayName(user) {
+                if (!user) return "Guest";
+                return user.firstName && user.lastName
+                  ? `${user.firstName} ${user.lastName}`
+                  : user.firstName || user.lastName || "User";
+              },
+              getUserInitials(user) {
+                if (!user) return "?";
+                const first = user.firstName?.charAt(0) || "";
+                const last = user.lastName?.charAt(0) || "";
+                return (first + last).toUpperCase() || "U";
+              },
+            };
+          })();
+
+        if (TemplateUtils.__bootstrapped) {
+          if (typeof window.lucide?.createIcons === "function") {
+            window.lucide.createIcons();
+          }
+          return;
+        }
+
+        TemplateUtils.__bootstrapped = true;
+
+        const state = {
+          popoverVisible: false,
+          sidebarOpen: false,
+          resizeTimer: null,
+          debounceTimer: null,
+          isUpdatingIcons: false,
+          observer: null,
+          refs: {},
+        };
+
+        function ready(fn) {
+          if (document.readyState === "loading") {
+            document.addEventListener("DOMContentLoaded", fn, { once: true });
+          } else if (typeof queueMicrotask === "function") {
+            queueMicrotask(fn);
+          } else {
+            Promise.resolve().then(fn);
+          }
+        }
+
+        function safeLucide(callback) {
+          if (typeof window.lucide?.createIcons === "function") {
+            callback();
+          }
+        }
+
+        function cacheRefs() {
+          state.refs = {
+            userProfileButton: document.getElementById("userProfileButton"),
+            userProfilePopover: document.getElementById("userProfilePopover"),
+            userAvatar: document.getElementById("userAvatar"),
+            userName: document.getElementById("userName"),
+            popoverUserAvatar: document.getElementById("popoverUserAvatar"),
+            popoverUserName: document.getElementById("popoverUserName"),
+            popoverUserEmail: document.getElementById("popoverUserEmail"),
+            signOutButton: document.getElementById("signOutButton"),
+            mobileMenuToggle: document.getElementById("mobileMenuToggle"),
+            sidebar: document.getElementById("sidebar"),
+            sidebarBackdrop: document.getElementById("sidebarBackdrop"),
+            navLinks: document.querySelectorAll(".nav-link"),
+            pageContent: document.getElementById("pageContent"),
+          };
+        }
+
+        function initializeUserProfile() {
+          const { userAvatar, userName } = state.refs;
+          if (!userAvatar || !userName) return;
+
+          const currentUser = TemplateUtils.UserUtils.getCurrentUser();
+          if (currentUser) {
+            userAvatar.textContent =
+              TemplateUtils.UserUtils.getUserInitials(currentUser);
+            userName.textContent =
+              TemplateUtils.UserUtils.getUserDisplayName(currentUser);
+          } else {
+            userAvatar.textContent = "?";
+            userName.textContent = "Guest";
+          }
+        }
+
+        function populatePopover() {
+          const currentUser = TemplateUtils.UserUtils.getCurrentUser();
+          const { popoverUserAvatar, popoverUserName, popoverUserEmail } =
+            state.refs;
+          if (!popoverUserAvatar || !popoverUserName || !popoverUserEmail)
+            return;
+
+          if (currentUser) {
+            popoverUserAvatar.textContent =
+              TemplateUtils.UserUtils.getUserInitials(currentUser);
+            popoverUserName.textContent =
+              TemplateUtils.UserUtils.getUserDisplayName(currentUser);
+            popoverUserEmail.textContent = currentUser.email || "No email";
+          } else {
+            popoverUserAvatar.textContent = "?";
+            popoverUserName.textContent = "Guest";
+            popoverUserEmail.textContent = "Not logged in";
+          }
+        }
+
+        function toggleUserPopover(forceClose = false) {
+          const { userProfilePopover, userProfileButton } = state.refs;
+          if (!userProfilePopover || !userProfileButton) return;
+
+          const shouldOpen = forceClose ? false : !state.popoverVisible;
+          if (shouldOpen) {
+            populatePopover();
+            userProfilePopover.classList.add("visible");
+            userProfileButton.setAttribute("aria-expanded", "true");
+            state.popoverVisible = true;
+            const firstButton = userProfilePopover.querySelector("button");
+            if (firstButton) {
+              setTimeout(() => firstButton.focus(), 50);
+            }
+          } else {
+            userProfilePopover.classList.remove("visible");
+            userProfileButton.setAttribute("aria-expanded", "false");
+            state.popoverVisible = false;
+          }
+        }
+
+        function hideUserPopover() {
+          if (state.popoverVisible) {
+            toggleUserPopover(true);
+          }
+        }
+
+        function toggleMobileSidebar(forceClose = false) {
+          const { sidebar, sidebarBackdrop, mobileMenuToggle } = state.refs;
+          if (!sidebar || !sidebarBackdrop || !mobileMenuToggle) return;
+
+          const shouldOpen = forceClose ? false : !state.sidebarOpen;
+          state.sidebarOpen = shouldOpen;
+
+          sidebar.classList.toggle("open", shouldOpen);
+          sidebarBackdrop.classList.toggle("active", shouldOpen);
+          document.body.classList.toggle("sidebar-open", shouldOpen);
+          mobileMenuToggle.setAttribute(
+            "aria-expanded",
+            shouldOpen ? "true" : "false"
+          );
+
+          const icon = mobileMenuToggle.querySelector("[data-lucide]");
+          if (icon) {
+            icon.setAttribute("data-lucide", shouldOpen ? "x" : "menu");
+            safeLucide(() => window.lucide.createIcons());
+          }
+        }
+
+        function closeMobileSidebar() {
+          if (state.sidebarOpen) {
+            toggleMobileSidebar(true);
+          }
+        }
+
+        function setActiveNavLink(pageId) {
+          if (!pageId) return;
+          const { navLinks } = state.refs;
+          navLinks?.forEach((link) => {
+            if (link.dataset.page === pageId) {
+              link.classList.add("active");
+            } else {
+              link.classList.remove("active");
+            }
+          });
+        }
+
+        TemplateUtils.setActiveNavLink = setActiveNavLink;
+        TemplateUtils.closeMobileSidebar = closeMobileSidebar;
+
+        function handleDocumentClick(event) {
+          const { userProfilePopover, userProfileButton } = state.refs;
+          if (
+            state.popoverVisible &&
+            userProfilePopover &&
+            userProfileButton &&
+            !userProfilePopover.contains(event.target) &&
+            !userProfileButton.contains(event.target)
+          ) {
+            hideUserPopover();
+          }
+        }
+
+        function handleKeydown(event) {
+          if (event.key !== "Escape") return;
+          if (state.popoverVisible) {
+            hideUserPopover();
+            state.refs.userProfileButton?.focus();
+          }
+          if (state.sidebarOpen) {
+            closeMobileSidebar();
+            state.refs.mobileMenuToggle?.focus();
+          }
+        }
+
+        function handleResize() {
+          clearTimeout(state.resizeTimer);
+          state.resizeTimer = setTimeout(() => {
+            if (window.innerWidth >= 768) {
+              closeMobileSidebar();
+            }
+          }, 200);
+        }
+
+        function bindEvents() {
+          const {
+            userProfileButton,
+            mobileMenuToggle,
+            sidebarBackdrop,
+            signOutButton,
+            navLinks,
+          } = state.refs;
+
+          userProfileButton?.addEventListener("click", (event) => {
+            event.stopPropagation();
+            toggleUserPopover();
+          });
+
+          mobileMenuToggle?.addEventListener("click", (event) => {
+            event.stopPropagation();
+            toggleMobileSidebar();
+          });
+
+          sidebarBackdrop?.addEventListener("click", () =>
+            closeMobileSidebar()
+          );
+
+          signOutButton?.addEventListener("click", () => {
+            if (confirm("Are you sure you want to sign out?")) {
+              TemplateUtils.UserUtils.signOut();
+            }
+          });
+
+          navLinks?.forEach((link) => {
+            link.addEventListener("click", () => closeMobileSidebar());
+          });
+
+          document.addEventListener("click", handleDocumentClick);
+          document.addEventListener("keydown", handleKeydown);
+          window.addEventListener("resize", handleResize);
+
+          window.addEventListener("pagehide", cleanup);
+        }
+
+        function cleanup() {
+          if (state.resizeTimer) clearTimeout(state.resizeTimer);
+          if (state.debounceTimer) clearTimeout(state.debounceTimer);
+          if (state.observer) {
+            state.observer.disconnect();
+            state.observer = null;
+          }
+          document.removeEventListener("click", handleDocumentClick);
+          document.removeEventListener("keydown", handleKeydown);
+          window.removeEventListener("resize", handleResize);
+        }
+
+        function initializePortalTargets() {
+          document.querySelectorAll('[data-portal="body"]').forEach((node) => {
+            if (node.parentElement !== document.body) {
+              document.body.appendChild(node);
+            }
+          });
+        }
+
+        function observePageContent() {
+          const { pageContent } = state.refs;
+          if (!pageContent || typeof MutationObserver !== "function") return;
+
+          const observer = new MutationObserver((mutations) => {
+            if (state.isUpdatingIcons) return;
+
+            const isLucideUpdate = mutations.every((m) => {
+              if (m.type !== "childList") return false;
+              const nodes = [...m.addedNodes, ...m.removedNodes];
+              return nodes.every(
+                (n) =>
+                  n.nodeType !== Node.ELEMENT_NODE ||
+                  n.nodeName.toLowerCase() === "svg" ||
+                  n.classList?.contains("lucide")
+              );
+            });
+            if (isLucideUpdate) return;
+
+            if (state.debounceTimer) clearTimeout(state.debounceTimer);
+            state.debounceTimer = setTimeout(() => {
+              state.debounceTimer = null;
+              state.isUpdatingIcons = true;
+              safeLucide(() => {
+                window.lucide.createIcons();
+                requestAnimationFrame(() => {
+                  state.isUpdatingIcons = false;
+                });
+              });
+            }, 100);
+          });
+
+          observer.observe(pageContent, { childList: true, subtree: true });
+          state.observer = observer;
+        }
+
+        function bootstrap() {
+          cacheRefs();
+          initializePortalTargets();
+          initializeUserProfile();
+          bindEvents();
+          safeLucide(() => window.lucide.createIcons());
+          observePageContent();
+        }
+
+        ready(bootstrap);
+      })();
+    </script>
+  
+
+<script>
+let sessionData = null;
+let attendeesGridInstance = null;
+let attendeeChanges = {
+  toAdd: [],
+  toRemove: []
+};
+
+// Utility functions
+function getDataSafely(key) {
+  try {
+    const data = localStorage.getItem(key);
+    return data ? JSON.parse(data) : [];
+  } catch (error) {
+    console.error(`Error parsing ${key}:`, error);
+    return [];
+  }
+}
+
+function funGetUrlParam(param) {
+  const urlParams = new URLSearchParams(window.location.search);
+  return urlParams.get(param);
+}
+
+function formatDateTime(isoString) {
+  if (!isoString) return '';
+  const date = new Date(isoString);
+  return date.toLocaleDateString('en-US', { 
+    month: '2-digit',
+    day: '2-digit', 
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: true
+  });
+}
+
+function formatDate(isoString) {
+  if (!isoString) return '';
+  const date = new Date(isoString);
+  return date.toLocaleDateString('en-US', { 
+    month: '2-digit',
+    day: '2-digit', 
+    year: 'numeric'
+  });
+}
+
+// Initialize page
+function funInitPage() {
+  const sessionId = funGetUrlParam('id');
+  if (!sessionId) {
+    alert('No session ID provided');
+    history.back();
+    return;
+  }
+
+  sessionData = funLoadSessionData(sessionId);
+  if (!sessionData) {
+    alert('Session not found');
+    history.back();
+    return;
+  }
+
+  funPopulateSessionDetails();
+  funInitAttendeesGrid();
+  funLoadFeedbackData();
+}
+
+// Load session data with all relationships
+function funLoadSessionData(sessionId) {
+  const sessions = getDataSafely('trainingSessions');
+  const skills = getDataSafely('skills');
+  const categories = getDataSafely('skillCategories');
+  const criticalities = getDataSafely('skillCriticalities');
+  const benchmarks = getDataSafely('skillBenchmarks');
+  const users = getDataSafely('users');
+  const departments = getDataSafely('departments');
+  const externalTrainers = getDataSafely('externalTrainers');
+
+  const session = sessions.find(s => s.id === sessionId);
+  if (!session) return null;
+
+  // Get skill details
+  const skill = skills.find(s => s.id === session.skillId);
+  const category = skill ? categories.find(c => c.id === skill.categoryId) : null;
+  const criticality = skill ? criticalities.find(c => c.id === skill.criticalityId) : null;
+  const benchmark = skill ? benchmarks.find(b => b.skillId === skill.id && !b.effectiveEndDate) : null;
+
+  // Get trainer details
+  let trainer = null;
+  if (session.trainerType === 'internal') {
+    trainer = users.find(u => u.id === session.trainerId);
+    if (trainer) {
+      const department = departments.find(d => d.id === trainer.departmentId);
+      trainer.department = department;
+    }
+  } else {
+    trainer = externalTrainers.find(t => t.id === session.trainerId);
+  }
+
+  // Get creator details
+  const creator = users.find(u => u.id === session.createdBy);
+
+  return {
+    ...session,
+    skill,
+    category,
+    criticality,
+    benchmark,
+    trainer,
+    creator
+  };
+}
+
+// Populate session details
+function funPopulateSessionDetails() {
+  const { skill, category, criticality, benchmark, trainer, creator } = sessionData;
+
+  // Update breadcrumb and title
+  document.getElementById('sessionBreadcrumb').textContent = sessionData.id;
+  document.getElementById('sessionTitle').textContent = `${skill?.name || 'Unknown Skill'} - ${formatDate(sessionData.scheduledDate)}`;
+
+  // Status badge
+  const statusBadge = document.getElementById('sessionStatusBadge');
+  statusBadge.classList.remove('hidden');
+  if (sessionData.status === 'scheduled') {
+    statusBadge.className = 'inline-flex px-2 py-1 text-xs font-medium rounded-lg text-blue-700 bg-blue-100';
+    statusBadge.textContent = 'Scheduled';
+  } else if (sessionData.status === 'completed') {
+    statusBadge.className = 'inline-flex px-2 py-1 text-xs font-medium rounded-lg text-green-700 bg-green-100';
+    statusBadge.textContent = 'Completed';
+  } else if (sessionData.status === 'cancelled') {
+    statusBadge.className = 'inline-flex px-2 py-1 text-xs font-medium rounded-lg text-red-700 bg-red-100';
+    statusBadge.textContent = 'Cancelled';
+  }
+
+  // Mode badge
+  const modeBadge = document.getElementById('sessionModeBadge');
+  modeBadge.classList.remove('hidden');
+  if (sessionData.mode === 'online') {
+    modeBadge.className = 'inline-flex px-2 py-1 text-xs font-medium rounded-lg text-green-700 bg-green-100';
+    modeBadge.textContent = 'Online';
+  } else {
+    modeBadge.className = 'inline-flex px-2 py-1 text-xs font-medium rounded-lg text-gray-700 bg-gray-100';
+    modeBadge.textContent = 'Offline';
+  }
+
+  // Action buttons
+  if (sessionData.status === 'scheduled') {
+    document.getElementById('editSessionBtn').classList.remove('hidden');
+    document.getElementById('manageAttendeesBtn').classList.remove('hidden');
+    document.getElementById('addAttendeesBtn').classList.remove('hidden');
+    
+    const endDate = new Date(sessionData.endDate || sessionData.scheduledDate);
+    const now = new Date();
+    if (endDate <= now) {
+      document.getElementById('markCompleteBtn').classList.remove('hidden');
+    }
+    
+    document.getElementById('cancelSessionBtn').classList.remove('hidden');
+  }
+
+  // Session details
+  const skillLink = document.getElementById('skillLink');
+  skillLink.href = `skill_detail.html?id=${skill?.id || ''}`;
+  skillLink.textContent = skill?.name || 'Unknown';
+
+  document.getElementById('categoryName').textContent = category?.categoryName || 'Unknown';
+  document.getElementById('criticalityName').textContent = criticality?.criticalityName || 'Unknown';
+  document.getElementById('benchmarkScore').textContent = benchmark?.benchmarkScore || 'N/A';
+  document.getElementById('scheduledDateTime').textContent = formatDateTime(sessionData.scheduledDate);
+  
+  if (sessionData.endDate) {
+    document.getElementById('endDateSection').classList.remove('hidden');
+    document.getElementById('endDateTime').textContent = formatDateTime(sessionData.endDate);
+  }
+
+  document.getElementById('sessionMode').textContent = sessionData.mode || 'Unknown';
+  document.getElementById('capacity').textContent = sessionData.capacity || 'Unknown';
+  document.getElementById('status').textContent = sessionData.status || 'Unknown';
+  document.getElementById('createdBy').textContent = creator ? `${creator.firstName} ${creator.lastName}` : 'Unknown';
+  document.getElementById('createdDate').textContent = formatDate(sessionData.createdTimestamp);
+
+  // Trainer information
+  const trainerTypeBadge = document.getElementById('trainerTypeBadge');
+  if (sessionData.trainerType === 'internal') {
+    trainerTypeBadge.className = 'inline-flex px-2 py-1 text-xs font-medium rounded-lg text-blue-700 bg-blue-100';
+    trainerTypeBadge.textContent = 'Internal';
+  } else {
+    trainerTypeBadge.className = 'inline-flex px-2 py-1 text-xs font-medium rounded-lg text-green-700 bg-green-100';
+    trainerTypeBadge.textContent = 'External';
+  }
+
+  const trainerLink = document.getElementById('trainerLink');
+  const trainerEmail = document.getElementById('trainerEmail');
+  
+  if (trainer) {
+    if (sessionData.trainerType === 'internal') {
+      trainerLink.href = `employee_detail.html?id=${trainer.id}`;
+      trainerLink.textContent = `${trainer.firstName} ${trainer.lastName}`;
+      trainerEmail.href = `mailto:${trainer.email}`;
+      trainerEmail.textContent = trainer.email;
+
+      document.getElementById('internalTrainerInfo').classList.remove('hidden');
+      document.getElementById('internalTrainerDept').classList.remove('hidden');
+      document.getElementById('trainerJobTitle').textContent = trainer.jobTitle || 'Unknown';
+      document.getElementById('trainerDepartment').textContent = trainer.department?.name || 'Unknown';
+    } else {
+      trainerLink.href = `external_trainer_detail.html?id=${trainer.id}`;
+      trainerLink.textContent = trainer.name;
+      trainerEmail.href = `mailto:${trainer.email}`;
+      trainerEmail.textContent = trainer.email;
+
+      document.getElementById('externalTrainerContact').classList.remove('hidden');
+      document.getElementById('trainerPhone').textContent = trainer.contactInfo?.phone || 'N/A';
+      document.getElementById('trainerAddress').textContent = trainer.contactInfo?.address || 'N/A';
+    }
+  }
+}
+
+// Initialize attendees grid
+function funInitAttendeesGrid() {
+  if (!window.TiramaiGrid) {
+    console.error('TiramaiGrid is not available');
+    return;
+  }
+
+  const attendeesData = funGetAttendeesData();
+  funUpdateAttendeesTitle(attendeesData.length);
+
+  if (attendeesData.length === 0) {
+    document.getElementById('attendeesGrid').classList.add('hidden');
+    document.getElementById('attendeesEmptyState').classList.remove('hidden');
+    return;
+  }
+
+  document.getElementById('attendeesGrid').classList.remove('hidden');
+  document.getElementById('attendeesEmptyState').classList.add('hidden');
+
+  const attendeeColumns = [
+    {
+      field: 'employeeName',
+      header: 'Employee Name',
+      sortable: true,
+      filterable: true,
+      isLink: true,
+      linkHref: (row) => `employee_detail.html?id=${row.employeeId}`,
+      width: 200
+    },
+    {
+      field: 'department',
+      header: 'Department',
+      sortable: true,
+      filterable: true,
+      width: 150
+    },
+    {
+      field: 'gapScore',
+      header: 'Gap Score',
+      type: 'number',
+      align: 'center',
+      width: 100,
+      render: (value) => {
+        if (!value) return 'N/A';
+        const colorClass = value >= 3 ? 'text-red-600 bg-red-50' : value >= 1 ? 'text-yellow-600 bg-yellow-50' : 'text-green-600 bg-green-50';
+        return `<span class="inline-flex px-2 py-1 text-xs font-medium rounded ${colorClass}">${value}</span>`;
+      }
+    },
+    {
+      field: 'assignmentDate',
+      header: 'Assignment Date',
+      type: 'date',
+      dateFormat: 'iso',
+      width: 140
+    },
+    {
+      field: 'attendanceStatus',
+      header: 'Attendance Status',
+      width: 150,
+      render: (value, row, rowIndex) => {
+        if (sessionData.status === 'completed') {
+          const colorClass = value === 'attended' ? 'text-green-600 bg-green-50' : 
+                            value === 'missed' ? 'text-red-600 bg-red-50' : 'text-gray-600 bg-gray-50';
+          return `<span class="inline-flex px-2 py-1 text-xs font-medium rounded ${colorClass}">${value}</span>`;
+        } else {
+          return `
+            <select class="attendance-select text-xs border border-gray-300 rounded px-2 py-1" 
+                    data-employee-id="${row.employeeId}" 
+                    onchange="funUpdateAttendanceStatus('${row.employeeId}', this.value)">
+              <option value="assigned" ${value === 'assigned' ? 'selected' : ''}>Assigned</option>
+              <option value="attended" ${value === 'attended' ? 'selected' : ''}>Attended</option>
+              <option value="missed" ${value === 'missed' ? 'selected' : ''}>Missed</option>
+            </select>
+          `;
+        }
+      }
+    }
+  ];
+
+  try {
+    attendeesGridInstance = new TiramaiGrid('#attendeesGrid', {
+      data: attendeesData,
+      columns: attendeeColumns,
+      theme: 'light',
+      sortable: true,
+      filterable: true,
+      globalSearch: false,
+      pagination: {
+        enabled: attendeesData.length > 10,
+        pageSize: 10,
+        pageSizeOptions: [10, 20, 50]
+      },
+      selection: {
+        enabled: false
+      },
+      export: {
+        enabled: false
+      }
+    });
+  } catch (error) {
+    console.error('Failed to initialize attendees grid:', error);
+  }
+}
+
+// Get attendees data with related information
+function funGetAttendeesData() {
+  const users = getDataSafely('users');
+  const departments = getDataSafely('departments');
+  const trainingNeeds = getDataSafely('trainingNeeds');
+
+  return sessionData.assignedEmployees.map(assignee => {
+    const employee = users.find(u => u.id === assignee.employeeId);
+    const department = employee ? departments.find(d => d.id === employee.departmentId) : null;
+    const need = trainingNeeds.find(n => n.employeeId === assignee.employeeId && n.skillId === sessionData.skillId);
+
+    return {
+      employeeId: assignee.employeeId,
+      employeeName: employee ? `${employee.firstName} ${employee.lastName}` : 'Unknown',
+      department: department?.name || 'Unknown',
+      gapScore: need?.gap || null,
+      assignmentDate: assignee.assignmentDate,
+      attendanceStatus: assignee.attendanceStatus
+    };
+  });
+}
+
+// Update attendees title
+function funUpdateAttendeesTitle(count) {
+  document.getElementById('attendeesTitle').textContent = `Assigned Employees (${count}/${sessionData.capacity})`;
+}
+
+// Update attendance status
+function funUpdateAttendanceStatus(employeeId, status) {
+  const sessions = getDataSafely('trainingSessions');
+  const sessionIndex = sessions.findIndex(s => s.id === sessionData.id);
+  
+  if (sessionIndex !== -1) {
+    const attendeeIndex = sessions[sessionIndex].assignedEmployees.findIndex(a => a.employeeId === employeeId);
+    if (attendeeIndex !== -1) {
+      sessions[sessionIndex].assignedEmployees[attendeeIndex].attendanceStatus = status;
+      localStorage.setItem('trainingSessions', JSON.stringify(sessions));
+      sessionData.assignedEmployees = sessions[sessionIndex].assignedEmployees;
+    }
+  }
+}
+
+// Action functions
+function funEditSession() {
+  window.location.href = `training_session_edit.html?id=${sessionData.id}`;
+}
+
+// Modal functions
+function funOpenManageAttendeesModal() {
+  attendeeChanges = { toAdd: [], toRemove: [] };
+  funPopulateManageAttendeesModal();
+  document.getElementById('manageAttendeesModal').classList.remove('hidden');
+}
+
+function funCloseManageAttendeesModal() {
+  document.getElementById('manageAttendeesModal').classList.add('hidden');
+}
+
+function funPopulateManageAttendeesModal() {
+  const users = getDataSafely('users');
+  const departments = getDataSafely('departments');
+  const trainingNeeds = getDataSafely('trainingNeeds');
+
+  // Update capacity indicator
+  const currentCount = sessionData.assignedEmployees.length;
+  document.getElementById('capacityIndicator').textContent = `Capacity: ${currentCount}/${sessionData.capacity}`;
+
+  // Get employees with training needs for this skill
+  const needsForSkill = trainingNeeds.filter(n => n.skillId === sessionData.skillId && n.tniStatus === 'trainingRequired');
+  const assignedEmployeeIds = sessionData.assignedEmployees.map(a => a.employeeId);
+  
+  const availableEmployees = needsForSkill
+    .filter(need => !assignedEmployeeIds.includes(need.employeeId))
+    .map(need => {
+      const employee = users.find(u => u.id === need.employeeId);
+      const department = employee ? departments.find(d => d.id === employee.departmentId) : null;
+      return {
+        id: employee?.id,
+        name: employee ? `${employee.firstName} ${employee.lastName}` : 'Unknown',
+        department: department?.name || 'Unknown',
+        gap: need.gap
+      };
+    })
+    .filter(emp => emp.id); // Remove entries where employee was not found
+
+  const assignedEmployees = sessionData.assignedEmployees.map(assignee => {
+    const employee = users.find(u => u.id === assignee.employeeId);
+    const department = employee ? departments.find(d => d.id === employee.departmentId) : null;
+    return {
+      id: assignee.employeeId,
+      name: employee ? `${employee.firstName} ${employee.lastName}` : 'Unknown',
+      department: department?.name || 'Unknown',
+      assignmentDate: assignee.assignmentDate
+    };
+  });
+
+  // Populate available employees list
+  const availableList = document.getElementById('availableEmployeesList');
+  const noAvailable = document.getElementById('noAvailableEmployees');
+  
+  if (availableEmployees.length === 0) {
+    availableList.innerHTML = '';
+    noAvailable.classList.remove('hidden');
+  } else {
+    noAvailable.classList.add('hidden');
+    availableList.innerHTML = availableEmployees.map(emp => `
+      <div class="flex items-center justify-between p-3 border border-gray-200 rounded-lg hover:bg-gray-50">
+        <div>
+          <div class="font-medium text-gray-900">${emp.name}</div>
+          <div class="text-sm text-gray-500">${emp.department} • Gap: ${emp.gap}</div>
+        </div>
+        <button onclick="funAddEmployee('${emp.id}')" class="text-blue-600 hover:text-blue-800 p-1">
+          <i data-lucide="plus" class="w-4 h-4"></i>
+        </button>
+      </div>
+    `).join('');
+  }
+
+  // Populate assigned employees list
+  const assignedList = document.getElementById('assignedEmployeesList');
+  const noAssigned = document.getElementById('noAssignedEmployees');
+  
+  if (assignedEmployees.length === 0) {
+    assignedList.innerHTML = '';
+    noAssigned.classList.remove('hidden');
+  } else {
+    noAssigned.classList.add('hidden');
+    assignedList.innerHTML = assignedEmployees.map(emp => `
+      <div class="flex items-center justify-between p-3 border border-gray-200 rounded-lg hover:bg-gray-50">
+        <div>
+          <div class="font-medium text-gray-900">${emp.name}</div>
+          <div class="text-sm text-gray-500">${emp.department}</div>
+        </div>
+        <button onclick="funRemoveEmployee('${emp.id}')" class="text-red-600 hover:text-red-800 p-1">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+    `).join('');
+  }
+
+  // Refresh icons
+  if (typeof window.lucide?.createIcons === 'function') {
+    window.lucide.createIcons();
+  }
+}
+
+function funAddEmployee(employeeId) {
+  if (!attendeeChanges.toRemove.includes(employeeId)) {
+    attendeeChanges.toAdd.push(employeeId);
+  }
+  attendeeChanges.toRemove = attendeeChanges.toRemove.filter(id => id !== employeeId);
+  funPopulateManageAttendeesModal();
+}
+
+function funRemoveEmployee(employeeId) {
+  if (!attendeeChanges.toAdd.includes(employeeId)) {
+    attendeeChanges.toRemove.push(employeeId);
+  }
+  attendeeChanges.toAdd = attendeeChanges.toAdd.filter(id => id !== employeeId);
+  funPopulateManageAttendeesModal();
+}
+
+function funSaveAttendeeChanges() {
+  const sessions = getDataSafely('trainingSessions');
+  const sessionIndex = sessions.findIndex(s => s.id === sessionData.id);
+  
+  if (sessionIndex !== -1) {
+    // Remove employees
+    sessions[sessionIndex].assignedEmployees = sessions[sessionIndex].assignedEmployees
+      .filter(assignee => !attendeeChanges.toRemove.includes(assignee.employeeId));
+    
+    // Add new employees
+    const now = new Date().toISOString();
+    attendeeChanges.toAdd.forEach(employeeId => {
+      sessions[sessionIndex].assignedEmployees.push({
+        employeeId,
+        assignmentDate: now,
+        attendanceStatus: 'assigned'
+      });
+    });
+
+    localStorage.setItem('trainingSessions', JSON.stringify(sessions));
+    sessionData.assignedEmployees = sessions[sessionIndex].assignedEmployees;
+    
+    funCloseManageAttendeesModal();
+    funInitAttendeesGrid();
+  }
+}
+
+function funOpenCancelModal() {
+  document.getElementById('cancelModalSkill').textContent = sessionData.skill?.name || 'Unknown';
+  document.getElementById('cancelModalDate').textContent = formatDateTime(sessionData.scheduledDate);
+  document.getElementById('cancelModalAttendees').textContent = sessionData.assignedEmployees.length;
+  document.getElementById('cancelSessionModal').classList.remove('hidden');
+}
+
+function funCloseCancelModal() {
+  document.getElementById('cancelSessionModal').classList.add('hidden');
+}
+
+function funConfirmCancelSession() {
+  const sessions = getDataSafely('trainingSessions');
+  const sessionIndex = sessions.findIndex(s => s.id === sessionData.id);
+  
+  if (sessionIndex !== -1) {
+    sessions[sessionIndex].status = 'cancelled';
+    localStorage.setItem('trainingSessions', JSON.stringify(sessions));
+    window.location.href = 'training_sessions_list.html';
+  }
+}
+
+function funOpenMarkCompleteModal() {
+  document.getElementById('markCompleteModal').classList.remove('hidden');
+}
+
+function funCloseMarkCompleteModal() {
+  document.getElementById('markCompleteModal').classList.add('hidden');
+}
+
+function funConfirmMarkComplete() {
+  const sessions = getDataSafely('trainingSessions');
+  const sessionIndex = sessions.findIndex(s => s.id === sessionData.id);
+  
+  if (sessionIndex !== -1) {
+    sessions[sessionIndex].status = 'completed';
+    localStorage.setItem('trainingSessions', JSON.stringify(sessions));
+    window.location.reload();
+  }
+}
+
+// Load and display feedback data
+function funLoadFeedbackData() {
+  if (sessionData.status !== 'completed') return;
+
+  const feedback = getDataSafely('trainingFeedback').filter(f => f.sessionId === sessionData.id);
+  
+  if (feedback.length === 0) return;
+
+  document.getElementById('feedbackSection').classList.remove('hidden');
+
+  const totalRating = feedback.reduce((sum, f) => sum + f.rating, 0);
+  const averageRating = (totalRating / feedback.length).toFixed(1);
+  const attendedCount = sessionData.assignedEmployees.filter(a => a.attendanceStatus === 'attended').length;
+  const responseRate = attendedCount > 0 ? Math.round((feedback.length / attendedCount) * 100) : 0;
+
+  document.getElementById('averageRating').textContent = averageRating;
+  document.getElementById('feedbackCount').textContent = feedback.length;
+  document.getElementById('responseRate').textContent = `${responseRate}%`;
+
+  // Generate star rating
+  const stars = document.getElementById('ratingStars');
+  stars.innerHTML = '';
+  for (let i = 1; i <= 5; i++) {
+    const star = document.createElement('i');
+    star.setAttribute('data-lucide', 'star');
+    star.className = `w-4 h-4 ${i <= Math.round(averageRating) ? 'text-yellow-400 fill-current' : 'text-gray-300'}`;
+    stars.appendChild(star);
+  }
+
+  // Refresh icons
+  if (typeof window.lucide?.createIcons === 'function') {
+    window.lucide.createIcons();
+  }
+}
+
+// Export attendee list
+function funExportAttendeeList() {
+  const attendeesData = funGetAttendeesData();
+  
+  if (attendeesData.length === 0) {
+    alert('No attendees to export');
+    return;
+  }
+
+  const csvContent = [
+    ['Employee Name', 'Department', 'Gap Score', 'Assignment Date', 'Attendance Status'],
+    ...attendeesData.map(row => [
+      row.employeeName,
+      row.department,
+      row.gapScore || 'N/A',
+      formatDate(row.assignmentDate),
+      row.attendanceStatus
+    ])
+  ].map(row => row.map(cell => `"${cell}"`).join(',')).join('\n');
+
+  const blob = new Blob([csvContent], { type: 'text/csv' });
+  const url = window.URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `attendees_${sessionData.id}.csv`;
+  a.click();
+  window.URL.revokeObjectURL(url);
+}
+
+// Initialize page on load
+document.addEventListener('DOMContentLoaded', funInitPage);
+</script></body></html>

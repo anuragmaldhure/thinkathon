@@ -1,0 +1,1470 @@
+<html lang="en"><head>
+    <meta charset="UTF-8">
+    <title>SkillBridge Employee Portal</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://tiramai-grid-lib.tiram.app/tiramai-grid.umd.js"></script>
+    <style type="text/tailwindcss">
+      @theme {
+        --color-primary: #1E40AF;
+        --color-secondary: #059669;
+        --color-accent: #F59E0B;
+        --color-surface: #FFFFFF;
+        --color-background: #F8FAFC;
+        --color-border: #E2E8F0;
+
+        --header-height: 4rem;
+        --sidebar-width: 16rem;
+
+        --text-xs: 12px;
+        --text-sm: 14px;
+        --text-base: 14px;
+        --text-lg: 16px;
+        --text-xl: 18px;
+        --text-2xl: 20px;
+        --text-3xl: 24px;
+
+        --radius-sm: 4px;
+        --radius: 8px;
+        --radius-lg: 16px;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+      }
+      ::-webkit-scrollbar-track {
+        background: #f1f1f1;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+        border-radius: 4px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: #94a3b8;
+      }
+
+      .app-header {
+        height: var(--header-height, 4rem);
+      }
+      .app-sidebar {
+        top: var(--header-height, 4rem);
+        width: var(--sidebar-width, 16rem);
+        height: calc(100vh - var(--header-height, 4rem));
+        overflow-y: auto;
+        overflow-x: hidden;
+      }
+      .app-main {
+        margin-top: var(--header-height, 4rem);
+        min-height: calc(100vh - var(--header-height, 4rem));
+      }
+      @media (min-width: 768px) {
+        .app-main {
+          margin-left: var(--sidebar-width, 16rem);
+        }
+      }
+
+      body.sidebar-open {
+        overflow: hidden;
+      }
+
+      @media (max-width: 767px) {
+        .app-sidebar {
+          left: calc(-1 * var(--sidebar-width, 16rem));
+          transition: left 0.3s ease-in-out;
+        }
+        .app-sidebar.open {
+          left: 0;
+        }
+      }
+
+      .nav-link.active {
+        background: var(--color-primary);
+        color: white;
+      }
+      .nav-link.active:hover {
+        background: var(--color-primary);
+        opacity: 0.9;
+      }
+
+      .popover {
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(-8px);
+        transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out,
+          visibility 0.2s ease-in-out;
+      }
+      .popover.visible {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+      }
+
+      .sidebar-backdrop {
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+      }
+      .sidebar-backdrop.active {
+        opacity: 1;
+        visibility: visible;
+      }
+      
+      button,
+      a {
+        font-size: 14px;
+      }
+    </style>
+  <title>Training Session Detail - SkillBridge Employee Portal</title></head>
+  <body class="bg-slate-50 text-gray-800 overflow-x-hidden">
+    <header class="app-header fixed top-0 left-0 right-0 bg-white border-b border-slate-200 z-40">
+      <div class="h-full max-w-[1920px] mx-auto px-4 md:px-6 flex justify-between items-center">
+        <div class="flex items-center gap-3">
+          <button id="mobileMenuToggle" class="flex items-center justify-center w-10 h-10 rounded-md text-gray-500 hover:bg-gray-100 hover:text-gray-900 transition-all duration-200 cursor-pointer border-0 bg-transparent md:hidden focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-700 focus-visible:outline-offset-2" aria-label="Toggle navigation menu" aria-expanded="false">
+            <i data-lucide="menu" class="w-6 h-6"></i>
+          </button>
+
+          <div class="flex items-center gap-3">
+            <div class="w-8 h-8 flex items-center justify-center">
+              <svg viewBox="0 0 400 400" width="32" height="32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <g>
+                  <path d="M80 230 Q200 80 320 230" stroke="#1E40AF" stroke-width="26" fill="none" stroke-linecap="round"></path>
+                  <rect x="95" y="230" width="24" height="80" rx="8" fill="#059669"></rect>
+                  <rect x="281" y="230" width="24" height="80" rx="8" fill="#059669"></rect>
+                  <rect x="189" y="196" width="22" height="114" rx="7" fill="#1E40AF"></rect>
+                  <circle cx="130" cy="180" r="15" fill="#1E40AF"></circle>
+                  <circle cx="270" cy="180" r="15" fill="#1E40AF"></circle>
+                  <circle cx="200" cy="106" r="17" fill="#059669"></circle>
+                  <rect x="192" y="126" width="16" height="36" rx="6" fill="#059669"></rect>
+                </g>
+              </svg>
+            </div>
+            <h1 class="text-lg md:text-xl font-bold text-gray-900">
+              SkillBridge
+            </h1>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-2 md:gap-3">
+          <button id="userProfileButton" class="flex items-center gap-3 px-3 py-2 rounded-lg border border-transparent hover:bg-gray-50 hover:border-gray-200 transition-all duration-200 cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-700 focus-visible:outline-offset-2" aria-label="User profile menu" aria-expanded="false" aria-haspopup="true">
+            <div id="userAvatar" class="w-8 h-8 bg-blue-700 text-white rounded-full flex items-center justify-center text-sm font-semibold shrink-0"></div>
+            <div class="hidden sm:flex flex-col items-start max-w-[150px]">
+              <div id="userName" class="text-sm font-medium text-gray-900 truncate w-full"></div>
+            </div>
+            <i data-lucide="chevron-down" class="w-4 h-4 text-gray-500 hidden sm:block"></i>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <div id="userProfilePopover" class="popover fixed top-[4.5rem] right-4 md:right-6 w-72 bg-white border border-slate-200 rounded-lg shadow-xl z-50" role="dialog" aria-labelledby="popoverUserName" data-portal="body">
+      <div class="p-4">
+        <div class="flex items-center gap-3 pb-3 mb-3 border-b border-gray-100">
+          <div id="popoverUserAvatar" class="w-8 h-8 bg-blue-700 text-white rounded-full flex items-center justify-center text-sm font-semibold shrink-0"></div>
+          <div class="flex-1 min-w-0">
+            <div id="popoverUserName" class="font-semibold text-gray-900 truncate"></div>
+            <div id="popoverUserEmail" class="text-xs text-gray-500 truncate"></div>
+          </div>
+        </div>
+
+        <div class="space-y-1">
+          <button id="signOutButton" class="w-full flex items-center gap-3 px-3 py-2 text-sm font-medium text-red-600 hover:bg-red-50 rounded-md transition-all duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-700 focus-visible:outline-offset-2">
+            <i data-lucide="log-out" class="w-4 h-4"></i>
+            Sign Out
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div id="sidebarBackdrop" class="sidebar-backdrop fixed inset-0 bg-black/50 z-20 md:hidden" style="top: var(--header-height, 4rem)"></div>
+
+    <aside id="sidebar" class="app-sidebar fixed left-0 bg-white border-r border-slate-200 overflow-y-auto z-30">
+      <nav class="p-4" role="navigation" aria-label="Main navigation">
+        <div class="py-6 border-b border-gray-100 first:pt-0 last:border-b-0">
+          <div class="px-4 pb-2 text-xs font-semibold uppercase tracking-wider text-gray-400">
+            Main
+          </div>
+          <div class="space-y-1">
+            <a href="employee_dashboard.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline active" data-page="employee_dashboard">
+              <i data-lucide="home" class="w-5 h-5"></i>
+              <span>Dashboard</span>
+            </a>
+            <a href="my_skills.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline" data-page="my_skills">
+              <i data-lucide="target" class="w-5 h-5"></i>
+              <span>My Skills</span>
+            </a>
+            <a href="my_training_sessions.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline" data-page="my_training_sessions">
+              <i data-lucide="graduation-cap" class="w-5 h-5"></i>
+              <span>My Training</span>
+            </a>
+            <a href="my_disputes.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline" data-page="my_disputes">
+              <i data-lucide="flag" class="w-5 h-5"></i>
+              <span>My Disputes</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="py-6 border-b border-gray-100 last:border-b-0">
+          <div class="px-4 pb-2 text-xs font-semibold uppercase tracking-wider text-gray-400">
+            Account
+          </div>
+          <div class="space-y-1">
+            <a href="my_profile.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline" data-page="my_profile">
+              <i data-lucide="user" class="w-5 h-5"></i>
+              <span>My Profile</span>
+            </a>
+          </div>
+        </div>
+      </nav>
+    </aside>
+
+    <main class="app-main max-w-7xl mx-auto p-4 md:p-6 lg:p-8" id="pageContent" role="main"><button onclick="history.back()" class="inline-flex items-center text-gray-600 hover:text-gray-900 mb-4 transition-colors">
+  <i data-lucide="arrow-left" class="w-4 h-4 mr-2"></i>
+  Back
+</button>
+
+<!-- Breadcrumb -->
+<nav class="flex items-center space-x-2 text-sm text-gray-600 mb-6" aria-label="Breadcrumb">
+  <a href="employee_dashboard.html" class="hover:text-gray-900">Dashboard</a>
+  <i data-lucide="chevron-right" class="w-4 h-4"></i>
+  <a href="my_training_sessions.html" class="hover:text-gray-900">My Training</a>
+  <i data-lucide="chevron-right" class="w-4 h-4"></i>
+  <span id="breadcrumbSkillName" class="text-gray-900 font-medium">Training Session</span>
+</nav>
+
+<!-- Page Title with Status Badge -->
+<div class="flex items-center justify-between mb-6">
+  <h1 id="pageTitle" class="text-2xl font-bold text-gray-900">Training Session</h1>
+  <span id="statusBadge" class="inline-flex px-3 py-1 text-sm font-medium rounded-full"></span>
+</div>
+
+<!-- Session Information Card -->
+<div class="bg-white rounded-lg shadow-sm border border-slate-200 p-6 mb-6">
+  <h2 class="text-lg font-semibold text-gray-900 mb-4">Session Information</h2>
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div>
+      <label class="block text-sm font-medium text-gray-700 mb-1">Skill</label>
+      <div class="flex items-center">
+        <a id="skillLink" href="#" class="text-blue-700 hover:text-blue-900 font-medium"></a>
+      </div>
+    </div>
+    <div>
+      <label class="block text-sm font-medium text-gray-700 mb-1">Category</label>
+      <p id="categoryName" class="text-gray-900"></p>
+    </div>
+    <div>
+      <label class="block text-sm font-medium text-gray-700 mb-1">Mode</label>
+      <div id="modeContainer" class="flex items-center gap-2">
+        <i id="modeIcon" class="w-4 h-4"></i>
+        <span id="modeBadge" class="inline-flex px-2 py-1 text-xs font-medium rounded"></span>
+      </div>
+    </div>
+    <div>
+      <label class="block text-sm font-medium text-gray-700 mb-1">Scheduled Date</label>
+      <p id="scheduledDate" class="text-gray-900"></p>
+    </div>
+    <div>
+      <label class="block text-sm font-medium text-gray-700 mb-1">End Date</label>
+      <p id="endDate" class="text-gray-900"></p>
+    </div>
+    <div>
+      <label class="block text-sm font-medium text-gray-700 mb-1">Duration</label>
+      <p id="duration" class="text-gray-900"></p>
+    </div>
+    <div>
+      <label class="block text-sm font-medium text-gray-700 mb-1">Trainer</label>
+      <p id="trainerName" class="text-gray-900"></p>
+    </div>
+    <div>
+      <label class="block text-sm font-medium text-gray-700 mb-1">Trainer Type</label>
+      <span id="trainerTypeBadge" class="inline-flex px-2 py-1 text-xs font-medium rounded"></span>
+    </div>
+    <div class="md:col-span-2">
+      <label class="block text-sm font-medium text-gray-700 mb-1">Your Attendance Status</label>
+      <span id="attendanceBadge" class="inline-flex px-2 py-1 text-xs font-medium rounded"></span>
+    </div>
+  </div>
+</div>
+
+<!-- Skill Context Section -->
+<div class="bg-white rounded-lg shadow-sm border border-slate-200 p-6 mb-6">
+  <h2 class="text-lg font-semibold text-gray-900 mb-4">Related Skill Performance</h2>
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
+    <div>
+      <label class="block text-sm font-medium text-gray-700 mb-1">Current Score</label>
+      <p id="currentScore" class="text-2xl font-bold text-gray-900"></p>
+    </div>
+    <div>
+      <label class="block text-sm font-medium text-gray-700 mb-1">Benchmark</label>
+      <p id="benchmarkScore" class="text-2xl font-bold text-gray-900"></p>
+    </div>
+    <div>
+      <label class="block text-sm font-medium text-gray-700 mb-1">Gap</label>
+      <div id="gapContainer" class="flex items-center gap-2">
+        <p id="gapValue" class="text-2xl font-bold"></p>
+        <i id="gapIcon" class="w-5 h-5"></i>
+      </div>
+    </div>
+    <div>
+      <label class="block text-sm font-medium text-gray-700 mb-1">TNI Status</label>
+      <span id="tniBadge" class="inline-flex px-2 py-1 text-xs font-medium rounded"></span>
+    </div>
+  </div>
+  <div class="pt-4 border-t border-gray-200">
+    <a id="skillHistoryLink" href="#" class="inline-flex items-center text-blue-700 hover:text-blue-900 text-sm font-medium">
+      <i data-lucide="external-link" class="w-4 h-4 mr-2"></i>
+      View Full Skill History
+    </a>
+  </div>
+</div>
+
+<!-- Feedback Section -->
+<div id="feedbackSection" class="bg-white rounded-lg shadow-sm border border-slate-200 p-6 mb-6">
+  <h2 class="text-lg font-semibold text-gray-900 mb-4">Training Feedback</h2>
+  <div id="feedbackContent"></div>
+</div>
+
+<!-- Timeline Section -->
+<div class="bg-white rounded-lg shadow-sm border border-slate-200 p-6">
+  <h2 class="text-lg font-semibold text-gray-900 mb-4">Training Schedule</h2>
+  <div class="relative">
+    <div class="absolute left-4 top-0 bottom-0 w-0.5 bg-gray-200"></div>
+    <div id="timelineContainer" class="space-y-4"></div>
+  </div>
+</div>
+
+<!-- Training Feedback Modal -->
+<div id="feedbackModal" data-portal="body" class="fixed inset-0 z-50 hidden">
+  <div class="flex items-center justify-center min-h-screen p-4 bg-black/50">
+    <div class="bg-white rounded-xl shadow-xl w-[min(92vw,42rem)] max-h-[90vh] overflow-y-auto">
+      <div class="p-6 border-b border-gray-200">
+        <h3 class="text-lg font-semibold text-gray-900">Submit Training Feedback</h3>
+      </div>
+      <form id="feedbackForm" class="p-6">
+        <div class="mb-6">
+          <label class="block text-sm font-medium text-gray-700 mb-3">How would you rate this training session? *</label>
+          <div class="flex items-center gap-1" id="ratingContainer">
+            <button type="button" class="rating-star w-8 h-8 text-gray-300 hover:text-yellow-400 transition-colors" data-rating="1">
+              <i data-lucide="star" class="w-6 h-6 mx-auto"></i>
+            </button>
+            <button type="button" class="rating-star w-8 h-8 text-gray-300 hover:text-yellow-400 transition-colors" data-rating="2">
+              <i data-lucide="star" class="w-6 h-6 mx-auto"></i>
+            </button>
+            <button type="button" class="rating-star w-8 h-8 text-gray-300 hover:text-yellow-400 transition-colors" data-rating="3">
+              <i data-lucide="star" class="w-6 h-6 mx-auto"></i>
+            </button>
+            <button type="button" class="rating-star w-8 h-8 text-gray-300 hover:text-yellow-400 transition-colors" data-rating="4">
+              <i data-lucide="star" class="w-6 h-6 mx-auto"></i>
+            </button>
+            <button type="button" class="rating-star w-8 h-8 text-gray-300 hover:text-yellow-400 transition-colors" data-rating="5">
+              <i data-lucide="star" class="w-6 h-6 mx-auto"></i>
+            </button>
+          </div>
+          <div id="ratingError" class="hidden text-red-600 text-sm mt-1">Please select a rating</div>
+        </div>
+        
+        <div class="mb-6">
+          <label for="feedbackComments" class="block text-sm font-medium text-gray-700 mb-2">Share your detailed feedback</label>
+          <textarea id="feedbackComments" name="comments" rows="4" maxlength="1000" placeholder="What did you find helpful? What could be improved?" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-700 focus:border-transparent resize-vertical"></textarea>
+          <div class="flex justify-between items-center mt-2">
+            <span class="text-xs text-gray-500">Optional but encouraged</span>
+            <span id="charCount" class="text-xs text-gray-500">0/1000</span>
+          </div>
+        </div>
+        
+        <div class="flex gap-3 justify-end">
+          <button type="button" id="cancelFeedback" class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 transition-colors">
+            Cancel
+          </button>
+          <button type="submit" id="submitFeedback" class="px-4 py-2 text-sm font-medium text-white bg-blue-700 rounded-md hover:bg-blue-800 transition-colors">
+            Submit Feedback
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+</main>
+
+    <script src="app.js"></script>
+    <script src="app_data.js"></script>
+    <script id="container-script">
+      (function () {
+        const TemplateUtils = (window.TemplateUtils =
+          window.TemplateUtils || {});
+
+        TemplateUtils.UserUtils =
+          TemplateUtils.UserUtils ||
+          (function createUserUtils() {
+            return {
+              getCurrentUser() {
+                try {
+                  let currentUserId = localStorage.getItem("currentUserId");
+                  if (!currentUserId) {
+                    localStorage.setItem("currentUserId", "user_001_alice_web");
+                    currentUserId = "user_001_alice_web";
+                  }
+
+                  const userData = localStorage.getItem(
+                    `users_${currentUserId}`
+                  );
+                  if (userData) {
+                    return JSON.parse(userData);
+                  }
+
+                  const users = JSON.parse(localStorage.getItem('users') || '[]');
+                  const user = users.find(u => u.id === 'usr_004');
+                  if (user) {
+                    localStorage.setItem(`users_${currentUserId}`, JSON.stringify(user));
+                    return user;
+                  }
+                  
+                  return null;
+                } catch (error) {
+                  console.error("Error retrieving user data:", error);
+                  return null;
+                }
+              },
+              signOut() {
+                try {
+                  localStorage.removeItem("currentUserId");
+                  window.location.reload();
+                } catch (error) {
+                  console.error("Error signing out:", error);
+                }
+              },
+              getUserDisplayName(user) {
+                if (!user) return "Guest";
+                return user.firstName && user.lastName
+                  ? `${user.firstName} ${user.lastName}`
+                  : user.firstName || user.lastName || "User";
+              },
+              getUserInitials(user) {
+                if (!user) return "?";
+                const first = user.firstName?.charAt(0) || "";
+                const last = user.lastName?.charAt(0) || "";
+                return (first + last).toUpperCase() || "U";
+              },
+            };
+          })();
+
+        if (TemplateUtils.__bootstrapped) {
+          if (typeof window.lucide?.createIcons === "function") {
+            window.lucide.createIcons();
+          }
+          return;
+        }
+
+        TemplateUtils.__bootstrapped = true;
+
+        const state = {
+          popoverVisible: false,
+          sidebarOpen: false,
+          resizeTimer: null,
+          debounceTimer: null,
+          isUpdatingIcons: false,
+          observer: null,
+          refs: {},
+        };
+
+        function ready(fn) {
+          if (document.readyState === "loading") {
+            document.addEventListener("DOMContentLoaded", fn, { once: true });
+          } else if (typeof queueMicrotask === "function") {
+            queueMicrotask(fn);
+          } else {
+            Promise.resolve().then(fn);
+          }
+        }
+
+        function safeLucide(callback) {
+          if (typeof window.lucide?.createIcons === "function") {
+            callback();
+          }
+        }
+
+        function cacheRefs() {
+          state.refs = {
+            userProfileButton: document.getElementById("userProfileButton"),
+            userProfilePopover: document.getElementById("userProfilePopover"),
+            userAvatar: document.getElementById("userAvatar"),
+            userName: document.getElementById("userName"),
+            popoverUserAvatar: document.getElementById("popoverUserAvatar"),
+            popoverUserName: document.getElementById("popoverUserName"),
+            popoverUserEmail: document.getElementById("popoverUserEmail"),
+            signOutButton: document.getElementById("signOutButton"),
+            mobileMenuToggle: document.getElementById("mobileMenuToggle"),
+            sidebar: document.getElementById("sidebar"),
+            sidebarBackdrop: document.getElementById("sidebarBackdrop"),
+            navLinks: document.querySelectorAll(".nav-link"),
+            pageContent: document.getElementById("pageContent"),
+          };
+        }
+
+        function initializeUserProfile() {
+          const { userAvatar, userName } = state.refs;
+          if (!userAvatar || !userName) return;
+
+          const currentUser = TemplateUtils.UserUtils.getCurrentUser();
+          if (currentUser) {
+            userAvatar.textContent =
+              TemplateUtils.UserUtils.getUserInitials(currentUser);
+            userName.textContent =
+              TemplateUtils.UserUtils.getUserDisplayName(currentUser);
+          } else {
+            userAvatar.textContent = "?";
+            userName.textContent = "Guest";
+          }
+        }
+
+        function populatePopover() {
+          const currentUser = TemplateUtils.UserUtils.getCurrentUser();
+          const { popoverUserAvatar, popoverUserName, popoverUserEmail } =
+            state.refs;
+          if (!popoverUserAvatar || !popoverUserName || !popoverUserEmail)
+            return;
+
+          if (currentUser) {
+            popoverUserAvatar.textContent =
+              TemplateUtils.UserUtils.getUserInitials(currentUser);
+            popoverUserName.textContent =
+              TemplateUtils.UserUtils.getUserDisplayName(currentUser);
+            popoverUserEmail.textContent = currentUser.email || "No email";
+          } else {
+            popoverUserAvatar.textContent = "?";
+            popoverUserName.textContent = "Guest";
+            popoverUserEmail.textContent = "Not logged in";
+          }
+        }
+
+        function toggleUserPopover(forceClose = false) {
+          const { userProfilePopover, userProfileButton } = state.refs;
+          if (!userProfilePopover || !userProfileButton) return;
+
+          const shouldOpen = forceClose ? false : !state.popoverVisible;
+          if (shouldOpen) {
+            populatePopover();
+            userProfilePopover.classList.add("visible");
+            userProfileButton.setAttribute("aria-expanded", "true");
+            state.popoverVisible = true;
+            const firstButton = userProfilePopover.querySelector("button");
+            if (firstButton) {
+              setTimeout(() => firstButton.focus(), 50);
+            }
+          } else {
+            userProfilePopover.classList.remove("visible");
+            userProfileButton.setAttribute("aria-expanded", "false");
+            state.popoverVisible = false;
+          }
+        }
+
+        function hideUserPopover() {
+          if (state.popoverVisible) {
+            toggleUserPopover(true);
+          }
+        }
+
+        function toggleMobileSidebar(forceClose = false) {
+          const { sidebar, sidebarBackdrop, mobileMenuToggle } = state.refs;
+          if (!sidebar || !sidebarBackdrop || !mobileMenuToggle) return;
+
+          const shouldOpen = forceClose ? false : !state.sidebarOpen;
+          state.sidebarOpen = shouldOpen;
+
+          sidebar.classList.toggle("open", shouldOpen);
+          sidebarBackdrop.classList.toggle("active", shouldOpen);
+          document.body.classList.toggle("sidebar-open", shouldOpen);
+          mobileMenuToggle.setAttribute(
+            "aria-expanded",
+            shouldOpen ? "true" : "false"
+          );
+
+          const icon = mobileMenuToggle.querySelector("[data-lucide]");
+          if (icon) {
+            icon.setAttribute("data-lucide", shouldOpen ? "x" : "menu");
+            safeLucide(() => window.lucide.createIcons());
+          }
+        }
+
+        function closeMobileSidebar() {
+          if (state.sidebarOpen) {
+            toggleMobileSidebar(true);
+          }
+        }
+
+        function setActiveNavLink(pageId) {
+          if (!pageId) return;
+          const { navLinks } = state.refs;
+          navLinks?.forEach((link) => {
+            if (link.dataset.page === pageId) {
+              link.classList.add("active");
+            } else {
+              link.classList.remove("active");
+            }
+          });
+        }
+
+        TemplateUtils.setActiveNavLink = setActiveNavLink;
+        TemplateUtils.closeMobileSidebar = closeMobileSidebar;
+
+        function handleDocumentClick(event) {
+          const { userProfilePopover, userProfileButton } = state.refs;
+          if (
+            state.popoverVisible &&
+            userProfilePopover &&
+            userProfileButton &&
+            !userProfilePopover.contains(event.target) &&
+            !userProfileButton.contains(event.target)
+          ) {
+            hideUserPopover();
+          }
+        }
+
+        function handleKeydown(event) {
+          if (event.key !== "Escape") return;
+          if (state.popoverVisible) {
+            hideUserPopover();
+            state.refs.userProfileButton?.focus();
+          }
+          if (state.sidebarOpen) {
+            closeMobileSidebar();
+            state.refs.mobileMenuToggle?.focus();
+          }
+        }
+
+        function handleResize() {
+          clearTimeout(state.resizeTimer);
+          state.resizeTimer = setTimeout(() => {
+            if (window.innerWidth >= 768) {
+              closeMobileSidebar();
+            }
+          }, 200);
+        }
+
+        function bindEvents() {
+          const {
+            userProfileButton,
+            mobileMenuToggle,
+            sidebarBackdrop,
+            signOutButton,
+            navLinks,
+          } = state.refs;
+
+          userProfileButton?.addEventListener("click", (event) => {
+            event.stopPropagation();
+            toggleUserPopover();
+          });
+
+          mobileMenuToggle?.addEventListener("click", (event) => {
+            event.stopPropagation();
+            toggleMobileSidebar();
+          });
+
+          sidebarBackdrop?.addEventListener("click", () =>
+            closeMobileSidebar()
+          );
+
+          signOutButton?.addEventListener("click", () => {
+            if (confirm("Are you sure you want to sign out?")) {
+              TemplateUtils.UserUtils.signOut();
+            }
+          });
+
+          navLinks?.forEach((link) => {
+            link.addEventListener("click", () => closeMobileSidebar());
+          });
+
+          document.addEventListener("click", handleDocumentClick);
+          document.addEventListener("keydown", handleKeydown);
+          window.addEventListener("resize", handleResize);
+
+          window.addEventListener("pagehide", cleanup);
+        }
+
+        function cleanup() {
+          if (state.resizeTimer) clearTimeout(state.resizeTimer);
+          if (state.debounceTimer) clearTimeout(state.debounceTimer);
+          if (state.observer) {
+            state.observer.disconnect();
+            state.observer = null;
+          }
+          document.removeEventListener("click", handleDocumentClick);
+          document.removeEventListener("keydown", handleKeydown);
+          window.removeEventListener("resize", handleResize);
+        }
+
+        function initializePortalTargets() {
+          document.querySelectorAll('[data-portal="body"]').forEach((node) => {
+            if (node.parentElement !== document.body) {
+              document.body.appendChild(node);
+            }
+          });
+        }
+
+        function observePageContent() {
+          const { pageContent } = state.refs;
+          if (!pageContent || typeof MutationObserver !== "function") return;
+
+          const observer = new MutationObserver((mutations) => {
+            if (state.isUpdatingIcons) return;
+
+            const isLucideUpdate = mutations.every((m) => {
+              if (m.type !== "childList") return false;
+              const nodes = [...m.addedNodes, ...m.removedNodes];
+              return nodes.every(
+                (n) =>
+                  n.nodeType !== Node.ELEMENT_NODE ||
+                  n.nodeName.toLowerCase() === "svg" ||
+                  n.classList?.contains("lucide")
+              );
+            });
+            if (isLucideUpdate) return;
+
+            if (state.debounceTimer) clearTimeout(state.debounceTimer);
+            state.debounceTimer = setTimeout(() => {
+              state.debounceTimer = null;
+              state.isUpdatingIcons = true;
+              safeLucide(() => {
+                window.lucide.createIcons();
+                requestAnimationFrame(() => {
+                  state.isUpdatingIcons = false;
+                });
+              });
+            }, 100);
+          });
+
+          observer.observe(pageContent, { childList: true, subtree: true });
+          state.observer = observer;
+        }
+
+        function bootstrap() {
+          cacheRefs();
+          initializePortalTargets();
+          initializeUserProfile();
+          bindEvents();
+          safeLucide(() => window.lucide.createIcons());
+          observePageContent();
+        }
+
+        ready(bootstrap);
+      })();
+    </script>
+  
+
+<script>
+// Get URL parameter
+function funGetUrlParam(param) {
+  const urlParams = new URLSearchParams(window.location.search);
+  return urlParams.get(param);
+}
+
+// Safe data retrieval
+function getDataSafely(key) {
+  try {
+    const data = localStorage.getItem(key);
+    return data ? JSON.parse(data) : [];
+  } catch (error) {
+    console.error(`Error parsing ${key}:`, error);
+    return [];
+  }
+}
+
+// Format date function
+function funFormatDate(dateString) {
+  if (!dateString) return 'N/A';
+  try {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', {
+      month: '2-digit',
+      day: '2-digit', 
+      year: 'numeric'
+    });
+  } catch (error) {
+    return 'Invalid Date';
+  }
+}
+
+// Format date with time
+function funFormatDateTime(dateString) {
+  if (!dateString) return 'N/A';
+  try {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', {
+      month: '2-digit',
+      day: '2-digit', 
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  } catch (error) {
+    return 'Invalid Date';
+  }
+}
+
+// Calculate duration between two dates
+function funCalculateDuration(startDate, endDate) {
+  if (!startDate || !endDate) return 'N/A';
+  try {
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+    const diffTime = Math.abs(end - start);
+    const diffHours = Math.ceil(diffTime / (1000 * 60 * 60));
+    
+    if (diffHours < 24) {
+      return `${diffHours} hour${diffHours !== 1 ? 's' : ''}`;
+    } else {
+      const diffDays = Math.ceil(diffHours / 24);
+      return `${diffDays} day${diffDays !== 1 ? 's' : ''}`;
+    }
+  } catch (error) {
+    return 'N/A';
+  }
+}
+
+// Get current user
+function funGetCurrentUser() {
+  try {
+    const users = getDataSafely('users');
+    return users.find(u => u.id === 'usr_004') || null; // Jennifer Anderson (employee)
+  } catch (error) {
+    console.error('Error getting current user:', error);
+    return null;
+  }
+}
+
+// Generate unique ID
+function funGenerateId(prefix = 'id') {
+  return `${prefix}_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+}
+
+// Save training feedback
+function funSaveTrainingFeedback(sessionId, employeeId, rating, comments) {
+  try {
+    const feedback = getDataSafely('trainingFeedback');
+    const newFeedback = {
+      id: funGenerateId('feedback'),
+      sessionId: sessionId,
+      employeeId: employeeId,
+      rating: parseInt(rating),
+      comments: comments || '',
+      submissionDate: new Date().toISOString()
+    };
+    
+    feedback.push(newFeedback);
+    localStorage.setItem('trainingFeedback', JSON.stringify(feedback));
+    return true;
+  } catch (error) {
+    console.error('Error saving feedback:', error);
+    return false;
+  }
+}
+
+// Get feedback for session
+function funGetFeedbackForSession(sessionId, employeeId) {
+  try {
+    const feedback = getDataSafely('trainingFeedback');
+    return feedback.find(f => f.sessionId === sessionId && f.employeeId === employeeId) || null;
+  } catch (error) {
+    console.error('Error getting feedback:', error);
+    return null;
+  }
+}
+
+// Show status badge
+function funShowStatusBadge(status) {
+  const badge = document.getElementById('statusBadge');
+  if (!badge) return;
+  
+  const statusConfig = {
+    scheduled: { text: 'Scheduled', class: 'text-blue-800 bg-blue-50' },
+    completed: { text: 'Completed', class: 'text-green-800 bg-green-50' },
+    cancelled: { text: 'Cancelled', class: 'text-red-800 bg-red-50' }
+  };
+  
+  const config = statusConfig[status] || statusConfig.scheduled;
+  badge.textContent = config.text;
+  badge.className = `inline-flex px-3 py-1 text-sm font-medium rounded-full ${config.class}`;
+}
+
+// Show mode badge
+function funShowModeBadge(mode) {
+  const container = document.getElementById('modeContainer');
+  const icon = document.getElementById('modeIcon');
+  const badge = document.getElementById('modeBadge');
+  
+  if (!container || !icon || !badge) return;
+  
+  if (mode === 'online') {
+    icon.setAttribute('data-lucide', 'monitor');
+    badge.textContent = 'Online';
+    badge.className = 'inline-flex px-2 py-1 text-xs font-medium rounded text-blue-800 bg-blue-50';
+  } else {
+    icon.setAttribute('data-lucide', 'map-pin');
+    badge.textContent = 'Offline';
+    badge.className = 'inline-flex px-2 py-1 text-xs font-medium rounded text-purple-800 bg-purple-50';
+  }
+}
+
+// Show trainer type badge
+function funShowTrainerTypeBadge(trainerType) {
+  const badge = document.getElementById('trainerTypeBadge');
+  if (!badge) return;
+  
+  if (trainerType === 'external') {
+    badge.textContent = 'External';
+    badge.className = 'inline-flex px-2 py-1 text-xs font-medium rounded text-orange-800 bg-orange-50';
+  } else {
+    badge.textContent = 'Internal';
+    badge.className = 'inline-flex px-2 py-1 text-xs font-medium rounded text-green-800 bg-green-50';
+  }
+}
+
+// Show attendance badge
+function funShowAttendanceBadge(status) {
+  const badge = document.getElementById('attendanceBadge');
+  if (!badge) return;
+  
+  const statusConfig = {
+    assigned: { text: 'Assigned', class: 'text-blue-800 bg-blue-50' },
+    attended: { text: 'Attended', class: 'text-green-800 bg-green-50' },
+    missed: { text: 'Missed', class: 'text-red-800 bg-red-50' }
+  };
+  
+  const config = statusConfig[status] || statusConfig.assigned;
+  badge.textContent = config.text;
+  badge.className = `inline-flex px-2 py-1 text-xs font-medium rounded ${config.class}`;
+}
+
+// Show gap indicator
+function funShowGapIndicator(gap) {
+  const container = document.getElementById('gapContainer');
+  const value = document.getElementById('gapValue');
+  const icon = document.getElementById('gapIcon');
+  
+  if (!container || !value || !icon) return;
+  
+  value.textContent = gap;
+  
+  if (gap > 0) {
+    value.className = 'text-2xl font-bold text-red-600';
+    icon.setAttribute('data-lucide', 'trending-down');
+    icon.className = 'w-5 h-5 text-red-600';
+  } else if (gap < 0) {
+    value.className = 'text-2xl font-bold text-green-600';
+    icon.setAttribute('data-lucide', 'trending-up');
+    icon.className = 'w-5 h-5 text-green-600';
+  } else {
+    value.className = 'text-2xl font-bold text-gray-600';
+    icon.setAttribute('data-lucide', 'minus');
+    icon.className = 'w-5 h-5 text-gray-600';
+  }
+}
+
+// Show TNI badge
+function funShowTniBadge(tniFlag) {
+  const badge = document.getElementById('tniBadge');
+  if (!badge) return;
+  
+  if (tniFlag) {
+    badge.textContent = 'Training Required';
+    badge.className = 'inline-flex px-2 py-1 text-xs font-medium rounded text-amber-800 bg-amber-50';
+  } else {
+    badge.textContent = 'Competent';
+    badge.className = 'inline-flex px-2 py-1 text-xs font-medium rounded text-green-800 bg-green-50';
+  }
+}
+
+// Show feedback section
+function funShowFeedbackSection(session, userAttendance, existingFeedback) {
+  const content = document.getElementById('feedbackContent');
+  if (!content) return;
+  
+  const now = new Date();
+  const endDate = new Date(session.endDate);
+  const isSessionCompleted = endDate < now;
+  const hasAttended = userAttendance?.attendanceStatus === 'attended';
+  const hasMissed = userAttendance?.attendanceStatus === 'missed';
+  
+  if (existingFeedback) {
+    // Show submitted feedback
+    content.innerHTML = `
+      <div class="bg-green-50 border border-green-200 rounded-lg p-4">
+        <h3 class="font-medium text-green-900 mb-3">Your Feedback (Submitted)</h3>
+        <div class="mb-3">
+          <label class="block text-sm font-medium text-green-800 mb-1">Your Rating</label>
+          <div class="flex items-center gap-1">
+            ${Array.from({length: 5}, (_, i) => 
+              `<i data-lucide="star" class="w-4 h-4 ${i < existingFeedback.rating ? 'text-yellow-400 fill-current' : 'text-gray-300'}"></i>`
+            ).join('')}
+            <span class="ml-2 text-sm text-green-700">${existingFeedback.rating}/5</span>
+          </div>
+        </div>
+        ${existingFeedback.comments ? `
+          <div class="mb-3">
+            <label class="block text-sm font-medium text-green-800 mb-1">Your Comments</label>
+            <p class="text-green-700 text-sm leading-relaxed">${existingFeedback.comments}</p>
+          </div>
+        ` : ''}
+        <div>
+          <label class="block text-sm font-medium text-green-800 mb-1">Submitted On</label>
+          <p class="text-green-700 text-sm">${funFormatDateTime(existingFeedback.submissionDate)}</p>
+        </div>
+      </div>
+    `;
+  } else if (!isSessionCompleted) {
+    // Session not completed yet
+    content.innerHTML = `
+      <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+        <div class="flex items-center gap-2 mb-2">
+          <i data-lucide="clock" class="w-5 h-5 text-blue-600"></i>
+          <h3 class="font-medium text-blue-900">Feedback Pending</h3>
+        </div>
+        <p class="text-blue-700 text-sm">Feedback can be submitted after the training session ends on ${funFormatDate(session.endDate)}.</p>
+      </div>
+    `;
+  } else if (hasMissed) {
+    // User missed the session
+    content.innerHTML = `
+      <div class="bg-gray-50 border border-gray-200 rounded-lg p-4">
+        <div class="flex items-center gap-2 mb-2">
+          <i data-lucide="x-circle" class="w-5 h-5 text-gray-600"></i>
+          <h3 class="font-medium text-gray-900">Feedback Not Available</h3>
+        </div>
+        <p class="text-gray-700 text-sm">Feedback is not available as you did not attend this session.</p>
+      </div>
+    `;
+  } else if (hasAttended) {
+    // Can submit feedback
+    content.innerHTML = `
+      <div class="bg-amber-50 border border-amber-200 rounded-lg p-4">
+        <div class="flex items-center gap-2 mb-2">
+          <i data-lucide="message-circle" class="w-5 h-5 text-amber-600"></i>
+          <h3 class="font-medium text-amber-900">Submit Your Feedback</h3>
+        </div>
+        <p class="text-amber-700 text-sm mb-4">Help us improve our training programs by sharing your experience.</p>
+        <button onclick="funOpenFeedbackModal()" class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-blue-700 rounded-lg hover:bg-blue-800 transition-colors">
+          <i data-lucide="message-circle" class="w-4 h-4 mr-2"></i>
+          Submit Feedback
+        </button>
+      </div>
+    `;
+  } else {
+    // Default case - assigned but session completed
+    content.innerHTML = `
+      <div class="bg-gray-50 border border-gray-200 rounded-lg p-4">
+        <div class="flex items-center gap-2 mb-2">
+          <i data-lucide="info" class="w-5 h-5 text-gray-600"></i>
+          <h3 class="font-medium text-gray-900">No Feedback Available</h3>
+        </div>
+        <p class="text-gray-700 text-sm">Attendance status not updated or feedback not available.</p>
+      </div>
+    `;
+  }
+}
+
+// Create timeline
+function funCreateTimeline(session, reassessmentDelayDays = 14) {
+  const container = document.getElementById('timelineContainer');
+  if (!container) return;
+  
+  const now = new Date();
+  const startDate = new Date(session.scheduledDate);
+  const endDate = new Date(session.endDate);
+  const reassessmentDate = new Date(endDate.getTime() + (reassessmentDelayDays * 24 * 60 * 60 * 1000));
+  
+  const timelineItems = [
+    {
+      date: startDate,
+      title: 'Training Starts',
+      description: 'Training session begins',
+      icon: 'play-circle',
+      isPast: startDate < now,
+      isToday: funIsSameDay(startDate, now)
+    },
+    {
+      date: endDate,
+      title: 'Training Ends',
+      description: 'Training session concludes',
+      icon: 'stop-circle',
+      isPast: endDate < now,
+      isToday: funIsSameDay(endDate, now)
+    },
+    {
+      date: now,
+      title: 'Today',
+      description: funFormatDate(now),
+      icon: 'calendar',
+      isPast: false,
+      isToday: true,
+      isCurrentDay: true
+    },
+    {
+      date: reassessmentDate,
+      title: 'Reassessment Window',
+      description: 'Skills may be reassessed',
+      icon: 'refresh-cw',
+      isPast: reassessmentDate < now,
+      isToday: funIsSameDay(reassessmentDate, now)
+    }
+  ];
+  
+  // Sort by date
+  timelineItems.sort((a, b) => a.date - b.date);
+  
+  container.innerHTML = timelineItems.map((item, index) => {
+    const colorClass = item.isCurrentDay ? 'text-blue-600 bg-blue-50 border-blue-200' : 
+                      item.isPast ? 'text-green-600 bg-green-50 border-green-200' : 
+                      'text-gray-600 bg-gray-50 border-gray-200';
+    
+    const dotClass = item.isCurrentDay ? 'bg-blue-600' : 
+                     item.isPast ? 'bg-green-600' : 'bg-gray-400';
+    
+    return `
+      <div class="relative flex items-center">
+        <div class="absolute left-4 w-2 h-2 rounded-full ${dotClass} transform -translate-x-1/2"></div>
+        <div class="ml-10 flex-1">
+          <div class="border rounded-lg p-4 ${colorClass}">
+            <div class="flex items-center gap-2 mb-1">
+              <i data-lucide="${item.icon}" class="w-4 h-4"></i>
+              <h3 class="font-medium">${item.title}</h3>
+            </div>
+            <p class="text-sm">${item.description}</p>
+            <p class="text-xs mt-1">${funFormatDate(item.date)}</p>
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+// Check if same day
+function funIsSameDay(date1, date2) {
+  return date1.toDateString() === date2.toDateString();
+}
+
+// Rating modal functions
+let selectedRating = 0;
+
+function funSetupRatingStars() {
+  const stars = document.querySelectorAll('.rating-star');
+  stars.forEach((star, index) => {
+    star.addEventListener('click', () => {
+      selectedRating = parseInt(star.dataset.rating);
+      funUpdateStarDisplay();
+      funHideRatingError();
+    });
+    
+    star.addEventListener('mouseenter', () => {
+      const hoverRating = parseInt(star.dataset.rating);
+      funUpdateStarDisplay(hoverRating);
+    });
+  });
+  
+  document.getElementById('ratingContainer').addEventListener('mouseleave', () => {
+    funUpdateStarDisplay();
+  });
+}
+
+function funUpdateStarDisplay(hoverRating = null) {
+  const stars = document.querySelectorAll('.rating-star');
+  const displayRating = hoverRating || selectedRating;
+  
+  stars.forEach((star, index) => {
+    const rating = index + 1;
+    const icon = star.querySelector('[data-lucide="star"]');
+    if (rating <= displayRating) {
+      star.className = 'rating-star w-8 h-8 text-yellow-400 hover:text-yellow-400 transition-colors';
+    } else {
+      star.className = 'rating-star w-8 h-8 text-gray-300 hover:text-yellow-400 transition-colors';
+    }
+  });
+}
+
+function funShowRatingError() {
+  const error = document.getElementById('ratingError');
+  if (error) {
+    error.classList.remove('hidden');
+  }
+}
+
+function funHideRatingError() {
+  const error = document.getElementById('ratingError');
+  if (error) {
+    error.classList.add('hidden');
+  }
+}
+
+function funOpenFeedbackModal() {
+  const modal = document.getElementById('feedbackModal');
+  if (modal) {
+    selectedRating = 0;
+    document.getElementById('feedbackComments').value = '';
+    document.getElementById('charCount').textContent = '0/1000';
+    funUpdateStarDisplay();
+    funHideRatingError();
+    modal.classList.remove('hidden');
+  }
+}
+
+function funCloseFeedbackModal() {
+  const modal = document.getElementById('feedbackModal');
+  if (modal) {
+    modal.classList.add('hidden');
+  }
+}
+
+function funUpdateCharCount() {
+  const textarea = document.getElementById('feedbackComments');
+  const counter = document.getElementById('charCount');
+  if (textarea && counter) {
+    counter.textContent = `${textarea.value.length}/1000`;
+  }
+}
+
+function funSubmitFeedback() {
+  if (selectedRating === 0) {
+    funShowRatingError();
+    return;
+  }
+  
+  const sessionId = funGetUrlParam('id');
+  const currentUser = funGetCurrentUser();
+  if (!sessionId || !currentUser) {
+    alert('Unable to submit feedback. Please try again.');
+    return;
+  }
+  
+  const comments = document.getElementById('feedbackComments').value.trim();
+  
+  const success = funSaveTrainingFeedback(sessionId, currentUser.id, selectedRating, comments);
+  
+  if (success) {
+    alert('Feedback submitted successfully!');
+    funCloseFeedbackModal();
+    funLoadTrainingSession(); // Refresh the page content
+  } else {
+    alert('Failed to submit feedback. Please try again.');
+  }
+}
+
+// Main load function
+function funLoadTrainingSession() {
+  const sessionId = funGetUrlParam('id');
+  
+  if (!sessionId) {
+    alert('No training session ID provided');
+    history.back();
+    return;
+  }
+  
+  // Load all required data
+  const trainingSessions = getDataSafely('trainingSessions');
+  const skills = getDataSafely('skills');
+  const skillCategories = getDataSafely('skillCategories');
+  const users = getDataSafely('users');
+  const externalTrainers = getDataSafely('externalTrainers');
+  const assessments = getDataSafely('assessments');
+  const assessmentCycles = getDataSafely('assessmentCycles');
+  const currentUser = funGetCurrentUser();
+  
+  if (!currentUser) {
+    alert('User not found');
+    history.back();
+    return;
+  }
+  
+  // Find the training session
+  const session = trainingSessions.find(s => s.id === sessionId);
+  if (!session) {
+    alert('Training session not found');
+    history.back();
+    return;
+  }
+  
+  // Find related skill
+  const skill = skills.find(s => s.id === session.skillId);
+  if (!skill) {
+    alert('Associated skill not found');
+    history.back();
+    return;
+  }
+  
+  // Find skill category
+  const category = skillCategories.find(c => c.id === skill.categoryId);
+  
+  // Find trainer
+  let trainerName = 'Unknown';
+  if (session.trainerType === 'external') {
+    const trainer = externalTrainers.find(t => t.id === session.trainerId);
+    trainerName = trainer ? trainer.name : 'External Trainer';
+  } else {
+    const trainer = users.find(u => u.id === session.trainerId);
+    trainerName = trainer ? `${trainer.firstName} ${trainer.lastName}` : 'Internal Trainer';
+  }
+  
+  // Find user's attendance
+  const userAttendance = session.assignedEmployees?.find(e => e.employeeId === currentUser.id);
+  
+  // Find most recent assessment for this skill
+  const userAssessments = assessments.filter(a => 
+    a.employeeId === currentUser.id && 
+    a.skillId === session.skillId &&
+    a.status === 'active'
+  ).sort((a, b) => new Date(b.assessmentTimestamp) - new Date(a.assessmentTimestamp));
+  
+  const recentAssessment = userAssessments[0];
+  
+  // Find active assessment cycle
+  const activeCycle = assessmentCycles.find(c => c.isActiveCycle) || { reassessmentDelayDays: 14 };
+  
+  // Check for existing feedback
+  const existingFeedback = funGetFeedbackForSession(sessionId, currentUser.id);
+  
+  // Update page content
+  funUpdatePageContent(session, skill, category, trainerName, userAttendance, recentAssessment, activeCycle, existingFeedback);
+}
+
+function funUpdatePageContent(session, skill, category, trainerName, userAttendance, recentAssessment, activeCycle, existingFeedback) {
+  // Update breadcrumb and title
+  const breadcrumbSkillName = document.getElementById('breadcrumbSkillName');
+  const pageTitle = document.getElementById('pageTitle');
+  
+  if (breadcrumbSkillName) {
+    breadcrumbSkillName.textContent = `${skill.name} Training`;
+  }
+  
+  if (pageTitle) {
+    pageTitle.textContent = `${skill.name} Training Session`;
+  }
+  
+  // Show status badge
+  funShowStatusBadge(session.status);
+  
+  // Update session information
+  const skillLink = document.getElementById('skillLink');
+  const categoryName = document.getElementById('categoryName');
+  const scheduledDate = document.getElementById('scheduledDate');
+  const endDate = document.getElementById('endDate');
+  const duration = document.getElementById('duration');
+  const trainerNameEl = document.getElementById('trainerName');
+  
+  if (skillLink) {
+    skillLink.textContent = skill.name;
+    skillLink.href = `skill_growth_detail.html?skillId=${skill.id}`;
+  }
+  
+  if (categoryName) {
+    categoryName.textContent = category ? category.categoryName : 'Unknown Category';
+  }
+  
+  if (scheduledDate) {
+    scheduledDate.textContent = funFormatDate(session.scheduledDate);
+  }
+  
+  if (endDate) {
+    endDate.textContent = funFormatDate(session.endDate);
+  }
+  
+  if (duration) {
+    duration.textContent = funCalculateDuration(session.scheduledDate, session.endDate);
+  }
+  
+  if (trainerNameEl) {
+    trainerNameEl.textContent = trainerName;
+  }
+  
+  // Show mode and trainer type badges
+  funShowModeBadge(session.mode);
+  funShowTrainerTypeBadge(session.trainerType);
+  
+  // Show attendance badge
+  const attendanceStatus = userAttendance?.attendanceStatus || 'assigned';
+  funShowAttendanceBadge(attendanceStatus);
+  
+  // Update skill context
+  if (recentAssessment) {
+    const currentScore = document.getElementById('currentScore');
+    const benchmarkScore = document.getElementById('benchmarkScore');
+    
+    if (currentScore) {
+      currentScore.textContent = recentAssessment.score;
+    }
+    
+    if (benchmarkScore) {
+      benchmarkScore.textContent = recentAssessment.benchmarkAtTimeOfAssessment;
+    }
+    
+    const gap = recentAssessment.benchmarkAtTimeOfAssessment - recentAssessment.score;
+    funShowGapIndicator(gap);
+    funShowTniBadge(recentAssessment.tniFlag);
+  } else {
+    // No assessment data
+    const currentScore = document.getElementById('currentScore');
+    const benchmarkScore = document.getElementById('benchmarkScore');
+    const gapValue = document.getElementById('gapValue');
+    
+    if (currentScore) currentScore.textContent = 'N/A';
+    if (benchmarkScore) benchmarkScore.textContent = 'N/A';
+    if (gapValue) gapValue.textContent = 'N/A';
+    
+    const tniBadge = document.getElementById('tniBadge');
+    if (tniBadge) {
+      tniBadge.textContent = 'No Assessment';
+      tniBadge.className = 'inline-flex px-2 py-1 text-xs font-medium rounded text-gray-800 bg-gray-50';
+    }
+  }
+  
+  // Update skill history link
+  const skillHistoryLink = document.getElementById('skillHistoryLink');
+  if (skillHistoryLink) {
+    skillHistoryLink.href = `skill_growth_detail.html?skillId=${skill.id}`;
+  }
+  
+  // Show feedback section
+  funShowFeedbackSection(session, userAttendance, existingFeedback);
+  
+  // Create timeline
+  funCreateTimeline(session, activeCycle.reassessmentDelayDays);
+}
+
+// Initialize page
+document.addEventListener('DOMContentLoaded', function() {
+  funLoadTrainingSession();
+  
+  // Setup rating stars
+  funSetupRatingStars();
+  
+  // Setup char counter
+  const textarea = document.getElementById('feedbackComments');
+  if (textarea) {
+    textarea.addEventListener('input', funUpdateCharCount);
+  }
+  
+  // Setup modal buttons
+  const cancelBtn = document.getElementById('cancelFeedback');
+  const submitBtn = document.getElementById('submitFeedback');
+  const feedbackForm = document.getElementById('feedbackForm');
+  
+  if (cancelBtn) {
+    cancelBtn.addEventListener('click', funCloseFeedbackModal);
+  }
+  
+  if (feedbackForm) {
+    feedbackForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      funSubmitFeedback();
+    });
+  }
+  
+  // Update navigation
+  if (window.TemplateUtils && window.TemplateUtils.setActiveNavLink) {
+    window.TemplateUtils.setActiveNavLink('my_training_sessions');
+  }
+});
+</script></body></html>

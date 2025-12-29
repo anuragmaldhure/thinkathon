@@ -1,0 +1,1387 @@
+<html lang="en"><head>
+    <meta charset="UTF-8">
+    <title>SkillBridge - Team Lead Portal</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://tiramai-grid-lib.tiram.app/tiramai-grid.umd.js"></script>
+    <style type="text/tailwindcss">
+      @theme {
+        --color-primary: #1e40af;
+        --color-secondary: #059669;
+        --color-accent: #f59e0b;
+        --color-surface: #ffffff;
+        --color-background: #f8fafc;
+        --color-border: #e2e8f0;
+        --color-error: #dc2626;
+
+        --header-height: 4rem;
+        --sidebar-width: 16rem;
+
+        --text-sm: 12px;
+        --text-md: 14px;
+        --text-base: 14px;
+        --text-lg: 16px;
+        --text-xl: 18px;
+        --text-2xl: 20px;
+        --text-3xl: 24px;
+        --text-4xl: 30px;
+        --text-5xl: 36px;
+        --text-6xl: 48px;
+        --text-7xl: 60px;
+        --text-8xl: 72px;
+        --text-9xl: 96px;
+        --text-10xl: 128px;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+      }
+      ::-webkit-scrollbar-track {
+        background: #f1f1f1;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+        border-radius: 4px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: #94a3b8;
+      }
+
+      .app-header {
+        height: var(--header-height, 4rem);
+      }
+      .app-sidebar {
+        top: var(--header-height, 4rem);
+        width: var(--sidebar-width, 16rem);
+        height: calc(100vh - var(--header-height, 4rem));
+        overflow-y: auto;
+        overflow-x: hidden;
+      }
+      .app-main {
+        margin-top: var(--header-height, 4rem);
+        min-height: calc(100vh - var(--header-height, 4rem));
+      }
+      @media (min-width: 768px) {
+        .app-main {
+          margin-left: var(--sidebar-width, 16rem);
+        }
+      }
+
+      body.sidebar-open {
+        overflow: hidden;
+      }
+
+      @media (max-width: 767px) {
+        .app-sidebar {
+          left: calc(-1 * var(--sidebar-width, 16rem));
+          transition: left 0.3s ease-in-out;
+        }
+        .app-sidebar.open {
+          left: 0;
+        }
+      }
+
+      .nav-link.active {
+        background: var(--color-primary);
+        color: white;
+      }
+      .nav-link.active:hover {
+        background: var(--color-primary);
+        opacity: 0.9;
+      }
+
+      .popover {
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(-8px);
+        transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out,
+          visibility 0.2s ease-in-out;
+      }
+      .popover.visible {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+      }
+
+      .sidebar-backdrop {
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+      }
+      .sidebar-backdrop.active {
+        opacity: 1;
+        visibility: visible;
+      }
+      
+      button,
+      a {
+        font-size: 14px;
+      }
+    </style>
+  <title>Skill Trend Analysis</title></head>
+  <body class="bg-slate-50 text-gray-800 overflow-x-hidden">
+    <header class="app-header fixed top-0 left-0 right-0 bg-white border-b border-slate-200 z-40">
+      <div class="h-full max-w-[1920px] mx-auto px-4 md:px-6 flex justify-between items-center">
+        <div class="flex items-center gap-3">
+          <button id="mobileMenuToggle" class="flex items-center justify-center w-10 h-10 rounded text-gray-500 hover:bg-gray-100 hover:text-gray-900 transition-all duration-200 cursor-pointer border-0 bg-transparent md:hidden focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-700 focus-visible:outline-offset-2" aria-label="Toggle navigation menu" aria-expanded="false">
+            <i data-lucide="menu" class="w-6 h-6"></i>
+          </button>
+
+          <div class="flex items-center gap-3">
+            <div class="w-8 h-8 rounded-lg flex items-center justify-center overflow-hidden">
+              <svg viewBox="0 0 400 400" width="32" height="32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <g>
+                  <path d="M80 230 Q200 80 320 230" stroke="#1E40AF" stroke-width="26" fill="none" stroke-linecap="round"></path>
+                  <rect x="95" y="230" width="24" height="80" rx="8" fill="#059669"></rect>
+                  <rect x="281" y="230" width="24" height="80" rx="8" fill="#059669"></rect>
+                  <rect x="189" y="196" width="22" height="114" rx="7" fill="#1E40AF"></rect>
+                  <circle cx="130" cy="180" r="15" fill="#1E40AF"></circle>
+                  <circle cx="270" cy="180" r="15" fill="#1E40AF"></circle>
+                  <circle cx="200" cy="106" r="17" fill="#059669"></circle>
+                  <rect x="192" y="126" width="16" height="36" rx="6" fill="#059669"></rect>
+                </g>
+              </svg>
+            </div>
+            <h1 class="text-lg md:text-xl font-bold text-gray-900">
+              SkillBridge
+            </h1>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-2 md:gap-3">
+          <button id="userProfileButton" class="flex items-center gap-3 px-3 py-2 rounded-lg border border-transparent hover:bg-gray-50 hover:border-gray-200 transition-all duration-200 cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-700 focus-visible:outline-offset-2" aria-label="User profile menu" aria-expanded="false" aria-haspopup="true">
+            <div id="userAvatar" class="w-8 h-8 bg-blue-700 text-white rounded-full flex items-center justify-center text-sm font-semibold shrink-0"></div>
+            <div class="hidden sm:flex flex-col items-start max-w-[150px]">
+              <div id="userName" class="text-sm font-medium text-gray-900 truncate w-full"></div>
+            </div>
+            <i data-lucide="chevron-down" class="w-4 h-4 text-gray-500 hidden sm:block"></i>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <div id="userProfilePopover" class="popover fixed top-[4.5rem] right-4 md:right-6 w-72 bg-white border border-gray-200 rounded-lg shadow-xl z-50" role="dialog" aria-labelledby="popoverUserName" data-portal="body">
+      <div class="p-4">
+        <div class="flex items-center gap-3 pb-3 mb-3 border-b border-gray-100">
+          <div id="popoverUserAvatar" class="w-8 h-8 bg-blue-700 text-white rounded-full flex items-center justify-center text-sm font-semibold shrink-0"></div>
+          <div class="flex-1 min-w-0">
+            <div id="popoverUserName" class="font-semibold text-gray-900 truncate"></div>
+            <div id="popoverUserEmail" class="text-xs text-gray-500 truncate"></div>
+          </div>
+        </div>
+
+        <div class="space-y-1">
+          <button id="signOutButton" class="w-full flex items-center gap-3 px-3 py-2 text-sm font-medium text-red-600 hover:bg-red-50 rounded transition-all duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-700 focus-visible:outline-offset-2">
+            <i data-lucide="log-out" class="w-4 h-4"></i>
+            Sign Out
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div id="sidebarBackdrop" class="sidebar-backdrop fixed inset-0 bg-black/50 z-20 md:hidden" style="top: var(--header-height, 4rem)"></div>
+
+    <aside id="sidebar" class="app-sidebar fixed left-0 bg-white border-r border-slate-200 overflow-y-auto z-30">
+      <nav class="p-4" role="navigation" aria-label="Main navigation">
+        <div class="py-6 border-b border-gray-100 first:pt-0 last:border-b-0">
+          <div class="px-4 pb-2 text-xs font-semibold uppercase tracking-wider text-gray-400">
+            Dashboard
+          </div>
+          <div class="space-y-1">
+            <a href="team_dashboard.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline active" data-page="team_dashboard">
+              <i data-lucide="home" class="w-5 h-5"></i>
+              <span>Team Dashboard</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="py-6 border-b border-gray-100 last:border-b-0">
+          <div class="px-4 pb-2 text-xs font-semibold uppercase tracking-wider text-gray-400">
+            Team Management
+          </div>
+          <div class="space-y-1">
+            <a href="my_team.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline" data-page="my_team">
+              <i data-lucide="users" class="w-5 h-5"></i>
+              <span>My Team</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="py-6 border-b border-gray-100 last:border-b-0">
+          <div class="px-4 pb-2 text-xs font-semibold uppercase tracking-wider text-gray-400">
+            Analytics
+          </div>
+          <div class="space-y-1">
+            <a href="team_skill_gaps.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline" data-page="team_skill_gaps">
+              <i data-lucide="target" class="w-5 h-5"></i>
+              <span>Skill Gaps</span>
+            </a>
+            <a href="skill_trend_analysis.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline" data-page="skill_trend_analysis">
+              <i data-lucide="trending-up" class="w-5 h-5"></i>
+              <span>Skill Trends</span>
+            </a>
+            <a href="training_impact.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline" data-page="training_impact">
+              <i data-lucide="graduation-cap" class="w-5 h-5"></i>
+              <span>Training Impact</span>
+            </a>
+          </div>
+        </div>
+      </nav>
+    </aside>
+
+    <main class="app-main max-w-7xl mx-auto p-4 md:p-6 lg:p-8" id="pageContent" role="main"><nav class="flex items-center space-x-2 text-sm text-gray-600 mb-6" aria-label="Breadcrumb">
+  <a href="team_dashboard.html" class="hover:text-gray-900">Home</a>
+  <i data-lucide="chevron-right" class="w-4 h-4"></i>
+  <span class="text-gray-900 font-medium">Skill Trend Analysis</span>
+</nav>
+
+<!-- Page Title -->
+<h1 class="text-2xl font-bold text-gray-900 mb-6">Skill Trend Analysis</h1>
+
+<!-- Skill Selector -->
+<div class="mb-6">
+  <label for="skillSelector" class="block text-sm font-medium text-gray-700 mb-2">
+    Select Skill for Analysis
+  </label>
+  <select id="skillSelector" class="w-full md:w-1/2 px-4 py-2 border border-slate-200 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-700">
+    <option value="">Choose a skill...</option>
+  </select>
+</div>
+
+<!-- Empty State - No Skill Selected -->
+<div id="noSkillSelected" class="text-center py-12">
+  <i data-lucide="trending-up" class="w-12 h-12 mx-auto text-gray-400 mb-4"></i>
+  <h3 class="text-lg font-medium text-gray-900 mb-2">Select a skill to view analysis</h3>
+  <p class="text-gray-500">Choose a skill from the dropdown above to see detailed trend analysis and team performance insights.</p>
+</div>
+
+<!-- Empty State - No Assessments -->
+<div id="noAssessments" class="hidden text-center py-12">
+  <i data-lucide="bar-chart-3" class="w-12 h-12 mx-auto text-gray-400 mb-4"></i>
+  <h3 class="text-lg font-medium text-gray-900 mb-2">No assessments for this skill in current cycle</h3>
+  <p class="text-gray-500">No team members have been assessed for this skill in the current assessment cycle.</p>
+</div>
+
+<!-- Main Analysis Content -->
+<div id="analysisContent" class="hidden space-y-6">
+  
+  <!-- Skill Info Card -->
+  <div class="bg-white rounded-lg border border-slate-200 p-6">
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-4">
+      <div>
+        <h2 id="selectedSkillName" class="text-xl font-semibold text-gray-900 mb-2"></h2>
+        <p id="selectedSkillDescription" class="text-sm text-gray-600"></p>
+      </div>
+      <div class="mt-4 md:mt-0 flex flex-col md:items-end space-y-2">
+        <div class="flex items-center space-x-4">
+          <span class="text-xs text-gray-500">Category:</span>
+          <span id="selectedSkillCategory" class="px-2 py-1 text-xs font-medium bg-blue-50 text-blue-700 rounded"></span>
+        </div>
+        <div class="flex items-center space-x-4">
+          <span class="text-xs text-gray-500">Criticality:</span>
+          <span id="selectedSkillCriticality" class="px-2 py-1 text-xs font-medium bg-amber-50 text-amber-700 rounded"></span>
+        </div>
+        <div class="flex items-center space-x-4">
+          <span class="text-xs text-gray-500">Current Benchmark:</span>
+          <span id="selectedSkillBenchmark" class="px-2 py-1 text-xs font-bold bg-green-50 text-green-700 rounded"></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Current Cycle Summary -->
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+    <div class="bg-white rounded-lg border border-slate-200 p-4">
+      <div class="flex items-center">
+        <div class="p-2 bg-blue-50 rounded">
+          <i data-lucide="bar-chart-3" class="w-5 h-5 text-blue-600"></i>
+        </div>
+        <div class="ml-3">
+          <p class="text-xs font-medium text-gray-500">Team Average Score</p>
+          <p id="teamAverage" class="text-lg font-semibold text-gray-900">-</p>
+        </div>
+      </div>
+    </div>
+    
+    <div class="bg-white rounded-lg border border-slate-200 p-4">
+      <div class="flex items-center">
+        <div class="p-2 bg-amber-50 rounded">
+          <i data-lucide="target" class="w-5 h-5 text-amber-600"></i>
+        </div>
+        <div class="ml-3">
+          <p class="text-xs font-medium text-gray-500">Benchmark Gap</p>
+          <p id="benchmarkGap" class="text-lg font-semibold text-gray-900">-</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-lg border border-slate-200 p-4">
+      <div class="flex items-center">
+        <div class="p-2 bg-red-50 rounded">
+          <i data-lucide="arrow-down-circle" class="w-5 h-5 text-red-600"></i>
+        </div>
+        <div class="ml-3">
+          <p class="text-xs font-medium text-gray-500">Below Benchmark</p>
+          <p id="belowBenchmark" class="text-lg font-semibold text-gray-900">-</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-lg border border-slate-200 p-4">
+      <div class="flex items-center">
+        <div class="p-2 bg-yellow-50 rounded">
+          <i data-lucide="alert-triangle" class="w-5 h-5 text-yellow-600"></i>
+        </div>
+        <div class="ml-3">
+          <p class="text-xs font-medium text-gray-500">TNI Rate</p>
+          <p id="tniRate" class="text-lg font-semibold text-gray-900">-</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Visualizations -->
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <!-- Score Distribution Chart -->
+    <div class="bg-white rounded-lg border border-slate-200 p-6">
+      <h3 class="text-lg font-semibold text-gray-900 mb-4">Score Distribution</h3>
+      <div id="scoreDistributionChart" class="h-64 flex items-end justify-center space-x-2 bg-gray-50 rounded-lg p-4">
+        <div class="text-center text-gray-500">
+          <i data-lucide="bar-chart" class="w-8 h-8 mx-auto mb-2"></i>
+          <p class="text-xs">Chart will appear here</p>
+        </div>
+      </div>
+      <div class="mt-4 text-center">
+        <div class="flex items-center justify-center space-x-4 text-xs text-gray-500">
+          <div class="flex items-center space-x-1">
+            <div class="w-3 h-3 bg-blue-500 rounded"></div>
+            <span>Team Scores</span>
+          </div>
+          <div class="flex items-center space-x-1">
+            <div class="w-0.5 h-6 bg-green-600"></div>
+            <span>Benchmark</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Trend Over Time Chart -->
+    <div class="bg-white rounded-lg border border-slate-200 p-6">
+      <h3 class="text-lg font-semibold text-gray-900 mb-4">Trend Over Time</h3>
+      <div id="trendChart" class="h-64 flex items-center justify-center bg-gray-50 rounded-lg p-4">
+        <div class="text-center text-gray-500">
+          <i data-lucide="trending-up" class="w-8 h-8 mx-auto mb-2"></i>
+          <p class="text-xs">Chart will appear here</p>
+        </div>
+      </div>
+      <div class="mt-4 text-center">
+        <div class="flex items-center justify-center space-x-4 text-xs text-gray-500">
+          <div class="flex items-center space-x-1">
+            <div class="w-3 h-3 bg-blue-500 rounded"></div>
+            <span>Team Average</span>
+          </div>
+          <div class="flex items-center space-x-1">
+            <div class="w-3 h-3 bg-green-600 rounded"></div>
+            <span>Benchmark</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Team Rankings Table -->
+  <div class="bg-white rounded-lg border border-slate-200 p-6">
+    <h3 class="text-lg font-semibold text-gray-900 mb-4">Team Rankings</h3>
+    <div id="teamRankingsGrid"></div>
+    <div id="teamRankingsEmpty" class="hidden text-center py-8">
+      <i data-lucide="users" class="w-8 h-8 mx-auto text-gray-400 mb-2"></i>
+      <p class="text-sm text-gray-500">No team member assessments found for this skill.</p>
+    </div>
+  </div>
+</div>
+
+</main>
+
+    <script src="app.js"></script>
+    <script src="app_data.js"></script>
+    <script id="container-script">
+      (function () {
+        const TemplateUtils = (window.TemplateUtils =
+          window.TemplateUtils || {});
+
+        TemplateUtils.UserUtils =
+          TemplateUtils.UserUtils ||
+          (function createUserUtils() {
+            return {
+              getCurrentUser() {
+                try {
+                  let currentUserId = localStorage.getItem("currentUserId");
+                  if (!currentUserId) {
+                    localStorage.setItem("currentUserId", "user_001_alice_web");
+                    currentUserId = "user_001_alice_web";
+                  }
+
+                  const userData = localStorage.getItem(
+                    `users_${currentUserId}`
+                  );
+                  return userData ? JSON.parse(userData) : null;
+                } catch (error) {
+                  console.error("Error retrieving user data:", error);
+                  return null;
+                }
+              },
+              signOut() {
+                try {
+                  localStorage.removeItem("currentUserId");
+                  window.location.reload();
+                } catch (error) {
+                  console.error("Error signing out:", error);
+                }
+              },
+              getUserDisplayName(user) {
+                if (!user) return "Guest";
+                return user.firstName && user.lastName
+                  ? `${user.firstName} ${user.lastName}`
+                  : user.firstName || user.lastName || "User";
+              },
+              getUserInitials(user) {
+                if (!user) return "?";
+                const first = user.firstName?.charAt(0) || "";
+                const last = user.lastName?.charAt(0) || "";
+                return (first + last).toUpperCase() || "U";
+              },
+            };
+          })();
+
+        if (TemplateUtils.__bootstrapped) {
+          if (typeof window.lucide?.createIcons === "function") {
+            window.lucide.createIcons();
+          }
+          return;
+        }
+
+        TemplateUtils.__bootstrapped = true;
+
+        const state = {
+          popoverVisible: false,
+          sidebarOpen: false,
+          resizeTimer: null,
+          debounceTimer: null,
+          isUpdatingIcons: false,
+          observer: null,
+          refs: {},
+        };
+
+        function ready(fn) {
+          if (document.readyState === "loading") {
+            document.addEventListener("DOMContentLoaded", fn, { once: true });
+          } else if (typeof queueMicrotask === "function") {
+            queueMicrotask(fn);
+          } else {
+            Promise.resolve().then(fn);
+          }
+        }
+
+        function safeLucide(callback) {
+          if (typeof window.lucide?.createIcons === "function") {
+            callback();
+          }
+        }
+
+        function cacheRefs() {
+          state.refs = {
+            userProfileButton: document.getElementById("userProfileButton"),
+            userProfilePopover: document.getElementById("userProfilePopover"),
+            userAvatar: document.getElementById("userAvatar"),
+            userName: document.getElementById("userName"),
+            popoverUserAvatar: document.getElementById("popoverUserAvatar"),
+            popoverUserName: document.getElementById("popoverUserName"),
+            popoverUserEmail: document.getElementById("popoverUserEmail"),
+            signOutButton: document.getElementById("signOutButton"),
+            mobileMenuToggle: document.getElementById("mobileMenuToggle"),
+            sidebar: document.getElementById("sidebar"),
+            sidebarBackdrop: document.getElementById("sidebarBackdrop"),
+            navLinks: document.querySelectorAll(".nav-link"),
+            pageContent: document.getElementById("pageContent"),
+          };
+        }
+
+        function initializeUserProfile() {
+          const { userAvatar, userName } = state.refs;
+          if (!userAvatar || !userName) return;
+
+          const currentUser = TemplateUtils.UserUtils.getCurrentUser();
+          if (currentUser) {
+            userAvatar.textContent =
+              TemplateUtils.UserUtils.getUserInitials(currentUser);
+            userName.textContent =
+              TemplateUtils.UserUtils.getUserDisplayName(currentUser);
+          } else {
+            userAvatar.textContent = "?";
+            userName.textContent = "Guest";
+          }
+        }
+
+        function populatePopover() {
+          const currentUser = TemplateUtils.UserUtils.getCurrentUser();
+          const { popoverUserAvatar, popoverUserName, popoverUserEmail } =
+            state.refs;
+          if (!popoverUserAvatar || !popoverUserName || !popoverUserEmail)
+            return;
+
+          if (currentUser) {
+            popoverUserAvatar.textContent =
+              TemplateUtils.UserUtils.getUserInitials(currentUser);
+            popoverUserName.textContent =
+              TemplateUtils.UserUtils.getUserDisplayName(currentUser);
+            popoverUserEmail.textContent = currentUser.email || "No email";
+          } else {
+            popoverUserAvatar.textContent = "?";
+            popoverUserName.textContent = "Guest";
+            popoverUserEmail.textContent = "Not logged in";
+          }
+        }
+
+        function toggleUserPopover(forceClose = false) {
+          const { userProfilePopover, userProfileButton } = state.refs;
+          if (!userProfilePopover || !userProfileButton) return;
+
+          const shouldOpen = forceClose ? false : !state.popoverVisible;
+          if (shouldOpen) {
+            populatePopover();
+            userProfilePopover.classList.add("visible");
+            userProfileButton.setAttribute("aria-expanded", "true");
+            state.popoverVisible = true;
+            const firstButton = userProfilePopover.querySelector("button");
+            if (firstButton) {
+              setTimeout(() => firstButton.focus(), 50);
+            }
+          } else {
+            userProfilePopover.classList.remove("visible");
+            userProfileButton.setAttribute("aria-expanded", "false");
+            state.popoverVisible = false;
+          }
+        }
+
+        function hideUserPopover() {
+          if (state.popoverVisible) {
+            toggleUserPopover(true);
+          }
+        }
+
+        function toggleMobileSidebar(forceClose = false) {
+          const { sidebar, sidebarBackdrop, mobileMenuToggle } = state.refs;
+          if (!sidebar || !sidebarBackdrop || !mobileMenuToggle) return;
+
+          const shouldOpen = forceClose ? false : !state.sidebarOpen;
+          state.sidebarOpen = shouldOpen;
+
+          sidebar.classList.toggle("open", shouldOpen);
+          sidebarBackdrop.classList.toggle("active", shouldOpen);
+          document.body.classList.toggle("sidebar-open", shouldOpen);
+          mobileMenuToggle.setAttribute(
+            "aria-expanded",
+            shouldOpen ? "true" : "false"
+          );
+
+          const icon = mobileMenuToggle.querySelector("[data-lucide]");
+          if (icon) {
+            icon.setAttribute("data-lucide", shouldOpen ? "x" : "menu");
+            safeLucide(() => window.lucide.createIcons());
+          }
+        }
+
+        function closeMobileSidebar() {
+          if (state.sidebarOpen) {
+            toggleMobileSidebar(true);
+          }
+        }
+
+        function setActiveNavLink(pageId) {
+          if (!pageId) return;
+          const { navLinks } = state.refs;
+          navLinks?.forEach((link) => {
+            if (link.dataset.page === pageId) {
+              link.classList.add("active");
+            } else {
+              link.classList.remove("active");
+            }
+          });
+        }
+
+        TemplateUtils.setActiveNavLink = setActiveNavLink;
+        TemplateUtils.closeMobileSidebar = closeMobileSidebar;
+
+        function handleDocumentClick(event) {
+          const { userProfilePopover, userProfileButton } = state.refs;
+          if (
+            state.popoverVisible &&
+            userProfilePopover &&
+            userProfileButton &&
+            !userProfilePopover.contains(event.target) &&
+            !userProfileButton.contains(event.target)
+          ) {
+            hideUserPopover();
+          }
+        }
+
+        function handleKeydown(event) {
+          if (event.key !== "Escape") return;
+          if (state.popoverVisible) {
+            hideUserPopover();
+            state.refs.userProfileButton?.focus();
+          }
+          if (state.sidebarOpen) {
+            closeMobileSidebar();
+            state.refs.mobileMenuToggle?.focus();
+          }
+        }
+
+        function handleResize() {
+          clearTimeout(state.resizeTimer);
+          state.resizeTimer = setTimeout(() => {
+            if (window.innerWidth >= 768) {
+              closeMobileSidebar();
+            }
+          }, 200);
+        }
+
+        function bindEvents() {
+          const {
+            userProfileButton,
+            mobileMenuToggle,
+            sidebarBackdrop,
+            signOutButton,
+            navLinks,
+          } = state.refs;
+
+          userProfileButton?.addEventListener("click", (event) => {
+            event.stopPropagation();
+            toggleUserPopover();
+          });
+
+          mobileMenuToggle?.addEventListener("click", (event) => {
+            event.stopPropagation();
+            toggleMobileSidebar();
+          });
+
+          sidebarBackdrop?.addEventListener("click", () =>
+            closeMobileSidebar()
+          );
+
+          signOutButton?.addEventListener("click", () => {
+            if (confirm("Are you sure you want to sign out?")) {
+              TemplateUtils.UserUtils.signOut();
+            }
+          });
+
+          navLinks?.forEach((link) => {
+            link.addEventListener("click", () => closeMobileSidebar());
+          });
+
+          document.addEventListener("click", handleDocumentClick);
+          document.addEventListener("keydown", handleKeydown);
+          window.addEventListener("resize", handleResize);
+
+          window.addEventListener("pagehide", cleanup);
+        }
+
+        function cleanup() {
+          if (state.resizeTimer) clearTimeout(state.resizeTimer);
+          if (state.debounceTimer) clearTimeout(state.debounceTimer);
+          if (state.observer) {
+            state.observer.disconnect();
+            state.observer = null;
+          }
+          document.removeEventListener("click", handleDocumentClick);
+          document.removeEventListener("keydown", handleKeydown);
+          window.removeEventListener("resize", handleResize);
+        }
+
+        function initializePortalTargets() {
+          document.querySelectorAll('[data-portal="body"]').forEach((node) => {
+            if (node.parentElement !== document.body) {
+              document.body.appendChild(node);
+            }
+          });
+        }
+
+        function observePageContent() {
+          const { pageContent } = state.refs;
+          if (!pageContent || typeof MutationObserver !== "function") return;
+
+          const observer = new MutationObserver((mutations) => {
+            if (state.isUpdatingIcons) return;
+
+            const isLucideUpdate = mutations.every((m) => {
+              if (m.type !== "childList") return false;
+              const nodes = [...m.addedNodes, ...m.removedNodes];
+              return nodes.every(
+                (n) =>
+                  n.nodeType !== Node.ELEMENT_NODE ||
+                  n.nodeName.toLowerCase() === "svg" ||
+                  n.classList?.contains("lucide")
+              );
+            });
+            if (isLucideUpdate) return;
+
+            if (state.debounceTimer) clearTimeout(state.debounceTimer);
+            state.debounceTimer = setTimeout(() => {
+              state.debounceTimer = null;
+              state.isUpdatingIcons = true;
+              safeLucide(() => {
+                window.lucide.createIcons();
+                requestAnimationFrame(() => {
+                  state.isUpdatingIcons = false;
+                });
+              });
+            }, 100);
+          });
+
+          observer.observe(pageContent, { childList: true, subtree: true });
+          state.observer = observer;
+        }
+
+        function bootstrap() {
+          cacheRefs();
+          initializePortalTargets();
+          initializeUserProfile();
+          bindEvents();
+          safeLucide(() => window.lucide.createIcons());
+          observePageContent();
+        }
+
+        ready(bootstrap);
+      })();
+    </script>
+  
+
+<script>
+  let gridInstance = null;
+  let currentSkillId = null;
+
+  // Safe data retrieval function
+  function getDataSafely(key) {
+    try {
+      const data = localStorage.getItem(key);
+      return data ? JSON.parse(data) : [];
+    } catch (error) {
+      console.error(`Error parsing ${key}:`, error);
+      return [];
+    }
+  }
+
+  // Get current user and team
+  function getCurrentUser() {
+    try {
+      const users = getDataSafely('users');
+      return users.find(u => u.uid === 'auth_003') || users[2]; // David Chen as team lead
+    } catch (error) {
+      console.error('Error getting current user:', error);
+      return null;
+    }
+  }
+
+  function getTeamMembers() {
+    try {
+      const currentUser = getCurrentUser();
+      if (!currentUser) return [];
+      
+      const users = getDataSafely('users');
+      return users.filter(u => u.teamLeadId === currentUser.id || u.id === currentUser.id);
+    } catch (error) {
+      console.error('Error getting team members:', error);
+      return [];
+    }
+  }
+
+  // Get team skill mappings
+  function getTeamSkillMappings() {
+    try {
+      const teamMembers = getTeamMembers();
+      const teamMemberIds = teamMembers.map(m => m.id);
+      const skillMappings = getDataSafely('skillMappings');
+      
+      return skillMappings.filter(mapping => 
+        teamMemberIds.includes(mapping.employeeId) && mapping.status === 'active'
+      );
+    } catch (error) {
+      console.error('Error getting team skill mappings:', error);
+      return [];
+    }
+  }
+
+  // Populate skill selector dropdown
+  function funInitSkillSelector() {
+    try {
+      const skillMappings = getTeamSkillMappings();
+      const uniqueSkillIds = [...new Set(skillMappings.map(m => m.skillId))];
+      const skills = getDataSafely('skills');
+      
+      const selector = document.getElementById('skillSelector');
+      if (!selector) return;
+      
+      // Clear existing options except first
+      while (selector.children.length > 1) {
+        selector.removeChild(selector.lastChild);
+      }
+      
+      uniqueSkillIds.forEach(skillId => {
+        const skill = skills.find(s => s.id === skillId && s.status === 'active');
+        if (skill) {
+          const option = document.createElement('option');
+          option.value = skill.id;
+          option.textContent = skill.name;
+          selector.appendChild(option);
+        }
+      });
+    } catch (error) {
+      console.error('Error initializing skill selector:', error);
+    }
+  }
+
+  // Handle skill selection change
+  function funOnSkillChange(skillId) {
+    currentSkillId = skillId;
+    
+    const noSkillSelected = document.getElementById('noSkillSelected');
+    const noAssessments = document.getElementById('noAssessments');
+    const analysisContent = document.getElementById('analysisContent');
+    
+    if (!skillId) {
+      if (noSkillSelected) noSkillSelected.classList.remove('hidden');
+      if (noAssessments) noAssessments.classList.add('hidden');
+      if (analysisContent) analysisContent.classList.add('hidden');
+      return;
+    }
+    
+    // Check if there are assessments for this skill
+    const teamMembers = getTeamMembers();
+    const teamMemberIds = teamMembers.map(m => m.id);
+    const assessments = getDataSafely('assessments').filter(a => 
+      a.skillId === skillId && 
+      teamMemberIds.includes(a.employeeId) && 
+      a.status === 'active'
+    );
+    
+    if (assessments.length === 0) {
+      if (noSkillSelected) noSkillSelected.classList.add('hidden');
+      if (noAssessments) noAssessments.classList.remove('hidden');
+      if (analysisContent) analysisContent.classList.add('hidden');
+      return;
+    }
+    
+    // Show analysis content
+    if (noSkillSelected) noSkillSelected.classList.add('hidden');
+    if (noAssessments) noAssessments.classList.add('hidden');
+    if (analysisContent) analysisContent.classList.remove('hidden');
+    
+    // Load skill info and analysis
+    funLoadSkillInfo(skillId);
+    funLoadCurrentCycleSummary(skillId);
+    funLoadVisualizations(skillId);
+    funLoadTeamRankings(skillId);
+  }
+
+  // Load skill information
+  function funLoadSkillInfo(skillId) {
+    try {
+      const skills = getDataSafely('skills');
+      const skillCategories = getDataSafely('skillCategories');
+      const skillCriticalities = getDataSafely('skillCriticalities');
+      const skillBenchmarks = getDataSafely('skillBenchmarks');
+      
+      const skill = skills.find(s => s.id === skillId);
+      if (!skill) return;
+      
+      const category = skillCategories.find(c => c.id === skill.categoryId);
+      const criticality = skillCriticalities.find(c => c.id === skill.criticalityId);
+      const benchmark = skillBenchmarks.find(b => 
+        b.skillId === skillId && b.effectiveEndDate === null
+      );
+      
+      // Update UI elements
+      const nameEl = document.getElementById('selectedSkillName');
+      const descEl = document.getElementById('selectedSkillDescription');
+      const categoryEl = document.getElementById('selectedSkillCategory');
+      const criticalityEl = document.getElementById('selectedSkillCriticality');
+      const benchmarkEl = document.getElementById('selectedSkillBenchmark');
+      
+      if (nameEl) nameEl.textContent = skill.name || '';
+      if (descEl) descEl.textContent = skill.description || '';
+      if (categoryEl) categoryEl.textContent = category?.categoryName || 'Unknown';
+      if (criticalityEl) {
+        const critName = criticality?.criticalityName || 'Unknown';
+        const weight = criticality?.weight ? ` (${criticality.weight})` : '';
+        criticalityEl.textContent = critName + weight;
+      }
+      if (benchmarkEl) benchmarkEl.textContent = benchmark?.benchmarkScore || 'N/A';
+    } catch (error) {
+      console.error('Error loading skill info:', error);
+    }
+  }
+
+  // Load current cycle summary
+  function funLoadCurrentCycleSummary(skillId) {
+    try {
+      const teamMembers = getTeamMembers();
+      const teamMemberIds = teamMembers.map(m => m.id);
+      const assessmentCycles = getDataSafely('assessmentCycles');
+      const currentCycle = assessmentCycles.find(c => c.isActiveCycle);
+      
+      if (!currentCycle) return;
+      
+      const assessments = getDataSafely('assessments').filter(a => 
+        a.skillId === skillId && 
+        teamMemberIds.includes(a.employeeId) && 
+        a.assessmentCycleId === currentCycle.id &&
+        a.status === 'active'
+      );
+      
+      if (assessments.length === 0) return;
+      
+      // Calculate metrics
+      const scores = assessments.map(a => a.score);
+      const teamAverage = (scores.reduce((sum, score) => sum + score, 0) / scores.length).toFixed(1);
+      
+      const benchmark = assessments[0]?.benchmarkAtTimeOfAssessment || 0;
+      const benchmarkGap = (benchmark - parseFloat(teamAverage)).toFixed(1);
+      
+      const belowBenchmarkCount = assessments.filter(a => a.score < benchmark).length;
+      const belowBenchmarkPercentage = ((belowBenchmarkCount / assessments.length) * 100).toFixed(0);
+      
+      const tniCount = assessments.filter(a => a.tniFlag).length;
+      const tniPercentage = ((tniCount / assessments.length) * 100).toFixed(0);
+      
+      // Update UI elements
+      const teamAvgEl = document.getElementById('teamAverage');
+      const benchmarkGapEl = document.getElementById('benchmarkGap');
+      const belowBenchmarkEl = document.getElementById('belowBenchmark');
+      const tniRateEl = document.getElementById('tniRate');
+      
+      if (teamAvgEl) teamAvgEl.textContent = teamAverage;
+      if (benchmarkGapEl) {
+        benchmarkGapEl.textContent = benchmarkGap;
+        benchmarkGapEl.className = `text-lg font-semibold ${parseFloat(benchmarkGap) >= 0 ? 'text-green-600' : 'text-red-600'}`;
+      }
+      if (belowBenchmarkEl) belowBenchmarkEl.textContent = `${belowBenchmarkPercentage}%`;
+      if (tniRateEl) tniRateEl.textContent = `${tniPercentage}%`;
+    } catch (error) {
+      console.error('Error loading current cycle summary:', error);
+    }
+  }
+
+  // Load visualizations
+  function funLoadVisualizations(skillId) {
+    try {
+      funLoadScoreDistribution(skillId);
+      funLoadTrendChart(skillId);
+    } catch (error) {
+      console.error('Error loading visualizations:', error);
+    }
+  }
+
+  // Load score distribution chart (simple bar representation)
+  function funLoadScoreDistribution(skillId) {
+    try {
+      const teamMembers = getTeamMembers();
+      const teamMemberIds = teamMembers.map(m => m.id);
+      const assessmentCycles = getDataSafely('assessmentCycles');
+      const currentCycle = assessmentCycles.find(c => c.isActiveCycle);
+      
+      if (!currentCycle) return;
+      
+      const assessments = getDataSafely('assessments').filter(a => 
+        a.skillId === skillId && 
+        teamMemberIds.includes(a.employeeId) && 
+        a.assessmentCycleId === currentCycle.id &&
+        a.status === 'active'
+      );
+      
+      // Create distribution data
+      const distribution = {};
+      for (let i = 1; i <= 10; i++) {
+        distribution[i] = 0;
+      }
+      
+      assessments.forEach(a => {
+        if (a.score >= 1 && a.score <= 10) {
+          distribution[a.score]++;
+        }
+      });
+      
+      const maxCount = Math.max(...Object.values(distribution));
+      const benchmark = assessments[0]?.benchmarkAtTimeOfAssessment || 0;
+      
+      // Create simple bar chart
+      const chartContainer = document.getElementById('scoreDistributionChart');
+      if (!chartContainer) return;
+      
+      chartContainer.innerHTML = '';
+      chartContainer.className = 'h-64 flex items-end justify-center space-x-1 bg-gray-50 rounded-lg p-4 relative';
+      
+      // Add benchmark line
+      if (benchmark >= 1 && benchmark <= 10) {
+        const benchmarkPos = ((benchmark - 0.5) / 10) * 100;
+        const benchmarkLine = document.createElement('div');
+        benchmarkLine.className = 'absolute bg-green-600 w-0.5 opacity-75';
+        benchmarkLine.style.left = `${benchmarkPos}%`;
+        benchmarkLine.style.top = '1rem';
+        benchmarkLine.style.bottom = '2.5rem';
+        chartContainer.appendChild(benchmarkLine);
+      }
+      
+      // Create bars
+      for (let score = 1; score <= 10; score++) {
+        const count = distribution[score];
+        const height = maxCount > 0 ? (count / maxCount) * 180 : 0; // Max height 180px
+        
+        const barContainer = document.createElement('div');
+        barContainer.className = 'flex flex-col items-center space-y-1';
+        
+        const bar = document.createElement('div');
+        bar.className = 'bg-blue-500 w-6 rounded-t';
+        bar.style.height = `${height}px`;
+        bar.style.minHeight = count > 0 ? '4px' : '0px';
+        
+        const label = document.createElement('span');
+        label.className = 'text-xs text-gray-500';
+        label.textContent = score;
+        
+        const countLabel = document.createElement('span');
+        countLabel.className = 'text-xs text-gray-700 font-medium';
+        countLabel.textContent = count || '';
+        
+        barContainer.appendChild(countLabel);
+        barContainer.appendChild(bar);
+        barContainer.appendChild(label);
+        chartContainer.appendChild(barContainer);
+      }
+    } catch (error) {
+      console.error('Error loading score distribution:', error);
+    }
+  }
+
+  // Load trend chart (simple representation)
+  function funLoadTrendChart(skillId) {
+    try {
+      const teamMembers = getTeamMembers();
+      const teamMemberIds = teamMembers.map(m => m.id);
+      const assessmentCycles = getDataSafely('assessmentCycles');
+      const allAssessments = getDataSafely('assessments');
+      const skillBenchmarks = getDataSafely('skillBenchmarks');
+      
+      // Get last 4 cycles
+      const sortedCycles = assessmentCycles
+        .filter(c => c.status === 'active' || c.status === 'closed')
+        .sort((a, b) => new Date(a.startDate) - new Date(b.startDate))
+        .slice(-4);
+      
+      const trendData = [];
+      
+      sortedCycles.forEach(cycle => {
+        const cycleAssessments = allAssessments.filter(a => 
+          a.skillId === skillId && 
+          teamMemberIds.includes(a.employeeId) && 
+          a.assessmentCycleId === cycle.id &&
+          a.status === 'active'
+        );
+        
+        if (cycleAssessments.length > 0) {
+          const scores = cycleAssessments.map(a => a.score);
+          const average = scores.reduce((sum, score) => sum + score, 0) / scores.length;
+          const benchmark = cycleAssessments[0]?.benchmarkAtTimeOfAssessment || 0;
+          
+          trendData.push({
+            cycleName: cycle.cycleName,
+            average: average,
+            benchmark: benchmark
+          });
+        }
+      });
+      
+      // Create simple trend visualization
+      const chartContainer = document.getElementById('trendChart');
+      if (!chartContainer || trendData.length === 0) return;
+      
+      chartContainer.innerHTML = '';
+      chartContainer.className = 'h-64 flex items-center justify-center bg-gray-50 rounded-lg p-4';
+      
+      if (trendData.length < 2) {
+        chartContainer.innerHTML = `
+          <div class="text-center text-gray-500">
+            <i data-lucide="trending-up" class="w-8 h-8 mx-auto mb-2"></i>
+            <p class="text-xs">Insufficient data for trend analysis</p>
+          </div>
+        `;
+        return;
+      }
+      
+      // Simple text-based trend display
+      const trendDisplay = document.createElement('div');
+      trendDisplay.className = 'w-full space-y-3';
+      
+      trendData.forEach((point, index) => {
+        const pointEl = document.createElement('div');
+        pointEl.className = 'flex justify-between items-center py-2 px-3 bg-white rounded border';
+        
+        const cycleEl = document.createElement('span');
+        cycleEl.className = 'text-xs font-medium text-gray-700';
+        cycleEl.textContent = point.cycleName.replace(' Assessment Cycle', '');
+        
+        const scoresEl = document.createElement('div');
+        scoresEl.className = 'flex space-x-4 text-xs';
+        
+        const avgEl = document.createElement('span');
+        avgEl.className = 'text-blue-600 font-medium';
+        avgEl.textContent = `Avg: ${point.average.toFixed(1)}`;
+        
+        const benchEl = document.createElement('span');
+        benchEl.className = 'text-green-600 font-medium';
+        benchEl.textContent = `Benchmark: ${point.benchmark}`;
+        
+        scoresEl.appendChild(avgEl);
+        scoresEl.appendChild(benchEl);
+        
+        pointEl.appendChild(cycleEl);
+        pointEl.appendChild(scoresEl);
+        trendDisplay.appendChild(pointEl);
+      });
+      
+      chartContainer.appendChild(trendDisplay);
+    } catch (error) {
+      console.error('Error loading trend chart:', error);
+    }
+  }
+
+  // Load team rankings using Tiramai Grid
+  function funLoadTeamRankings(skillId) {
+    try {
+      // Destroy existing grid instance
+      if (gridInstance) {
+        gridInstance.destroy();
+        gridInstance = null;
+      }
+      
+      const teamMembers = getTeamMembers();
+      const teamMemberIds = teamMembers.map(m => m.id);
+      const assessmentCycles = getDataSafely('assessmentCycles');
+      const currentCycle = assessmentCycles.find(c => c.isActiveCycle);
+      
+      if (!currentCycle) return;
+      
+      const allAssessments = getDataSafely('assessments');
+      const currentAssessments = allAssessments.filter(a => 
+        a.skillId === skillId && 
+        teamMemberIds.includes(a.employeeId) && 
+        a.assessmentCycleId === currentCycle.id &&
+        a.status === 'active'
+      );
+      
+      // Get previous cycle assessments for trend calculation
+      const sortedCycles = assessmentCycles
+        .filter(c => c.status === 'active' || c.status === 'closed')
+        .sort((a, b) => new Date(a.startDate) - new Date(b.startDate));
+      
+      const currentCycleIndex = sortedCycles.findIndex(c => c.id === currentCycle.id);
+      const previousCycle = currentCycleIndex > 0 ? sortedCycles[currentCycleIndex - 1] : null;
+      
+      const previousAssessments = previousCycle ? allAssessments.filter(a => 
+        a.skillId === skillId && 
+        teamMemberIds.includes(a.employeeId) && 
+        a.assessmentCycleId === previousCycle.id &&
+        a.status === 'active'
+      ) : [];
+      
+      // Handle empty state
+      const gridContainer = document.getElementById('teamRankingsGrid');
+      const emptyState = document.getElementById('teamRankingsEmpty');
+      
+      if (currentAssessments.length === 0) {
+        if (gridContainer) gridContainer.classList.add('hidden');
+        if (emptyState) emptyState.classList.remove('hidden');
+        return;
+      }
+      
+      if (gridContainer) gridContainer.classList.remove('hidden');
+      if (emptyState) emptyState.classList.add('hidden');
+      
+      // Prepare grid data
+      const gridData = currentAssessments.map((assessment, index) => {
+        const employee = teamMembers.find(m => m.id === assessment.employeeId);
+        const previousAssessment = previousAssessments.find(a => a.employeeId === assessment.employeeId);
+        
+        // Calculate trend
+        let trend = 'stable';
+        let trendIcon = '—';
+        if (previousAssessment) {
+          if (assessment.score > previousAssessment.score) {
+            trend = 'improved';
+            trendIcon = '↗';
+          } else if (assessment.score < previousAssessment.score) {
+            trend = 'declined';
+            trendIcon = '↘';
+          }
+        }
+        
+        const gap = assessment.benchmarkAtTimeOfAssessment - assessment.score;
+        
+        return {
+          rank: index + 1, // Will be recalculated after sorting
+          employeeId: assessment.employeeId,
+          employeeName: employee ? `${employee.firstName} ${employee.lastName}` : 'Unknown',
+          currentScore: assessment.score,
+          benchmark: assessment.benchmarkAtTimeOfAssessment,
+          gap: gap,
+          trend: trend,
+          trendIcon: trendIcon,
+          isAboveBenchmark: assessment.score >= assessment.benchmarkAtTimeOfAssessment
+        };
+      });
+      
+      // Sort by score descending
+      gridData.sort((a, b) => b.currentScore - a.currentScore);
+      
+      // Update ranks
+      gridData.forEach((item, index) => {
+        item.rank = index + 1;
+      });
+      
+      const rankingColumns = [
+        { 
+          field: 'rank', 
+          header: 'Rank', 
+          width: 80, 
+          sortable: false,
+          align: 'center'
+        },
+        { 
+          field: 'employeeName', 
+          header: 'Employee Name', 
+          sortable: true,
+          filterable: true,
+          isLink: true,
+          linkHref: (row) => `employee_profile.html?id=${row.employeeId}`,
+          render: (value, row) => {
+            const colorClass = row.isAboveBenchmark ? 'text-green-700' : 'text-red-700';
+            return `<span class="${colorClass} font-medium">${value}</span>`;
+          }
+        },
+        { 
+          field: 'currentScore', 
+          header: 'Current Score', 
+          width: 120, 
+          sortable: true,
+          align: 'center',
+          render: (value, row) => {
+            const colorClass = row.isAboveBenchmark ? 'text-green-600' : 'text-red-600';
+            return `<span class="font-semibold ${colorClass}">${value}</span>`;
+          }
+        },
+        { 
+          field: 'benchmark', 
+          header: 'Benchmark', 
+          width: 100, 
+          sortable: true,
+          align: 'center'
+        },
+        { 
+          field: 'gap', 
+          header: 'Gap', 
+          width: 80, 
+          sortable: true,
+          align: 'center',
+          render: (value, row) => {
+            const colorClass = value <= 0 ? 'text-green-600' : 'text-red-600';
+            const displayValue = value <= 0 ? `+${Math.abs(value)}` : value;
+            return `<span class="font-medium ${colorClass}">${displayValue}</span>`;
+          }
+        },
+        { 
+          field: 'trendIcon', 
+          header: 'Trend', 
+          width: 80, 
+          sortable: false,
+          align: 'center',
+          render: (value, row) => {
+            const colorClass = row.trend === 'improved' ? 'text-green-600' : 
+                              row.trend === 'declined' ? 'text-red-600' : 'text-gray-500';
+            return `<span class="font-bold text-lg ${colorClass}">${value}</span>`;
+          }
+        },
+        {
+          field: 'actions',
+          header: 'Actions',
+          width: 120,
+          sortable: false,
+          filterable: false,
+          render: (value, row) => {
+            return `<a href="employee_profile.html?id=${row.employeeId}" class="text-sm text-blue-600 hover:text-blue-800 font-medium">View Profile</a>`;
+          }
+        }
+      ];
+      
+      // Initialize Tiramai Grid
+      if (window.TiramaiGrid) {
+        gridInstance = new TiramaiGrid('#teamRankingsGrid', {
+          data: gridData,
+          columns: rankingColumns,
+          theme: 'light',
+          sortable: true,
+          filterable: true,
+          globalSearch: false,
+          pagination: {
+            enabled: false
+          },
+          selection: {
+            enabled: false
+          },
+          export: {
+            enabled: true,
+            filename: `skill_${skillId}_rankings.csv`,
+            includeHeaders: true
+          }
+        });
+      }
+    } catch (error) {
+      console.error('Error loading team rankings:', error);
+    }
+  }
+
+  // Event handlers
+  function funHandleSkillSelectorChange(event) {
+    const skillId = event.target.value;
+    funOnSkillChange(skillId);
+  }
+
+  // Initialize page
+  function funInitializePage() {
+    try {
+      funInitSkillSelector();
+      
+      const skillSelector = document.getElementById('skillSelector');
+      if (skillSelector) {
+        skillSelector.addEventListener('change', funHandleSkillSelectorChange);
+      }
+      
+      // Check URL parameters for skill ID
+      const urlParams = new URLSearchParams(window.location.search);
+      const skillId = urlParams.get('skill');
+      if (skillId) {
+        if (skillSelector) skillSelector.value = skillId;
+        funOnSkillChange(skillId);
+      }
+    } catch (error) {
+      console.error('Error initializing page:', error);
+    }
+  }
+
+  // Initialize on DOM ready
+  document.addEventListener('DOMContentLoaded', funInitializePage);
+</script></body></html>

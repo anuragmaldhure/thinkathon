@@ -1,0 +1,1600 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SkillBridge Competency Management Platform</title>
+
+    <!-- Required: Main JS Script -->
+    <script type="module" src="scripts/main.js" data-tiramai="web-gen"></script>
+
+    <!-- Required: TailwindCSS -->
+    <script src="./lib/tailwindcss/tailwindcss.js" fetchpriority="high" data-tiramai="web-gen"></script>
+
+    <!-- Required: Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest" data-tiramai="web-gen"></script>
+
+    <!-- Required: Favicon -->
+    <link rel="icon" href="assets/imgs/logo.ico" type="image/x-icon" data-tiramai="web-gen"/>
+
+    <!-- ECharts Support (for charts/graphs) -->
+    <script defer src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js" data-tiramai="web-gen"></script>
+
+    <!-- Markdown Support (for content rendering) -->
+    <script defer src="https://cdn.jsdelivr.net/npm/marked/marked.min.js" data-tiramai="web-gen"></script>
+
+    <!-- Tailwind Configuration -->
+    <script data-tiramai="web-gen">
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#1e293b',
+                        secondary: '#475569',
+                        accent: '#2563eb',
+                        gold: '#CBA35C',
+                        success: '#16A34A',
+                        warning: '#D97706',
+                        error: '#DC2626',
+                        info: '#0EA5E9',
+                        neutral: {
+                            50: '#F8FAFC',
+                            100: '#F1F5F9',
+                            200: '#E2E8F0',
+                            400: '#94A3B8',
+                            700: '#334155',
+                            900: '#0F172A',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['IBM Plex Sans', '-apple-system', 'Segoe UI', 'Roboto', 'Helvetica Neue', 'Arial', 'sans-serif'],
+                        mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', 'Liberation Mono', 'Courier New', 'monospace']
+                    },
+                    boxShadow: {
+                        sm: '0 1px 2px rgba(15,23,42,0.06)',
+                        DEFAULT: '0 2px 8px rgba(15,23,42,0.08)',
+                        lg: '0 8px 24px rgba(15,23,42,0.12)',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-neutral-50 min-h-screen text-neutral-700 font-sans">
+    <!-- Top Navigation -->
+    <header class="fixed top-0 left-0 right-0 bg-white border-b border-neutral-200 flex items-center justify-between px-6 py-4 z-30 h-16">
+        <div class="flex items-center gap-4">
+            <button id="mobile-menu-btn" class="md:hidden p-2 hover:bg-neutral-100 rounded-md transition-colors duration-150">
+                <i data-lucide="menu" class="w-6 h-6 text-secondary"></i>
+            </button>
+            <div class="flex items-center gap-3">
+                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 400 400" fill="none" class="h-8 w-8">
+                    <rect x="100" y="100" width="200" height="200" rx="16" stroke="#1e293b" stroke-width="16" fill="none"/>
+                    <path d="M150 250V170c0-11 9-20 20-20h60c11 0 20 9 20 20v80" stroke="#2563eb" stroke-width="14" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                    <circle cx="200" cy="170" r="18" stroke="#1e293b" stroke-width="12" fill="none"/>
+                    <path d="M150 250h100m-60-30h20" stroke="#2563eb" stroke-width="12" stroke-linecap="round" fill="none"/>
+                    <path d="M170 220v0" stroke="#1e293b" stroke-width="12" stroke-linecap="round"/>
+                    <path d="M230 220v0" stroke="#1e293b" stroke-width="12" stroke-linecap="round"/>
+                </svg>
+                <span class="text-xl font-semibold text-primary">SkillBridge Competency Management Platform</span>
+            </div>
+        </div>
+        <div class="flex items-center gap-4">
+            <!-- User Profile Dropdown -->
+            <div class="relative">
+                <button id="user-profile-btn" class="flex items-center gap-3 p-2 hover:bg-neutral-100 rounded-md transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2">
+                    <div class="flex flex-col items-end">
+                        <span id="user-name" class="text-sm font-medium text-neutral-700">Loading...</span>
+                        <span id="user-role" class="text-xs text-neutral-400">System Admin</span>
+                    </div>
+                    <div class="w-8 h-8 bg-accent rounded-full flex items-center justify-center">
+                        <i data-lucide="user" class="w-4 h-4 text-white"></i>
+                    </div>
+                </button>
+                <!-- Dropdown Menu -->
+                <div id="user-dropdown" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg border border-neutral-200 z-40">
+                    <div class="py-2">
+                        <button id="sign-out-btn" class="w-full px-4 py-2 text-left text-sm text-neutral-700 hover:bg-neutral-50 flex items-center gap-2">
+                            <i data-lucide="log-out" class="w-4 h-4"></i>
+                            Sign Out
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="flex pt-16">
+        <!-- Side Navigation -->
+        <aside id="sidebar" class="w-64 bg-white border-r border-neutral-200 h-[calc(100vh-4rem)] sticky top-16 overflow-y-auto hidden md:block">
+            <nav class="p-4 space-y-1">
+                <!-- Analytics Hub -->
+                <a href="analytics_hub.html" data-page="analytics_hub" class="nav-item flex items-center gap-3 px-3 py-2 text-sm rounded-md hover:bg-neutral-100 transition-colors duration-150 text-neutral-700">
+                    <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
+                    <span>Analytics Hub</span>
+                </a>
+
+                <!-- Organization Management Section -->
+                <div class="pt-4">
+                    <h3 class="px-3 text-xs font-semibold text-secondary uppercase tracking-wide mb-2">Organization</h3>
+                    <a href="org_configuration.html" data-page="org_configuration" class="nav-item flex items-center gap-3 px-3 py-2 text-sm rounded-md hover:bg-neutral-100 transition-colors duration-150 text-neutral-700">
+                        <i data-lucide="building-2" class="w-5 h-5"></i>
+                        <span>Org Configuration</span>
+                    </a>
+                    <a href="org_settings_versioned.html" data-page="org_settings_versioned" class="nav-item flex items-center gap-3 px-3 py-2 text-sm rounded-md hover:bg-neutral-100 transition-colors duration-150 text-neutral-700">
+                        <i data-lucide="history" class="w-5 h-5"></i>
+                        <span>Org Settings</span>
+                    </a>
+                </div>
+
+                <!-- Core Management Section -->
+                <div class="pt-4">
+                    <h3 class="px-3 text-xs font-semibold text-secondary uppercase tracking-wide mb-2">Core Management</h3>
+                    <a href="skill_framework.html" data-page="skill_framework" class="nav-item flex items-center gap-3 px-3 py-2 text-sm rounded-md hover:bg-neutral-100 transition-colors duration-150 text-neutral-700">
+                        <i data-lucide="book-open" class="w-5 h-5"></i>
+                        <span>Skill Framework</span>
+                    </a>
+                    <a href="employees_hierarchy.html" data-page="employees_hierarchy" class="nav-item flex items-center gap-3 px-3 py-2 text-sm rounded-md hover:bg-neutral-100 transition-colors duration-150 text-neutral-700">
+                        <i data-lucide="users" class="w-5 h-5"></i>
+                        <span>Employees & Hierarchy</span>
+                    </a>
+                    <a href="training_management.html" data-page="training_management" class="nav-item flex items-center gap-3 px-3 py-2 text-sm rounded-md hover:bg-neutral-100 transition-colors duration-150 text-neutral-700">
+                        <i data-lucide="calendar" class="w-5 h-5"></i>
+                        <span>Training Management</span>
+                    </a>
+                </div>
+
+                <!-- Operations Section -->
+                <div class="pt-4">
+                    <h3 class="px-3 text-xs font-semibold text-secondary uppercase tracking-wide mb-2">Operations</h3>
+                    <a href="disputes_center.html" data-page="disputes_center" class="nav-item flex items-center gap-3 px-3 py-2 text-sm rounded-md hover:bg-neutral-100 transition-colors duration-150 text-neutral-700">
+                        <i data-lucide="gavel" class="w-5 h-5"></i>
+                        <span>Disputes Center</span>
+                    </a>
+                    <a href="assessment_viewer.html" data-page="assessment_viewer" class="nav-item flex items-center gap-3 px-3 py-2 text-sm rounded-md hover:bg-neutral-100 transition-colors duration-150 text-neutral-700">
+                        <i data-lucide="file-text" class="w-5 h-5"></i>
+                        <span>Assessment Viewer</span>
+                    </a>
+                    <a href="audit_log_viewer.html" data-page="audit_log_viewer" class="nav-item flex items-center gap-3 px-3 py-2 text-sm rounded-md hover:bg-neutral-100 transition-colors duration-150 text-neutral-700">
+                        <i data-lucide="file-search" class="w-5 h-5"></i>
+                        <span>Audit Log Viewer</span>
+                    </a>
+                </div>
+            </nav>
+
+            <!-- Footer -->
+            <div class="absolute bottom-6 w-full text-center text-xs text-neutral-400 bg-white px-4">
+                Made with ❤️ by TiramAi
+            </div>
+        </aside>
+
+        <!-- Mobile Navigation Overlay -->
+        <div id="mobile-nav-overlay" class="hidden fixed inset-0 z-40 md:hidden">
+            <div class="fixed inset-0 bg-neutral-900 bg-opacity-50" id="mobile-nav-backdrop"></div>
+            <aside class="fixed left-0 top-16 h-[calc(100vh-4rem)] w-64 bg-white border-r border-neutral-200 overflow-y-auto">
+                <nav class="p-4 space-y-1">
+                    <!-- Same navigation structure as desktop -->
+                    <a href="analytics_hub.html" data-page="analytics_hub" class="nav-item flex items-center gap-3 px-3 py-2 text-sm rounded-md hover:bg-neutral-100 transition-colors duration-150 text-neutral-700">
+                        <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
+                        <span>Analytics Hub</span>
+                    </a>
+                    
+                    <div class="pt-4">
+                        <h3 class="px-3 text-xs font-semibold text-secondary uppercase tracking-wide mb-2">Organization</h3>
+                        <a href="org_configuration.html" data-page="org_configuration" class="nav-item flex items-center gap-3 px-3 py-2 text-sm rounded-md hover:bg-neutral-100 transition-colors duration-150 text-neutral-700">
+                            <i data-lucide="building-2" class="w-5 h-5"></i>
+                            <span>Org Configuration</span>
+                        </a>
+                        <a href="org_settings_versioned.html" data-page="org_settings_versioned" class="nav-item flex items-center gap-3 px-3 py-2 text-sm rounded-md hover:bg-neutral-100 transition-colors duration-150 text-neutral-700">
+                            <i data-lucide="history" class="w-5 h-5"></i>
+                            <span>Org Settings</span>
+                        </a>
+                    </div>
+
+                    <div class="pt-4">
+                        <h3 class="px-3 text-xs font-semibold text-secondary uppercase tracking-wide mb-2">Core Management</h3>
+                        <a href="skill_framework.html" data-page="skill_framework" class="nav-item flex items-center gap-3 px-3 py-2 text-sm rounded-md hover:bg-neutral-100 transition-colors duration-150 text-neutral-700">
+                            <i data-lucide="book-open" class="w-5 h-5"></i>
+                            <span>Skill Framework</span>
+                        </a>
+                        <a href="employees_hierarchy.html" data-page="employees_hierarchy" class="nav-item flex items-center gap-3 px-3 py-2 text-sm rounded-md hover:bg-neutral-100 transition-colors duration-150 text-neutral-700">
+                            <i data-lucide="users" class="w-5 h-5"></i>
+                            <span>Employees & Hierarchy</span>
+                        </a>
+                        <a href="training_management.html" data-page="training_management" class="nav-item flex items-center gap-3 px-3 py-2 text-sm rounded-md hover:bg-neutral-100 transition-colors duration-150 text-neutral-700">
+                            <i data-lucide="calendar" class="w-5 h-5"></i>
+                            <span>Training Management</span>
+                        </a>
+                    </div>
+
+                    <div class="pt-4">
+                        <h3 class="px-3 text-xs font-semibold text-secondary uppercase tracking-wide mb-2">Operations</h3>
+                        <a href="disputes_center.html" data-page="disputes_center" class="nav-item flex items-center gap-3 px-3 py-2 text-sm rounded-md hover:bg-neutral-100 transition-colors duration-150 text-neutral-700">
+                            <i data-lucide="gavel" class="w-5 h-5"></i>
+                            <span>Disputes Center</span>
+                        </a>
+                        <a href="assessment_viewer.html" data-page="assessment_viewer" class="nav-item flex items-center gap-3 px-3 py-2 text-sm rounded-md hover:bg-neutral-100 transition-colors duration-150 text-neutral-700">
+                            <i data-lucide="file-text" class="w-5 h-5"></i>
+                            <span>Assessment Viewer</span>
+                        </a>
+                        <a href="audit_log_viewer.html" data-page="audit_log_viewer" class="nav-item flex items-center gap-3 px-3 py-2 text-sm rounded-md hover:bg-neutral-100 transition-colors duration-150 text-neutral-700">
+                            <i data-lucide="file-search" class="w-5 h-5"></i>
+                            <span>Audit Log Viewer</span>
+                        </a>
+                    </div>
+                </nav>
+            </aside>
+        </div>
+
+        <!-- Main Content -->
+        <main id="pageContent" class="flex-1 p-6 overflow-y-auto max-w-[1440px] mx-auto">
+            
+<!-- Employee Hierarchy Management Page -->
+<div class="container mx-auto px-4 max-w-[1440px]">
+  <!-- Page Header -->
+  <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-6">
+    <div>
+      <h1 class="text-[clamp(1.5rem,2.5vw,2rem)] leading-10 font-bold text-primary">Employees & Hierarchy</h1>
+      <p class="text-sm text-secondary mt-1">Manage employee records and organizational hierarchy with safe team lead transitions</p>
+    </div>
+    <div class="flex flex-col sm:flex-row gap-2">
+      <button id="btn-refresh" class="inline-flex items-center justify-center gap-2 bg-white text-primary border border-neutral-200 rounded-md px-4 py-2 hover:bg-neutral-50 focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 text-sm">
+        <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+        Refresh
+      </button>
+      <button id="btn-add-employee" class="inline-flex items-center justify-center gap-2 bg-accent text-white rounded-md px-4 py-2 hover:bg-[#1d4ed8] focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 text-sm">
+        <i data-lucide="plus" class="w-4 h-4"></i>
+        Add Employee
+      </button>
+    </div>
+  </div>
+
+  <!-- Filters Row -->
+  <div class="bg-white rounded-md border border-neutral-200 p-4 mb-6">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <!-- Department Filter -->
+      <div>
+        <label class="block text-secondary text-xs mb-1">Department</label>
+        <select id="filter-department" class="w-full border border-neutral-200 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2">
+          <option value="">All Departments</option>
+        </select>
+      </div>
+
+      <!-- Status Filter -->
+      <div>
+        <label class="block text-secondary text-xs mb-1">Status</label>
+        <select id="filter-status" class="w-full border border-neutral-200 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2">
+          <option value="">All Status</option>
+          <option value="active">Active</option>
+          <option value="inactive">Inactive</option>
+        </select>
+      </div>
+
+      <!-- Team Lead Filter -->
+      <div>
+        <label class="block text-secondary text-xs mb-1">Team Lead</label>
+        <select id="filter-team-lead" class="w-full border border-neutral-200 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2">
+          <option value="">All Team Leads</option>
+        </select>
+      </div>
+
+      <!-- System Role Filter -->
+      <div>
+        <label class="block text-secondary text-xs mb-1">System Role</label>
+        <select id="filter-role" class="w-full border border-neutral-200 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2">
+          <option value="">All Roles</option>
+          <option value="employee">Employee</option>
+          <option value="systemAdmin">System Admin</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Search -->
+    <div class="mt-4 max-w-md">
+      <label class="block text-secondary text-xs mb-1">Search</label>
+      <input type="text" id="search-input" placeholder="Search by name, email, or employee code..." 
+             class="w-full border border-neutral-200 rounded px-3 py-2 text-sm placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2">
+    </div>
+  </div>
+
+  <!-- Employee Grid -->
+  <div class="bg-white rounded-md border border-neutral-200 overflow-hidden">
+    <!-- Table Header -->
+    <div class="bg-neutral-50 border-b border-neutral-200 px-4 py-3">
+      <h3 class="text-sm font-semibold text-secondary">Employee Directory</h3>
+    </div>
+
+    <!-- Table Container -->
+    <div class="overflow-x-auto">
+      <table class="w-full">
+        <thead class="bg-neutral-50 sticky top-0">
+          <tr class="text-secondary text-xs">
+            <th class="text-left px-4 py-3 border-b border-neutral-200 font-semibold">Employee</th>
+            <th class="text-left px-4 py-3 border-b border-neutral-200 font-semibold">Job Title</th>
+            <th class="text-left px-4 py-3 border-b border-neutral-200 font-semibold">Department</th>
+            <th class="text-left px-4 py-3 border-b border-neutral-200 font-semibold">Team Lead</th>
+            <th class="text-left px-4 py-3 border-b border-neutral-200 font-semibold">System Role</th>
+            <th class="text-left px-4 py-3 border-b border-neutral-200 font-semibold">Status</th>
+            <th class="text-left px-4 py-3 border-b border-neutral-200 font-semibold">Reports</th>
+            <th class="text-left px-4 py-3 border-b border-neutral-200 font-semibold">Updated</th>
+            <th class="text-center px-4 py-3 border-b border-neutral-200 font-semibold w-32">Actions</th>
+          </tr>
+        </thead>
+        <tbody id="employees-table-body" class="text-sm">
+          <!-- Skeleton rows will be inserted here during loading -->
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Pagination -->
+    <div class="border-t border-neutral-200 px-4 py-3 bg-neutral-50 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div class="text-xs text-neutral-400">
+        <span id="pagination-info">Loading...</span>
+      </div>
+      <div class="flex items-center gap-2">
+        <button id="btn-prev-page" disabled class="inline-flex items-center gap-2 px-3 py-1 text-xs border border-neutral-200 rounded hover:bg-white focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed">
+          <i data-lucide="chevron-left" class="w-3 h-3"></i>
+          Previous
+        </button>
+        <button id="btn-next-page" disabled class="inline-flex items-center gap-2 px-3 py-1 text-xs border border-neutral-200 rounded hover:bg-white focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed">
+          Next
+          <i data-lucide="chevron-right" class="w-3 h-3"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Add/Edit Employee Modal -->
+<div id="employee-modal" class="hidden fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
+  <div class="bg-white rounded-lg shadow-lg w-full max-w-lg">
+    <div class="border-b border-neutral-200 px-6 py-4">
+      <h2 id="modal-title" class="text-lg font-semibold text-primary">Add Employee</h2>
+    </div>
+    <form id="employee-form" class="p-6 space-y-4">
+      <!-- Employee Code -->
+      <div>
+        <label class="block text-secondary text-xs mb-1">Employee Code <span class="text-error">*</span></label>
+        <input type="text" id="input-employee-code" required 
+               class="w-full border border-neutral-200 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2"
+               placeholder="EMP-0001">
+        <p class="mt-1 text-xs text-neutral-400">Unique identifier for the employee</p>
+      </div>
+
+      <!-- Name -->
+      <div>
+        <label class="block text-secondary text-xs mb-1">Full Name <span class="text-error">*</span></label>
+        <input type="text" id="input-name" required 
+               class="w-full border border-neutral-200 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2"
+               placeholder="John Doe">
+      </div>
+
+      <!-- Email -->
+      <div>
+        <label class="block text-secondary text-xs mb-1">Email Address <span class="text-error">*</span></label>
+        <input type="email" id="input-email" required 
+               class="w-full border border-neutral-200 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2"
+               placeholder="john.doe@company.com">
+      </div>
+
+      <!-- Job Title -->
+      <div>
+        <label class="block text-secondary text-xs mb-1">Job Title <span class="text-error">*</span></label>
+        <input type="text" id="input-job-title" required 
+               class="w-full border border-neutral-200 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2"
+               placeholder="Software Engineer">
+      </div>
+
+      <!-- Department -->
+      <div>
+        <label class="block text-secondary text-xs mb-1">Department <span class="text-error">*</span></label>
+        <select id="input-department" required 
+                class="w-full border border-neutral-200 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2">
+          <option value="">Select Department</option>
+        </select>
+      </div>
+
+      <!-- Team Lead -->
+      <div>
+        <label class="block text-secondary text-xs mb-1">Team Lead</label>
+        <select id="input-team-lead" 
+                class="w-full border border-neutral-200 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2">
+          <option value="">No Team Lead</option>
+        </select>
+        <p class="mt-1 text-xs text-neutral-400">Optional. Select a team lead for this employee</p>
+      </div>
+
+      <!-- System Role -->
+      <div>
+        <label class="block text-secondary text-xs mb-1">System Role <span class="text-error">*</span></label>
+        <select id="input-system-role" required 
+                class="w-full border border-neutral-200 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2">
+          <option value="employee">Employee</option>
+          <option value="systemAdmin">System Admin</option>
+        </select>
+      </div>
+
+      <!-- Status -->
+      <div>
+        <label class="block text-secondary text-xs mb-1">Status <span class="text-error">*</span></label>
+        <select id="input-status" required 
+                class="w-full border border-neutral-200 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2">
+          <option value="active">Active</option>
+          <option value="inactive">Inactive</option>
+        </select>
+      </div>
+    </form>
+    <div class="border-t border-neutral-200 px-6 py-4 flex gap-2 justify-end">
+      <button type="button" id="btn-cancel-employee" 
+              class="px-4 py-2 text-sm border border-neutral-200 rounded hover:bg-neutral-50 focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2">
+        Cancel
+      </button>
+      <button type="submit" form="employee-form" id="btn-save-employee" 
+              class="px-4 py-2 text-sm bg-accent text-white rounded hover:bg-[#1d4ed8] focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2">
+        Save Employee
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Change Team Lead Modal -->
+<div id="change-team-lead-modal" class="hidden fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
+  <div class="bg-white rounded-lg shadow-lg w-full max-w-2xl">
+    <div class="border-b border-neutral-200 px-6 py-4">
+      <h2 class="text-lg font-semibold text-primary">Change Team Lead</h2>
+      <p class="text-sm text-secondary mt-1">This will automatically close pending assessments and deactivate skill mappings</p>
+    </div>
+    <div class="p-6 space-y-4">
+      <!-- Employee Info -->
+      <div class="bg-neutral-50 rounded-md p-4">
+        <h3 class="text-sm font-semibold text-primary mb-2">Employee Information</h3>
+        <div id="change-tl-employee-info" class="text-sm text-neutral-700">
+          <!-- Employee details will be populated here -->
+        </div>
+      </div>
+
+      <!-- New Team Lead Selection -->
+      <div>
+        <label class="block text-secondary text-xs mb-1">New Team Lead <span class="text-error">*</span></label>
+        <select id="input-new-team-lead" required 
+                class="w-full border border-neutral-200 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2">
+          <option value="">Select New Team Lead</option>
+        </select>
+      </div>
+
+      <!-- Reason -->
+      <div>
+        <label class="block text-secondary text-xs mb-1">Reason for Change</label>
+        <textarea id="input-change-reason" rows="3"
+                  class="w-full border border-neutral-200 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2"
+                  placeholder="Optional reason for team lead change"></textarea>
+      </div>
+
+      <!-- Impact Summary -->
+      <div id="change-impact-summary" class="bg-warning/10 border border-warning/20 rounded-md p-4">
+        <h4 class="text-sm font-semibold text-warning mb-2">Impact Summary</h4>
+        <div id="impact-details" class="text-sm text-neutral-700">
+          <div class="flex items-center gap-2 mb-1">
+            <i data-lucide="clock" class="w-4 h-4 text-warning"></i>
+            <span id="assessments-to-close">Loading assessment impact...</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <i data-lucide="user-x" class="w-4 h-4 text-warning"></i>
+            <span id="mappings-to-deactivate">Loading skill mappings impact...</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="border-t border-neutral-200 px-6 py-4 flex gap-2 justify-end">
+      <button type="button" id="btn-cancel-change-tl" 
+              class="px-4 py-2 text-sm border border-neutral-200 rounded hover:bg-neutral-50 focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2">
+        Cancel
+      </button>
+      <button type="button" id="btn-confirm-change-tl" 
+              class="px-4 py-2 text-sm bg-warning text-white rounded hover:bg-warning/90 focus:outline-none focus:ring-2 focus:ring-warning focus:ring-offset-2">
+        Confirm Change
+      </button>
+    </div>
+  </div>
+</div>
+
+        </main>
+    </div>
+
+    <!-- Required: JavaScript -->
+    <script type="module" data-tiramai="web-gen">
+        import { showToast, showLoader, hideLoader, env } from "./scripts/main.js";
+        import { auth, db, storage } from "./scripts/firebase.js";
+        import { onAuthStateChanged, getAuth, signOut } from 'https://www.gstatic.com/firebasejs/10.12.4/firebase-auth.js';
+        import { doc, getDoc } from 'https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js';
+
+        // Initialize Lucide icons
+        lucide.createIcons();
+
+        // Auth state management
+        let currentUser = null;
+
+        // Initialize auth state listener
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                currentUser = user;
+                await loadUserProfile(user);
+            } else {
+                // Redirect to auth page if not authenticated
+                window.location.href = 'auth.html';
+            }
+        });
+
+        // Load user profile data
+        async function loadUserProfile(user) {
+            try {
+                const userDoc = await getDoc(doc(db, 'users', user.uid));
+                
+                if (userDoc.exists()) {
+                    const userData = userDoc.data();
+                    const fullName = `${userData.firstName || ''} ${userData.lastName || ''}`.trim();
+                    document.getElementById('user-name').textContent = fullName || user.email;
+                } else {
+                    // Fallback to email if no user doc exists
+                    document.getElementById('user-name').textContent = user.email;
+                }
+            } catch (error) {
+                console.error('Error loading user profile:', error);
+                // Fallback to email on error
+                document.getElementById('user-name').textContent = user.email;
+            }
+        }
+
+        // User dropdown functionality
+        const userProfileBtn = document.getElementById('user-profile-btn');
+        const userDropdown = document.getElementById('user-dropdown');
+        const signOutBtn = document.getElementById('sign-out-btn');
+
+        userProfileBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            userDropdown.classList.toggle('hidden');
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', () => {
+            userDropdown.classList.add('hidden');
+        });
+
+        // Sign out functionality
+        signOutBtn.addEventListener('click', async () => {
+            try {
+                await signOut(auth);
+                window.location.href = 'auth.html';
+            } catch (error) {
+                console.error('Error signing out:', error);
+                showToast('Error signing out', 'error');
+            }
+        });
+
+        // Mobile navigation
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const mobileNavOverlay = document.getElementById('mobile-nav-overlay');
+        const mobileNavBackdrop = document.getElementById('mobile-nav-backdrop');
+
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileNavOverlay.classList.remove('hidden');
+        });
+
+        mobileNavBackdrop.addEventListener('click', () => {
+            mobileNavOverlay.classList.add('hidden');
+        });
+
+        // Close mobile nav on navigation
+        document.querySelectorAll('#mobile-nav-overlay .nav-item').forEach(link => {
+            link.addEventListener('click', () => {
+                mobileNavOverlay.classList.add('hidden');
+            });
+        });
+
+        // Active navigation state
+        function updateActiveNavState() {
+            const currentPath = window.location.pathname;
+            const pageName = currentPath.replace('/', '').replace('.html', '');
+            
+            // Remove active state from all nav items
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('bg-accent', 'text-white');
+                item.classList.add('text-neutral-700');
+            });
+
+            // Add active state to current page
+            document.querySelectorAll(`[data-page="${pageName}"]`).forEach(item => {
+                item.classList.add('bg-accent', 'text-white');
+                item.classList.remove('text-neutral-700');
+            });
+        }
+
+        // Update active state on load
+        updateActiveNavState();
+
+        // Update active state on navigation (for SPA behavior)
+        window.addEventListener('popstate', updateActiveNavState);
+    </script>
+
+    
+<script id="employees-hierarchy-script" type="module" data-tiramai="web-gen">
+import {
+  collection, getDocs, setDoc, addDoc, doc, getDoc, updateDoc, deleteDoc, writeBatch,
+  query, where, orderBy, limit, startAfter, endBefore, onSnapshot, Timestamp,
+  getCountFromServer
+} from 'https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js';
+import { onAuthStateChanged, getAuth, signOut } from 'https://www.gstatic.com/firebasejs/10.12.4/firebase-auth.js';
+import { auth, getDb } from "./scripts/firebase.js";
+import { showToast, showLoader, hideLoader } from "./scripts/main.js";
+
+const db = getDb();
+
+// Auth check
+onAuthStateChanged(auth, user => {
+  if (!user) location.href = "auth.html?redirect=" + encodeURIComponent(location.pathname);
+});
+
+// State management
+let currentUser = null;
+let employees = [];
+let departments = [];
+let filteredEmployees = [];
+let currentPage = 1;
+const pageSize = 10;
+let lastDoc = null;
+let firstDoc = null;
+let searchTimeout = null;
+let currentAbort = null;
+let currentEditingEmployee = null;
+
+// Concurrency control
+function createSemaphore(max = 2) {
+  const queue = [];
+  let active = 0;
+  const next = () => {
+    if (active >= max || queue.length === 0) return;
+    active++;
+    const { fn, res, rej } = queue.shift();
+    Promise.resolve()
+      .then(fn)
+      .catch(e => rej(e))
+      .finally(() => { active--; next(); });
+  };
+  return (fn) => new Promise((res, rej) => { queue.push({ fn, res, rej }); next(); });
+}
+const withLimit = createSemaphore(2);
+
+// Abortable fetch pattern
+async function funFetchEmployeesPage(filters = {}, searchTerm = '', reset = false) {
+  if (currentAbort) currentAbort.abort();
+  currentAbort = new AbortController();
+  const signal = currentAbort.signal;
+
+  try {
+    let q = collection(db, 'employees');
+    const queryConstraints = [];
+
+    // Apply filters
+    if (filters.departmentId) {
+      queryConstraints.push(where('departmentId', '==', filters.departmentId));
+    }
+    if (filters.status) {
+      queryConstraints.push(where('status', '==', filters.status));
+    }
+    if (filters.teamLeadId) {
+      queryConstraints.push(where('teamLeadId', '==', filters.teamLeadId));
+    }
+    if (filters.systemRole) {
+      queryConstraints.push(where('systemRole', '==', filters.systemRole));
+    }
+
+    // Add search if provided (Note: Firestore doesn't support full-text search, this is a simple prefix match)
+    if (searchTerm) {
+      // For search, we'll need to fetch all and filter client-side for this demo
+      // In production, consider using Algolia or similar for full-text search
+    }
+
+    queryConstraints.push(orderBy('name', 'asc'));
+    queryConstraints.push(limit(pageSize));
+
+    if (!reset && lastDoc) {
+      queryConstraints.push(startAfter(lastDoc));
+    }
+
+    q = query(q, ...queryConstraints);
+
+    const snapshot = await withLimit(() => getDocs(q));
+    if (signal.aborted) return { items: [], cursor: null, hasMore: false };
+
+    const items = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    
+    // Client-side search filtering if search term is provided
+    let searchFiltered = items;
+    if (searchTerm) {
+      const lowerSearch = searchTerm.toLowerCase();
+      searchFiltered = items.filter(emp => 
+        emp.name?.toLowerCase().includes(lowerSearch) ||
+        emp.email?.toLowerCase().includes(lowerSearch) ||
+        emp.employeeCode?.toLowerCase().includes(lowerSearch)
+      );
+    }
+
+    const newLastDoc = snapshot.docs.at(-1) || null;
+    const hasMore = snapshot.docs.length === pageSize;
+
+    return {
+      items: searchFiltered,
+      cursor: newLastDoc,
+      hasMore,
+      firstDoc: reset ? snapshot.docs[0] : firstDoc
+    };
+  } catch (error) {
+    if (signal.aborted) return { items: [], cursor: null, hasMore: false };
+    console.error('Error fetching employees:', error);
+    showToast('Error loading employees: ' + (error?.message || 'Unknown error'), 'error');
+    return { items: [], cursor: null, hasMore: false };
+  }
+}
+
+// Initialize page
+async function funInitializeEmployeesPage() {
+  showSkeletonTable();
+  await Promise.all([
+    funLoadDepartments(),
+    funLoadTeamLeads(),
+    funLoadInitialEmployees()
+  ]);
+  setupEventListeners();
+  handleUrlParams();
+}
+
+// Load departments for filters and form
+async function funLoadDepartments() {
+  try {
+    const q = query(
+      collection(db, 'departments'),
+      where('status', '==', 'active'),
+      orderBy('name', 'asc')
+    );
+    
+    const snapshot = await withLimit(() => getDocs(q));
+    departments = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    
+    populateDepartmentSelects();
+  } catch (error) {
+    console.error('Error loading departments:', error);
+    showToast('Error loading departments: ' + (error?.message || 'Unknown error'), 'error');
+  }
+}
+
+// Load team leads for filters and form
+async function funLoadTeamLeads() {
+  try {
+    const q = query(
+      collection(db, 'employees'),
+      where('status', '==', 'active'),
+      orderBy('name', 'asc')
+    );
+    
+    const snapshot = await withLimit(() => getDocs(q));
+    const teamLeads = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    
+    populateTeamLeadSelects(teamLeads);
+  } catch (error) {
+    console.error('Error loading team leads:', error);
+    showToast('Error loading team leads: ' + (error?.message || 'Unknown error'), 'error');
+  }
+}
+
+// Load initial employees
+async function funLoadInitialEmployees() {
+  const result = await funFetchEmployeesPage({}, '', true);
+  employees = result.items || [];
+  lastDoc = result.cursor;
+  firstDoc = result.firstDoc;
+  
+  await enrichEmployeesWithJoins(employees);
+  renderEmployeesTable();
+  updatePaginationInfo();
+}
+
+// Enrich employees with department and team lead names
+async function enrichEmployeesWithJoins(employeesList) {
+  const departmentMap = {};
+  const teamLeadMap = {};
+
+  // Build department map
+  for (const dept of departments) {
+    departmentMap[dept.id] = dept.name;
+  }
+
+  // Build team lead map (fetch if needed)
+  const uniqueTeamLeadIds = [...new Set(employeesList.map(emp => emp.teamLeadId).filter(Boolean))];
+  for (const tlId of uniqueTeamLeadIds) {
+    if (!teamLeadMap[tlId]) {
+      try {
+        const tlDoc = await getDoc(doc(db, 'employees', tlId));
+        if (tlDoc.exists()) {
+          teamLeadMap[tlId] = tlDoc.data().name;
+        }
+      } catch (error) {
+        console.error(`Error fetching team lead ${tlId}:`, error);
+        teamLeadMap[tlId] = 'N/A';
+      }
+    }
+  }
+
+  // Check for direct reports
+  for (const emp of employeesList) {
+    emp.departmentName = departmentMap[emp.departmentId] || 'N/A';
+    emp.teamLeadName = emp.teamLeadId ? (teamLeadMap[emp.teamLeadId] || 'N/A') : 'N/A';
+    
+    // Check if employee has direct reports
+    try {
+      const reportsQuery = query(
+        collection(db, 'employees'),
+        where('teamLeadId', '==', emp.id),
+        where('status', '==', 'active'),
+        limit(1)
+      );
+      const reportsSnapshot = await getDocs(reportsQuery);
+      emp.hasDirectReports = !reportsSnapshot.empty;
+    } catch (error) {
+      console.error(`Error checking direct reports for ${emp.id}:`, error);
+      emp.hasDirectReports = false;
+    }
+  }
+}
+
+// Populate department select elements
+function populateDepartmentSelects() {
+  const filterSelect = document.getElementById('filter-department');
+  const formSelect = document.getElementById('input-department');
+  
+  [filterSelect, formSelect].forEach(select => {
+    if (!select) return;
+    
+    // Clear existing options (except first one for filter)
+    const isFilter = select.id === 'filter-department';
+    select.innerHTML = isFilter ? '<option value="">All Departments</option>' : '<option value="">Select Department</option>';
+    
+    departments.forEach(dept => {
+      const option = document.createElement('option');
+      option.value = dept.id;
+      option.textContent = dept.name || 'Unnamed Department';
+      select.appendChild(option);
+    });
+  });
+}
+
+// Populate team lead select elements
+function populateTeamLeadSelects(teamLeads) {
+  const filterSelect = document.getElementById('filter-team-lead');
+  const formSelect = document.getElementById('input-team-lead');
+  const changeFormSelect = document.getElementById('input-new-team-lead');
+  
+  [filterSelect, formSelect, changeFormSelect].forEach(select => {
+    if (!select) return;
+    
+    const isFilter = select.id === 'filter-team-lead';
+    const isChangeForm = select.id === 'input-new-team-lead';
+    
+    if (isFilter) {
+      select.innerHTML = '<option value="">All Team Leads</option>';
+    } else if (isChangeForm) {
+      select.innerHTML = '<option value="">Select New Team Lead</option>';
+    } else {
+      select.innerHTML = '<option value="">No Team Lead</option>';
+    }
+    
+    teamLeads.forEach(tl => {
+      const option = document.createElement('option');
+      option.value = tl.id;
+      option.textContent = tl.name || 'Unnamed Employee';
+      select.appendChild(option);
+    });
+  });
+}
+
+// Show skeleton loading state
+function showSkeletonTable() {
+  const tbody = document.getElementById('employees-table-body');
+  tbody.innerHTML = '';
+  
+  for (let i = 0; i < 5; i++) {
+    const row = document.createElement('tr');
+    row.className = 'odd:bg-white even:bg-neutral-50 animate-pulse';
+    row.innerHTML = `
+      <td class="px-4 py-3">
+        <div class="flex items-center gap-3">
+          <div class="w-8 h-8 bg-neutral-200 rounded-full"></div>
+          <div>
+            <div class="w-24 h-3 bg-neutral-200 rounded mb-1"></div>
+            <div class="w-32 h-3 bg-neutral-200 rounded"></div>
+          </div>
+        </div>
+      </td>
+      <td class="px-4 py-3"><div class="w-20 h-3 bg-neutral-200 rounded"></div></td>
+      <td class="px-4 py-3"><div class="w-16 h-3 bg-neutral-200 rounded"></div></td>
+      <td class="px-4 py-3"><div class="w-20 h-3 bg-neutral-200 rounded"></div></td>
+      <td class="px-4 py-3"><div class="w-12 h-3 bg-neutral-200 rounded"></div></td>
+      <td class="px-4 py-3"><div class="w-12 h-6 bg-neutral-200 rounded-full"></div></td>
+      <td class="px-4 py-3"><div class="w-8 h-3 bg-neutral-200 rounded"></div></td>
+      <td class="px-4 py-3"><div class="w-16 h-3 bg-neutral-200 rounded"></div></td>
+      <td class="px-4 py-3"><div class="w-20 h-6 bg-neutral-200 rounded"></div></td>
+    `;
+    tbody.appendChild(row);
+  }
+}
+
+// Render employees table
+function renderEmployeesTable() {
+  const tbody = document.getElementById('employees-table-body');
+  
+  if (!employees || employees.length === 0) {
+    tbody.innerHTML = `
+      <tr>
+        <td colspan="9" class="px-4 py-12 text-center">
+          <div class="flex flex-col items-center gap-2">
+            <i data-lucide="users" class="w-8 h-8 text-neutral-400"></i>
+            <p class="text-sm text-neutral-500">No employees found</p>
+            <button id="btn-add-first-employee" class="text-accent hover:underline text-sm">Add First Employee</button>
+          </div>
+        </td>
+      </tr>
+    `;
+    
+    // Add event listener for first employee button
+    document.getElementById('btn-add-first-employee')?.addEventListener('click', funOpenAddEmployeeModal);
+    return;
+  }
+
+  tbody.innerHTML = '';
+  
+  employees.forEach((employee, index) => {
+    const row = document.createElement('tr');
+    row.className = 'odd:bg-white even:bg-neutral-50 hover:bg-neutral-100 transition-colors';
+    
+    const updatedDate = employee.updatedAt ? 
+      new Date(employee.updatedAt).toLocaleDateString('en-GB') : 'N/A';
+    
+    row.innerHTML = `
+      <td class="px-4 py-3">
+        <div class="flex items-center gap-3">
+          <div class="w-8 h-8 bg-accent/10 text-accent rounded-full flex items-center justify-center text-xs font-semibold">
+            ${(employee.name || 'U')[0].toUpperCase()}
+          </div>
+          <div>
+            <div class="font-medium text-neutral-700">${employee.name || 'N/A'}</div>
+            <div class="text-xs text-neutral-400">${employee.employeeCode || 'N/A'}</div>
+            <div class="text-xs text-neutral-400">${employee.email || 'N/A'}</div>
+          </div>
+        </div>
+      </td>
+      <td class="px-4 py-3 text-neutral-700">${employee.jobTitle || 'N/A'}</td>
+      <td class="px-4 py-3 text-neutral-700">${employee.departmentName || 'N/A'}</td>
+      <td class="px-4 py-3 text-neutral-700">${employee.teamLeadName || 'N/A'}</td>
+      <td class="px-4 py-3">
+        <span class="inline-flex items-center gap-1 text-xs px-2 py-1 rounded-full ${employee.systemRole === 'systemAdmin' ? 'bg-gold/10 text-primary border border-gold/20' : 'bg-neutral-100 text-neutral-700'}">
+          ${employee.systemRole === 'systemAdmin' ? '👑 Admin' : 'Employee'}
+        </span>
+      </td>
+      <td class="px-4 py-3">
+        <span class="inline-flex items-center gap-1 text-xs px-2 py-1 rounded-full ${employee.status === 'active' ? 'bg-success/10 text-success' : 'bg-neutral-100 text-neutral-500'}">
+          <span class="w-1.5 h-1.5 rounded-full ${employee.status === 'active' ? 'bg-success' : 'bg-neutral-400'}"></span>
+          ${employee.status === 'active' ? 'Active' : 'Inactive'}
+        </span>
+      </td>
+      <td class="px-4 py-3 text-neutral-700">${employee.hasDirectReports ? 'Yes' : 'No'}</td>
+      <td class="px-4 py-3 text-neutral-700 text-xs">${updatedDate}</td>
+      <td class="px-4 py-3">
+        <div class="flex items-center gap-1">
+          <button class="p-1 text-neutral-400 hover:text-accent rounded" 
+                  onclick="funEditEmployee('${employee.id}')"
+                  title="Edit Employee">
+            <i data-lucide="edit-3" class="w-4 h-4"></i>
+          </button>
+          <div class="relative group">
+            <button class="p-1 text-neutral-400 hover:text-secondary rounded" title="More Actions">
+              <i data-lucide="more-horizontal" class="w-4 h-4"></i>
+            </button>
+            <div class="hidden group-hover:block absolute right-0 top-full mt-1 bg-white border border-neutral-200 rounded-md shadow-lg z-10 min-w-48">
+              <button class="w-full px-3 py-2 text-left text-xs hover:bg-neutral-50 flex items-center gap-2"
+                      onclick="funChangeTeamLead('${employee.id}')">
+                <i data-lucide="users" class="w-3 h-3"></i>
+                Change Team Lead
+              </button>
+              <button class="w-full px-3 py-2 text-left text-xs hover:bg-neutral-50 flex items-center gap-2"
+                      onclick="funToggleSystemRole('${employee.id}')">
+                <i data-lucide="${employee.systemRole === 'systemAdmin' ? 'user-minus' : 'user-plus'}" class="w-3 h-3"></i>
+                ${employee.systemRole === 'systemAdmin' ? 'Remove' : 'Set as'} Admin
+              </button>
+              <hr class="my-1">
+              <button class="w-full px-3 py-2 text-left text-xs hover:bg-neutral-50 flex items-center gap-2"
+                      onclick="funViewAssessments('${employee.id}')">
+                <i data-lucide="file-text" class="w-3 h-3"></i>
+                View Assessments
+              </button>
+              <button class="w-full px-3 py-2 text-left text-xs hover:bg-neutral-50 flex items-center gap-2"
+                      onclick="funAllocateTraining('${employee.id}')">
+                <i data-lucide="graduation-cap" class="w-3 h-3"></i>
+                Allocate Training
+              </button>
+              <button class="w-full px-3 py-2 text-left text-xs hover:bg-neutral-50 flex items-center gap-2"
+                      onclick="funViewAuditLogs('${employee.id}')">
+                <i data-lucide="file-search" class="w-3 h-3"></i>
+                Audit Trail
+              </button>
+            </div>
+          </div>
+        </div>
+      </td>
+    `;
+    
+    tbody.appendChild(row);
+  });
+
+  // Reinitialize Lucide icons for new content
+  if (typeof lucide !== 'undefined') {
+    lucide.createIcons();
+  }
+}
+
+// Update pagination info
+function updatePaginationInfo() {
+  const info = document.getElementById('pagination-info');
+  const prevBtn = document.getElementById('btn-prev-page');
+  const nextBtn = document.getElementById('btn-next-page');
+  
+  const startIndex = (currentPage - 1) * pageSize + 1;
+  const endIndex = Math.min(currentPage * pageSize, startIndex + employees.length - 1);
+  
+  if (employees.length === 0) {
+    info.textContent = 'No employees found';
+  } else {
+    info.textContent = `Showing ${startIndex}-${endIndex} of employees`;
+  }
+  
+  prevBtn.disabled = currentPage === 1;
+  nextBtn.disabled = employees.length < pageSize;
+}
+
+// Setup event listeners
+function setupEventListeners() {
+  // Filter change handlers
+  ['filter-department', 'filter-status', 'filter-team-lead', 'filter-role'].forEach(id => {
+    document.getElementById(id)?.addEventListener('change', funApplyFilters);
+  });
+
+  // Search input handler
+  const searchInput = document.getElementById('search-input');
+  searchInput?.addEventListener('input', (e) => {
+    clearTimeout(searchTimeout);
+    searchTimeout = setTimeout(() => {
+      funApplyFilters();
+    }, 300);
+  });
+
+  // Button handlers
+  document.getElementById('btn-refresh')?.addEventListener('click', () => funRefreshData());
+  document.getElementById('btn-add-employee')?.addEventListener('click', funOpenAddEmployeeModal);
+  document.getElementById('btn-prev-page')?.addEventListener('click', funPreviousPage);
+  document.getElementById('btn-next-page')?.addEventListener('click', funNextPage);
+
+  // Modal handlers
+  document.getElementById('btn-cancel-employee')?.addEventListener('click', funCloseEmployeeModal);
+  document.getElementById('btn-cancel-change-tl')?.addEventListener('click', funCloseChangeTeamLeadModal);
+  document.getElementById('employee-form')?.addEventListener('submit', funSaveEmployee);
+  document.getElementById('btn-confirm-change-tl')?.addEventListener('click', funConfirmChangeTeamLead);
+
+  // Close modals on backdrop click
+  document.getElementById('employee-modal')?.addEventListener('click', (e) => {
+    if (e.target.id === 'employee-modal') funCloseEmployeeModal();
+  });
+  document.getElementById('change-team-lead-modal')?.addEventListener('click', (e) => {
+    if (e.target.id === 'change-team-lead-modal') funCloseChangeTeamLeadModal();
+  });
+
+  // ESC key to close modals
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      funCloseEmployeeModal();
+      funCloseChangeTeamLeadModal();
+    }
+  });
+}
+
+// Apply filters and search
+async function funApplyFilters() {
+  currentPage = 1;
+  lastDoc = null;
+  firstDoc = null;
+  
+  const filters = {
+    departmentId: document.getElementById('filter-department')?.value || '',
+    status: document.getElementById('filter-status')?.value || '',
+    teamLeadId: document.getElementById('filter-team-lead')?.value || '',
+    systemRole: document.getElementById('filter-role')?.value || ''
+  };
+  
+  const searchTerm = document.getElementById('search-input')?.value || '';
+  
+  showSkeletonTable();
+  
+  const result = await funFetchEmployeesPage(filters, searchTerm, true);
+  employees = result.items || [];
+  lastDoc = result.cursor;
+  firstDoc = result.firstDoc;
+  
+  await enrichEmployeesWithJoins(employees);
+  renderEmployeesTable();
+  updatePaginationInfo();
+}
+
+// Refresh data
+async function funRefreshData() {
+  currentPage = 1;
+  lastDoc = null;
+  firstDoc = null;
+  showSkeletonTable();
+  
+  await Promise.all([
+    funLoadDepartments(),
+    funLoadTeamLeads(),
+    funLoadInitialEmployees()
+  ]);
+}
+
+// Pagination handlers
+async function funNextPage() {
+  if (employees.length < pageSize) return;
+  
+  currentPage++;
+  showSkeletonTable();
+  
+  const result = await funFetchEmployeesPage({}, '', false);
+  employees = result.items || [];
+  lastDoc = result.cursor;
+  
+  await enrichEmployeesWithJoins(employees);
+  renderEmployeesTable();
+  updatePaginationInfo();
+}
+
+async function funPreviousPage() {
+  if (currentPage === 1) return;
+  
+  currentPage--;
+  // For simplicity, re-fetch from beginning
+  // In production, implement proper backward pagination
+  funRefreshData();
+}
+
+// Open add employee modal
+function funOpenAddEmployeeModal() {
+  currentEditingEmployee = null;
+  document.getElementById('modal-title').textContent = 'Add Employee';
+  document.getElementById('employee-form').reset();
+  
+  // Reset form state
+  const form = document.getElementById('employee-form');
+  form.querySelectorAll('input, select').forEach(input => {
+    input.value = '';
+  });
+  
+  // Set default values
+  document.getElementById('input-system-role').value = 'employee';
+  document.getElementById('input-status').value = 'active';
+  
+  document.getElementById('employee-modal').classList.remove('hidden');
+  
+  // Focus first input
+  setTimeout(() => {
+    document.getElementById('input-employee-code')?.focus();
+  }, 100);
+}
+
+// Close employee modal
+function funCloseEmployeeModal() {
+  document.getElementById('employee-modal').classList.add('hidden');
+  currentEditingEmployee = null;
+}
+
+// Edit employee
+window.funEditEmployee = async function(employeeId) {
+  try {
+    showLoader();
+    const employeeDoc = await getDoc(doc(db, 'employees', employeeId));
+    
+    if (!employeeDoc.exists()) {
+      showToast('Employee not found', 'error');
+      return;
+    }
+    
+    const employeeData = { id: employeeDoc.id, ...employeeDoc.data() };
+    currentEditingEmployee = employeeData;
+    
+    document.getElementById('modal-title').textContent = 'Edit Employee';
+    
+    // Populate form
+    document.getElementById('input-employee-code').value = employeeData.employeeCode || '';
+    document.getElementById('input-name').value = employeeData.name || '';
+    document.getElementById('input-email').value = employeeData.email || '';
+    document.getElementById('input-job-title').value = employeeData.jobTitle || '';
+    document.getElementById('input-department').value = employeeData.departmentId || '';
+    document.getElementById('input-team-lead').value = employeeData.teamLeadId || '';
+    document.getElementById('input-system-role').value = employeeData.systemRole || 'employee';
+    document.getElementById('input-status').value = employeeData.status || 'active';
+    
+    document.getElementById('employee-modal').classList.remove('hidden');
+    
+  } catch (error) {
+    console.error('Error loading employee for edit:', error);
+    showToast('Error loading employee: ' + (error?.message || 'Unknown error'), 'error');
+  } finally {
+    hideLoader();
+  }
+};
+
+// Save employee (add or edit)
+async function funSaveEmployee(e) {
+  e.preventDefault();
+  
+  const formData = {
+    employeeCode: document.getElementById('input-employee-code').value.trim(),
+    name: document.getElementById('input-name').value.trim(),
+    email: document.getElementById('input-email').value.trim(),
+    jobTitle: document.getElementById('input-job-title').value.trim(),
+    departmentId: document.getElementById('input-department').value,
+    teamLeadId: document.getElementById('input-team-lead').value || null,
+    systemRole: document.getElementById('input-system-role').value,
+    status: document.getElementById('input-status').value
+  };
+
+  // Validation
+  if (!formData.employeeCode || !formData.name || !formData.email || !formData.jobTitle || !formData.departmentId) {
+    showToast('Please fill in all required fields', 'error');
+    return;
+  }
+
+  // Email validation
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(formData.email)) {
+    showToast('Please enter a valid email address', 'error');
+    return;
+  }
+
+  // Cannot set self as team lead
+  if (currentEditingEmployee && formData.teamLeadId === currentEditingEmployee.id) {
+    showToast('Employee cannot be their own team lead', 'error');
+    return;
+  }
+
+  try {
+    showLoader();
+    
+    const now = new Date().toISOString();
+    const userId = auth.currentUser?.uid;
+
+    if (currentEditingEmployee) {
+      // Update existing employee
+      await updateDoc(doc(db, 'employees', currentEditingEmployee.id), {
+        ...formData,
+        updatedAt: now,
+        updatedBy: userId
+      });
+
+      // Log audit trail
+      await addDoc(collection(db, 'auditLogs'), {
+        entityType: 'employee',
+        entityId: currentEditingEmployee.id,
+        action: 'update',
+        actorId: userId,
+        timestamp: now,
+        before: currentEditingEmployee,
+        after: { ...currentEditingEmployee, ...formData },
+        reason: 'Employee information updated'
+      });
+
+      showToast('Employee updated successfully', 'success');
+    } else {
+      // Add new employee
+      const newEmployeeRef = doc(collection(db, 'employees'));
+      await setDoc(newEmployeeRef, {
+        id: newEmployeeRef.id,
+        ...formData,
+        createdAt: now,
+        createdBy: userId,
+        updatedAt: now,
+        updatedBy: userId
+      });
+
+      // Log audit trail
+      await addDoc(collection(db, 'auditLogs'), {
+        entityType: 'employee',
+        entityId: newEmployeeRef.id,
+        action: 'create',
+        actorId: userId,
+        timestamp: now,
+        before: null,
+        after: { id: newEmployeeRef.id, ...formData },
+        reason: 'New employee created'
+      });
+
+      showToast('Employee added successfully', 'success');
+    }
+
+    funCloseEmployeeModal();
+    funRefreshData();
+
+  } catch (error) {
+    console.error('Error saving employee:', error);
+    showToast('Error saving employee: ' + (error?.message || 'Unknown error'), 'error');
+  } finally {
+    hideLoader();
+  }
+}
+
+// Change team lead
+window.funChangeTeamLead = async function(employeeId) {
+  try {
+    showLoader();
+    
+    // Fetch employee details
+    const employeeDoc = await getDoc(doc(db, 'employees', employeeId));
+    if (!employeeDoc.exists()) {
+      showToast('Employee not found', 'error');
+      return;
+    }
+    
+    const employeeData = { id: employeeDoc.id, ...employeeDoc.data() };
+    
+    // Show employee info
+    document.getElementById('change-tl-employee-info').innerHTML = `
+      <div><strong>Name:</strong> ${employeeData.name || 'N/A'}</div>
+      <div><strong>Employee Code:</strong> ${employeeData.employeeCode || 'N/A'}</div>
+      <div><strong>Current Team Lead:</strong> ${employeeData.teamLeadName || 'N/A'}</div>
+    `;
+
+    // Load impact assessment
+    await funLoadChangeTeamLeadImpact(employeeId);
+    
+    // Store current employee for change
+    window.currentChangeEmployee = employeeData;
+    
+    document.getElementById('change-team-lead-modal').classList.remove('hidden');
+    
+  } catch (error) {
+    console.error('Error preparing team lead change:', error);
+    showToast('Error preparing team lead change: ' + (error?.message || 'Unknown error'), 'error');
+  } finally {
+    hideLoader();
+  }
+};
+
+// Load impact assessment for team lead change
+async function funLoadChangeTeamLeadImpact(employeeId) {
+  try {
+    // Check for open/pending assessments
+    const assessmentsQuery = query(
+      collection(db, 'assessments'),
+      where('employeeId', '==', employeeId),
+      where('status', 'in', ['open', 'pending'])
+    );
+    const assessmentsSnapshot = await getDocs(assessmentsQuery);
+    const assessmentsToClose = assessmentsSnapshot.size;
+
+    // Check for active skill mappings
+    const mappingsQuery = query(
+      collection(db, 'employeeSkillMappings'),
+      where('employeeId', '==', employeeId),
+      where('status', '==', 'active')
+    );
+    const mappingsSnapshot = await getDocs(mappingsQuery);
+    const mappingsToDeactivate = mappingsSnapshot.size;
+
+    document.getElementById('assessments-to-close').textContent = 
+      `${assessmentsToClose} assessment(s) will be closed due to reassignment`;
+    document.getElementById('mappings-to-deactivate').textContent = 
+      `${mappingsToDeactivate} skill mapping(s) will be deactivated`;
+
+  } catch (error) {
+    console.error('Error loading change impact:', error);
+    document.getElementById('assessments-to-close').textContent = 'Error loading assessment impact';
+    document.getElementById('mappings-to-deactivate').textContent = 'Error loading skill mappings impact';
+  }
+}
+
+// Close change team lead modal
+function funCloseChangeTeamLeadModal() {
+  document.getElementById('change-team-lead-modal').classList.add('hidden');
+  document.getElementById('input-new-team-lead').value = '';
+  document.getElementById('input-change-reason').value = '';
+  window.currentChangeEmployee = null;
+}
+
+// Confirm team lead change
+async function funConfirmChangeTeamLead() {
+  if (!window.currentChangeEmployee) return;
+
+  const newTeamLeadId = document.getElementById('input-new-team-lead').value;
+  const reason = document.getElementById('input-change-reason').value || '';
+
+  if (!newTeamLeadId) {
+    showToast('Please select a new team lead', 'error');
+    return;
+  }
+
+  if (newTeamLeadId === window.currentChangeEmployee.id) {
+    showToast('Employee cannot be their own team lead', 'error');
+    return;
+  }
+
+  try {
+    showLoader();
+    const batch = writeBatch(db);
+    const now = new Date().toISOString();
+    const userId = auth.currentUser?.uid;
+
+    // Update employee team lead
+    const employeeRef = doc(db, 'employees', window.currentChangeEmployee.id);
+    batch.update(employeeRef, {
+      teamLeadId: newTeamLeadId,
+      updatedAt: now,
+      updatedBy: userId
+    });
+
+    // Close pending/open assessments
+    const assessmentsQuery = query(
+      collection(db, 'assessments'),
+      where('employeeId', '==', window.currentChangeEmployee.id),
+      where('status', 'in', ['open', 'pending'])
+    );
+    const assessmentsSnapshot = await getDocs(assessmentsQuery);
+    
+    assessmentsSnapshot.docs.forEach(assessmentDoc => {
+      batch.update(doc(db, 'assessments', assessmentDoc.id), {
+        status: 'closedDueToReassignment',
+        locked: true
+      });
+    });
+
+    // Deactivate skill mappings
+    const mappingsQuery = query(
+      collection(db, 'employeeSkillMappings'),
+      where('employeeId', '==', window.currentChangeEmployee.id),
+      where('status', '==', 'active')
+    );
+    const mappingsSnapshot = await getDocs(mappingsQuery);
+    
+    mappingsSnapshot.docs.forEach(mappingDoc => {
+      batch.update(doc(db, 'employeeSkillMappings', mappingDoc.id), {
+        status: 'inactive'
+      });
+    });
+
+    // Add audit log
+    const auditRef = doc(collection(db, 'auditLogs'));
+    batch.set(auditRef, {
+      entityType: 'employee',
+      entityId: window.currentChangeEmployee.id,
+      action: 'changeTeamLead',
+      actorId: userId,
+      timestamp: now,
+      before: { teamLeadId: window.currentChangeEmployee.teamLeadId },
+      after: { teamLeadId: newTeamLeadId },
+      reason: reason || 'Team lead change'
+    });
+
+    await batch.commit();
+
+    showToast('Team lead changed successfully. Assessments closed and skill mappings deactivated.', 'success');
+    funCloseChangeTeamLeadModal();
+    funRefreshData();
+
+  } catch (error) {
+    console.error('Error changing team lead:', error);
+    showToast('Error changing team lead: ' + (error?.message || 'Unknown error'), 'error');
+  } finally {
+    hideLoader();
+  }
+}
+
+// Toggle system role
+window.funToggleSystemRole = async function(employeeId) {
+  try {
+    const employeeDoc = await getDoc(doc(db, 'employees', employeeId));
+    if (!employeeDoc.exists()) {
+      showToast('Employee not found', 'error');
+      return;
+    }
+
+    const employeeData = employeeDoc.data();
+    const newRole = employeeData.systemRole === 'systemAdmin' ? 'employee' : 'systemAdmin';
+    const action = newRole === 'systemAdmin' ? 'Set as System Admin' : 'Remove System Admin';
+
+    if (!confirm(`Are you sure you want to ${action.toLowerCase()} for ${employeeData.name}?`)) {
+      return;
+    }
+
+    showLoader();
+    const now = new Date().toISOString();
+    const userId = auth.currentUser?.uid;
+
+    await updateDoc(doc(db, 'employees', employeeId), {
+      systemRole: newRole,
+      updatedAt: now,
+      updatedBy: userId
+    });
+
+    // Log audit trail
+    await addDoc(collection(db, 'auditLogs'), {
+      entityType: 'employee',
+      entityId: employeeId,
+      action: 'update',
+      actorId: userId,
+      timestamp: now,
+      before: { systemRole: employeeData.systemRole },
+      after: { systemRole: newRole },
+      reason: action
+    });
+
+    showToast(`${action} completed successfully`, 'success');
+    funRefreshData();
+
+  } catch (error) {
+    console.error('Error toggling system role:', error);
+    showToast('Error updating system role: ' + (error?.message || 'Unknown error'), 'error');
+  } finally {
+    hideLoader();
+  }
+};
+
+// Navigation functions
+window.funViewAssessments = function(employeeId) {
+  const returnTo = encodeURIComponent(location.pathname);
+  location.href = `assessment_viewer.html?employeeId=${employeeId}&returnTo=${returnTo}`;
+};
+
+window.funAllocateTraining = function(employeeId) {
+  const returnTo = encodeURIComponent(location.pathname);
+  location.href = `training_management.html?tab=sessions&preselect.employeeIds=[${employeeId}]&returnTo=${returnTo}`;
+};
+
+window.funViewAuditLogs = function(employeeId) {
+  const returnTo = encodeURIComponent(location.pathname);
+  location.href = `audit_log_viewer.html?entityType=employee&entityId=${employeeId}&returnTo=${returnTo}`;
+};
+
+// Handle URL parameters
+function handleUrlParams() {
+  const params = new URLSearchParams(window.location.search);
+  
+  const employeeId = params.get('employeeId');
+  const departmentId = params.get('departmentId');
+  
+  if (employeeId) {
+    // Open edit modal for specific employee
+    setTimeout(() => {
+      window.funEditEmployee(employeeId);
+    }, 1000);
+  }
+  
+  if (departmentId) {
+    // Pre-filter by department
+    setTimeout(() => {
+      const deptFilter = document.getElementById('filter-department');
+      if (deptFilter) {
+        deptFilter.value = departmentId;
+        funApplyFilters();
+      }
+    }, 500);
+  }
+}
+
+// Initialize page
+document.addEventListener('DOMContentLoaded', funInitializeEmployeesPage);
+</script>
+
+</body>
+</html>

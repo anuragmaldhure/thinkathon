@@ -1,0 +1,1035 @@
+<html lang="en"><head>
+    <meta charset="UTF-8">
+    <title>SkillBridge Employee Portal</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://tiramai-grid-lib.tiram.app/tiramai-grid.umd.js"></script>
+    <style type="text/tailwindcss">
+      @theme {
+        --color-primary: #1E40AF;
+        --color-secondary: #059669;
+        --color-accent: #F59E0B;
+        --color-surface: #FFFFFF;
+        --color-background: #F8FAFC;
+        --color-border: #E2E8F0;
+
+        --header-height: 4rem;
+        --sidebar-width: 16rem;
+
+        --text-xs: 12px;
+        --text-sm: 14px;
+        --text-base: 14px;
+        --text-lg: 16px;
+        --text-xl: 18px;
+        --text-2xl: 20px;
+        --text-3xl: 24px;
+
+        --radius-sm: 4px;
+        --radius: 8px;
+        --radius-lg: 16px;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+      }
+      ::-webkit-scrollbar-track {
+        background: #f1f1f1;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+        border-radius: 4px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: #94a3b8;
+      }
+
+      .app-header {
+        height: var(--header-height, 4rem);
+      }
+      .app-sidebar {
+        top: var(--header-height, 4rem);
+        width: var(--sidebar-width, 16rem);
+        height: calc(100vh - var(--header-height, 4rem));
+        overflow-y: auto;
+        overflow-x: hidden;
+      }
+      .app-main {
+        margin-top: var(--header-height, 4rem);
+        min-height: calc(100vh - var(--header-height, 4rem));
+      }
+      @media (min-width: 768px) {
+        .app-main {
+          margin-left: var(--sidebar-width, 16rem);
+        }
+      }
+
+      body.sidebar-open {
+        overflow: hidden;
+      }
+
+      @media (max-width: 767px) {
+        .app-sidebar {
+          left: calc(-1 * var(--sidebar-width, 16rem));
+          transition: left 0.3s ease-in-out;
+        }
+        .app-sidebar.open {
+          left: 0;
+        }
+      }
+
+      .nav-link.active {
+        background: var(--color-primary);
+        color: white;
+      }
+      .nav-link.active:hover {
+        background: var(--color-primary);
+        opacity: 0.9;
+      }
+
+      .popover {
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(-8px);
+        transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out,
+          visibility 0.2s ease-in-out;
+      }
+      .popover.visible {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+      }
+
+      .sidebar-backdrop {
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+      }
+      .sidebar-backdrop.active {
+        opacity: 1;
+        visibility: visible;
+      }
+      
+      button,
+      a {
+        font-size: 14px;
+      }
+    </style>
+  <title>My Disputes</title></head>
+  <body class="bg-slate-50 text-gray-800 overflow-x-hidden">
+    <header class="app-header fixed top-0 left-0 right-0 bg-white border-b border-slate-200 z-40">
+      <div class="h-full max-w-[1920px] mx-auto px-4 md:px-6 flex justify-between items-center">
+        <div class="flex items-center gap-3">
+          <button id="mobileMenuToggle" class="flex items-center justify-center w-10 h-10 rounded-md text-gray-500 hover:bg-gray-100 hover:text-gray-900 transition-all duration-200 cursor-pointer border-0 bg-transparent md:hidden focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-700 focus-visible:outline-offset-2" aria-label="Toggle navigation menu" aria-expanded="false">
+            <i data-lucide="menu" class="w-6 h-6"></i>
+          </button>
+
+          <div class="flex items-center gap-3">
+            <div class="w-8 h-8 flex items-center justify-center">
+              <svg viewBox="0 0 400 400" width="32" height="32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <g>
+                  <path d="M80 230 Q200 80 320 230" stroke="#1E40AF" stroke-width="26" fill="none" stroke-linecap="round"></path>
+                  <rect x="95" y="230" width="24" height="80" rx="8" fill="#059669"></rect>
+                  <rect x="281" y="230" width="24" height="80" rx="8" fill="#059669"></rect>
+                  <rect x="189" y="196" width="22" height="114" rx="7" fill="#1E40AF"></rect>
+                  <circle cx="130" cy="180" r="15" fill="#1E40AF"></circle>
+                  <circle cx="270" cy="180" r="15" fill="#1E40AF"></circle>
+                  <circle cx="200" cy="106" r="17" fill="#059669"></circle>
+                  <rect x="192" y="126" width="16" height="36" rx="6" fill="#059669"></rect>
+                </g>
+              </svg>
+            </div>
+            <h1 class="text-lg md:text-xl font-bold text-gray-900">
+              SkillBridge
+            </h1>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-2 md:gap-3">
+          <button id="userProfileButton" class="flex items-center gap-3 px-3 py-2 rounded-lg border border-transparent hover:bg-gray-50 hover:border-gray-200 transition-all duration-200 cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-700 focus-visible:outline-offset-2" aria-label="User profile menu" aria-expanded="false" aria-haspopup="true">
+            <div id="userAvatar" class="w-8 h-8 bg-blue-700 text-white rounded-full flex items-center justify-center text-sm font-semibold shrink-0"></div>
+            <div class="hidden sm:flex flex-col items-start max-w-[150px]">
+              <div id="userName" class="text-sm font-medium text-gray-900 truncate w-full"></div>
+            </div>
+            <i data-lucide="chevron-down" class="w-4 h-4 text-gray-500 hidden sm:block"></i>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <div id="userProfilePopover" class="popover fixed top-[4.5rem] right-4 md:right-6 w-72 bg-white border border-slate-200 rounded-lg shadow-xl z-50" role="dialog" aria-labelledby="popoverUserName" data-portal="body">
+      <div class="p-4">
+        <div class="flex items-center gap-3 pb-3 mb-3 border-b border-gray-100">
+          <div id="popoverUserAvatar" class="w-8 h-8 bg-blue-700 text-white rounded-full flex items-center justify-center text-sm font-semibold shrink-0"></div>
+          <div class="flex-1 min-w-0">
+            <div id="popoverUserName" class="font-semibold text-gray-900 truncate"></div>
+            <div id="popoverUserEmail" class="text-xs text-gray-500 truncate"></div>
+          </div>
+        </div>
+
+        <div class="space-y-1">
+          <button id="signOutButton" class="w-full flex items-center gap-3 px-3 py-2 text-sm font-medium text-red-600 hover:bg-red-50 rounded-md transition-all duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-700 focus-visible:outline-offset-2">
+            <i data-lucide="log-out" class="w-4 h-4"></i>
+            Sign Out
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div id="sidebarBackdrop" class="sidebar-backdrop fixed inset-0 bg-black/50 z-20 md:hidden" style="top: var(--header-height, 4rem)"></div>
+
+    <aside id="sidebar" class="app-sidebar fixed left-0 bg-white border-r border-slate-200 overflow-y-auto z-30">
+      <nav class="p-4" role="navigation" aria-label="Main navigation">
+        <div class="py-6 border-b border-gray-100 first:pt-0 last:border-b-0">
+          <div class="px-4 pb-2 text-xs font-semibold uppercase tracking-wider text-gray-400">
+            Main
+          </div>
+          <div class="space-y-1">
+            <a href="employee_dashboard.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline active" data-page="employee_dashboard">
+              <i data-lucide="home" class="w-5 h-5"></i>
+              <span>Dashboard</span>
+            </a>
+            <a href="my_skills.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline" data-page="my_skills">
+              <i data-lucide="target" class="w-5 h-5"></i>
+              <span>My Skills</span>
+            </a>
+            <a href="my_training_sessions.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline" data-page="my_training_sessions">
+              <i data-lucide="graduation-cap" class="w-5 h-5"></i>
+              <span>My Training</span>
+            </a>
+            <a href="my_disputes.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline" data-page="my_disputes">
+              <i data-lucide="flag" class="w-5 h-5"></i>
+              <span>My Disputes</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="py-6 border-b border-gray-100 last:border-b-0">
+          <div class="px-4 pb-2 text-xs font-semibold uppercase tracking-wider text-gray-400">
+            Account
+          </div>
+          <div class="space-y-1">
+            <a href="my_profile.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline" data-page="my_profile">
+              <i data-lucide="user" class="w-5 h-5"></i>
+              <span>My Profile</span>
+            </a>
+          </div>
+        </div>
+      </nav>
+    </aside>
+
+    <main class="app-main max-w-7xl mx-auto p-4 md:p-6 lg:p-8" id="pageContent" role="main"><nav class="flex items-center space-x-2 text-sm text-gray-600 mb-6" aria-label="Breadcrumb">
+  <a href="employee_dashboard.html" class="hover:text-gray-900">Home</a>
+  <i data-lucide="chevron-right" class="w-4 h-4"></i>
+  <span class="text-gray-900 font-medium">My Disputes</span>
+</nav>
+
+<!-- Page Header -->
+<div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+  <div>
+    <h1 class="text-2xl font-bold text-gray-900 mb-2">My Disputes</h1>
+    <p class="text-gray-600">Track and manage your assessment disputes</p>
+  </div>
+  <button onclick="window.location.href='raise_dispute.html'" class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-blue-700 rounded-lg hover:bg-blue-700/90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-700 focus-visible:outline-offset-2 transition-colors">
+    <i data-lucide="plus" class="w-4 h-4 mr-2"></i>
+    Raise New Dispute
+  </button>
+</div>
+
+<!-- Summary Stats -->
+<div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+  <div class="bg-white rounded-lg border border-slate-200 p-4">
+    <div class="text-2xl font-bold text-gray-900" id="totalDisputesCount">0</div>
+    <div class="text-sm text-gray-500">Total Disputes</div>
+  </div>
+  <div class="bg-white rounded-lg border border-slate-200 p-4">
+    <div class="text-2xl font-bold text-blue-700" id="openDisputesCount">0</div>
+    <div class="text-sm text-gray-500">Open</div>
+  </div>
+  <div class="bg-white rounded-lg border border-slate-200 p-4">
+    <div class="text-2xl font-bold text-green-600" id="resolvedDisputesCount">0</div>
+    <div class="text-sm text-gray-500">Resolved</div>
+  </div>
+  <div class="bg-white rounded-lg border border-slate-200 p-4">
+    <div class="text-2xl font-bold text-amber-500" id="needsResponseCount">0</div>
+    <div class="text-sm text-gray-500">Awaiting Your Response</div>
+  </div>
+</div>
+
+<!-- Filter Tabs -->
+<div class="bg-white rounded-lg border border-slate-200 mb-6">
+  <div class="flex border-b border-gray-200">
+    <button id="allTab" onclick="funSwitchFilter('all')" class="filter-tab active px-6 py-3 text-sm font-medium text-blue-700 border-b-2 border-blue-700 bg-blue-50">
+      All <span id="allTabCount" class="ml-2 bg-blue-700 text-white text-xs px-2 py-1 rounded-full">0</span>
+    </button>
+    <button id="openTab" onclick="funSwitchFilter('open')" class="filter-tab px-6 py-3 text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50">
+      Open <span id="openTabCount" class="ml-2 bg-gray-500 text-white text-xs px-2 py-1 rounded-full">0</span>
+    </button>
+    <button id="resolvedTab" onclick="funSwitchFilter('resolved')" class="filter-tab px-6 py-3 text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50">
+      Resolved <span id="resolvedTabCount" class="ml-2 bg-gray-500 text-white text-xs px-2 py-1 rounded-full">0</span>
+    </button>
+    <button id="needsResponseTab" onclick="funSwitchFilter('needsResponse')" class="filter-tab px-6 py-3 text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50">
+      Needs Response <span id="needsResponseTabCount" class="ml-2 bg-gray-500 text-white text-xs px-2 py-1 rounded-full">0</span>
+    </button>
+  </div>
+</div>
+
+<!-- Disputes Grid -->
+<div id="disputesGrid" class="mt-6"></div>
+
+<!-- Empty State -->
+<div id="disputesEmptyState" class="hidden text-center py-12">
+  <i data-lucide="flag" class="w-12 h-12 mx-auto text-gray-400 mb-4"></i>
+  <h3 class="text-lg font-medium text-gray-900 mb-2">No disputes found</h3>
+  <p class="text-gray-500 mb-4">You haven't raised any disputes yet.</p>
+  <button onclick="window.location.href='raise_dispute.html'" class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-blue-700 rounded-lg hover:bg-blue-700/90">
+    <i data-lucide="plus" class="w-4 h-4 mr-2"></i>
+    Raise New Dispute
+  </button>
+</div>
+
+</main>
+
+    <script src="app.js"></script>
+    <script src="app_data.js"></script>
+    <script id="container-script">
+      (function () {
+        const TemplateUtils = (window.TemplateUtils =
+          window.TemplateUtils || {});
+
+        TemplateUtils.UserUtils =
+          TemplateUtils.UserUtils ||
+          (function createUserUtils() {
+            return {
+              getCurrentUser() {
+                try {
+                  let currentUserId = localStorage.getItem("currentUserId");
+                  if (!currentUserId) {
+                    localStorage.setItem("currentUserId", "user_001_alice_web");
+                    currentUserId = "user_001_alice_web";
+                  }
+
+                  const userData = localStorage.getItem(
+                    `users_${currentUserId}`
+                  );
+                  if (userData) {
+                    return JSON.parse(userData);
+                  }
+
+                  const users = JSON.parse(localStorage.getItem('users') || '[]');
+                  const user = users.find(u => u.id === 'usr_004');
+                  if (user) {
+                    localStorage.setItem(`users_${currentUserId}`, JSON.stringify(user));
+                    return user;
+                  }
+                  
+                  return null;
+                } catch (error) {
+                  console.error("Error retrieving user data:", error);
+                  return null;
+                }
+              },
+              signOut() {
+                try {
+                  localStorage.removeItem("currentUserId");
+                  window.location.reload();
+                } catch (error) {
+                  console.error("Error signing out:", error);
+                }
+              },
+              getUserDisplayName(user) {
+                if (!user) return "Guest";
+                return user.firstName && user.lastName
+                  ? `${user.firstName} ${user.lastName}`
+                  : user.firstName || user.lastName || "User";
+              },
+              getUserInitials(user) {
+                if (!user) return "?";
+                const first = user.firstName?.charAt(0) || "";
+                const last = user.lastName?.charAt(0) || "";
+                return (first + last).toUpperCase() || "U";
+              },
+            };
+          })();
+
+        if (TemplateUtils.__bootstrapped) {
+          if (typeof window.lucide?.createIcons === "function") {
+            window.lucide.createIcons();
+          }
+          return;
+        }
+
+        TemplateUtils.__bootstrapped = true;
+
+        const state = {
+          popoverVisible: false,
+          sidebarOpen: false,
+          resizeTimer: null,
+          debounceTimer: null,
+          isUpdatingIcons: false,
+          observer: null,
+          refs: {},
+        };
+
+        function ready(fn) {
+          if (document.readyState === "loading") {
+            document.addEventListener("DOMContentLoaded", fn, { once: true });
+          } else if (typeof queueMicrotask === "function") {
+            queueMicrotask(fn);
+          } else {
+            Promise.resolve().then(fn);
+          }
+        }
+
+        function safeLucide(callback) {
+          if (typeof window.lucide?.createIcons === "function") {
+            callback();
+          }
+        }
+
+        function cacheRefs() {
+          state.refs = {
+            userProfileButton: document.getElementById("userProfileButton"),
+            userProfilePopover: document.getElementById("userProfilePopover"),
+            userAvatar: document.getElementById("userAvatar"),
+            userName: document.getElementById("userName"),
+            popoverUserAvatar: document.getElementById("popoverUserAvatar"),
+            popoverUserName: document.getElementById("popoverUserName"),
+            popoverUserEmail: document.getElementById("popoverUserEmail"),
+            signOutButton: document.getElementById("signOutButton"),
+            mobileMenuToggle: document.getElementById("mobileMenuToggle"),
+            sidebar: document.getElementById("sidebar"),
+            sidebarBackdrop: document.getElementById("sidebarBackdrop"),
+            navLinks: document.querySelectorAll(".nav-link"),
+            pageContent: document.getElementById("pageContent"),
+          };
+        }
+
+        function initializeUserProfile() {
+          const { userAvatar, userName } = state.refs;
+          if (!userAvatar || !userName) return;
+
+          const currentUser = TemplateUtils.UserUtils.getCurrentUser();
+          if (currentUser) {
+            userAvatar.textContent =
+              TemplateUtils.UserUtils.getUserInitials(currentUser);
+            userName.textContent =
+              TemplateUtils.UserUtils.getUserDisplayName(currentUser);
+          } else {
+            userAvatar.textContent = "?";
+            userName.textContent = "Guest";
+          }
+        }
+
+        function populatePopover() {
+          const currentUser = TemplateUtils.UserUtils.getCurrentUser();
+          const { popoverUserAvatar, popoverUserName, popoverUserEmail } =
+            state.refs;
+          if (!popoverUserAvatar || !popoverUserName || !popoverUserEmail)
+            return;
+
+          if (currentUser) {
+            popoverUserAvatar.textContent =
+              TemplateUtils.UserUtils.getUserInitials(currentUser);
+            popoverUserName.textContent =
+              TemplateUtils.UserUtils.getUserDisplayName(currentUser);
+            popoverUserEmail.textContent = currentUser.email || "No email";
+          } else {
+            popoverUserAvatar.textContent = "?";
+            popoverUserName.textContent = "Guest";
+            popoverUserEmail.textContent = "Not logged in";
+          }
+        }
+
+        function toggleUserPopover(forceClose = false) {
+          const { userProfilePopover, userProfileButton } = state.refs;
+          if (!userProfilePopover || !userProfileButton) return;
+
+          const shouldOpen = forceClose ? false : !state.popoverVisible;
+          if (shouldOpen) {
+            populatePopover();
+            userProfilePopover.classList.add("visible");
+            userProfileButton.setAttribute("aria-expanded", "true");
+            state.popoverVisible = true;
+            const firstButton = userProfilePopover.querySelector("button");
+            if (firstButton) {
+              setTimeout(() => firstButton.focus(), 50);
+            }
+          } else {
+            userProfilePopover.classList.remove("visible");
+            userProfileButton.setAttribute("aria-expanded", "false");
+            state.popoverVisible = false;
+          }
+        }
+
+        function hideUserPopover() {
+          if (state.popoverVisible) {
+            toggleUserPopover(true);
+          }
+        }
+
+        function toggleMobileSidebar(forceClose = false) {
+          const { sidebar, sidebarBackdrop, mobileMenuToggle } = state.refs;
+          if (!sidebar || !sidebarBackdrop || !mobileMenuToggle) return;
+
+          const shouldOpen = forceClose ? false : !state.sidebarOpen;
+          state.sidebarOpen = shouldOpen;
+
+          sidebar.classList.toggle("open", shouldOpen);
+          sidebarBackdrop.classList.toggle("active", shouldOpen);
+          document.body.classList.toggle("sidebar-open", shouldOpen);
+          mobileMenuToggle.setAttribute(
+            "aria-expanded",
+            shouldOpen ? "true" : "false"
+          );
+
+          const icon = mobileMenuToggle.querySelector("[data-lucide]");
+          if (icon) {
+            icon.setAttribute("data-lucide", shouldOpen ? "x" : "menu");
+            safeLucide(() => window.lucide.createIcons());
+          }
+        }
+
+        function closeMobileSidebar() {
+          if (state.sidebarOpen) {
+            toggleMobileSidebar(true);
+          }
+        }
+
+        function setActiveNavLink(pageId) {
+          if (!pageId) return;
+          const { navLinks } = state.refs;
+          navLinks?.forEach((link) => {
+            if (link.dataset.page === pageId) {
+              link.classList.add("active");
+            } else {
+              link.classList.remove("active");
+            }
+          });
+        }
+
+        TemplateUtils.setActiveNavLink = setActiveNavLink;
+        TemplateUtils.closeMobileSidebar = closeMobileSidebar;
+
+        function handleDocumentClick(event) {
+          const { userProfilePopover, userProfileButton } = state.refs;
+          if (
+            state.popoverVisible &&
+            userProfilePopover &&
+            userProfileButton &&
+            !userProfilePopover.contains(event.target) &&
+            !userProfileButton.contains(event.target)
+          ) {
+            hideUserPopover();
+          }
+        }
+
+        function handleKeydown(event) {
+          if (event.key !== "Escape") return;
+          if (state.popoverVisible) {
+            hideUserPopover();
+            state.refs.userProfileButton?.focus();
+          }
+          if (state.sidebarOpen) {
+            closeMobileSidebar();
+            state.refs.mobileMenuToggle?.focus();
+          }
+        }
+
+        function handleResize() {
+          clearTimeout(state.resizeTimer);
+          state.resizeTimer = setTimeout(() => {
+            if (window.innerWidth >= 768) {
+              closeMobileSidebar();
+            }
+          }, 200);
+        }
+
+        function bindEvents() {
+          const {
+            userProfileButton,
+            mobileMenuToggle,
+            sidebarBackdrop,
+            signOutButton,
+            navLinks,
+          } = state.refs;
+
+          userProfileButton?.addEventListener("click", (event) => {
+            event.stopPropagation();
+            toggleUserPopover();
+          });
+
+          mobileMenuToggle?.addEventListener("click", (event) => {
+            event.stopPropagation();
+            toggleMobileSidebar();
+          });
+
+          sidebarBackdrop?.addEventListener("click", () =>
+            closeMobileSidebar()
+          );
+
+          signOutButton?.addEventListener("click", () => {
+            if (confirm("Are you sure you want to sign out?")) {
+              TemplateUtils.UserUtils.signOut();
+            }
+          });
+
+          navLinks?.forEach((link) => {
+            link.addEventListener("click", () => closeMobileSidebar());
+          });
+
+          document.addEventListener("click", handleDocumentClick);
+          document.addEventListener("keydown", handleKeydown);
+          window.addEventListener("resize", handleResize);
+
+          window.addEventListener("pagehide", cleanup);
+        }
+
+        function cleanup() {
+          if (state.resizeTimer) clearTimeout(state.resizeTimer);
+          if (state.debounceTimer) clearTimeout(state.debounceTimer);
+          if (state.observer) {
+            state.observer.disconnect();
+            state.observer = null;
+          }
+          document.removeEventListener("click", handleDocumentClick);
+          document.removeEventListener("keydown", handleKeydown);
+          window.removeEventListener("resize", handleResize);
+        }
+
+        function initializePortalTargets() {
+          document.querySelectorAll('[data-portal="body"]').forEach((node) => {
+            if (node.parentElement !== document.body) {
+              document.body.appendChild(node);
+            }
+          });
+        }
+
+        function observePageContent() {
+          const { pageContent } = state.refs;
+          if (!pageContent || typeof MutationObserver !== "function") return;
+
+          const observer = new MutationObserver((mutations) => {
+            if (state.isUpdatingIcons) return;
+
+            const isLucideUpdate = mutations.every((m) => {
+              if (m.type !== "childList") return false;
+              const nodes = [...m.addedNodes, ...m.removedNodes];
+              return nodes.every(
+                (n) =>
+                  n.nodeType !== Node.ELEMENT_NODE ||
+                  n.nodeName.toLowerCase() === "svg" ||
+                  n.classList?.contains("lucide")
+              );
+            });
+            if (isLucideUpdate) return;
+
+            if (state.debounceTimer) clearTimeout(state.debounceTimer);
+            state.debounceTimer = setTimeout(() => {
+              state.debounceTimer = null;
+              state.isUpdatingIcons = true;
+              safeLucide(() => {
+                window.lucide.createIcons();
+                requestAnimationFrame(() => {
+                  state.isUpdatingIcons = false;
+                });
+              });
+            }, 100);
+          });
+
+          observer.observe(pageContent, { childList: true, subtree: true });
+          state.observer = observer;
+        }
+
+        function bootstrap() {
+          cacheRefs();
+          initializePortalTargets();
+          initializeUserProfile();
+          bindEvents();
+          safeLucide(() => window.lucide.createIcons());
+          observePageContent();
+        }
+
+        ready(bootstrap);
+      })();
+    </script>
+  
+
+<script>
+  let disputesGridInstance = null;
+  let allDisputes = [];
+  let currentUser = null;
+  let currentFilter = 'all';
+
+  // Safe data retrieval
+  function getDataSafely(key) {
+    try {
+      const data = localStorage.getItem(key);
+      return data ? JSON.parse(data) : [];
+    } catch (error) {
+      console.error(`Error parsing ${key}:`, error);
+      return [];
+    }
+  }
+
+  // Get current user
+  function funGetCurrentUser() {
+    if (typeof window.TemplateUtils?.UserUtils?.getCurrentUser === 'function') {
+      return window.TemplateUtils.UserUtils.getCurrentUser();
+    }
+    
+    // Fallback to default user if TemplateUtils not available
+    const users = getDataSafely('users');
+    return users.find(u => u.id === 'usr_004') || null;
+  }
+
+  // Format date for display
+  function funFormatDate(dateString) {
+    if (!dateString) return '-';
+    try {
+      const date = new Date(dateString);
+      return date.toLocaleDateString('en-US', {
+        month: '2-digit',
+        day: '2-digit', 
+        year: 'numeric'
+      });
+    } catch (error) {
+      return dateString;
+    }
+  }
+
+  // Format dispute ID for display
+  function funFormatDisputeId(disputeId) {
+    if (!disputeId) return '';
+    return disputeId.replace('disp_', 'DSP-');
+  }
+
+  // Get disputed skills names
+  function funGetDisputedSkillNames(disputedSkills) {
+    if (!disputedSkills || !Array.isArray(disputedSkills)) return [];
+    
+    const skills = getDataSafely('skills');
+    const skillNames = [];
+    
+    disputedSkills.forEach(disputed => {
+      if (disputed.skillId) {
+        const skill = skills.find(s => s.id === disputed.skillId);
+        if (skill) {
+          skillNames.push(skill.name);
+        }
+      }
+    });
+    
+    return skillNames;
+  }
+
+  // Format disputed skills for display
+  function funFormatDisputedSkills(disputedSkills) {
+    const skillNames = funGetDisputedSkillNames(disputedSkills);
+    if (skillNames.length === 0) return '-';
+    
+    if (skillNames.length <= 3) {
+      return skillNames.join(', ');
+    } else {
+      const remaining = skillNames.length - 3;
+      return `${skillNames.slice(0, 3).join(', ')} +${remaining} more`;
+    }
+  }
+
+  // Check if dispute needs response
+  function funDisputeNeedsResponse(dispute) {
+    if (dispute.status !== 'resolved' || !dispute.resolutionTimestamp) {
+      return false;
+    }
+
+    if (!dispute.auditTrail || !Array.isArray(dispute.auditTrail)) {
+      return true;
+    }
+
+    const resolutionTime = new Date(dispute.resolutionTimestamp);
+    const employeeResponses = dispute.auditTrail.filter(entry => 
+      entry.actorType === 'employee' &&
+      ['agreed', 'disagreed'].includes(entry.action) &&
+      new Date(entry.timestamp) > resolutionTime
+    );
+
+    return employeeResponses.length === 0;
+  }
+
+  // Get display status
+  function funGetDisplayStatus(dispute) {
+    if (dispute.status === 'open') {
+      return 'Open';
+    } else if (dispute.status === 'resolved') {
+      return funDisputeNeedsResponse(dispute) ? 'Needs Response' : 'Resolved';
+    }
+    return dispute.status;
+  }
+
+  // Get cycle name
+  function funGetCycleName(assessmentCycleId) {
+    if (!assessmentCycleId) return '-';
+    
+    const cycles = getDataSafely('assessmentCycles');
+    const cycle = cycles.find(c => c.id === assessmentCycleId);
+    return cycle ? cycle.cycleName : '-';
+  }
+
+  // Get resolution text
+  function funGetResolutionText(dispute) {
+    if (dispute.status !== 'resolved') return '-';
+    
+    if (dispute.resolutionAction === 'editRating') {
+      return 'Edit Rating';
+    } else if (dispute.resolutionAction === 'dismiss') {
+      return 'Dismiss';
+    }
+    
+    return 'Resolved';
+  }
+
+  // Process disputes data
+  function funProcessDisputes() {
+    const disputes = getDataSafely('disputes');
+    if (!currentUser) return [];
+
+    return disputes
+      .filter(dispute => dispute.employeeId === currentUser.id)
+      .map(dispute => ({
+        ...dispute,
+        formattedId: funFormatDisputeId(dispute.id),
+        formattedDate: funFormatDate(dispute.submissionDate),
+        cycleName: funGetCycleName(dispute.assessmentCycleId),
+        disputedSkillsText: funFormatDisputedSkills(dispute.disputedSkills),
+        displayStatus: funGetDisplayStatus(dispute),
+        needsResponse: funDisputeNeedsResponse(dispute),
+        resolutionText: funGetResolutionText(dispute)
+      }));
+  }
+
+  // Filter disputes
+  function funFilterDisputes(disputes, filter) {
+    switch (filter) {
+      case 'open':
+        return disputes.filter(d => d.status === 'open');
+      case 'resolved':
+        return disputes.filter(d => d.status === 'resolved' && !d.needsResponse);
+      case 'needsResponse':
+        return disputes.filter(d => d.needsResponse);
+      default:
+        return disputes;
+    }
+  }
+
+  // Update summary stats
+  function funUpdateSummaryStats(disputes) {
+    const total = disputes.length;
+    const open = disputes.filter(d => d.status === 'open').length;
+    const resolved = disputes.filter(d => d.status === 'resolved' && !d.needsResponse).length;
+    const needsResponse = disputes.filter(d => d.needsResponse).length;
+
+    document.getElementById('totalDisputesCount').textContent = total;
+    document.getElementById('openDisputesCount').textContent = open;
+    document.getElementById('resolvedDisputesCount').textContent = resolved;
+    document.getElementById('needsResponseCount').textContent = needsResponse;
+  }
+
+  // Update tab counts
+  function funUpdateTabCounts(disputes) {
+    const total = disputes.length;
+    const open = disputes.filter(d => d.status === 'open').length;
+    const resolved = disputes.filter(d => d.status === 'resolved' && !d.needsResponse).length;
+    const needsResponse = disputes.filter(d => d.needsResponse).length;
+
+    document.getElementById('allTabCount').textContent = total;
+    document.getElementById('openTabCount').textContent = open;
+    document.getElementById('resolvedTabCount').textContent = resolved;
+    document.getElementById('needsResponseTabCount').textContent = needsResponse;
+  }
+
+  // Switch filter
+  function funSwitchFilter(filter) {
+    currentFilter = filter;
+    
+    // Update tab styles
+    document.querySelectorAll('.filter-tab').forEach(tab => {
+      tab.className = 'filter-tab px-6 py-3 text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50';
+      tab.querySelector('span').className = 'ml-2 bg-gray-500 text-white text-xs px-2 py-1 rounded-full';
+    });
+    
+    const activeTab = document.getElementById(filter + 'Tab');
+    if (activeTab) {
+      activeTab.className = 'filter-tab active px-6 py-3 text-sm font-medium text-blue-700 border-b-2 border-blue-700 bg-blue-50';
+      const badge = activeTab.querySelector('span');
+      if (badge) {
+        badge.className = 'ml-2 bg-blue-700 text-white text-xs px-2 py-1 rounded-full';
+      }
+    }
+
+    funRefreshDisputesGrid();
+  }
+
+  // Navigate to dispute detail
+  function funNavigateToDisputeDetail(disputeId) {
+    window.location.href = `dispute_detail.html?id=${disputeId}`;
+  }
+
+  // Initialize disputes grid
+  function funInitDisputesGrid() {
+    if (!window.TiramaiGrid) {
+      console.error('TiramaiGrid is not available');
+      return;
+    }
+
+    allDisputes = funProcessDisputes();
+    funUpdateSummaryStats(allDisputes);
+    funUpdateTabCounts(allDisputes);
+
+    const filteredDisputes = funFilterDisputes(allDisputes, currentFilter);
+    
+    // Handle empty state
+    const gridContainer = document.getElementById('disputesGrid');
+    const emptyState = document.getElementById('disputesEmptyState');
+    
+    if (allDisputes.length === 0) {
+      if (gridContainer) gridContainer.classList.add('hidden');
+      if (emptyState) emptyState.classList.remove('hidden');
+      return;
+    }
+    
+    if (gridContainer) gridContainer.classList.remove('hidden');
+    if (emptyState) emptyState.classList.add('hidden');
+
+    const disputeColumns = [
+      {
+        field: 'formattedId',
+        header: 'Dispute ID',
+        width: 120,
+        sortable: true,
+        filterable: true
+      },
+      {
+        field: 'formattedDate',
+        header: 'Submitted Date',
+        width: 130,
+        sortable: true,
+        filterable: true
+      },
+      {
+        field: 'cycleName',
+        header: 'Assessment Cycle',
+        width: 200,
+        sortable: true,
+        filterable: true
+      },
+      {
+        field: 'disputedSkillsText',
+        header: 'Disputed Skills',
+        width: 250,
+        sortable: false,
+        filterable: true
+      },
+      {
+        field: 'displayStatus',
+        header: 'Status',
+        width: 130,
+        sortable: true,
+        filterable: true,
+        filterType: 'enum',
+        filterEnumValues: ['Open', 'Resolved', 'Needs Response'],
+        render: (value, row) => {
+          const colors = {
+            'Open': 'text-blue-600 bg-blue-50 border-blue-200',
+            'Resolved': 'text-green-600 bg-green-50 border-green-200',
+            'Needs Response': 'text-amber-600 bg-amber-50 border-amber-200'
+          };
+          const colorClass = colors[value] || 'text-gray-600 bg-gray-50 border-gray-200';
+          return `<span class="inline-flex px-2 py-1 text-xs font-medium rounded border ${colorClass}">${value}</span>`;
+        }
+      },
+      {
+        field: 'resolutionText',
+        header: 'Resolution',
+        width: 120,
+        sortable: true,
+        filterable: true
+      },
+      {
+        field: 'actions',
+        header: 'Actions',
+        width: 120,
+        sortable: false,
+        filterable: false,
+        render: (value, row) => {
+          return `<button onclick="funNavigateToDisputeDetail('${row.id}')" class="text-blue-600 hover:text-blue-800 text-sm font-medium">View Details</button>`;
+        }
+      }
+    ];
+
+    try {
+      disputesGridInstance = new TiramaiGrid('#disputesGrid', {
+        data: filteredDisputes,
+        columns: disputeColumns,
+        theme: 'light',
+        sortable: true,
+        filterable: true,
+        globalSearch: true,
+        pagination: {
+          enabled: true,
+          pageSize: 10,
+          pageSizeOptions: [10, 20, 50],
+          showFirstLast: true,
+          showPrevNext: true,
+          showPageInfo: true
+        },
+        selection: {
+          enabled: false
+        },
+        export: {
+          enabled: true,
+          filename: 'my-disputes.csv',
+          includeHeaders: true,
+          delimiter: ','
+        },
+        onRowClick: (row, rowIndex, event) => {
+          // Navigate to detail page (skip if clicking action buttons)
+          if (event.target.tagName !== 'BUTTON' && !event.target.closest('button')) {
+            funNavigateToDisputeDetail(row.id);
+          }
+        }
+      });
+    } catch (error) {
+      console.error('Failed to initialize disputes grid:', error);
+    }
+  }
+
+  // Refresh grid with current filter
+  function funRefreshDisputesGrid() {
+    if (!disputesGridInstance) return;
+    
+    const filteredDisputes = funFilterDisputes(allDisputes, currentFilter);
+    disputesGridInstance.setData(filteredDisputes);
+  }
+
+  // Initialize on page load
+  document.addEventListener('DOMContentLoaded', function() {
+    currentUser = funGetCurrentUser();
+    
+    if (!currentUser) {
+      console.error('No current user found');
+      return;
+    }
+
+    funInitDisputesGrid();
+    
+    // Update navigation
+    if (typeof window.TemplateUtils?.setActiveNavLink === 'function') {
+      window.TemplateUtils.setActiveNavLink('my_disputes');
+    }
+  });
+</script></body></html>

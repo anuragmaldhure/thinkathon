@@ -1,0 +1,973 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SkillBridge Competency Management Platform</title>
+
+    <!-- Required: Main JS Script -->
+    <script type="module" src="scripts/main.js" data-tiramai="web-gen"></script>
+
+    <!-- Required: TailwindCSS -->
+    <script src="./lib/tailwindcss/tailwindcss.js" fetchpriority="high" data-tiramai="web-gen"></script>
+
+    <!-- Required: Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest" data-tiramai="web-gen"></script>
+
+    <!-- Required: Favicon -->
+    <link rel="icon" href="assets/imgs/logo.ico" type="image/x-icon" data-tiramai="web-gen"/>
+
+    <!-- ECharts Support (for charts/graphs) -->
+    <script defer src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js" data-tiramai="web-gen"></script>
+
+    <!-- Markdown Support (for content rendering) -->
+    <script defer src="https://cdn.jsdelivr.net/npm/marked/marked.min.js" data-tiramai="web-gen"></script>
+
+    <!-- Tailwind Configuration -->
+    <script data-tiramai="web-gen">
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#1e293b',
+                        secondary: '#475569',
+                        accent: '#2563eb',
+                        gold: '#CBA35C',
+                        success: '#16A34A',
+                        warning: '#D97706',
+                        error: '#DC2626',
+                        info: '#0EA5E9',
+                        neutral: {
+                            50: '#F8FAFC',
+                            100: '#F1F5F9',
+                            200: '#E2E8F0',
+                            400: '#94A3B8',
+                            700: '#334155',
+                            900: '#0F172A',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['IBM Plex Sans', '-apple-system', 'Segoe UI', 'Roboto', 'Helvetica Neue', 'Arial', 'sans-serif'],
+                        mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', 'Liberation Mono', 'Courier New', 'monospace']
+                    },
+                    boxShadow: {
+                        sm: '0 1px 2px rgba(15,23,42,0.06)',
+                        DEFAULT: '0 2px 8px rgba(15,23,42,0.08)',
+                        lg: '0 8px 24px rgba(15,23,42,0.12)',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-neutral-50 min-h-screen text-neutral-700 font-sans">
+    <!-- Top Navigation -->
+    <header class="fixed top-0 left-0 right-0 bg-white border-b border-neutral-200 flex items-center justify-between px-6 py-4 z-30 h-16">
+        <div class="flex items-center gap-4">
+            <button id="mobile-menu-btn" class="md:hidden p-2 hover:bg-neutral-100 rounded-md transition-colors duration-150">
+                <i data-lucide="menu" class="w-6 h-6 text-secondary"></i>
+            </button>
+            <div class="flex items-center gap-3">
+                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 400 400" fill="none" class="h-8 w-8">
+                    <rect x="100" y="100" width="200" height="200" rx="16" stroke="#1e293b" stroke-width="16" fill="none"/>
+                    <path d="M150 250V170c0-11 9-20 20-20h60c11 0 20 9 20 20v80" stroke="#2563eb" stroke-width="14" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                    <circle cx="200" cy="170" r="18" stroke="#1e293b" stroke-width="12" fill="none"/>
+                    <path d="M150 250h100m-60-30h20" stroke="#2563eb" stroke-width="12" stroke-linecap="round" fill="none"/>
+                    <path d="M170 220v0" stroke="#1e293b" stroke-width="12" stroke-linecap="round"/>
+                    <path d="M230 220v0" stroke="#1e293b" stroke-width="12" stroke-linecap="round"/>
+                </svg>
+                <span class="text-xl font-semibold text-primary">SkillBridge Competency Management Platform</span>
+            </div>
+        </div>
+        <div class="flex items-center gap-4">
+            <!-- User Profile Dropdown -->
+            <div class="relative">
+                <button id="user-profile-btn" class="flex items-center gap-3 p-2 hover:bg-neutral-100 rounded-md transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2">
+                    <div class="flex flex-col items-end">
+                        <span id="user-name" class="text-sm font-medium text-neutral-700">Loading...</span>
+                        <span id="user-role" class="text-xs text-neutral-400">System Admin</span>
+                    </div>
+                    <div class="w-8 h-8 bg-accent rounded-full flex items-center justify-center">
+                        <i data-lucide="user" class="w-4 h-4 text-white"></i>
+                    </div>
+                </button>
+                <!-- Dropdown Menu -->
+                <div id="user-dropdown" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg border border-neutral-200 z-40">
+                    <div class="py-2">
+                        <button id="sign-out-btn" class="w-full px-4 py-2 text-left text-sm text-neutral-700 hover:bg-neutral-50 flex items-center gap-2">
+                            <i data-lucide="log-out" class="w-4 h-4"></i>
+                            Sign Out
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="flex pt-16">
+        <!-- Side Navigation -->
+        <aside id="sidebar" class="w-64 bg-white border-r border-neutral-200 h-[calc(100vh-4rem)] sticky top-16 overflow-y-auto hidden md:block">
+            <nav class="p-4 space-y-1">
+                <!-- Analytics Hub -->
+                <a href="analytics_hub.html" data-page="analytics_hub" class="nav-item flex items-center gap-3 px-3 py-2 text-sm rounded-md hover:bg-neutral-100 transition-colors duration-150 text-neutral-700">
+                    <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
+                    <span>Analytics Hub</span>
+                </a>
+
+                <!-- Organization Management Section -->
+                <div class="pt-4">
+                    <h3 class="px-3 text-xs font-semibold text-secondary uppercase tracking-wide mb-2">Organization</h3>
+                    <a href="org_configuration.html" data-page="org_configuration" class="nav-item flex items-center gap-3 px-3 py-2 text-sm rounded-md hover:bg-neutral-100 transition-colors duration-150 text-neutral-700">
+                        <i data-lucide="building-2" class="w-5 h-5"></i>
+                        <span>Org Configuration</span>
+                    </a>
+                    <a href="org_settings_versioned.html" data-page="org_settings_versioned" class="nav-item flex items-center gap-3 px-3 py-2 text-sm rounded-md hover:bg-neutral-100 transition-colors duration-150 text-neutral-700">
+                        <i data-lucide="history" class="w-5 h-5"></i>
+                        <span>Org Settings</span>
+                    </a>
+                </div>
+
+                <!-- Core Management Section -->
+                <div class="pt-4">
+                    <h3 class="px-3 text-xs font-semibold text-secondary uppercase tracking-wide mb-2">Core Management</h3>
+                    <a href="skill_framework.html" data-page="skill_framework" class="nav-item flex items-center gap-3 px-3 py-2 text-sm rounded-md hover:bg-neutral-100 transition-colors duration-150 text-neutral-700">
+                        <i data-lucide="book-open" class="w-5 h-5"></i>
+                        <span>Skill Framework</span>
+                    </a>
+                    <a href="employees_hierarchy.html" data-page="employees_hierarchy" class="nav-item flex items-center gap-3 px-3 py-2 text-sm rounded-md hover:bg-neutral-100 transition-colors duration-150 text-neutral-700">
+                        <i data-lucide="users" class="w-5 h-5"></i>
+                        <span>Employees & Hierarchy</span>
+                    </a>
+                    <a href="training_management.html" data-page="training_management" class="nav-item flex items-center gap-3 px-3 py-2 text-sm rounded-md hover:bg-neutral-100 transition-colors duration-150 text-neutral-700">
+                        <i data-lucide="calendar" class="w-5 h-5"></i>
+                        <span>Training Management</span>
+                    </a>
+                </div>
+
+                <!-- Operations Section -->
+                <div class="pt-4">
+                    <h3 class="px-3 text-xs font-semibold text-secondary uppercase tracking-wide mb-2">Operations</h3>
+                    <a href="disputes_center.html" data-page="disputes_center" class="nav-item flex items-center gap-3 px-3 py-2 text-sm rounded-md hover:bg-neutral-100 transition-colors duration-150 text-neutral-700">
+                        <i data-lucide="gavel" class="w-5 h-5"></i>
+                        <span>Disputes Center</span>
+                    </a>
+                    <a href="assessment_viewer.html" data-page="assessment_viewer" class="nav-item flex items-center gap-3 px-3 py-2 text-sm rounded-md hover:bg-neutral-100 transition-colors duration-150 text-neutral-700">
+                        <i data-lucide="file-text" class="w-5 h-5"></i>
+                        <span>Assessment Viewer</span>
+                    </a>
+                    <a href="audit_log_viewer.html" data-page="audit_log_viewer" class="nav-item flex items-center gap-3 px-3 py-2 text-sm rounded-md hover:bg-neutral-100 transition-colors duration-150 text-neutral-700">
+                        <i data-lucide="file-search" class="w-5 h-5"></i>
+                        <span>Audit Log Viewer</span>
+                    </a>
+                </div>
+            </nav>
+
+            <!-- Footer -->
+            <div class="absolute bottom-6 w-full text-center text-xs text-neutral-400 bg-white px-4">
+                Made with ❤️ by TiramAi
+            </div>
+        </aside>
+
+        <!-- Mobile Navigation Overlay -->
+        <div id="mobile-nav-overlay" class="hidden fixed inset-0 z-40 md:hidden">
+            <div class="fixed inset-0 bg-neutral-900 bg-opacity-50" id="mobile-nav-backdrop"></div>
+            <aside class="fixed left-0 top-16 h-[calc(100vh-4rem)] w-64 bg-white border-r border-neutral-200 overflow-y-auto">
+                <nav class="p-4 space-y-1">
+                    <!-- Same navigation structure as desktop -->
+                    <a href="analytics_hub.html" data-page="analytics_hub" class="nav-item flex items-center gap-3 px-3 py-2 text-sm rounded-md hover:bg-neutral-100 transition-colors duration-150 text-neutral-700">
+                        <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
+                        <span>Analytics Hub</span>
+                    </a>
+                    
+                    <div class="pt-4">
+                        <h3 class="px-3 text-xs font-semibold text-secondary uppercase tracking-wide mb-2">Organization</h3>
+                        <a href="org_configuration.html" data-page="org_configuration" class="nav-item flex items-center gap-3 px-3 py-2 text-sm rounded-md hover:bg-neutral-100 transition-colors duration-150 text-neutral-700">
+                            <i data-lucide="building-2" class="w-5 h-5"></i>
+                            <span>Org Configuration</span>
+                        </a>
+                        <a href="org_settings_versioned.html" data-page="org_settings_versioned" class="nav-item flex items-center gap-3 px-3 py-2 text-sm rounded-md hover:bg-neutral-100 transition-colors duration-150 text-neutral-700">
+                            <i data-lucide="history" class="w-5 h-5"></i>
+                            <span>Org Settings</span>
+                        </a>
+                    </div>
+
+                    <div class="pt-4">
+                        <h3 class="px-3 text-xs font-semibold text-secondary uppercase tracking-wide mb-2">Core Management</h3>
+                        <a href="skill_framework.html" data-page="skill_framework" class="nav-item flex items-center gap-3 px-3 py-2 text-sm rounded-md hover:bg-neutral-100 transition-colors duration-150 text-neutral-700">
+                            <i data-lucide="book-open" class="w-5 h-5"></i>
+                            <span>Skill Framework</span>
+                        </a>
+                        <a href="employees_hierarchy.html" data-page="employees_hierarchy" class="nav-item flex items-center gap-3 px-3 py-2 text-sm rounded-md hover:bg-neutral-100 transition-colors duration-150 text-neutral-700">
+                            <i data-lucide="users" class="w-5 h-5"></i>
+                            <span>Employees & Hierarchy</span>
+                        </a>
+                        <a href="training_management.html" data-page="training_management" class="nav-item flex items-center gap-3 px-3 py-2 text-sm rounded-md hover:bg-neutral-100 transition-colors duration-150 text-neutral-700">
+                            <i data-lucide="calendar" class="w-5 h-5"></i>
+                            <span>Training Management</span>
+                        </a>
+                    </div>
+
+                    <div class="pt-4">
+                        <h3 class="px-3 text-xs font-semibold text-secondary uppercase tracking-wide mb-2">Operations</h3>
+                        <a href="disputes_center.html" data-page="disputes_center" class="nav-item flex items-center gap-3 px-3 py-2 text-sm rounded-md hover:bg-neutral-100 transition-colors duration-150 text-neutral-700">
+                            <i data-lucide="gavel" class="w-5 h-5"></i>
+                            <span>Disputes Center</span>
+                        </a>
+                        <a href="assessment_viewer.html" data-page="assessment_viewer" class="nav-item flex items-center gap-3 px-3 py-2 text-sm rounded-md hover:bg-neutral-100 transition-colors duration-150 text-neutral-700">
+                            <i data-lucide="file-text" class="w-5 h-5"></i>
+                            <span>Assessment Viewer</span>
+                        </a>
+                        <a href="audit_log_viewer.html" data-page="audit_log_viewer" class="nav-item flex items-center gap-3 px-3 py-2 text-sm rounded-md hover:bg-neutral-100 transition-colors duration-150 text-neutral-700">
+                            <i data-lucide="file-search" class="w-5 h-5"></i>
+                            <span>Audit Log Viewer</span>
+                        </a>
+                    </div>
+                </nav>
+            </aside>
+        </div>
+
+        <!-- Main Content -->
+        <main id="pageContent" class="flex-1 p-6 overflow-y-auto max-w-[1440px] mx-auto">
+            
+<!-- Org Settings (Versioned) Page -->
+<div class="space-y-6">
+    <!-- Page Header -->
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+            <h1 class="text-[clamp(1.5rem,2.5vw,2rem)] leading-10 font-bold text-primary">Organization Settings</h1>
+            <p class="text-sm text-secondary mt-1">Manage global thresholds and delays with version history</p>
+        </div>
+        <div class="flex items-center gap-3">
+            <button id="view-audit-trail-btn" class="inline-flex items-center gap-2 text-secondary border border-neutral-200 rounded-md px-4 py-2 hover:bg-neutral-50 focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 transition-colors duration-150">
+                <i data-lucide="file-search" class="w-4 h-4"></i>
+                <span>View Audit Trail</span>
+            </button>
+            <button id="refresh-settings-btn" class="inline-flex items-center gap-2 text-secondary hover:text-primary transition-colors duration-150" aria-label="Refresh">
+                <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+                <span class="sr-only">Refresh</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Current Settings Card -->
+    <div class="bg-white rounded-md shadow border border-neutral-200 p-6">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+            <div>
+                <h2 class="text-lg leading-7 font-semibold text-primary">Current Settings</h2>
+                <p class="text-sm text-secondary mt-1">Active configuration for the organization</p>
+            </div>
+            <button id="update-settings-btn" class="inline-flex items-center gap-2 bg-accent text-white rounded-md px-4 py-2 hover:bg-[#1d4ed8] focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 transition-colors duration-150">
+                <i data-lucide="edit" class="w-4 h-4"></i>
+                <span>Update Settings</span>
+            </button>
+        </div>
+
+        <!-- Current Settings Display -->
+        <div id="current-settings" class="space-y-4">
+            <!-- Skeleton loader -->
+            <div class="animate-pulse space-y-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <div class="h-20 bg-neutral-100 rounded"></div>
+                    <div class="h-20 bg-neutral-100 rounded"></div>
+                    <div class="h-20 bg-neutral-100 rounded"></div>
+                </div>
+                <div class="h-4 bg-neutral-100 rounded w-3/4"></div>
+            </div>
+        </div>
+
+        <!-- No Current Settings State -->
+        <div id="no-current-settings" class="hidden text-center py-8">
+            <i data-lucide="settings" class="w-12 h-12 text-neutral-400 mx-auto mb-4"></i>
+            <h3 class="text-lg font-medium text-neutral-700 mb-2">No Current Settings</h3>
+            <p class="text-sm text-neutral-500 mb-4">No active settings configuration found</p>
+            <button id="create-initial-settings-btn" class="inline-flex items-center gap-2 bg-accent text-white rounded-md px-4 py-2 hover:bg-[#1d4ed8] focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2">
+                <i data-lucide="plus" class="w-4 h-4"></i>
+                <span>Create Initial Settings</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Version History -->
+    <div class="bg-white rounded-md shadow border border-neutral-200">
+        <div class="p-6 border-b border-neutral-200">
+            <h2 class="text-lg leading-7 font-semibold text-primary">Version History</h2>
+            <p class="text-sm text-secondary mt-1">Timeline of previous configuration versions</p>
+        </div>
+
+        <!-- History List -->
+        <div id="version-history" class="divide-y divide-neutral-200">
+            <!-- Skeleton loader for history -->
+            <div class="animate-pulse p-6 space-y-4">
+                <div class="flex items-center space-x-4">
+                    <div class="w-8 h-8 bg-neutral-100 rounded-full"></div>
+                    <div class="flex-1 space-y-2">
+                        <div class="h-4 bg-neutral-100 rounded w-3/4"></div>
+                        <div class="h-3 bg-neutral-100 rounded w-1/2"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- No History State -->
+        <div id="no-history" class="hidden p-6 text-center">
+            <i data-lucide="history" class="w-12 h-12 text-neutral-400 mx-auto mb-4"></i>
+            <h3 class="text-lg font-medium text-neutral-700 mb-2">No Version History</h3>
+            <p class="text-sm text-neutral-500">No previous versions available</p>
+        </div>
+    </div>
+</div>
+
+<!-- Update Settings Modal -->
+<div id="update-settings-modal" class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-lg shadow-lg max-w-lg w-full max-h-[90vh] overflow-y-auto">
+        <div class="flex items-center justify-between p-6 border-b border-neutral-200">
+            <div>
+                <h3 class="text-lg font-semibold text-primary">Update Settings</h3>
+                <p class="text-sm text-secondary mt-1">Create a new version of organization settings</p>
+            </div>
+            <button id="close-settings-modal" class="text-neutral-400 hover:text-neutral-600 transition-colors duration-150">
+                <i data-lucide="x" class="w-6 h-6"></i>
+            </button>
+        </div>
+        
+        <form id="settings-form" class="p-6 space-y-6">
+            <!-- Mandatory Comment Threshold -->
+            <div>
+                <label class="block text-secondary text-xs mb-1">Mandatory Comment Threshold</label>
+                <input type="number" id="mandatory-comment-threshold" min="1" max="10" step="1" 
+                       class="w-full border border-neutral-200 rounded-md px-3 py-2 text-neutral-700 focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2" 
+                       placeholder="7" required>
+                <p class="mt-1 text-xs text-neutral-400">Score threshold below which comments are mandatory (1-10)</p>
+                <p class="mt-1 text-xs text-error hidden" id="mandatory-comment-threshold-error"></p>
+            </div>
+
+            <!-- TNI Ignore Threshold -->
+            <div>
+                <label class="block text-secondary text-xs mb-1">TNI Ignore Threshold</label>
+                <input type="number" id="tni-ignore-threshold" min="1" max="10" step="1" 
+                       class="w-full border border-neutral-200 rounded-md px-3 py-2 text-neutral-700 focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2" 
+                       placeholder="1" required>
+                <p class="mt-1 text-xs text-neutral-400">Gap threshold below which TNI is ignored (1-10)</p>
+                <p class="mt-1 text-xs text-error hidden" id="tni-ignore-threshold-error"></p>
+            </div>
+
+            <!-- Reassessment Delay Days -->
+            <div>
+                <label class="block text-secondary text-xs mb-1">Reassessment Delay Days</label>
+                <input type="number" id="reassessment-delay-days" min="0" step="1" 
+                       class="w-full border border-neutral-200 rounded-md px-3 py-2 text-neutral-700 focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2" 
+                       placeholder="14" required>
+                <p class="mt-1 text-xs text-neutral-400">Days to wait after training before reassessment (≥0)</p>
+                <p class="mt-1 text-xs text-error hidden" id="reassessment-delay-days-error"></p>
+            </div>
+
+            <!-- Effective Start Date -->
+            <div>
+                <label class="block text-secondary text-xs mb-1">Effective Start Date</label>
+                <input type="datetime-local" id="effective-start-date" 
+                       class="w-full border border-neutral-200 rounded-md px-3 py-2 text-neutral-700 focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2" 
+                       required>
+                <p class="mt-1 text-xs text-neutral-400">When these settings become effective (≥ now)</p>
+                <p class="mt-1 text-xs text-error hidden" id="effective-start-date-error"></p>
+            </div>
+
+            <!-- Form Actions -->
+            <div class="flex flex-col-reverse sm:flex-row sm:justify-end gap-3 pt-6 border-t border-neutral-200">
+                <button type="button" id="cancel-settings-btn" class="inline-flex items-center justify-center gap-2 bg-white text-primary border border-neutral-200 rounded-md px-4 py-2 hover:bg-neutral-50 focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 transition-colors duration-150">
+                    Cancel
+                </button>
+                <button type="submit" id="save-settings-btn" class="inline-flex items-center justify-center gap-2 bg-accent text-white rounded-md px-4 py-2 hover:bg-[#1d4ed8] focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 transition-colors duration-150">
+                    <i data-lucide="save" class="w-4 h-4"></i>
+                    <span>Save Settings</span>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+        </main>
+    </div>
+
+    <!-- Required: JavaScript -->
+    <script type="module" data-tiramai="web-gen">
+        import { showToast, showLoader, hideLoader, env } from "./scripts/main.js";
+        import { auth, db, storage } from "./scripts/firebase.js";
+        import { onAuthStateChanged, getAuth, signOut } from 'https://www.gstatic.com/firebasejs/10.12.4/firebase-auth.js';
+        import { doc, getDoc } from 'https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js';
+
+        // Initialize Lucide icons
+        lucide.createIcons();
+
+        // Auth state management
+        let currentUser = null;
+
+        // Initialize auth state listener
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                currentUser = user;
+                await loadUserProfile(user);
+            } else {
+                // Redirect to auth page if not authenticated
+                window.location.href = 'auth.html';
+            }
+        });
+
+        // Load user profile data
+        async function loadUserProfile(user) {
+            try {
+                const userDoc = await getDoc(doc(db, 'users', user.uid));
+                
+                if (userDoc.exists()) {
+                    const userData = userDoc.data();
+                    const fullName = `${userData.firstName || ''} ${userData.lastName || ''}`.trim();
+                    document.getElementById('user-name').textContent = fullName || user.email;
+                } else {
+                    // Fallback to email if no user doc exists
+                    document.getElementById('user-name').textContent = user.email;
+                }
+            } catch (error) {
+                console.error('Error loading user profile:', error);
+                // Fallback to email on error
+                document.getElementById('user-name').textContent = user.email;
+            }
+        }
+
+        // User dropdown functionality
+        const userProfileBtn = document.getElementById('user-profile-btn');
+        const userDropdown = document.getElementById('user-dropdown');
+        const signOutBtn = document.getElementById('sign-out-btn');
+
+        userProfileBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            userDropdown.classList.toggle('hidden');
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', () => {
+            userDropdown.classList.add('hidden');
+        });
+
+        // Sign out functionality
+        signOutBtn.addEventListener('click', async () => {
+            try {
+                await signOut(auth);
+                window.location.href = 'auth.html';
+            } catch (error) {
+                console.error('Error signing out:', error);
+                showToast('Error signing out', 'error');
+            }
+        });
+
+        // Mobile navigation
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const mobileNavOverlay = document.getElementById('mobile-nav-overlay');
+        const mobileNavBackdrop = document.getElementById('mobile-nav-backdrop');
+
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileNavOverlay.classList.remove('hidden');
+        });
+
+        mobileNavBackdrop.addEventListener('click', () => {
+            mobileNavOverlay.classList.add('hidden');
+        });
+
+        // Close mobile nav on navigation
+        document.querySelectorAll('#mobile-nav-overlay .nav-item').forEach(link => {
+            link.addEventListener('click', () => {
+                mobileNavOverlay.classList.add('hidden');
+            });
+        });
+
+        // Active navigation state
+        function updateActiveNavState() {
+            const currentPath = window.location.pathname;
+            const pageName = currentPath.replace('/', '').replace('.html', '');
+            
+            // Remove active state from all nav items
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('bg-accent', 'text-white');
+                item.classList.add('text-neutral-700');
+            });
+
+            // Add active state to current page
+            document.querySelectorAll(`[data-page="${pageName}"]`).forEach(item => {
+                item.classList.add('bg-accent', 'text-white');
+                item.classList.remove('text-neutral-700');
+            });
+        }
+
+        // Update active state on load
+        updateActiveNavState();
+
+        // Update active state on navigation (for SPA behavior)
+        window.addEventListener('popstate', updateActiveNavState);
+    </script>
+
+    
+<script id="data-script" type="module" data-tiramai="web-gen">
+import { 
+    collection, query, where, orderBy, limit, getDocs, addDoc, updateDoc, doc, 
+    Timestamp, writeBatch 
+} from 'https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js';
+import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.12.4/firebase-auth.js';
+import { auth, getDb } from './scripts/firebase.js';
+import { showToast, showLoader, hideLoader } from './scripts/main.js';
+
+const db = getDb();
+let currentUser = null;
+let currentSettings = null;
+
+// Auth check
+onAuthStateChanged(auth, user => {
+    if (!user) {
+        location.href = "auth.html?redirect=" + encodeURIComponent(location.pathname);
+        return;
+    }
+    currentUser = user;
+    funInitialLoad();
+});
+
+// Initialize lucide icons after DOM load
+document.addEventListener('DOMContentLoaded', () => {
+    if (typeof lucide !== 'undefined') {
+        lucide.createIcons();
+    }
+});
+
+// Event listeners
+document.getElementById('refresh-settings-btn')?.addEventListener('click', () => funInitialLoad(true));
+document.getElementById('update-settings-btn')?.addEventListener('click', funOpenUpdateModal);
+document.getElementById('create-initial-settings-btn')?.addEventListener('click', funOpenUpdateModal);
+document.getElementById('close-settings-modal')?.addEventListener('click', funCloseModal);
+document.getElementById('cancel-settings-btn')?.addEventListener('click', funCloseModal);
+document.getElementById('settings-form')?.addEventListener('submit', funSaveSettings);
+document.getElementById('view-audit-trail-btn')?.addEventListener('click', funViewAuditTrail);
+
+// Modal backdrop click to close
+document.getElementById('update-settings-modal')?.addEventListener('click', (e) => {
+    if (e.target.id === 'update-settings-modal') {
+        funCloseModal();
+    }
+});
+
+// ESC key to close modal
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+        funCloseModal();
+    }
+});
+
+async function funInitialLoad(isRefresh = false) {
+    try {
+        if (!isRefresh) {
+            // Show skeleton loaders
+            document.getElementById('current-settings').innerHTML = `
+                <div class="animate-pulse space-y-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <div class="h-20 bg-neutral-100 rounded"></div>
+                        <div class="h-20 bg-neutral-100 rounded"></div>
+                        <div class="h-20 bg-neutral-100 rounded"></div>
+                    </div>
+                    <div class="h-4 bg-neutral-100 rounded w-3/4"></div>
+                </div>
+            `;
+            
+            document.getElementById('version-history').innerHTML = `
+                <div class="animate-pulse p-6 space-y-4">
+                    <div class="flex items-center space-x-4">
+                        <div class="w-8 h-8 bg-neutral-100 rounded-full"></div>
+                        <div class="flex-1 space-y-2">
+                            <div class="h-4 bg-neutral-100 rounded w-3/4"></div>
+                            <div class="h-3 bg-neutral-100 rounded w-1/2"></div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Load current and historical settings
+        await Promise.all([
+            funLoadCurrentSettings(),
+            funLoadVersionHistory()
+        ]);
+
+        if (typeof lucide !== 'undefined') {
+            lucide.createIcons();
+        }
+    } catch (error) {
+        console.error('Error loading settings:', error);
+        showToast('Failed to load organization settings', 'error');
+    }
+}
+
+async function funLoadCurrentSettings() {
+    try {
+        // Query for current settings (effectiveEndDate is null)
+        const q = query(
+            collection(db, 'orgSettings'),
+            where('effectiveEndDate', '==', null),
+            orderBy('effectiveStartDate', 'desc'),
+            limit(1)
+        );
+
+        const snapshot = await getDocs(q);
+        const currentSettingsEl = document.getElementById('current-settings');
+        const noCurrentSettingsEl = document.getElementById('no-current-settings');
+
+        if (snapshot.empty) {
+            // No current settings
+            currentSettingsEl.classList.add('hidden');
+            noCurrentSettingsEl.classList.remove('hidden');
+            currentSettings = null;
+        } else {
+            // Display current settings
+            const doc = snapshot.docs[0];
+            currentSettings = { id: doc.id, ...doc.data() };
+            
+            currentSettingsEl.classList.remove('hidden');
+            noCurrentSettingsEl.classList.add('hidden');
+
+            funDisplayCurrentSettings(currentSettings);
+        }
+    } catch (error) {
+        console.error('Error loading current settings:', error);
+        showToast('Failed to load current settings', 'error');
+        
+        // Show error state
+        document.getElementById('current-settings').innerHTML = `
+            <div class="text-center py-8">
+                <i data-lucide="alert-circle" class="w-12 h-12 text-error mx-auto mb-4"></i>
+                <p class="text-error">Failed to load current settings</p>
+            </div>
+        `;
+    }
+}
+
+function funDisplayCurrentSettings(settings) {
+    const effectiveStart = settings.effectiveStartDate ? new Date(settings.effectiveStartDate).toLocaleString('en-IN', {
+        day: '2-digit',
+        month: '2-digit', 
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+    }) : 'N/A';
+
+    const createdBy = settings.createdBy || 'N/A';
+    const createdAt = settings.createdAt ? new Date(settings.createdAt).toLocaleString('en-IN', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+    }) : 'N/A';
+
+    document.getElementById('current-settings').innerHTML = `
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+            <div class="bg-neutral-50 rounded-md p-4">
+                <div class="text-xs text-secondary mb-1">Mandatory Comment Threshold</div>
+                <div class="text-xl font-semibold text-primary">${settings.mandatoryCommentThreshold || 'N/A'}</div>
+                <div class="text-xs text-neutral-400">Score threshold for mandatory comments</div>
+            </div>
+            <div class="bg-neutral-50 rounded-md p-4">
+                <div class="text-xs text-secondary mb-1">TNI Ignore Threshold</div>
+                <div class="text-xl font-semibold text-primary">${settings.tniIgnoreThreshold || 'N/A'}</div>
+                <div class="text-xs text-neutral-400">Gap threshold for TNI calculation</div>
+            </div>
+            <div class="bg-neutral-50 rounded-md p-4">
+                <div class="text-xs text-secondary mb-1">Reassessment Delay Days</div>
+                <div class="text-xl font-semibold text-primary">${settings.reassessmentDelayDays || 'N/A'}</div>
+                <div class="text-xs text-neutral-400">Days before reassessment allowed</div>
+            </div>
+        </div>
+        <div class="text-xs text-neutral-500 space-y-1">
+            <div>Effective since: ${effectiveStart}</div>
+            <div>Created by: ${createdBy} on ${createdAt}</div>
+        </div>
+    `;
+}
+
+async function funLoadVersionHistory() {
+    try {
+        // Query for historical settings (effectiveEndDate is not null)
+        const q = query(
+            collection(db, 'orgSettings'),
+            where('effectiveEndDate', '!=', null),
+            orderBy('effectiveEndDate', 'desc'),
+            limit(10)
+        );
+
+        const snapshot = await getDocs(q);
+        const historyEl = document.getElementById('version-history');
+        const noHistoryEl = document.getElementById('no-history');
+
+        if (snapshot.empty) {
+            // No history
+            historyEl.innerHTML = '';
+            noHistoryEl.classList.remove('hidden');
+        } else {
+            // Display history
+            noHistoryEl.classList.add('hidden');
+            
+            const historyHtml = snapshot.docs.map(doc => {
+                const data = doc.data();
+                
+                const effectiveStart = data.effectiveStartDate ? new Date(data.effectiveStartDate).toLocaleString('en-IN', {
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                }) : 'N/A';
+
+                const effectiveEnd = data.effectiveEndDate ? new Date(data.effectiveEndDate).toLocaleString('en-IN', {
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                }) : 'N/A';
+
+                const createdBy = data.createdBy || 'N/A';
+
+                return `
+                    <div class="p-6">
+                        <div class="flex items-start space-x-4">
+                            <div class="w-8 h-8 bg-neutral-200 rounded-full flex items-center justify-center flex-shrink-0">
+                                <i data-lucide="settings" class="w-4 h-4 text-neutral-600"></i>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-3">
+                                    <div class="text-sm font-medium text-primary">
+                                        Settings Version
+                                    </div>
+                                    <div class="text-xs text-neutral-500">
+                                        ${effectiveStart} - ${effectiveEnd}
+                                    </div>
+                                </div>
+                                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+                                    <div>
+                                        <span class="text-secondary">Comment Threshold:</span>
+                                        <span class="text-primary font-medium ml-1">${data.mandatoryCommentThreshold || 'N/A'}</span>
+                                    </div>
+                                    <div>
+                                        <span class="text-secondary">TNI Threshold:</span>
+                                        <span class="text-primary font-medium ml-1">${data.tniIgnoreThreshold || 'N/A'}</span>
+                                    </div>
+                                    <div>
+                                        <span class="text-secondary">Delay Days:</span>
+                                        <span class="text-primary font-medium ml-1">${data.reassessmentDelayDays || 'N/A'}</span>
+                                    </div>
+                                </div>
+                                <div class="text-xs text-neutral-400 mt-2">
+                                    Created by ${createdBy}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            historyEl.innerHTML = historyHtml;
+        }
+    } catch (error) {
+        console.error('Error loading version history:', error);
+        showToast('Failed to load version history', 'error');
+        
+        document.getElementById('version-history').innerHTML = `
+            <div class="p-6 text-center">
+                <i data-lucide="alert-circle" class="w-12 h-12 text-error mx-auto mb-4"></i>
+                <p class="text-error">Failed to load version history</p>
+            </div>
+        `;
+    }
+}
+
+function funOpenUpdateModal() {
+    const modal = document.getElementById('update-settings-modal');
+    modal.classList.remove('hidden');
+    
+    // Set default effective start date to now
+    const now = new Date();
+    const localISOTime = new Date(now.getTime() - now.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
+    document.getElementById('effective-start-date').value = localISOTime;
+    
+    // Pre-fill with current settings if they exist
+    if (currentSettings) {
+        document.getElementById('mandatory-comment-threshold').value = currentSettings.mandatoryCommentThreshold || '';
+        document.getElementById('tni-ignore-threshold').value = currentSettings.tniIgnoreThreshold || '';
+        document.getElementById('reassessment-delay-days').value = currentSettings.reassessmentDelayDays || '';
+    }
+    
+    // Focus first input
+    document.getElementById('mandatory-comment-threshold').focus();
+}
+
+function funCloseModal() {
+    document.getElementById('update-settings-modal').classList.add('hidden');
+    // Clear form
+    document.getElementById('settings-form').reset();
+    // Clear error messages
+    document.querySelectorAll('.text-error').forEach(el => el.classList.add('hidden'));
+}
+
+async function funSaveSettings(event) {
+    event.preventDefault();
+    
+    const saveBtn = document.getElementById('save-settings-btn');
+    const originalText = saveBtn.innerHTML;
+    
+    try {
+        // Show loading state
+        saveBtn.innerHTML = '<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> <span>Saving...</span>';
+        saveBtn.disabled = true;
+        
+        // Clear previous errors
+        document.querySelectorAll('.text-error').forEach(el => el.classList.add('hidden'));
+        
+        // Get form data
+        const formData = {
+            mandatoryCommentThreshold: parseInt(document.getElementById('mandatory-comment-threshold').value),
+            tniIgnoreThreshold: parseInt(document.getElementById('tni-ignore-threshold').value),
+            reassessmentDelayDays: parseInt(document.getElementById('reassessment-delay-days').value),
+            effectiveStartDate: document.getElementById('effective-start-date').value
+        };
+        
+        // Validate
+        const validationErrors = funValidateSettings(formData);
+        if (validationErrors.length > 0) {
+            validationErrors.forEach(error => {
+                const errorEl = document.getElementById(error.field + '-error');
+                if (errorEl) {
+                    errorEl.textContent = error.message;
+                    errorEl.classList.remove('hidden');
+                }
+            });
+            return;
+        }
+        
+        // Convert to ISO string for storage
+        const effectiveStartISO = new Date(formData.effectiveStartDate).toISOString();
+        const nowISO = new Date().toISOString();
+        
+        const batch = writeBatch(db);
+        
+        // If there's a current setting, end it
+        if (currentSettings) {
+            const currentDocRef = doc(db, 'orgSettings', currentSettings.id);
+            // Set end date to 1ms before the new start date
+            const endDate = new Date(new Date(effectiveStartISO).getTime() - 1).toISOString();
+            batch.update(currentDocRef, {
+                effectiveEndDate: endDate
+            });
+        }
+        
+        // Create new settings document
+        const newSettingsRef = doc(collection(db, 'orgSettings'));
+        const newSettings = {
+            effectiveStartDate: effectiveStartISO,
+            effectiveEndDate: null,
+            mandatoryCommentThreshold: formData.mandatoryCommentThreshold,
+            tniIgnoreThreshold: formData.tniIgnoreThreshold,
+            reassessmentDelayDays: formData.reassessmentDelayDays,
+            createdBy: currentUser?.uid || null,
+            createdAt: nowISO
+        };
+        
+        batch.set(newSettingsRef, newSettings);
+        
+        // Write audit log
+        const auditRef = doc(collection(db, 'auditLogs'));
+        const auditLog = {
+            entityType: 'department', // Using 'department' as specified in navigation
+            entityId: newSettingsRef.id,
+            action: currentSettings ? 'update' : 'create',
+            actorId: currentUser?.uid || null,
+            timestamp: nowISO,
+            before: currentSettings ? {
+                mandatoryCommentThreshold: currentSettings.mandatoryCommentThreshold,
+                tniIgnoreThreshold: currentSettings.tniIgnoreThreshold,
+                reassessmentDelayDays: currentSettings.reassessmentDelayDays,
+                effectiveStartDate: currentSettings.effectiveStartDate,
+                effectiveEndDate: currentSettings.effectiveEndDate
+            } : {},
+            after: newSettings,
+            reason: currentSettings ? 'Updated organization settings' : 'Created initial organization settings'
+        };
+        
+        batch.set(auditRef, auditLog);
+        
+        // Commit the batch
+        await batch.commit();
+        
+        showToast('Settings updated successfully', 'success');
+        funCloseModal();
+        await funInitialLoad(true);
+        
+    } catch (error) {
+        console.error('Error saving settings:', error);
+        showToast(error?.message || 'Failed to save settings', 'error');
+    } finally {
+        // Reset button
+        saveBtn.innerHTML = originalText;
+        saveBtn.disabled = false;
+        if (typeof lucide !== 'undefined') {
+            lucide.createIcons();
+        }
+    }
+}
+
+function funValidateSettings(data) {
+    const errors = [];
+    
+    // Validate mandatory comment threshold
+    if (!Number.isInteger(data.mandatoryCommentThreshold) || data.mandatoryCommentThreshold < 1 || data.mandatoryCommentThreshold > 10) {
+        errors.push({
+            field: 'mandatory-comment-threshold',
+            message: 'Must be an integer between 1 and 10'
+        });
+    }
+    
+    // Validate TNI ignore threshold
+    if (!Number.isInteger(data.tniIgnoreThreshold) || data.tniIgnoreThreshold < 1 || data.tniIgnoreThreshold > 10) {
+        errors.push({
+            field: 'tni-ignore-threshold',
+            message: 'Must be an integer between 1 and 10'
+        });
+    }
+    
+    // Validate reassessment delay days
+    if (!Number.isInteger(data.reassessmentDelayDays) || data.reassessmentDelayDays < 0) {
+        errors.push({
+            field: 'reassessment-delay-days',
+            message: 'Must be an integer ≥ 0'
+        });
+    }
+    
+    // Validate effective start date
+    const startDate = new Date(data.effectiveStartDate);
+    const now = new Date();
+    
+    if (isNaN(startDate.getTime())) {
+        errors.push({
+            field: 'effective-start-date',
+            message: 'Invalid date format'
+        });
+    } else if (startDate < now) {
+        errors.push({
+            field: 'effective-start-date',
+            message: 'Effective start date must be ≥ current time'
+        });
+    }
+    
+    return errors;
+}
+
+function funViewAuditTrail() {
+    const settingsId = currentSettings?.id || 'unknown';
+    const returnTo = encodeURIComponent('org_settings_versioned');
+    window.location.href = `audit_log_viewer.html?entityType=department&entityId=${settingsId}&returnTo=${returnTo}`;
+}
+</script>
+
+</body>
+</html>

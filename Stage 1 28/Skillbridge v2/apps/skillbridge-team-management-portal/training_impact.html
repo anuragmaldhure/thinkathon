@@ -1,0 +1,1289 @@
+<html lang="en"><head>
+    <meta charset="UTF-8">
+    <title>SkillBridge - Team Lead Portal</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://tiramai-grid-lib.tiram.app/tiramai-grid.umd.js"></script>
+    <style type="text/tailwindcss">
+      @theme {
+        --color-primary: #1e40af;
+        --color-secondary: #059669;
+        --color-accent: #f59e0b;
+        --color-surface: #ffffff;
+        --color-background: #f8fafc;
+        --color-border: #e2e8f0;
+        --color-error: #dc2626;
+
+        --header-height: 4rem;
+        --sidebar-width: 16rem;
+
+        --text-sm: 12px;
+        --text-md: 14px;
+        --text-base: 14px;
+        --text-lg: 16px;
+        --text-xl: 18px;
+        --text-2xl: 20px;
+        --text-3xl: 24px;
+        --text-4xl: 30px;
+        --text-5xl: 36px;
+        --text-6xl: 48px;
+        --text-7xl: 60px;
+        --text-8xl: 72px;
+        --text-9xl: 96px;
+        --text-10xl: 128px;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+      }
+      ::-webkit-scrollbar-track {
+        background: #f1f1f1;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+        border-radius: 4px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: #94a3b8;
+      }
+
+      .app-header {
+        height: var(--header-height, 4rem);
+      }
+      .app-sidebar {
+        top: var(--header-height, 4rem);
+        width: var(--sidebar-width, 16rem);
+        height: calc(100vh - var(--header-height, 4rem));
+        overflow-y: auto;
+        overflow-x: hidden;
+      }
+      .app-main {
+        margin-top: var(--header-height, 4rem);
+        min-height: calc(100vh - var(--header-height, 4rem));
+      }
+      @media (min-width: 768px) {
+        .app-main {
+          margin-left: var(--sidebar-width, 16rem);
+        }
+      }
+
+      body.sidebar-open {
+        overflow: hidden;
+      }
+
+      @media (max-width: 767px) {
+        .app-sidebar {
+          left: calc(-1 * var(--sidebar-width, 16rem));
+          transition: left 0.3s ease-in-out;
+        }
+        .app-sidebar.open {
+          left: 0;
+        }
+      }
+
+      .nav-link.active {
+        background: var(--color-primary);
+        color: white;
+      }
+      .nav-link.active:hover {
+        background: var(--color-primary);
+        opacity: 0.9;
+      }
+
+      .popover {
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(-8px);
+        transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out,
+          visibility 0.2s ease-in-out;
+      }
+      .popover.visible {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+      }
+
+      .sidebar-backdrop {
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+      }
+      .sidebar-backdrop.active {
+        opacity: 1;
+        visibility: visible;
+      }
+      
+      button,
+      a {
+        font-size: 14px;
+      }
+    </style>
+  <title>Training Impact Analysis - SkillBridge</title></head>
+  <body class="bg-slate-50 text-gray-800 overflow-x-hidden">
+    <header class="app-header fixed top-0 left-0 right-0 bg-white border-b border-slate-200 z-40">
+      <div class="h-full max-w-[1920px] mx-auto px-4 md:px-6 flex justify-between items-center">
+        <div class="flex items-center gap-3">
+          <button id="mobileMenuToggle" class="flex items-center justify-center w-10 h-10 rounded text-gray-500 hover:bg-gray-100 hover:text-gray-900 transition-all duration-200 cursor-pointer border-0 bg-transparent md:hidden focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-700 focus-visible:outline-offset-2" aria-label="Toggle navigation menu" aria-expanded="false">
+            <i data-lucide="menu" class="w-6 h-6"></i>
+          </button>
+
+          <div class="flex items-center gap-3">
+            <div class="w-8 h-8 rounded-lg flex items-center justify-center overflow-hidden">
+              <svg viewBox="0 0 400 400" width="32" height="32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <g>
+                  <path d="M80 230 Q200 80 320 230" stroke="#1E40AF" stroke-width="26" fill="none" stroke-linecap="round"></path>
+                  <rect x="95" y="230" width="24" height="80" rx="8" fill="#059669"></rect>
+                  <rect x="281" y="230" width="24" height="80" rx="8" fill="#059669"></rect>
+                  <rect x="189" y="196" width="22" height="114" rx="7" fill="#1E40AF"></rect>
+                  <circle cx="130" cy="180" r="15" fill="#1E40AF"></circle>
+                  <circle cx="270" cy="180" r="15" fill="#1E40AF"></circle>
+                  <circle cx="200" cy="106" r="17" fill="#059669"></circle>
+                  <rect x="192" y="126" width="16" height="36" rx="6" fill="#059669"></rect>
+                </g>
+              </svg>
+            </div>
+            <h1 class="text-lg md:text-xl font-bold text-gray-900">
+              SkillBridge
+            </h1>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-2 md:gap-3">
+          <button id="userProfileButton" class="flex items-center gap-3 px-3 py-2 rounded-lg border border-transparent hover:bg-gray-50 hover:border-gray-200 transition-all duration-200 cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-700 focus-visible:outline-offset-2" aria-label="User profile menu" aria-expanded="false" aria-haspopup="true">
+            <div id="userAvatar" class="w-8 h-8 bg-blue-700 text-white rounded-full flex items-center justify-center text-sm font-semibold shrink-0"></div>
+            <div class="hidden sm:flex flex-col items-start max-w-[150px]">
+              <div id="userName" class="text-sm font-medium text-gray-900 truncate w-full"></div>
+            </div>
+            <i data-lucide="chevron-down" class="w-4 h-4 text-gray-500 hidden sm:block"></i>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <div id="userProfilePopover" class="popover fixed top-[4.5rem] right-4 md:right-6 w-72 bg-white border border-gray-200 rounded-lg shadow-xl z-50" role="dialog" aria-labelledby="popoverUserName" data-portal="body">
+      <div class="p-4">
+        <div class="flex items-center gap-3 pb-3 mb-3 border-b border-gray-100">
+          <div id="popoverUserAvatar" class="w-8 h-8 bg-blue-700 text-white rounded-full flex items-center justify-center text-sm font-semibold shrink-0"></div>
+          <div class="flex-1 min-w-0">
+            <div id="popoverUserName" class="font-semibold text-gray-900 truncate"></div>
+            <div id="popoverUserEmail" class="text-xs text-gray-500 truncate"></div>
+          </div>
+        </div>
+
+        <div class="space-y-1">
+          <button id="signOutButton" class="w-full flex items-center gap-3 px-3 py-2 text-sm font-medium text-red-600 hover:bg-red-50 rounded transition-all duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-700 focus-visible:outline-offset-2">
+            <i data-lucide="log-out" class="w-4 h-4"></i>
+            Sign Out
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div id="sidebarBackdrop" class="sidebar-backdrop fixed inset-0 bg-black/50 z-20 md:hidden" style="top: var(--header-height, 4rem)"></div>
+
+    <aside id="sidebar" class="app-sidebar fixed left-0 bg-white border-r border-slate-200 overflow-y-auto z-30">
+      <nav class="p-4" role="navigation" aria-label="Main navigation">
+        <div class="py-6 border-b border-gray-100 first:pt-0 last:border-b-0">
+          <div class="px-4 pb-2 text-xs font-semibold uppercase tracking-wider text-gray-400">
+            Dashboard
+          </div>
+          <div class="space-y-1">
+            <a href="team_dashboard.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline active" data-page="team_dashboard">
+              <i data-lucide="home" class="w-5 h-5"></i>
+              <span>Team Dashboard</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="py-6 border-b border-gray-100 last:border-b-0">
+          <div class="px-4 pb-2 text-xs font-semibold uppercase tracking-wider text-gray-400">
+            Team Management
+          </div>
+          <div class="space-y-1">
+            <a href="my_team.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline" data-page="my_team">
+              <i data-lucide="users" class="w-5 h-5"></i>
+              <span>My Team</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="py-6 border-b border-gray-100 last:border-b-0">
+          <div class="px-4 pb-2 text-xs font-semibold uppercase tracking-wider text-gray-400">
+            Analytics
+          </div>
+          <div class="space-y-1">
+            <a href="team_skill_gaps.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline" data-page="team_skill_gaps">
+              <i data-lucide="target" class="w-5 h-5"></i>
+              <span>Skill Gaps</span>
+            </a>
+            <a href="skill_trend_analysis.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline" data-page="skill_trend_analysis">
+              <i data-lucide="trending-up" class="w-5 h-5"></i>
+              <span>Skill Trends</span>
+            </a>
+            <a href="training_impact.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline" data-page="training_impact">
+              <i data-lucide="graduation-cap" class="w-5 h-5"></i>
+              <span>Training Impact</span>
+            </a>
+          </div>
+        </div>
+      </nav>
+    </aside>
+
+    <main class="app-main max-w-7xl mx-auto p-4 md:p-6 lg:p-8" id="pageContent" role="main"><nav class="flex items-center space-x-2 text-sm text-gray-600 mb-6" aria-label="Breadcrumb">
+  <a href="team_dashboard.html" class="hover:text-gray-900">Home</a>
+  <i data-lucide="chevron-right" class="w-4 h-4"></i>
+  <span class="text-gray-900 font-medium">Training Impact Analysis</span>
+</nav>
+
+<!-- Page Title -->
+<h1 class="text-2xl font-bold text-gray-900 mb-6">Training Impact Analysis</h1>
+
+<!-- Summary Stats Cards -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+  <div class="bg-white p-6 rounded-lg border border-slate-200">
+    <div class="flex items-center justify-between">
+      <div>
+        <p class="text-sm text-gray-600">Training Sessions</p>
+        <p id="totalSessions" class="text-2xl font-bold text-gray-900">0</p>
+      </div>
+      <div class="w-12 h-12 bg-blue-50 rounded-lg flex items-center justify-center">
+        <i data-lucide="graduation-cap" class="w-6 h-6 text-blue-600"></i>
+      </div>
+    </div>
+  </div>
+
+  <div class="bg-white p-6 rounded-lg border border-slate-200">
+    <div class="flex items-center justify-between">
+      <div>
+        <p class="text-sm text-gray-600">Team Members Trained</p>
+        <p id="membersTrained" class="text-2xl font-bold text-gray-900">0</p>
+      </div>
+      <div class="w-12 h-12 bg-green-50 rounded-lg flex items-center justify-center">
+        <i data-lucide="users" class="w-6 h-6 text-green-600"></i>
+      </div>
+    </div>
+  </div>
+
+  <div class="bg-white p-6 rounded-lg border border-slate-200">
+    <div class="flex items-center justify-between">
+      <div>
+        <p class="text-sm text-gray-600">Average Improvement</p>
+        <p id="avgImprovement" class="text-2xl font-bold text-gray-900">+0.0</p>
+      </div>
+      <div class="w-12 h-12 bg-amber-50 rounded-lg flex items-center justify-center">
+        <i data-lucide="trending-up" class="w-6 h-6 text-amber-500"></i>
+      </div>
+    </div>
+  </div>
+
+  <div class="bg-white p-6 rounded-lg border border-slate-200">
+    <div class="flex items-center justify-between">
+      <div>
+        <p class="text-sm text-gray-600">TNI Clearance Rate</p>
+        <p id="tniClearanceRate" class="text-2xl font-bold text-gray-900">0%</p>
+      </div>
+      <div class="w-12 h-12 bg-green-50 rounded-lg flex items-center justify-center">
+        <i data-lucide="check-circle" class="w-6 h-6 text-green-600"></i>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Filter Section -->
+<div class="bg-white p-6 rounded-lg border border-slate-200 mb-6">
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+    <div>
+      <label for="skillFilter" class="block text-sm font-medium text-gray-700 mb-2">Skill</label>
+      <select id="skillFilter" class="w-full px-3 py-2 border border-slate-200 rounded text-sm">
+        <option value="">All Skills</option>
+      </select>
+    </div>
+
+    <div>
+      <label for="dateFromFilter" class="block text-sm font-medium text-gray-700 mb-2">From Date</label>
+      <input type="date" id="dateFromFilter" class="w-full px-3 py-2 border border-slate-200 rounded text-sm">
+    </div>
+
+    <div>
+      <label for="dateToFilter" class="block text-sm font-medium text-gray-700 mb-2">To Date</label>
+      <input type="date" id="dateToFilter" class="w-full px-3 py-2 border border-slate-200 rounded text-sm">
+    </div>
+  </div>
+
+  <div class="mt-4">
+    <label class="block text-sm font-medium text-gray-700 mb-2">Show Options</label>
+    <div class="flex flex-wrap gap-4">
+      <label class="flex items-center">
+        <input type="radio" name="showFilter" value="all" class="mr-2" checked="">
+        <span class="text-sm text-gray-700">All</span>
+      </label>
+      <label class="flex items-center">
+        <input type="radio" name="showFilter" value="improvement" class="mr-2">
+        <span class="text-sm text-gray-700">With Improvement</span>
+      </label>
+      <label class="flex items-center">
+        <input type="radio" name="showFilter" value="no-improvement" class="mr-2">
+        <span class="text-sm text-gray-700">No Improvement</span>
+      </label>
+    </div>
+  </div>
+</div>
+
+<!-- Training Impact Grid -->
+<div id="trainingImpactGrid" class="mt-6"></div>
+
+<!-- Empty State -->
+<div id="emptyState" class="hidden text-center py-12">
+  <i data-lucide="graduation-cap" class="w-12 h-12 mx-auto text-gray-400 mb-4"></i>
+  <h3 class="text-lg font-medium text-gray-900 mb-2">No training data available</h3>
+  <p class="text-gray-500">Training sessions with team member participation will appear here.</p>
+</div>
+
+<!-- Bottom Summary Section -->
+<div id="summarySection" class="mt-8 space-y-6">
+  <!-- Skills with Best Training Outcomes -->
+  <div class="bg-white p-6 rounded-lg border border-slate-200">
+    <h3 class="text-lg font-semibold text-gray-900 mb-4">Skills with Best Training Outcomes</h3>
+    <div id="bestOutcomes" class="space-y-3">
+      <!-- Best outcomes will be populated here -->
+    </div>
+  </div>
+
+  <!-- Recommendations -->
+  <div class="bg-white p-6 rounded-lg border border-slate-200">
+    <h3 class="text-lg font-semibold text-gray-900 mb-4">Recommendations</h3>
+    <p id="recommendations" class="text-gray-700">
+      <!-- Recommendations will be populated here -->
+    </p>
+  </div>
+</div>
+
+<!-- Training Session Detail Modal -->
+<div id="trainingDetailModal" data-portal="body" class="fixed inset-0 z-50 hidden">
+  <div class="flex items-center justify-center min-h-screen p-4 bg-black/50">
+    <div class="bg-white rounded-xl shadow-xl w-[min(92vw,42rem)] max-h-[90vh] overflow-y-auto">
+      <div class="p-6 border-b border-gray-200">
+        <div class="flex items-center justify-between">
+          <h2 class="text-lg font-semibold text-gray-900">Training Session Details</h2>
+          <button onclick="funCloseTrainingModal()" class="text-gray-400 hover:text-gray-600">
+            <i data-lucide="x" class="w-5 h-5"></i>
+          </button>
+        </div>
+      </div>
+      <div class="p-6">
+        <div id="trainingModalContent">
+          <!-- Content will be populated dynamically -->
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</main>
+
+    <script src="app.js"></script>
+    <script src="app_data.js"></script>
+    <script id="container-script">
+      (function () {
+        const TemplateUtils = (window.TemplateUtils =
+          window.TemplateUtils || {});
+
+        TemplateUtils.UserUtils =
+          TemplateUtils.UserUtils ||
+          (function createUserUtils() {
+            return {
+              getCurrentUser() {
+                try {
+                  let currentUserId = localStorage.getItem("currentUserId");
+                  if (!currentUserId) {
+                    localStorage.setItem("currentUserId", "user_001_alice_web");
+                    currentUserId = "user_001_alice_web";
+                  }
+
+                  const userData = localStorage.getItem(
+                    `users_${currentUserId}`
+                  );
+                  return userData ? JSON.parse(userData) : null;
+                } catch (error) {
+                  console.error("Error retrieving user data:", error);
+                  return null;
+                }
+              },
+              signOut() {
+                try {
+                  localStorage.removeItem("currentUserId");
+                  window.location.reload();
+                } catch (error) {
+                  console.error("Error signing out:", error);
+                }
+              },
+              getUserDisplayName(user) {
+                if (!user) return "Guest";
+                return user.firstName && user.lastName
+                  ? `${user.firstName} ${user.lastName}`
+                  : user.firstName || user.lastName || "User";
+              },
+              getUserInitials(user) {
+                if (!user) return "?";
+                const first = user.firstName?.charAt(0) || "";
+                const last = user.lastName?.charAt(0) || "";
+                return (first + last).toUpperCase() || "U";
+              },
+            };
+          })();
+
+        if (TemplateUtils.__bootstrapped) {
+          if (typeof window.lucide?.createIcons === "function") {
+            window.lucide.createIcons();
+          }
+          return;
+        }
+
+        TemplateUtils.__bootstrapped = true;
+
+        const state = {
+          popoverVisible: false,
+          sidebarOpen: false,
+          resizeTimer: null,
+          debounceTimer: null,
+          isUpdatingIcons: false,
+          observer: null,
+          refs: {},
+        };
+
+        function ready(fn) {
+          if (document.readyState === "loading") {
+            document.addEventListener("DOMContentLoaded", fn, { once: true });
+          } else if (typeof queueMicrotask === "function") {
+            queueMicrotask(fn);
+          } else {
+            Promise.resolve().then(fn);
+          }
+        }
+
+        function safeLucide(callback) {
+          if (typeof window.lucide?.createIcons === "function") {
+            callback();
+          }
+        }
+
+        function cacheRefs() {
+          state.refs = {
+            userProfileButton: document.getElementById("userProfileButton"),
+            userProfilePopover: document.getElementById("userProfilePopover"),
+            userAvatar: document.getElementById("userAvatar"),
+            userName: document.getElementById("userName"),
+            popoverUserAvatar: document.getElementById("popoverUserAvatar"),
+            popoverUserName: document.getElementById("popoverUserName"),
+            popoverUserEmail: document.getElementById("popoverUserEmail"),
+            signOutButton: document.getElementById("signOutButton"),
+            mobileMenuToggle: document.getElementById("mobileMenuToggle"),
+            sidebar: document.getElementById("sidebar"),
+            sidebarBackdrop: document.getElementById("sidebarBackdrop"),
+            navLinks: document.querySelectorAll(".nav-link"),
+            pageContent: document.getElementById("pageContent"),
+          };
+        }
+
+        function initializeUserProfile() {
+          const { userAvatar, userName } = state.refs;
+          if (!userAvatar || !userName) return;
+
+          const currentUser = TemplateUtils.UserUtils.getCurrentUser();
+          if (currentUser) {
+            userAvatar.textContent =
+              TemplateUtils.UserUtils.getUserInitials(currentUser);
+            userName.textContent =
+              TemplateUtils.UserUtils.getUserDisplayName(currentUser);
+          } else {
+            userAvatar.textContent = "?";
+            userName.textContent = "Guest";
+          }
+        }
+
+        function populatePopover() {
+          const currentUser = TemplateUtils.UserUtils.getCurrentUser();
+          const { popoverUserAvatar, popoverUserName, popoverUserEmail } =
+            state.refs;
+          if (!popoverUserAvatar || !popoverUserName || !popoverUserEmail)
+            return;
+
+          if (currentUser) {
+            popoverUserAvatar.textContent =
+              TemplateUtils.UserUtils.getUserInitials(currentUser);
+            popoverUserName.textContent =
+              TemplateUtils.UserUtils.getUserDisplayName(currentUser);
+            popoverUserEmail.textContent = currentUser.email || "No email";
+          } else {
+            popoverUserAvatar.textContent = "?";
+            popoverUserName.textContent = "Guest";
+            popoverUserEmail.textContent = "Not logged in";
+          }
+        }
+
+        function toggleUserPopover(forceClose = false) {
+          const { userProfilePopover, userProfileButton } = state.refs;
+          if (!userProfilePopover || !userProfileButton) return;
+
+          const shouldOpen = forceClose ? false : !state.popoverVisible;
+          if (shouldOpen) {
+            populatePopover();
+            userProfilePopover.classList.add("visible");
+            userProfileButton.setAttribute("aria-expanded", "true");
+            state.popoverVisible = true;
+            const firstButton = userProfilePopover.querySelector("button");
+            if (firstButton) {
+              setTimeout(() => firstButton.focus(), 50);
+            }
+          } else {
+            userProfilePopover.classList.remove("visible");
+            userProfileButton.setAttribute("aria-expanded", "false");
+            state.popoverVisible = false;
+          }
+        }
+
+        function hideUserPopover() {
+          if (state.popoverVisible) {
+            toggleUserPopover(true);
+          }
+        }
+
+        function toggleMobileSidebar(forceClose = false) {
+          const { sidebar, sidebarBackdrop, mobileMenuToggle } = state.refs;
+          if (!sidebar || !sidebarBackdrop || !mobileMenuToggle) return;
+
+          const shouldOpen = forceClose ? false : !state.sidebarOpen;
+          state.sidebarOpen = shouldOpen;
+
+          sidebar.classList.toggle("open", shouldOpen);
+          sidebarBackdrop.classList.toggle("active", shouldOpen);
+          document.body.classList.toggle("sidebar-open", shouldOpen);
+          mobileMenuToggle.setAttribute(
+            "aria-expanded",
+            shouldOpen ? "true" : "false"
+          );
+
+          const icon = mobileMenuToggle.querySelector("[data-lucide]");
+          if (icon) {
+            icon.setAttribute("data-lucide", shouldOpen ? "x" : "menu");
+            safeLucide(() => window.lucide.createIcons());
+          }
+        }
+
+        function closeMobileSidebar() {
+          if (state.sidebarOpen) {
+            toggleMobileSidebar(true);
+          }
+        }
+
+        function setActiveNavLink(pageId) {
+          if (!pageId) return;
+          const { navLinks } = state.refs;
+          navLinks?.forEach((link) => {
+            if (link.dataset.page === pageId) {
+              link.classList.add("active");
+            } else {
+              link.classList.remove("active");
+            }
+          });
+        }
+
+        TemplateUtils.setActiveNavLink = setActiveNavLink;
+        TemplateUtils.closeMobileSidebar = closeMobileSidebar;
+
+        function handleDocumentClick(event) {
+          const { userProfilePopover, userProfileButton } = state.refs;
+          if (
+            state.popoverVisible &&
+            userProfilePopover &&
+            userProfileButton &&
+            !userProfilePopover.contains(event.target) &&
+            !userProfileButton.contains(event.target)
+          ) {
+            hideUserPopover();
+          }
+        }
+
+        function handleKeydown(event) {
+          if (event.key !== "Escape") return;
+          if (state.popoverVisible) {
+            hideUserPopover();
+            state.refs.userProfileButton?.focus();
+          }
+          if (state.sidebarOpen) {
+            closeMobileSidebar();
+            state.refs.mobileMenuToggle?.focus();
+          }
+        }
+
+        function handleResize() {
+          clearTimeout(state.resizeTimer);
+          state.resizeTimer = setTimeout(() => {
+            if (window.innerWidth >= 768) {
+              closeMobileSidebar();
+            }
+          }, 200);
+        }
+
+        function bindEvents() {
+          const {
+            userProfileButton,
+            mobileMenuToggle,
+            sidebarBackdrop,
+            signOutButton,
+            navLinks,
+          } = state.refs;
+
+          userProfileButton?.addEventListener("click", (event) => {
+            event.stopPropagation();
+            toggleUserPopover();
+          });
+
+          mobileMenuToggle?.addEventListener("click", (event) => {
+            event.stopPropagation();
+            toggleMobileSidebar();
+          });
+
+          sidebarBackdrop?.addEventListener("click", () =>
+            closeMobileSidebar()
+          );
+
+          signOutButton?.addEventListener("click", () => {
+            if (confirm("Are you sure you want to sign out?")) {
+              TemplateUtils.UserUtils.signOut();
+            }
+          });
+
+          navLinks?.forEach((link) => {
+            link.addEventListener("click", () => closeMobileSidebar());
+          });
+
+          document.addEventListener("click", handleDocumentClick);
+          document.addEventListener("keydown", handleKeydown);
+          window.addEventListener("resize", handleResize);
+
+          window.addEventListener("pagehide", cleanup);
+        }
+
+        function cleanup() {
+          if (state.resizeTimer) clearTimeout(state.resizeTimer);
+          if (state.debounceTimer) clearTimeout(state.debounceTimer);
+          if (state.observer) {
+            state.observer.disconnect();
+            state.observer = null;
+          }
+          document.removeEventListener("click", handleDocumentClick);
+          document.removeEventListener("keydown", handleKeydown);
+          window.removeEventListener("resize", handleResize);
+        }
+
+        function initializePortalTargets() {
+          document.querySelectorAll('[data-portal="body"]').forEach((node) => {
+            if (node.parentElement !== document.body) {
+              document.body.appendChild(node);
+            }
+          });
+        }
+
+        function observePageContent() {
+          const { pageContent } = state.refs;
+          if (!pageContent || typeof MutationObserver !== "function") return;
+
+          const observer = new MutationObserver((mutations) => {
+            if (state.isUpdatingIcons) return;
+
+            const isLucideUpdate = mutations.every((m) => {
+              if (m.type !== "childList") return false;
+              const nodes = [...m.addedNodes, ...m.removedNodes];
+              return nodes.every(
+                (n) =>
+                  n.nodeType !== Node.ELEMENT_NODE ||
+                  n.nodeName.toLowerCase() === "svg" ||
+                  n.classList?.contains("lucide")
+              );
+            });
+            if (isLucideUpdate) return;
+
+            if (state.debounceTimer) clearTimeout(state.debounceTimer);
+            state.debounceTimer = setTimeout(() => {
+              state.debounceTimer = null;
+              state.isUpdatingIcons = true;
+              safeLucide(() => {
+                window.lucide.createIcons();
+                requestAnimationFrame(() => {
+                  state.isUpdatingIcons = false;
+                });
+              });
+            }, 100);
+          });
+
+          observer.observe(pageContent, { childList: true, subtree: true });
+          state.observer = observer;
+        }
+
+        function bootstrap() {
+          cacheRefs();
+          initializePortalTargets();
+          initializeUserProfile();
+          bindEvents();
+          safeLucide(() => window.lucide.createIcons());
+          observePageContent();
+        }
+
+        ready(bootstrap);
+      })();
+    </script>
+  
+
+<script>
+let trainingImpactGridInstance = null;
+let allTrainingData = [];
+let currentUser = null;
+
+// Utility functions
+function getDataSafely(key) {
+  try {
+    const data = localStorage.getItem(key);
+    return data ? JSON.parse(data) : [];
+  } catch (error) {
+    console.error(`Error parsing ${key}:`, error);
+    return [];
+  }
+}
+
+function funGetCurrentUser() {
+  if (typeof window.TemplateUtils?.UserUtils?.getCurrentUser === 'function') {
+    return window.TemplateUtils.UserUtils.getCurrentUser();
+  }
+  
+  // Fallback for testing
+  const users = getDataSafely('users');
+  return users.find(user => user.id === 'usr_003') || null; // David Chen as team lead
+}
+
+function funGetTeamMembers(teamLeadId) {
+  const users = getDataSafely('users');
+  return users.filter(user => user.teamLeadId === teamLeadId);
+}
+
+function funGetTrainingData() {
+  if (!currentUser) return [];
+  
+  const teamMembers = funGetTeamMembers(currentUser.id);
+  const teamMemberIds = teamMembers.map(member => member.id);
+  const trainingSessions = getDataSafely('trainingSessions');
+  const skills = getDataSafely('skills');
+  const assessments = getDataSafely('assessments');
+  const users = getDataSafely('users');
+  const externalTrainers = getDataSafely('externalTrainers');
+  
+  const trainingData = [];
+  
+  trainingSessions.forEach(session => {
+    if (!session.assignedEmployees) return;
+    
+    session.assignedEmployees.forEach(assignment => {
+      if (teamMemberIds.includes(assignment.employeeId)) {
+        const employee = users.find(u => u.id === assignment.employeeId);
+        const skill = skills.find(s => s.id === session.skillId);
+        
+        if (!employee || !skill) return;
+        
+        // Find pre and post training scores
+        const sessionDate = new Date(session.scheduledDate);
+        const sessionEndDate = new Date(session.endDate);
+        
+        const employeeAssessments = assessments.filter(a => 
+          a.employeeId === assignment.employeeId && 
+          a.skillId === session.skillId
+        );
+        
+        // Pre-training score (most recent before training)
+        const preAssessments = employeeAssessments.filter(a => 
+          new Date(a.assessmentTimestamp) < sessionDate
+        ).sort((a, b) => new Date(b.assessmentTimestamp) - new Date(a.assessmentTimestamp));
+        
+        // Post-training score (first after training)
+        const postAssessments = employeeAssessments.filter(a => 
+          new Date(a.assessmentTimestamp) > sessionEndDate
+        ).sort((a, b) => new Date(a.assessmentTimestamp) - new Date(b.assessmentTimestamp));
+        
+        const preScore = preAssessments.length > 0 ? preAssessments[0] : null;
+        const postScore = postAssessments.length > 0 ? postAssessments[0] : null;
+        
+        let improvement = 0;
+        let improvementText = 'N/A';
+        let tniCleared = 'N/A';
+        
+        if (preScore && postScore) {
+          improvement = postScore.score - preScore.score;
+          improvementText = improvement > 0 ? `+${improvement}` : `${improvement}`;
+          tniCleared = (preScore.tniFlag === true && postScore.tniFlag === false) ? 'Yes' : 'No';
+        } else if (preScore && !postScore) {
+          improvementText = 'Pending Reassessment';
+        }
+        
+        // Get trainer name
+        let trainerName = 'Unknown';
+        if (session.trainerType === 'internal') {
+          const trainer = users.find(u => u.id === session.trainerId);
+          if (trainer) {
+            trainerName = `${trainer.firstName} ${trainer.lastName}`;
+          }
+        } else if (session.trainerType === 'external') {
+          const trainer = externalTrainers.find(t => t.id === session.trainerId);
+          if (trainer) {
+            trainerName = trainer.name;
+          }
+        }
+        
+        trainingData.push({
+          id: `${session.id}_${assignment.employeeId}`,
+          sessionId: session.id,
+          employeeId: assignment.employeeId,
+          employeeName: `${employee.firstName} ${employee.lastName}`,
+          skillId: session.skillId,
+          skillName: skill.name,
+          trainingDate: session.scheduledDate,
+          trainingMode: session.mode,
+          trainerName: trainerName,
+          trainerType: session.trainerType,
+          attendanceStatus: assignment.attendanceStatus,
+          preScore: preScore ? preScore.score : null,
+          postScore: postScore ? postScore.score : null,
+          improvement: improvement,
+          improvementText: improvementText,
+          tniCleared: tniCleared,
+          capacity: session.capacity
+        });
+      }
+    });
+  });
+  
+  return trainingData;
+}
+
+function funCalculateStats() {
+  const data = allTrainingData;
+  
+  // Training Sessions (unique sessions)
+  const uniqueSessions = [...new Set(data.map(d => d.sessionId))];
+  document.getElementById('totalSessions').textContent = uniqueSessions.length;
+  
+  // Team Members Trained (unique employees)
+  const uniqueEmployees = [...new Set(data.map(d => d.employeeId))];
+  document.getElementById('membersTrained').textContent = uniqueEmployees.length;
+  
+  // Average Improvement
+  const improvementsWithScores = data.filter(d => 
+    d.preScore !== null && d.postScore !== null
+  );
+  const avgImprovement = improvementsWithScores.length > 0 
+    ? improvementsWithScores.reduce((sum, d) => sum + d.improvement, 0) / improvementsWithScores.length
+    : 0;
+  document.getElementById('avgImprovement').textContent = avgImprovement >= 0 
+    ? `+${avgImprovement.toFixed(1)}` 
+    : avgImprovement.toFixed(1);
+  
+  // TNI Clearance Rate
+  const tniClearances = data.filter(d => d.tniCleared === 'Yes');
+  const tniEligible = data.filter(d => d.tniCleared !== 'N/A');
+  const clearanceRate = tniEligible.length > 0 
+    ? (tniClearances.length / tniEligible.length) * 100 
+    : 0;
+  document.getElementById('tniClearanceRate').textContent = `${clearanceRate.toFixed(0)}%`;
+}
+
+function funUpdateSummary() {
+  const data = allTrainingData;
+  
+  // Skills with best training outcomes
+  const skillOutcomes = {};
+  data.forEach(d => {
+    if (d.preScore !== null && d.postScore !== null) {
+      if (!skillOutcomes[d.skillName]) {
+        skillOutcomes[d.skillName] = { improvements: [], total: 0 };
+      }
+      skillOutcomes[d.skillName].improvements.push(d.improvement);
+      skillOutcomes[d.skillName].total++;
+    }
+  });
+  
+  const skillAverages = Object.entries(skillOutcomes).map(([skill, data]) => ({
+    skill,
+    avgImprovement: data.improvements.reduce((sum, imp) => sum + imp, 0) / data.improvements.length,
+    count: data.total
+  })).sort((a, b) => b.avgImprovement - a.avgImprovement).slice(0, 3);
+  
+  const bestOutcomesEl = document.getElementById('bestOutcomes');
+  if (skillAverages.length > 0) {
+    bestOutcomesEl.innerHTML = skillAverages.map((item, index) => `
+      <div class="flex items-center justify-between p-3 bg-gray-50 rounded">
+        <div class="flex items-center gap-3">
+          <span class="w-6 h-6 bg-green-100 text-green-700 rounded-full flex items-center justify-center text-xs font-semibold">${index + 1}</span>
+          <span class="font-medium">${item.skill}</span>
+        </div>
+        <div class="text-right">
+          <span class="text-green-600 font-semibold">+${item.avgImprovement.toFixed(1)}</span>
+          <span class="text-gray-500 text-sm ml-2">(${item.count} sessions)</span>
+        </div>
+      </div>
+    `).join('');
+  } else {
+    bestOutcomesEl.innerHTML = '<p class="text-gray-500">No completed training outcomes available yet.</p>';
+  }
+  
+  // Recommendations
+  const pendingReassessments = data.filter(d => d.improvementText === 'Pending Reassessment');
+  const recommendationsEl = document.getElementById('recommendations');
+  
+  if (pendingReassessments.length > 0) {
+    recommendationsEl.textContent = `Consider scheduling reassessments for ${pendingReassessments.length} team members who completed training but have not been re-evaluated.`;
+  } else {
+    recommendationsEl.textContent = 'All team members have been reassessed following their training sessions.';
+  }
+}
+
+function funPopulateSkillFilter() {
+  const skills = [...new Set(allTrainingData.map(d => d.skillName))].sort();
+  const skillFilter = document.getElementById('skillFilter');
+  
+  skillFilter.innerHTML = '<option value="">All Skills</option>';
+  skills.forEach(skill => {
+    const option = document.createElement('option');
+    option.value = skill;
+    option.textContent = skill;
+    skillFilter.appendChild(option);
+  });
+}
+
+function funApplyFilters(data) {
+  const skillFilter = document.getElementById('skillFilter').value;
+  const dateFromFilter = document.getElementById('dateFromFilter').value;
+  const dateToFilter = document.getElementById('dateToFilter').value;
+  const showFilter = document.querySelector('input[name="showFilter"]:checked').value;
+  
+  let filteredData = data;
+  
+  if (skillFilter) {
+    filteredData = filteredData.filter(d => d.skillName === skillFilter);
+  }
+  
+  if (dateFromFilter) {
+    filteredData = filteredData.filter(d => new Date(d.trainingDate) >= new Date(dateFromFilter));
+  }
+  
+  if (dateToFilter) {
+    filteredData = filteredData.filter(d => new Date(d.trainingDate) <= new Date(dateToFilter));
+  }
+  
+  if (showFilter === 'improvement') {
+    filteredData = filteredData.filter(d => d.improvement > 0);
+  } else if (showFilter === 'no-improvement') {
+    filteredData = filteredData.filter(d => d.improvement <= 0);
+  }
+  
+  return filteredData;
+}
+
+function funInitTrainingImpactGrid() {
+  if (!window.TiramaiGrid) {
+    console.error('TiramaiGrid is not available');
+    return;
+  }
+  
+  allTrainingData = funGetTrainingData();
+  const filteredData = funApplyFilters(allTrainingData);
+  
+  // Handle empty state
+  const gridContainer = document.getElementById('trainingImpactGrid');
+  const emptyState = document.getElementById('emptyState');
+  const summarySection = document.getElementById('summarySection');
+  
+  if (allTrainingData.length === 0) {
+    if (gridContainer) gridContainer.classList.add('hidden');
+    if (emptyState) emptyState.classList.remove('hidden');
+    if (summarySection) summarySection.classList.add('hidden');
+    return;
+  }
+  
+  if (gridContainer) gridContainer.classList.remove('hidden');
+  if (emptyState) emptyState.classList.add('hidden');
+  if (summarySection) summarySection.classList.remove('hidden');
+  
+  const columns = [
+    {
+      field: 'employeeName',
+      header: 'Employee Name',
+      sortable: true,
+      filterable: true,
+      isLink: true,
+      linkHref: (row) => `employee_profile.html?id=${row.employeeId}`
+    },
+    {
+      field: 'skillName',
+      header: 'Skill Name',
+      sortable: true,
+      filterable: true
+    },
+    {
+      field: 'trainingDate',
+      header: 'Training Date',
+      type: 'date',
+      dateFormat: 'iso',
+      dateDisplayFormat: 'mm/dd/yyyy',
+      sortable: true
+    },
+    {
+      field: 'preScore',
+      header: 'Pre-Training Score',
+      type: 'number',
+      sortable: true,
+      align: 'center',
+      render: (value) => value !== null ? value.toString() : 'N/A'
+    },
+    {
+      field: 'postScore',
+      header: 'Post-Training Score',
+      type: 'number',
+      sortable: true,
+      align: 'center',
+      render: (value, row) => {
+        if (value !== null) {
+          return value.toString();
+        } else if (row.preScore !== null) {
+          return '<em style="color: #6b7280;">Pending Reassessment</em>';
+        }
+        return 'N/A';
+      }
+    },
+    {
+      field: 'improvementText',
+      header: 'Improvement',
+      sortable: true,
+      align: 'center',
+      render: (value, row) => {
+        if (row.improvement > 0) {
+          return `<span class="text-green-600 font-semibold">${value}</span>`;
+        } else if (row.improvement < 0) {
+          return `<span class="text-red-600 font-semibold">${value}</span>`;
+        } else if (row.improvement === 0) {
+          return `<span class="text-gray-600">${value}</span>`;
+        }
+        return `<span class="text-gray-500">${value}</span>`;
+      }
+    },
+    {
+      field: 'tniCleared',
+      header: 'TNI Cleared',
+      sortable: true,
+      align: 'center',
+      render: (value) => {
+        if (value === 'Yes') {
+          return '<span class="inline-flex px-2 py-1 text-xs font-medium text-green-700 bg-green-50 rounded">Yes</span>';
+        } else if (value === 'No') {
+          return '<span class="inline-flex px-2 py-1 text-xs font-medium text-red-700 bg-red-50 rounded">No</span>';
+        }
+        return '<span class="inline-flex px-2 py-1 text-xs font-medium text-gray-700 bg-gray-50 rounded">N/A</span>';
+      }
+    },
+    {
+      field: 'actions',
+      header: 'Actions',
+      sortable: false,
+      filterable: false,
+      width: 120,
+      align: 'center',
+      render: (value, row) => `
+        <button onclick="funOpenTrainingModal('${row.sessionId}')" 
+                class="text-blue-600 hover:text-blue-800 text-sm font-medium">
+          View Details
+        </button>
+      `
+    }
+  ];
+  
+  try {
+    trainingImpactGridInstance = new TiramaiGrid('#trainingImpactGrid', {
+      data: filteredData,
+      columns: columns,
+      theme: 'light',
+      sortable: true,
+      filterable: true,
+      globalSearch: true,
+      pagination: {
+        enabled: true,
+        pageSize: 15,
+        pageSizeOptions: [15, 25, 50],
+        showFirstLast: true,
+        showPrevNext: true,
+        showPageInfo: true
+      },
+      selection: {
+        enabled: false
+      },
+      export: {
+        enabled: true,
+        filename: 'training_impact_analysis.csv',
+        includeHeaders: true,
+        delimiter: ','
+      }
+    });
+    
+    // Calculate stats and update summary
+    funCalculateStats();
+    funUpdateSummary();
+    funPopulateSkillFilter();
+    
+  } catch (error) {
+    console.error('Failed to initialize training impact grid:', error);
+  }
+}
+
+function funRefreshGrid() {
+  if (!trainingImpactGridInstance) return;
+  
+  allTrainingData = funGetTrainingData();
+  const filteredData = funApplyFilters(allTrainingData);
+  trainingImpactGridInstance.setData(filteredData);
+  
+  funCalculateStats();
+  funUpdateSummary();
+}
+
+function funOpenTrainingModal(sessionId) {
+  const session = getDataSafely('trainingSessions').find(s => s.id === sessionId);
+  if (!session) return;
+  
+  const skill = getDataSafely('skills').find(s => s.id === session.skillId);
+  const users = getDataSafely('users');
+  const externalTrainers = getDataSafely('externalTrainers');
+  const trainingFeedback = getDataSafely('trainingFeedback');
+  
+  let trainerName = 'Unknown';
+  if (session.trainerType === 'internal') {
+    const trainer = users.find(u => u.id === session.trainerId);
+    trainerName = trainer ? `${trainer.firstName} ${trainer.lastName}` : 'Unknown';
+  } else {
+    const trainer = externalTrainers.find(t => t.id === session.trainerId);
+    trainerName = trainer ? trainer.name : 'Unknown';
+  }
+  
+  const teamMemberIds = funGetTeamMembers(currentUser.id).map(m => m.id);
+  const teamAttendees = session.assignedEmployees.filter(emp => 
+    teamMemberIds.includes(emp.employeeId)
+  );
+  
+  const sessionFeedback = trainingFeedback.filter(f => f.sessionId === sessionId);
+  const avgRating = sessionFeedback.length > 0 
+    ? sessionFeedback.reduce((sum, f) => sum + f.rating, 0) / sessionFeedback.length
+    : 0;
+  
+  const modalContent = document.getElementById('trainingModalContent');
+  modalContent.innerHTML = `
+    <div class="space-y-6">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <h4 class="font-medium text-gray-900 mb-2">Training Details</h4>
+          <div class="space-y-2 text-sm">
+            <div><strong>Skill:</strong> ${skill ? skill.name : 'Unknown'}</div>
+            <div><strong>Scheduled Date:</strong> ${new Date(session.scheduledDate).toLocaleDateString('en-US')}</div>
+            <div><strong>End Date:</strong> ${new Date(session.endDate).toLocaleDateString('en-US')}</div>
+            <div><strong>Mode:</strong> <span class="capitalize">${session.mode}</span></div>
+            <div><strong>Trainer:</strong> ${trainerName}</div>
+            <div><strong>Capacity:</strong> ${session.capacity}</div>
+          </div>
+        </div>
+        
+        <div>
+          <h4 class="font-medium text-gray-900 mb-2">Team Attendance Summary</h4>
+          <div class="text-sm">
+            <div class="mb-2"><strong>${teamAttendees.length}</strong> team members assigned</div>
+            <div class="space-y-1">
+              ${teamAttendees.map(emp => {
+                const employee = users.find(u => u.id === emp.employeeId);
+                const statusClass = emp.attendanceStatus === 'attended' ? 'bg-green-50 text-green-700' :
+                                  emp.attendanceStatus === 'missed' ? 'bg-red-50 text-red-700' :
+                                  'bg-gray-50 text-gray-700';
+                return `
+                  <div class="flex items-center justify-between">
+                    <span>${employee ? `${employee.firstName} ${employee.lastName}` : 'Unknown'}</span>
+                    <span class="inline-flex px-2 py-1 text-xs font-medium rounded ${statusClass}">
+                      ${emp.attendanceStatus.charAt(0).toUpperCase() + emp.attendanceStatus.slice(1)}
+                    </span>
+                  </div>
+                `;
+              }).join('')}
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      ${sessionFeedback.length > 0 ? `
+        <div>
+          <h4 class="font-medium text-gray-900 mb-2">Training Feedback</h4>
+          <div class="space-y-3">
+            <div class="flex items-center gap-2">
+              <span class="text-sm font-medium">Average Rating:</span>
+              <div class="flex items-center">
+                ${Array.from({length: 5}, (_, i) => `
+                  <i data-lucide="star" class="w-4 h-4 ${i < Math.round(avgRating) ? 'text-yellow-400 fill-current' : 'text-gray-300'}"></i>
+                `).join('')}
+                <span class="ml-2 text-sm text-gray-600">${avgRating.toFixed(1)}/5</span>
+              </div>
+            </div>
+            
+            ${sessionFeedback.slice(0, 2).map(feedback => {
+              const employee = users.find(u => u.id === feedback.employeeId);
+              return `
+                <div class="p-3 bg-gray-50 rounded text-sm">
+                  <div class="font-medium text-gray-900 mb-1">${employee ? `${employee.firstName} ${employee.lastName}` : 'Anonymous'}</div>
+                  <div class="text-gray-700">"${feedback.comments}"</div>
+                </div>
+              `;
+            }).join('')}
+          </div>
+        </div>
+      ` : ''}
+    </div>
+  `;
+  
+  document.getElementById('trainingDetailModal').classList.remove('hidden');
+}
+
+function funCloseTrainingModal() {
+  document.getElementById('trainingDetailModal').classList.add('hidden');
+}
+
+// Event listeners
+document.addEventListener('DOMContentLoaded', function() {
+  currentUser = funGetCurrentUser();
+  if (!currentUser) {
+    console.error('No current user found');
+    return;
+  }
+  
+  funInitTrainingImpactGrid();
+  
+  // Filter event listeners
+  const filters = ['skillFilter', 'dateFromFilter', 'dateToFilter'];
+  filters.forEach(filterId => {
+    document.getElementById(filterId).addEventListener('change', funRefreshGrid);
+  });
+  
+  document.querySelectorAll('input[name="showFilter"]').forEach(radio => {
+    radio.addEventListener('change', funRefreshGrid);
+  });
+  
+  // Set active nav link
+  if (typeof window.TemplateUtils?.setActiveNavLink === 'function') {
+    window.TemplateUtils.setActiveNavLink('training_impact');
+  }
+});
+</script></body></html>

@@ -1,0 +1,1299 @@
+<html lang="en"><head>
+    <meta charset="UTF-8">
+    <title>SkillBridge Admin Portal</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Always add this import for data grid implementation - Important -->
+    <script src="https://tiramai-grid-lib.tiram.app/tiramai-grid.umd.js"></script>
+    <style type="text/tailwindcss">
+      @theme {
+        /* Brand Colors from SkillBridge Design System */
+        --color-primary: #1E40AF; /* Primary blue for navigation, CTAs */
+        --color-secondary: #059669; /* Success/progress green */
+        --color-accent: #F59E0B; /* Training/notification amber */
+        --color-surface: #FFFFFF; /* Cards, modals, form containers */
+        --color-background: #F8FAFC; /* Main background */
+        --color-border: #E2E8F0; /* Dividers, borders */
+        --color-error: #DC2626; /* Error states */
+
+        /* Layout Constants */
+        --header-height: 4rem; /* 64px header */
+        --sidebar-width: 16rem; /* 256px sidebar */
+
+        /* Typography Scale */
+        --text-xs: 12px;
+        --text-sm: 14px;
+        --text-base: 14px;
+        --text-lg: 16px;
+        --text-xl: 18px;
+        --text-2xl: 20px;
+        --text-3xl: 24px;
+        --text-4xl: 30px;
+        --text-5xl: 36px;
+        --text-6xl: 48px;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+      }
+      ::-webkit-scrollbar-track {
+        background: #f1f1f1;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+        border-radius: 4px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: #94a3b8;
+      }
+
+      .app-header {
+        height: var(--header-height, 4rem);
+      }
+      .app-sidebar {
+        top: var(--header-height, 4rem);
+        width: var(--sidebar-width, 16rem);
+        height: calc(100vh - var(--header-height, 4rem));
+        overflow-y: auto;
+        overflow-x: hidden;
+      }
+      .app-main {
+        margin-top: var(--header-height, 4rem);
+        min-height: calc(100vh - var(--header-height, 4rem));
+      }
+      @media (min-width: 768px) {
+        .app-main {
+          margin-left: var(--sidebar-width, 16rem);
+        }
+      }
+
+      body.sidebar-open {
+        overflow: hidden;
+      }
+
+      @media (max-width: 767px) {
+        .app-sidebar {
+          left: calc(-1 * var(--sidebar-width, 16rem));
+          transition: left 0.3s ease-in-out;
+        }
+        .app-sidebar.open {
+          left: 0;
+        }
+      }
+
+      .nav-link.active {
+        background: #1E40AF;
+        color: white;
+      }
+      .nav-link.active:hover {
+        background: #1E40AF;
+        opacity: 0.9;
+      }
+
+      .popover {
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(-8px);
+        transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out,
+          visibility 0.2s ease-in-out;
+      }
+      .popover.visible {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+      }
+
+      .sidebar-backdrop {
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+      }
+      .sidebar-backdrop.active {
+        opacity: 1;
+        visibility: visible;
+      }
+
+      button,
+      a {
+        font-size: 14px;
+      }
+    </style>
+  <title>Assessment Cycle Details - SkillBridge</title></head>
+  <body class="bg-slate-50 text-gray-800 overflow-x-hidden">
+    <header class="app-header fixed top-0 left-0 right-0 bg-white border-b border-slate-200 z-40">
+      <div class="h-full max-w-[1920px] mx-auto px-4 md:px-6 flex justify-between items-center">
+        <div class="flex items-center gap-3">
+          <button id="mobileMenuToggle" class="flex items-center justify-center w-10 h-10 rounded text-gray-500 hover:bg-gray-100 hover:text-gray-900 transition-all duration-200 cursor-pointer border-0 bg-transparent md:hidden focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-700 focus-visible:outline-offset-2" aria-label="Toggle navigation menu" aria-expanded="false">
+            <i data-lucide="menu" class="w-6 h-6"></i>
+          </button>
+
+          <div class="flex items-center gap-3">
+            <div class="w-8 h-8">
+              <svg viewBox="0 0 400 400" width="32" height="32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <g>
+                  <path d="M80 230 Q200 80 320 230" stroke="#1E40AF" stroke-width="26" fill="none" stroke-linecap="round"></path>
+                  <rect x="95" y="230" width="24" height="80" rx="8" fill="#059669"></rect>
+                  <rect x="281" y="230" width="24" height="80" rx="8" fill="#059669"></rect>
+                  <rect x="189" y="196" width="22" height="114" rx="7" fill="#1E40AF"></rect>
+                  <circle cx="130" cy="180" r="15" fill="#1E40AF"></circle>
+                  <circle cx="270" cy="180" r="15" fill="#1E40AF"></circle>
+                  <circle cx="200" cy="106" r="17" fill="#059669"></circle>
+                  <rect x="192" y="126" width="16" height="36" rx="6" fill="#059669"></rect>
+                </g>
+              </svg>
+            </div>
+            <h1 class="text-lg md:text-xl font-bold text-gray-900">
+              SkillBridge
+            </h1>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-2 md:gap-3">
+          <button id="userProfileButton" class="flex items-center gap-3 px-3 py-2 rounded-lg border border-transparent hover:bg-gray-50 hover:border-gray-200 transition-all duration-200 cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-700 focus-visible:outline-offset-2" aria-label="User profile menu" aria-expanded="false" aria-haspopup="true">
+            <div id="userAvatar" class="w-8 h-8 bg-blue-700 text-white rounded-full flex items-center justify-center text-sm font-semibold shrink-0"></div>
+            <div class="hidden sm:flex flex-col items-start max-w-[150px]">
+              <div id="userName" class="text-sm font-medium text-gray-900 truncate w-full"></div>
+            </div>
+            <i data-lucide="chevron-down" class="w-4 h-4 text-gray-500 hidden sm:block"></i>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <div id="userProfilePopover" class="popover fixed top-[4.5rem] right-4 md:right-6 w-72 bg-white border border-gray-200 rounded-lg shadow-xl z-50" role="dialog" aria-labelledby="popoverUserName" data-portal="body">
+      <div class="p-4">
+        <div class="flex items-center gap-3 pb-3 mb-3 border-b border-gray-100">
+          <div id="popoverUserAvatar" class="w-8 h-8 bg-blue-700 text-white rounded-full flex items-center justify-center text-sm font-semibold shrink-0"></div>
+          <div class="flex-1 min-w-0">
+            <div id="popoverUserName" class="font-semibold text-gray-900 truncate"></div>
+            <div id="popoverUserEmail" class="text-xs text-gray-500 truncate"></div>
+          </div>
+        </div>
+
+        <div class="space-y-1">
+          <button id="signOutButton" class="w-full flex items-center gap-3 px-3 py-2 text-sm font-medium text-red-600 hover:bg-red-50 rounded transition-all duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-700 focus-visible:outline-offset-2">
+            <i data-lucide="log-out" class="w-4 h-4"></i>
+            Sign Out
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div id="sidebarBackdrop" class="sidebar-backdrop fixed inset-0 bg-black/50 z-20 md:hidden" style="top: var(--header-height, 4rem)"></div>
+
+    <aside id="sidebar" class="app-sidebar fixed left-0 bg-white border-r border-slate-200 overflow-y-auto z-30">
+      <nav class="p-4" role="navigation" aria-label="Main navigation">
+        <div class="py-6 border-b border-gray-100 first:pt-0 last:border-b-0">
+          <div class="px-4 pb-2 text-xs font-semibold uppercase tracking-wider text-gray-400">
+            Dashboard
+          </div>
+          <div class="space-y-1">
+            <a href="dashboard.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline active" data-page="dashboard">
+              <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
+              <span>Admin Dashboard</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="py-6 border-b border-gray-100 last:border-b-0">
+          <div class="px-4 pb-2 text-xs font-semibold uppercase tracking-wider text-gray-400">
+            Organization Setup
+          </div>
+          <div class="space-y-1">
+            <a href="departments_list.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline" data-page="departments">
+              <i data-lucide="building" class="w-5 h-5"></i>
+              <span>Departments</span>
+            </a>
+            <a href="assessment_cycles_list.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline" data-page="assessment_cycles">
+              <i data-lucide="calendar" class="w-5 h-5"></i>
+              <span>Assessment Cycles</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="py-6 border-b border-gray-100 last:border-b-0">
+          <div class="px-4 pb-2 text-xs font-semibold uppercase tracking-wider text-gray-400">
+            Competency Framework
+          </div>
+          <div class="space-y-1">
+            <a href="skill_categories_list.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline" data-page="skill_categories">
+              <i data-lucide="folder" class="w-5 h-5"></i>
+              <span>Skill Categories</span>
+            </a>
+            <a href="skill_criticalities_list.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline" data-page="skill_criticalities">
+              <i data-lucide="alert-triangle" class="w-5 h-5"></i>
+              <span>Criticality Levels</span>
+            </a>
+            <a href="skills_list.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline" data-page="skills">
+              <i data-lucide="star" class="w-5 h-5"></i>
+              <span>Skills</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="py-6 border-b border-gray-100 last:border-b-0">
+          <div class="px-4 pb-2 text-xs font-semibold uppercase tracking-wider text-gray-400">
+            People Management
+          </div>
+          <div class="space-y-1">
+            <a href="employees_list.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline" data-page="employees">
+              <i data-lucide="users" class="w-5 h-5"></i>
+              <span>Employees</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="py-6 border-b border-gray-100 last:border-b-0">
+          <div class="px-4 pb-2 text-xs font-semibold uppercase tracking-wider text-gray-400">
+            Training
+          </div>
+          <div class="space-y-1">
+            <a href="training_sessions_list.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline" data-page="training_sessions">
+              <i data-lucide="graduation-cap" class="w-5 h-5"></i>
+              <span>Training Sessions</span>
+            </a>
+            <a href="trainers_list.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline" data-page="trainers">
+              <i data-lucide="user-check" class="w-5 h-5"></i>
+              <span>Trainers</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="py-6 border-b border-gray-100 last:border-b-0">
+          <div class="px-4 pb-2 text-xs font-semibold uppercase tracking-wider text-gray-400">
+            Disputes
+          </div>
+          <div class="space-y-1">
+            <a href="disputes_list.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline" data-page="disputes">
+              <i data-lucide="message-circle" class="w-5 h-5"></i>
+              <span>Disputes</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="py-6 border-b border-gray-100 last:border-b-0">
+          <div class="px-4 pb-2 text-xs font-semibold uppercase tracking-wider text-gray-400">
+            Analytics
+          </div>
+          <div class="space-y-1">
+            <a href="analytics_skill_gap_heatmap.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline" data-page="skill_gap_heatmap">
+              <i data-lucide="map" class="w-5 h-5"></i>
+              <span>Skill Gap Heatmap</span>
+            </a>
+            <a href="analytics_tni_dashboard.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline" data-page="tni_dashboard">
+              <i data-lucide="target" class="w-5 h-5"></i>
+              <span>TNI Dashboard</span>
+            </a>
+            <a href="analytics_training_forecast.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline" data-page="training_forecast">
+              <i data-lucide="trending-up" class="w-5 h-5"></i>
+              <span>Training Demand Forecast</span>
+            </a>
+            <a href="analytics_assessment_completion.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline" data-page="assessment_completion">
+              <i data-lucide="check-circle" class="w-5 h-5"></i>
+              <span>Assessment Completion</span>
+            </a>
+            <a href="analytics_dispute_metrics.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline" data-page="dispute_metrics">
+              <i data-lucide="bar-chart-3" class="w-5 h-5"></i>
+              <span>Dispute Metrics</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="py-6">
+          <div class="px-4 pb-2 text-xs font-semibold uppercase tracking-wider text-gray-400">
+            Settings
+          </div>
+          <div class="space-y-1">
+            <a href="system_settings.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline" data-page="system_settings">
+              <i data-lucide="settings" class="w-5 h-5"></i>
+              <span>System Settings</span>
+            </a>
+          </div>
+        </div>
+      </nav>
+    </aside>
+
+    <main class="app-main max-w-7xl mx-auto p-4 md:p-6 lg:p-8" id="pageContent" role="main"><nav class="flex items-center space-x-2 text-sm text-gray-600 mb-6" aria-label="Breadcrumb">
+  <a href="dashboard.html" class="hover:text-gray-900">Home</a>
+  <i data-lucide="chevron-right" class="w-4 h-4"></i>
+  <a href="assessment_cycles_list.html" class="hover:text-gray-900">Assessment Cycles</a>
+  <i data-lucide="chevron-right" class="w-4 h-4"></i>
+  <span class="text-gray-900 font-medium" id="breadcrumbCycleName">Assessment Cycle</span>
+</nav>
+
+<!-- Back Button -->
+<button onclick="history.back()" class="inline-flex items-center text-gray-600 hover:text-gray-900 mb-4 transition-colors">
+  <i data-lucide="arrow-left" class="w-4 h-4 mr-2"></i>
+  Back
+</button>
+
+<!-- Page Header -->
+<div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-6">
+  <div>
+    <div class="flex items-center gap-3 mb-2">
+      <h1 class="text-2xl font-bold text-gray-900" id="cycleNameHeader">Assessment Cycle Details</h1>
+      <div id="statusBadges" class="flex gap-2"></div>
+    </div>
+    <p class="text-gray-600" id="cycleDates">Loading cycle information...</p>
+  </div>
+  <div class="flex flex-wrap gap-2" id="actionButtons">
+    <!-- Dynamic action buttons will be inserted here -->
+  </div>
+</div>
+
+<!-- Two Column Layout -->
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+  <!-- Configuration Card -->
+  <div class="bg-white rounded-lg border border-slate-200 p-6">
+    <h2 class="text-lg font-semibold text-gray-900 mb-4">Configuration</h2>
+    <div class="space-y-4">
+      <div>
+        <dt class="text-sm font-medium text-gray-500">Cycle Name</dt>
+        <dd class="text-sm text-gray-900 mt-1" id="configCycleName">-</dd>
+      </div>
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <dt class="text-sm font-medium text-gray-500">Start Date</dt>
+          <dd class="text-sm text-gray-900 mt-1" id="configStartDate">-</dd>
+        </div>
+        <div>
+          <dt class="text-sm font-medium text-gray-500">End Date</dt>
+          <dd class="text-sm text-gray-900 mt-1" id="configEndDate">-</dd>
+        </div>
+      </div>
+      <div>
+        <dt class="text-sm font-medium text-gray-500">Duration</dt>
+        <dd class="text-sm text-gray-900 mt-1" id="configDuration">-</dd>
+      </div>
+      <div class="grid grid-cols-3 gap-4">
+        <div>
+          <dt class="text-sm font-medium text-gray-500">Notification Window</dt>
+          <dd class="text-sm text-gray-900 mt-1" id="configNotificationWindow">-</dd>
+        </div>
+        <div>
+          <dt class="text-sm font-medium text-gray-500">Reassessment Delay</dt>
+          <dd class="text-sm text-gray-900 mt-1" id="configReassessmentDelay">-</dd>
+        </div>
+        <div>
+          <dt class="text-sm font-medium text-gray-500">Comment Threshold</dt>
+          <dd class="text-sm text-gray-900 mt-1" id="configCommentThreshold">-</dd>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Progress Card -->
+  <div class="bg-white rounded-lg border border-slate-200 p-6">
+    <h2 class="text-lg font-semibold text-gray-900 mb-4">Progress Overview</h2>
+    
+    <!-- Circular Progress -->
+    <div class="flex justify-center mb-6">
+      <div class="relative w-32 h-32">
+        <svg class="w-32 h-32 transform -rotate-90" viewBox="0 0 120 120">
+          <circle cx="60" cy="60" r="50" stroke="#E2E8F0" stroke-width="8" fill="none"></circle>
+          <circle id="progressCircle" cx="60" cy="60" r="50" stroke="#059669" stroke-width="8" fill="none" stroke-dasharray="314.16" stroke-dashoffset="314.16" class="transition-all duration-700"></circle>
+        </svg>
+        <div class="absolute inset-0 flex items-center justify-center">
+          <div class="text-center">
+            <div class="text-2xl font-bold text-gray-900" id="progressPercentage">0%</div>
+            <div class="text-xs text-gray-500">Complete</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Progress Stats -->
+    <div class="grid grid-cols-2 gap-4">
+      <div class="text-center">
+        <div class="text-2xl font-bold text-gray-900" id="totalEmployees">0</div>
+        <div class="text-xs text-gray-500">Total Employees</div>
+      </div>
+      <div class="text-center">
+        <div class="text-2xl font-bold text-blue-700" id="expectedAssessments">0</div>
+        <div class="text-xs text-gray-500">Expected Assessments</div>
+      </div>
+      <div class="text-center">
+        <div class="text-2xl font-bold text-green-600" id="completedAssessments">0</div>
+        <div class="text-xs text-gray-500">Completed</div>
+      </div>
+      <div class="text-center">
+        <div class="text-2xl font-bold text-amber-500" id="remainingAssessments">0</div>
+        <div class="text-xs text-gray-500">Remaining</div>
+      </div>
+    </div>
+
+    <!-- Days Remaining -->
+    <div class="mt-4 pt-4 border-t border-gray-100">
+      <div class="text-center">
+        <div class="text-lg font-semibold text-gray-900" id="daysRemaining">-</div>
+        <div class="text-xs text-gray-500">Days Status</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Department Breakdown Section -->
+<div class="bg-white rounded-lg border border-slate-200 p-6">
+  <h2 class="text-lg font-semibold text-gray-900 mb-4">Department Breakdown</h2>
+  
+  <!-- Department Grid Container -->
+  <div id="departmentGrid" class="mt-6"></div>
+  
+  <!-- Empty State -->
+  <div id="departmentEmptyState" class="hidden text-center py-12">
+    <i data-lucide="building" class="w-12 h-12 mx-auto text-gray-400 mb-4"></i>
+    <h3 class="text-lg font-medium text-gray-900 mb-2">No department data found</h3>
+    <p class="text-gray-500">Department breakdown will appear here when assessments are available.</p>
+  </div>
+</div>
+
+<!-- Close Cycle Confirmation Modal -->
+<div id="closeCycleModal" data-portal="body" class="fixed inset-0 z-50 hidden">
+  <div class="flex items-center justify-center min-h-screen p-4 bg-black/50">
+    <div class="bg-white rounded-xl shadow-xl w-[min(92vw,42rem)] max-h-[90vh] overflow-y-auto">
+      <div class="p-6">
+        <h3 class="text-lg font-semibold text-gray-900 mb-4">Close Assessment Cycle</h3>
+        <p class="text-gray-600 mb-4">
+          Are you sure you want to close <strong id="closeCycleName">this cycle</strong>? This will:
+        </p>
+        <ul class="list-disc list-inside text-sm text-gray-600 mb-6 space-y-1">
+          <li>Mark the cycle as closed</li>
+          <li>Lock all assessments in this cycle</li>
+          <li>Prevent new assessments from being submitted</li>
+        </ul>
+        <p class="text-red-600 text-sm font-medium mb-6">This action cannot be undone.</p>
+        
+        <div class="flex justify-end gap-3">
+          <button onclick="funCloseModal('closeCycleModal')" class="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors">
+            Cancel
+          </button>
+          <button onclick="funConfirmCloseCycle()" class="px-4 py-2 text-white bg-red-600 rounded-lg hover:bg-red-700 transition-colors">
+            Close Cycle
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Set Active Confirmation Modal -->
+<div id="setActiveModal" data-portal="body" class="fixed inset-0 z-50 hidden">
+  <div class="flex items-center justify-center min-h-screen p-4 bg-black/50">
+    <div class="bg-white rounded-xl shadow-xl w-[min(92vw,42rem)] max-h-[90vh] overflow-y-auto">
+      <div class="p-6">
+        <h3 class="text-lg font-semibold text-gray-900 mb-4">Set Active Assessment Cycle</h3>
+        <p class="text-gray-600 mb-4">
+          Are you sure you want to set <strong id="setActiveCycleName">this cycle</strong> as the active assessment cycle?
+        </p>
+        <p class="text-amber-600 text-sm mb-6">
+          This will deactivate the current active cycle and make this cycle the active one for new assessments.
+        </p>
+        
+        <div class="flex justify-end gap-3">
+          <button onclick="funCloseModal('setActiveModal')" class="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors">
+            Cancel
+          </button>
+          <button onclick="funConfirmSetActive()" class="px-4 py-2 text-white bg-blue-700 rounded-lg hover:bg-blue-800 transition-colors">
+            Set as Active
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</main>
+
+    <script src="app.js"></script>
+    <script src="app_data.js"></script>
+    <script id="container-script">
+      (function () {
+        const TemplateUtils = (window.TemplateUtils =
+          window.TemplateUtils || {});
+
+        TemplateUtils.UserUtils =
+          TemplateUtils.UserUtils ||
+          (function createUserUtils() {
+            return {
+              getCurrentUser() {
+                try {
+                  let currentUserId = localStorage.getItem("currentUserId");
+                  if (!currentUserId) {
+                    localStorage.setItem("currentUserId", "usr_001");
+                    currentUserId = "usr_001";
+                  }
+
+                  const users = JSON.parse(localStorage.getItem("users") || "[]");
+                  return users.find(user => user.id === currentUserId) || null;
+                } catch (error) {
+                  console.error("Error retrieving user data:", error);
+                  return null;
+                }
+              },
+              signOut() {
+                try {
+                  localStorage.removeItem("currentUserId");
+                  window.location.reload();
+                } catch (error) {
+                  console.error("Error signing out:", error);
+                }
+              },
+              getUserDisplayName(user) {
+                if (!user) return "Guest";
+                return user.firstName && user.lastName
+                  ? `${user.firstName} ${user.lastName}`
+                  : user.firstName || user.lastName || "User";
+              },
+              getUserInitials(user) {
+                if (!user) return "?";
+                const first = user.firstName?.charAt(0) || "";
+                const last = user.lastName?.charAt(0) || "";
+                return (first + last).toUpperCase() || "U";
+              },
+            };
+          })();
+
+        if (TemplateUtils.__bootstrapped) {
+          if (typeof window.lucide?.createIcons === "function") {
+            window.lucide.createIcons();
+          }
+          return;
+        }
+
+        TemplateUtils.__bootstrapped = true;
+
+        const state = {
+          popoverVisible: false,
+          sidebarOpen: false,
+          resizeTimer: null,
+          debounceTimer: null,
+          isUpdatingIcons: false,
+          observer: null,
+          refs: {},
+        };
+
+        function ready(fn) {
+          if (document.readyState === "loading") {
+            document.addEventListener("DOMContentLoaded", fn, { once: true });
+          } else if (typeof queueMicrotask === "function") {
+            queueMicrotask(fn);
+          } else {
+            Promise.resolve().then(fn);
+          }
+        }
+
+        function safeLucide(callback) {
+          if (typeof window.lucide?.createIcons === "function") {
+            callback();
+          }
+        }
+
+        function cacheRefs() {
+          state.refs = {
+            userProfileButton: document.getElementById("userProfileButton"),
+            userProfilePopover: document.getElementById("userProfilePopover"),
+            userAvatar: document.getElementById("userAvatar"),
+            userName: document.getElementById("userName"),
+            popoverUserAvatar: document.getElementById("popoverUserAvatar"),
+            popoverUserName: document.getElementById("popoverUserName"),
+            popoverUserEmail: document.getElementById("popoverUserEmail"),
+            signOutButton: document.getElementById("signOutButton"),
+            mobileMenuToggle: document.getElementById("mobileMenuToggle"),
+            sidebar: document.getElementById("sidebar"),
+            sidebarBackdrop: document.getElementById("sidebarBackdrop"),
+            navLinks: document.querySelectorAll(".nav-link"),
+            pageContent: document.getElementById("pageContent"),
+          };
+        }
+
+        function initializeUserProfile() {
+          const { userAvatar, userName } = state.refs;
+          if (!userAvatar || !userName) return;
+
+          const currentUser = TemplateUtils.UserUtils.getCurrentUser();
+          if (currentUser) {
+            userAvatar.textContent =
+              TemplateUtils.UserUtils.getUserInitials(currentUser);
+            userName.textContent =
+              TemplateUtils.UserUtils.getUserDisplayName(currentUser);
+          } else {
+            userAvatar.textContent = "?";
+            userName.textContent = "Guest";
+          }
+        }
+
+        function populatePopover() {
+          const currentUser = TemplateUtils.UserUtils.getCurrentUser();
+          const { popoverUserAvatar, popoverUserName, popoverUserEmail } =
+            state.refs;
+          if (!popoverUserAvatar || !popoverUserName || !popoverUserEmail)
+            return;
+
+          if (currentUser) {
+            popoverUserAvatar.textContent =
+              TemplateUtils.UserUtils.getUserInitials(currentUser);
+            popoverUserName.textContent =
+              TemplateUtils.UserUtils.getUserDisplayName(currentUser);
+            popoverUserEmail.textContent = currentUser.email || "No email";
+          } else {
+            popoverUserAvatar.textContent = "?";
+            popoverUserName.textContent = "Guest";
+            popoverUserEmail.textContent = "Not logged in";
+          }
+        }
+
+        function toggleUserPopover(forceClose = false) {
+          const { userProfilePopover, userProfileButton } = state.refs;
+          if (!userProfilePopover || !userProfileButton) return;
+
+          const shouldOpen = forceClose ? false : !state.popoverVisible;
+          if (shouldOpen) {
+            populatePopover();
+            userProfilePopover.classList.add("visible");
+            userProfileButton.setAttribute("aria-expanded", "true");
+            state.popoverVisible = true;
+            const firstButton = userProfilePopover.querySelector("button");
+            if (firstButton) {
+              setTimeout(() => firstButton.focus(), 50);
+            }
+          } else {
+            userProfilePopover.classList.remove("visible");
+            userProfileButton.setAttribute("aria-expanded", "false");
+            state.popoverVisible = false;
+          }
+        }
+
+        function hideUserPopover() {
+          if (state.popoverVisible) {
+            toggleUserPopover(true);
+          }
+        }
+
+        function toggleMobileSidebar(forceClose = false) {
+          const { sidebar, sidebarBackdrop, mobileMenuToggle } = state.refs;
+          if (!sidebar || !sidebarBackdrop || !mobileMenuToggle) return;
+
+          const shouldOpen = forceClose ? false : !state.sidebarOpen;
+          state.sidebarOpen = shouldOpen;
+
+          sidebar.classList.toggle("open", shouldOpen);
+          sidebarBackdrop.classList.toggle("active", shouldOpen);
+          document.body.classList.toggle("sidebar-open", shouldOpen);
+          mobileMenuToggle.setAttribute(
+            "aria-expanded",
+            shouldOpen ? "true" : "false"
+          );
+
+          const icon = mobileMenuToggle.querySelector("[data-lucide]");
+          if (icon) {
+            icon.setAttribute("data-lucide", shouldOpen ? "x" : "menu");
+            safeLucide(() => window.lucide.createIcons());
+          }
+        }
+
+        function closeMobileSidebar() {
+          if (state.sidebarOpen) {
+            toggleMobileSidebar(true);
+          }
+        }
+
+        function setActiveNavLink(pageId) {
+          if (!pageId) return;
+          const { navLinks } = state.refs;
+          navLinks?.forEach((link) => {
+            if (link.dataset.page === pageId) {
+              link.classList.add("active");
+            } else {
+              link.classList.remove("active");
+            }
+          });
+        }
+
+        TemplateUtils.setActiveNavLink = setActiveNavLink;
+        TemplateUtils.closeMobileSidebar = closeMobileSidebar;
+
+        function handleDocumentClick(event) {
+          const { userProfilePopover, userProfileButton } = state.refs;
+          if (
+            state.popoverVisible &&
+            userProfilePopover &&
+            userProfileButton &&
+            !userProfilePopover.contains(event.target) &&
+            !userProfileButton.contains(event.target)
+          ) {
+            hideUserPopover();
+          }
+        }
+
+        function handleKeydown(event) {
+          if (event.key !== "Escape") return;
+          if (state.popoverVisible) {
+            hideUserPopover();
+            state.refs.userProfileButton?.focus();
+          }
+          if (state.sidebarOpen) {
+            closeMobileSidebar();
+            state.refs.mobileMenuToggle?.focus();
+          }
+        }
+
+        function handleResize() {
+          clearTimeout(state.resizeTimer);
+          state.resizeTimer = setTimeout(() => {
+            if (window.innerWidth >= 768) {
+              closeMobileSidebar();
+            }
+          }, 200);
+        }
+
+        function bindEvents() {
+          const {
+            userProfileButton,
+            mobileMenuToggle,
+            sidebarBackdrop,
+            signOutButton,
+            navLinks,
+          } = state.refs;
+
+          userProfileButton?.addEventListener("click", (event) => {
+            event.stopPropagation();
+            toggleUserPopover();
+          });
+
+          mobileMenuToggle?.addEventListener("click", (event) => {
+            event.stopPropagation();
+            toggleMobileSidebar();
+          });
+
+          sidebarBackdrop?.addEventListener("click", () =>
+            closeMobileSidebar()
+          );
+
+          signOutButton?.addEventListener("click", () => {
+            if (confirm("Are you sure you want to sign out?")) {
+              TemplateUtils.UserUtils.signOut();
+            }
+          });
+
+          navLinks?.forEach((link) => {
+            link.addEventListener("click", () => closeMobileSidebar());
+          });
+
+          document.addEventListener("click", handleDocumentClick);
+          document.addEventListener("keydown", handleKeydown);
+          window.addEventListener("resize", handleResize);
+
+          window.addEventListener("pagehide", cleanup);
+        }
+
+        function cleanup() {
+          if (state.resizeTimer) clearTimeout(state.resizeTimer);
+          if (state.debounceTimer) clearTimeout(state.debounceTimer);
+          if (state.observer) {
+            state.observer.disconnect();
+            state.observer = null;
+          }
+          document.removeEventListener("click", handleDocumentClick);
+          document.removeEventListener("keydown", handleKeydown);
+          window.removeEventListener("resize", handleResize);
+        }
+
+        function initializePortalTargets() {
+          document.querySelectorAll('[data-portal="body"]').forEach((node) => {
+            if (node.parentElement !== document.body) {
+              document.body.appendChild(node);
+            }
+          });
+        }
+
+        function observePageContent() {
+          const { pageContent } = state.refs;
+          if (!pageContent || typeof MutationObserver !== "function") return;
+
+          const observer = new MutationObserver((mutations) => {
+            if (state.isUpdatingIcons) return;
+
+            const isLucideUpdate = mutations.every((m) => {
+              if (m.type !== "childList") return false;
+              const nodes = [...m.addedNodes, ...m.removedNodes];
+              return nodes.every(
+                (n) =>
+                  n.nodeType !== Node.ELEMENT_NODE ||
+                  n.nodeName.toLowerCase() === "svg" ||
+                  n.classList?.contains("lucide")
+              );
+            });
+            if (isLucideUpdate) return;
+
+            if (state.debounceTimer) clearTimeout(state.debounceTimer);
+            state.debounceTimer = setTimeout(() => {
+              state.debounceTimer = null;
+              state.isUpdatingIcons = true;
+              safeLucide(() => {
+                window.lucide.createIcons();
+                requestAnimationFrame(() => {
+                  state.isUpdatingIcons = false;
+                });
+              });
+            }, 100);
+          });
+
+          observer.observe(pageContent, { childList: true, subtree: true });
+          state.observer = observer;
+        }
+
+        function bootstrap() {
+          cacheRefs();
+          initializePortalTargets();
+          initializeUserProfile();
+          bindEvents();
+          safeLucide(() => window.lucide.createIcons());
+          observePageContent();
+        }
+
+        ready(bootstrap);
+      })();
+    </script>
+  
+
+<script>
+  let currentCycle = null;
+  let departmentGridInstance = null;
+
+  // Utility functions
+  function getDataSafely(key) {
+    try {
+      const data = localStorage.getItem(key);
+      return data ? JSON.parse(data) : [];
+    } catch (error) {
+      console.error(`Error parsing ${key}:`, error);
+      return [];
+    }
+  }
+
+  function funGetUrlParam(param) {
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get(param);
+  }
+
+  function formatDate(dateString) {
+    if (!dateString) return '-';
+    try {
+      const date = new Date(dateString);
+      return date.toLocaleDateString('en-US', { 
+        month: '2-digit', 
+        day: '2-digit', 
+        year: 'numeric' 
+      });
+    } catch {
+      return '-';
+    }
+  }
+
+  function calculateDaysDifference(startDate, endDate) {
+    try {
+      const start = new Date(startDate);
+      const end = new Date(endDate);
+      const diffTime = Math.abs(end - start);
+      return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    } catch {
+      return 0;
+    }
+  }
+
+  function funCloseModal(modalId) {
+    const modal = document.getElementById(modalId);
+    if (modal) {
+      modal.classList.add('hidden');
+    }
+  }
+
+  function funOpenModal(modalId) {
+    const modal = document.getElementById(modalId);
+    if (modal) {
+      modal.classList.remove('hidden');
+    }
+  }
+
+  // Load and display cycle data
+  function funLoadCycleData() {
+    const cycleId = funGetUrlParam('id');
+    if (!cycleId) {
+      alert('No cycle ID provided');
+      history.back();
+      return;
+    }
+
+    const cycles = getDataSafely('assessmentCycles');
+    currentCycle = cycles.find(cycle => cycle.id === cycleId);
+    
+    if (!currentCycle) {
+      alert('Assessment cycle not found');
+      history.back();
+      return;
+    }
+
+    funDisplayCycleInfo();
+    funDisplayConfiguration();
+    funCalculateProgress();
+    funRenderActionButtons();
+    funLoadDepartmentBreakdown();
+  }
+
+  function funDisplayCycleInfo() {
+    if (!currentCycle) return;
+
+    // Update page title and breadcrumb
+    document.getElementById('breadcrumbCycleName').textContent = currentCycle.cycleName;
+    document.getElementById('cycleNameHeader').textContent = currentCycle.cycleName;
+    document.getElementById('cycleDates').textContent = 
+      `${formatDate(currentCycle.startDate)} - ${formatDate(currentCycle.endDate)}`;
+
+    // Status badges
+    const statusContainer = document.getElementById('statusBadges');
+    statusContainer.innerHTML = '';
+
+    // Status badge
+    const statusClass = currentCycle.status === 'active' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800';
+    const statusBadge = document.createElement('span');
+    statusBadge.className = `inline-flex px-2 py-1 text-xs font-medium rounded ${statusClass}`;
+    statusBadge.textContent = currentCycle.status === 'active' ? 'Active' : 'Closed';
+    statusContainer.appendChild(statusBadge);
+
+    // Active cycle badge
+    if (currentCycle.isActiveCycle) {
+      const activeBadge = document.createElement('span');
+      activeBadge.className = 'inline-flex px-2 py-1 text-xs font-medium rounded bg-blue-100 text-blue-800';
+      activeBadge.textContent = 'Current Active Cycle';
+      statusContainer.appendChild(activeBadge);
+    }
+  }
+
+  function funDisplayConfiguration() {
+    if (!currentCycle) return;
+
+    document.getElementById('configCycleName').textContent = currentCycle.cycleName;
+    document.getElementById('configStartDate').textContent = formatDate(currentCycle.startDate);
+    document.getElementById('configEndDate').textContent = formatDate(currentCycle.endDate);
+    
+    const duration = calculateDaysDifference(currentCycle.startDate, currentCycle.endDate);
+    document.getElementById('configDuration').textContent = `${duration} days`;
+    
+    document.getElementById('configNotificationWindow').textContent = `${currentCycle.notificationWindowDays} days`;
+    document.getElementById('configReassessmentDelay').textContent = `${currentCycle.reassessmentDelayDays} days`;
+    document.getElementById('configCommentThreshold').textContent = `Score < ${currentCycle.mandatoryCommentThreshold}`;
+  }
+
+  function funCalculateProgress() {
+    if (!currentCycle) return;
+
+    const users = getDataSafely('users').filter(user => user.employeeStatus === 'active');
+    const skillMappings = getDataSafely('skillMappings').filter(mapping => mapping.status === 'active');
+    const assessments = getDataSafely('assessments').filter(assessment => 
+      assessment.assessmentCycleId === currentCycle.id && assessment.status === 'active'
+    );
+
+    // Calculate expected assessments (total skill mappings for active employees)
+    const expectedAssessments = skillMappings.length;
+    const completedAssessments = assessments.length;
+    const remainingAssessments = Math.max(0, expectedAssessments - completedAssessments);
+    const completionPercentage = expectedAssessments > 0 ? Math.round((completedAssessments / expectedAssessments) * 100) : 0;
+
+    // Update UI
+    document.getElementById('totalEmployees').textContent = users.length.toString();
+    document.getElementById('expectedAssessments').textContent = expectedAssessments.toString();
+    document.getElementById('completedAssessments').textContent = completedAssessments.toString();
+    document.getElementById('remainingAssessments').textContent = remainingAssessments.toString();
+    document.getElementById('progressPercentage').textContent = `${completionPercentage}%`;
+
+    // Update circular progress
+    const progressCircle = document.getElementById('progressCircle');
+    const circumference = 2 * Math.PI * 50; // radius = 50
+    const offset = circumference - (completionPercentage / 100) * circumference;
+    progressCircle.style.strokeDashoffset = offset;
+
+    // Days remaining calculation
+    const today = new Date();
+    const endDate = new Date(currentCycle.endDate);
+    const daysRemaining = Math.ceil((endDate - today) / (1000 * 60 * 60 * 24));
+    
+    const daysRemainingElement = document.getElementById('daysRemaining');
+    if (daysRemaining > 0) {
+      daysRemainingElement.textContent = `${daysRemaining} days remaining`;
+      daysRemainingElement.className = 'text-lg font-semibold text-amber-500';
+    } else if (daysRemaining === 0) {
+      daysRemainingElement.textContent = 'Ends today';
+      daysRemainingElement.className = 'text-lg font-semibold text-red-600';
+    } else {
+      daysRemainingElement.textContent = `Ended ${Math.abs(daysRemaining)} days ago`;
+      daysRemainingElement.className = 'text-lg font-semibold text-gray-600';
+    }
+  }
+
+  function funRenderActionButtons() {
+    if (!currentCycle) return;
+
+    const actionContainer = document.getElementById('actionButtons');
+    actionContainer.innerHTML = '';
+
+    const today = new Date();
+    const startDate = new Date(currentCycle.startDate);
+    const endDate = new Date(currentCycle.endDate);
+
+    // Edit button (only if start date > today)
+    if (startDate > today) {
+      const editBtn = document.createElement('button');
+      editBtn.className = 'inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-blue-700 rounded-lg hover:bg-blue-800 transition-colors';
+      editBtn.innerHTML = '<i data-lucide="edit" class="w-4 h-4 mr-2"></i>Edit';
+      editBtn.onclick = () => window.location.href = `assessment_cycle_edit.html?id=${currentCycle.id}`;
+      actionContainer.appendChild(editBtn);
+    }
+
+    // Set as Active button (only if not closed and not already active)
+    if (currentCycle.status !== 'closed' && !currentCycle.isActiveCycle) {
+      const setActiveBtn = document.createElement('button');
+      setActiveBtn.className = 'inline-flex items-center px-4 py-2 text-sm font-medium text-blue-700 bg-blue-100 rounded-lg hover:bg-blue-200 transition-colors';
+      setActiveBtn.innerHTML = '<i data-lucide="play" class="w-4 h-4 mr-2"></i>Set as Active';
+      setActiveBtn.onclick = funOpenSetActiveModal;
+      actionContainer.appendChild(setActiveBtn);
+    }
+
+    // Close Cycle button (only if active and end date passed)
+    if (currentCycle.status === 'active' && endDate < today) {
+      const closeBtn = document.createElement('button');
+      closeBtn.className = 'inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 transition-colors';
+      closeBtn.innerHTML = '<i data-lucide="x-circle" class="w-4 h-4 mr-2"></i>Close Cycle';
+      closeBtn.onclick = funOpenCloseCycleModal;
+      actionContainer.appendChild(closeBtn);
+    }
+  }
+
+  function funLoadDepartmentBreakdown() {
+    if (!currentCycle) return;
+
+    const departments = getDataSafely('departments').filter(dept => dept.status === 'active');
+    const users = getDataSafely('users').filter(user => user.employeeStatus === 'active');
+    const skillMappings = getDataSafely('skillMappings').filter(mapping => mapping.status === 'active');
+    const assessments = getDataSafely('assessments').filter(assessment => 
+      assessment.assessmentCycleId === currentCycle.id && assessment.status === 'active'
+    );
+
+    const departmentData = departments.map(department => {
+      const deptUsers = users.filter(user => user.departmentId === department.id);
+      const deptUserIds = deptUsers.map(user => user.id);
+      
+      // Expected assessments for this department (skill mappings for dept employees)
+      const expectedAssessments = skillMappings.filter(mapping => 
+        deptUserIds.includes(mapping.employeeId)
+      ).length;
+      
+      // Completed assessments for this department
+      const completedAssessments = assessments.filter(assessment => 
+        deptUserIds.includes(assessment.employeeId)
+      ).length;
+      
+      const completionPercentage = expectedAssessments > 0 ? 
+        Math.round((completedAssessments / expectedAssessments) * 100) : 0;
+      
+      let status = 'Not Started';
+      if (completionPercentage === 100) {
+        status = 'Complete';
+      } else if (completionPercentage > 0) {
+        status = 'In Progress';
+      }
+
+      return {
+        id: department.id,
+        departmentName: department.name,
+        employees: deptUsers.length,
+        expectedAssessments,
+        completedAssessments,
+        completionPercentage,
+        status
+      };
+    });
+
+    funInitDepartmentGrid(departmentData);
+  }
+
+  function funInitDepartmentGrid(data) {
+    if (!window.TiramaiGrid) {
+      console.error('TiramaiGrid is not available');
+      return;
+    }
+
+    const gridContainer = document.getElementById('departmentGrid');
+    const emptyState = document.getElementById('departmentEmptyState');
+
+    if (data.length === 0) {
+      gridContainer.classList.add('hidden');
+      emptyState.classList.remove('hidden');
+      return;
+    }
+
+    gridContainer.classList.remove('hidden');
+    emptyState.classList.add('hidden');
+
+    const columns = [
+      {
+        field: 'departmentName',
+        header: 'Department Name',
+        sortable: true,
+        filterable: true
+      },
+      {
+        field: 'employees',
+        header: 'Employees',
+        type: 'number',
+        align: 'center',
+        sortable: true
+      },
+      {
+        field: 'expectedAssessments',
+        header: 'Expected',
+        type: 'number',
+        align: 'center',
+        sortable: true
+      },
+      {
+        field: 'completedAssessments',
+        header: 'Completed',
+        type: 'number',
+        align: 'center',
+        sortable: true
+      },
+      {
+        field: 'completionPercentage',
+        header: 'Completion %',
+        type: 'number',
+        align: 'center',
+        sortable: true,
+        render: (value) => `${value}%`
+      },
+      {
+        field: 'status',
+        header: 'Status',
+        type: 'text',
+        filterType: 'enum',
+        filterEnumValues: ['Complete', 'In Progress', 'Not Started'],
+        render: (value) => {
+          const colors = {
+            'Complete': 'text-green-600 bg-green-50',
+            'In Progress': 'text-blue-600 bg-blue-50',
+            'Not Started': 'text-gray-600 bg-gray-50'
+          };
+          return `<span class="inline-flex px-2 py-1 text-xs font-medium rounded ${colors[value] || ''}">${value}</span>`;
+        }
+      }
+    ];
+
+    try {
+      departmentGridInstance = new TiramaiGrid('#departmentGrid', {
+        data: data,
+        columns: columns,
+        theme: 'light',
+        sortable: true,
+        filterable: true,
+        pagination: {
+          enabled: false
+        },
+        selection: {
+          enabled: false
+        },
+        onRowClick: (row) => {
+          window.location.href = `analytics_assessment_completion.html?department=${row.id}`;
+        }
+      });
+    } catch (error) {
+      console.error('Failed to initialize department grid:', error);
+    }
+  }
+
+  // Modal functions
+  function funOpenCloseCycleModal() {
+    if (!currentCycle) return;
+    document.getElementById('closeCycleName').textContent = currentCycle.cycleName;
+    funOpenModal('closeCycleModal');
+  }
+
+  function funOpenSetActiveModal() {
+    if (!currentCycle) return;
+    document.getElementById('setActiveCycleName').textContent = currentCycle.cycleName;
+    funOpenModal('setActiveModal');
+  }
+
+  function funConfirmCloseCycle() {
+    if (!currentCycle) return;
+
+    try {
+      // Update cycle status
+      const cycles = getDataSafely('assessmentCycles');
+      const cycleIndex = cycles.findIndex(c => c.id === currentCycle.id);
+      if (cycleIndex !== -1) {
+        cycles[cycleIndex].status = 'closed';
+        cycles[cycleIndex].modifiedTimestamp = new Date().toISOString();
+        localStorage.setItem('assessmentCycles', JSON.stringify(cycles));
+      }
+
+      // Lock all assessments in this cycle
+      const assessments = getDataSafely('assessments');
+      const updatedAssessments = assessments.map(assessment => {
+        if (assessment.assessmentCycleId === currentCycle.id) {
+          return { ...assessment, isLocked: true };
+        }
+        return assessment;
+      });
+      localStorage.setItem('assessments', JSON.stringify(updatedAssessments));
+
+      funCloseModal('closeCycleModal');
+      
+      // Refresh page
+      window.location.reload();
+    } catch (error) {
+      console.error('Error closing cycle:', error);
+      alert('Failed to close cycle. Please try again.');
+    }
+  }
+
+  function funConfirmSetActive() {
+    if (!currentCycle) return;
+
+    try {
+      const cycles = getDataSafely('assessmentCycles');
+      
+      // Set all cycles to inactive first
+      const updatedCycles = cycles.map(cycle => ({
+        ...cycle,
+        isActiveCycle: false
+      }));
+      
+      // Set current cycle as active
+      const cycleIndex = updatedCycles.findIndex(c => c.id === currentCycle.id);
+      if (cycleIndex !== -1) {
+        updatedCycles[cycleIndex].isActiveCycle = true;
+        updatedCycles[cycleIndex].modifiedTimestamp = new Date().toISOString();
+      }
+      
+      localStorage.setItem('assessmentCycles', JSON.stringify(updatedCycles));
+      
+      funCloseModal('setActiveModal');
+      
+      // Refresh page
+      window.location.reload();
+    } catch (error) {
+      console.error('Error setting active cycle:', error);
+      alert('Failed to set active cycle. Please try again.');
+    }
+  }
+
+  // Initialize page
+  document.addEventListener('DOMContentLoaded', function() {
+    funLoadCycleData();
+  });
+</script></body></html>

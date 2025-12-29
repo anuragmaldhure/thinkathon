@@ -1,0 +1,1500 @@
+<html lang="en"><head>
+    <meta charset="UTF-8">
+    <title>SkillBridge Admin Portal</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Always add this import for data grid implementation - Important -->
+    <script src="https://tiramai-grid-lib.tiram.app/tiramai-grid.umd.js"></script>
+    <style type="text/tailwindcss">
+      @theme {
+        /* Brand Colors from SkillBridge Design System */
+        --color-primary: #1E40AF; /* Primary blue for navigation, CTAs */
+        --color-secondary: #059669; /* Success/progress green */
+        --color-accent: #F59E0B; /* Training/notification amber */
+        --color-surface: #FFFFFF; /* Cards, modals, form containers */
+        --color-background: #F8FAFC; /* Main background */
+        --color-border: #E2E8F0; /* Dividers, borders */
+        --color-error: #DC2626; /* Error states */
+
+        /* Layout Constants */
+        --header-height: 4rem; /* 64px header */
+        --sidebar-width: 16rem; /* 256px sidebar */
+
+        /* Typography Scale */
+        --text-xs: 12px;
+        --text-sm: 14px;
+        --text-base: 14px;
+        --text-lg: 16px;
+        --text-xl: 18px;
+        --text-2xl: 20px;
+        --text-3xl: 24px;
+        --text-4xl: 30px;
+        --text-5xl: 36px;
+        --text-6xl: 48px;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+      }
+      ::-webkit-scrollbar-track {
+        background: #f1f1f1;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+        border-radius: 4px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: #94a3b8;
+      }
+
+      .app-header {
+        height: var(--header-height, 4rem);
+      }
+      .app-sidebar {
+        top: var(--header-height, 4rem);
+        width: var(--sidebar-width, 16rem);
+        height: calc(100vh - var(--header-height, 4rem));
+        overflow-y: auto;
+        overflow-x: hidden;
+      }
+      .app-main {
+        margin-top: var(--header-height, 4rem);
+        min-height: calc(100vh - var(--header-height, 4rem));
+      }
+      @media (min-width: 768px) {
+        .app-main {
+          margin-left: var(--sidebar-width, 16rem);
+        }
+      }
+
+      body.sidebar-open {
+        overflow: hidden;
+      }
+
+      @media (max-width: 767px) {
+        .app-sidebar {
+          left: calc(-1 * var(--sidebar-width, 16rem));
+          transition: left 0.3s ease-in-out;
+        }
+        .app-sidebar.open {
+          left: 0;
+        }
+      }
+
+      .nav-link.active {
+        background: #1E40AF;
+        color: white;
+      }
+      .nav-link.active:hover {
+        background: #1E40AF;
+        opacity: 0.9;
+      }
+
+      .popover {
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(-8px);
+        transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out,
+          visibility 0.2s ease-in-out;
+      }
+      .popover.visible {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+      }
+
+      .sidebar-backdrop {
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+      }
+      .sidebar-backdrop.active {
+        opacity: 1;
+        visibility: visible;
+      }
+
+      button,
+      a {
+        font-size: 14px;
+      }
+    </style>
+  <title>TNI Dashboard - SkillBridge</title></head>
+  <body class="bg-slate-50 text-gray-800 overflow-x-hidden">
+    <header class="app-header fixed top-0 left-0 right-0 bg-white border-b border-slate-200 z-40">
+      <div class="h-full max-w-[1920px] mx-auto px-4 md:px-6 flex justify-between items-center">
+        <div class="flex items-center gap-3">
+          <button id="mobileMenuToggle" class="flex items-center justify-center w-10 h-10 rounded text-gray-500 hover:bg-gray-100 hover:text-gray-900 transition-all duration-200 cursor-pointer border-0 bg-transparent md:hidden focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-700 focus-visible:outline-offset-2" aria-label="Toggle navigation menu" aria-expanded="false">
+            <i data-lucide="menu" class="w-6 h-6"></i>
+          </button>
+
+          <div class="flex items-center gap-3">
+            <div class="w-8 h-8">
+              <svg viewBox="0 0 400 400" width="32" height="32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <g>
+                  <path d="M80 230 Q200 80 320 230" stroke="#1E40AF" stroke-width="26" fill="none" stroke-linecap="round"></path>
+                  <rect x="95" y="230" width="24" height="80" rx="8" fill="#059669"></rect>
+                  <rect x="281" y="230" width="24" height="80" rx="8" fill="#059669"></rect>
+                  <rect x="189" y="196" width="22" height="114" rx="7" fill="#1E40AF"></rect>
+                  <circle cx="130" cy="180" r="15" fill="#1E40AF"></circle>
+                  <circle cx="270" cy="180" r="15" fill="#1E40AF"></circle>
+                  <circle cx="200" cy="106" r="17" fill="#059669"></circle>
+                  <rect x="192" y="126" width="16" height="36" rx="6" fill="#059669"></rect>
+                </g>
+              </svg>
+            </div>
+            <h1 class="text-lg md:text-xl font-bold text-gray-900">
+              SkillBridge
+            </h1>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-2 md:gap-3">
+          <button id="userProfileButton" class="flex items-center gap-3 px-3 py-2 rounded-lg border border-transparent hover:bg-gray-50 hover:border-gray-200 transition-all duration-200 cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-700 focus-visible:outline-offset-2" aria-label="User profile menu" aria-expanded="false" aria-haspopup="true">
+            <div id="userAvatar" class="w-8 h-8 bg-blue-700 text-white rounded-full flex items-center justify-center text-sm font-semibold shrink-0"></div>
+            <div class="hidden sm:flex flex-col items-start max-w-[150px]">
+              <div id="userName" class="text-sm font-medium text-gray-900 truncate w-full"></div>
+            </div>
+            <i data-lucide="chevron-down" class="w-4 h-4 text-gray-500 hidden sm:block"></i>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <div id="userProfilePopover" class="popover fixed top-[4.5rem] right-4 md:right-6 w-72 bg-white border border-gray-200 rounded-lg shadow-xl z-50" role="dialog" aria-labelledby="popoverUserName" data-portal="body">
+      <div class="p-4">
+        <div class="flex items-center gap-3 pb-3 mb-3 border-b border-gray-100">
+          <div id="popoverUserAvatar" class="w-8 h-8 bg-blue-700 text-white rounded-full flex items-center justify-center text-sm font-semibold shrink-0"></div>
+          <div class="flex-1 min-w-0">
+            <div id="popoverUserName" class="font-semibold text-gray-900 truncate"></div>
+            <div id="popoverUserEmail" class="text-xs text-gray-500 truncate"></div>
+          </div>
+        </div>
+
+        <div class="space-y-1">
+          <button id="signOutButton" class="w-full flex items-center gap-3 px-3 py-2 text-sm font-medium text-red-600 hover:bg-red-50 rounded transition-all duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-700 focus-visible:outline-offset-2">
+            <i data-lucide="log-out" class="w-4 h-4"></i>
+            Sign Out
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div id="sidebarBackdrop" class="sidebar-backdrop fixed inset-0 bg-black/50 z-20 md:hidden" style="top: var(--header-height, 4rem)"></div>
+
+    <aside id="sidebar" class="app-sidebar fixed left-0 bg-white border-r border-slate-200 overflow-y-auto z-30">
+      <nav class="p-4" role="navigation" aria-label="Main navigation">
+        <div class="py-6 border-b border-gray-100 first:pt-0 last:border-b-0">
+          <div class="px-4 pb-2 text-xs font-semibold uppercase tracking-wider text-gray-400">
+            Dashboard
+          </div>
+          <div class="space-y-1">
+            <a href="dashboard.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline active" data-page="dashboard">
+              <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
+              <span>Admin Dashboard</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="py-6 border-b border-gray-100 last:border-b-0">
+          <div class="px-4 pb-2 text-xs font-semibold uppercase tracking-wider text-gray-400">
+            Organization Setup
+          </div>
+          <div class="space-y-1">
+            <a href="departments_list.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline" data-page="departments">
+              <i data-lucide="building" class="w-5 h-5"></i>
+              <span>Departments</span>
+            </a>
+            <a href="assessment_cycles_list.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline" data-page="assessment_cycles">
+              <i data-lucide="calendar" class="w-5 h-5"></i>
+              <span>Assessment Cycles</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="py-6 border-b border-gray-100 last:border-b-0">
+          <div class="px-4 pb-2 text-xs font-semibold uppercase tracking-wider text-gray-400">
+            Competency Framework
+          </div>
+          <div class="space-y-1">
+            <a href="skill_categories_list.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline" data-page="skill_categories">
+              <i data-lucide="folder" class="w-5 h-5"></i>
+              <span>Skill Categories</span>
+            </a>
+            <a href="skill_criticalities_list.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline" data-page="skill_criticalities">
+              <i data-lucide="alert-triangle" class="w-5 h-5"></i>
+              <span>Criticality Levels</span>
+            </a>
+            <a href="skills_list.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline" data-page="skills">
+              <i data-lucide="star" class="w-5 h-5"></i>
+              <span>Skills</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="py-6 border-b border-gray-100 last:border-b-0">
+          <div class="px-4 pb-2 text-xs font-semibold uppercase tracking-wider text-gray-400">
+            People Management
+          </div>
+          <div class="space-y-1">
+            <a href="employees_list.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline" data-page="employees">
+              <i data-lucide="users" class="w-5 h-5"></i>
+              <span>Employees</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="py-6 border-b border-gray-100 last:border-b-0">
+          <div class="px-4 pb-2 text-xs font-semibold uppercase tracking-wider text-gray-400">
+            Training
+          </div>
+          <div class="space-y-1">
+            <a href="training_sessions_list.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline" data-page="training_sessions">
+              <i data-lucide="graduation-cap" class="w-5 h-5"></i>
+              <span>Training Sessions</span>
+            </a>
+            <a href="trainers_list.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline" data-page="trainers">
+              <i data-lucide="user-check" class="w-5 h-5"></i>
+              <span>Trainers</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="py-6 border-b border-gray-100 last:border-b-0">
+          <div class="px-4 pb-2 text-xs font-semibold uppercase tracking-wider text-gray-400">
+            Disputes
+          </div>
+          <div class="space-y-1">
+            <a href="disputes_list.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline" data-page="disputes">
+              <i data-lucide="message-circle" class="w-5 h-5"></i>
+              <span>Disputes</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="py-6 border-b border-gray-100 last:border-b-0">
+          <div class="px-4 pb-2 text-xs font-semibold uppercase tracking-wider text-gray-400">
+            Analytics
+          </div>
+          <div class="space-y-1">
+            <a href="analytics_skill_gap_heatmap.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline" data-page="skill_gap_heatmap">
+              <i data-lucide="map" class="w-5 h-5"></i>
+              <span>Skill Gap Heatmap</span>
+            </a>
+            <a href="analytics_tni_dashboard.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline" data-page="tni_dashboard">
+              <i data-lucide="target" class="w-5 h-5"></i>
+              <span>TNI Dashboard</span>
+            </a>
+            <a href="analytics_training_forecast.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline" data-page="training_forecast">
+              <i data-lucide="trending-up" class="w-5 h-5"></i>
+              <span>Training Demand Forecast</span>
+            </a>
+            <a href="analytics_assessment_completion.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline" data-page="assessment_completion">
+              <i data-lucide="check-circle" class="w-5 h-5"></i>
+              <span>Assessment Completion</span>
+            </a>
+            <a href="analytics_dispute_metrics.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline" data-page="dispute_metrics">
+              <i data-lucide="bar-chart-3" class="w-5 h-5"></i>
+              <span>Dispute Metrics</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="py-6">
+          <div class="px-4 pb-2 text-xs font-semibold uppercase tracking-wider text-gray-400">
+            Settings
+          </div>
+          <div class="space-y-1">
+            <a href="system_settings.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline" data-page="system_settings">
+              <i data-lucide="settings" class="w-5 h-5"></i>
+              <span>System Settings</span>
+            </a>
+          </div>
+        </div>
+      </nav>
+    </aside>
+
+    <main class="app-main max-w-7xl mx-auto p-4 md:p-6 lg:p-8" id="pageContent" role="main"><nav class="flex items-center space-x-2 text-sm text-gray-600 mb-6" aria-label="Breadcrumb">
+  <a href="dashboard.html" class="hover:text-gray-900">Home</a>
+  <i data-lucide="chevron-right" class="w-4 h-4"></i>
+  <span class="hover:text-gray-900">Analytics</span>
+  <i data-lucide="chevron-right" class="w-4 h-4"></i>
+  <span class="text-gray-900 font-medium">TNI Dashboard</span>
+</nav>
+
+<!-- Page Header -->
+<div class="flex justify-between items-center mb-6">
+  <h1 class="text-2xl font-bold text-gray-900">Training Needs Identification</h1>
+  <button onclick="funExportTNI()" class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-blue-700 rounded-lg hover:bg-blue-600 transition-colors">
+    <i data-lucide="download" class="w-4 h-4 mr-2"></i>
+    Export Data
+  </button>
+</div>
+
+<!-- KPI Cards -->
+<div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-8">
+  <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+    <div class="flex items-center">
+      <div class="p-2 bg-red-50 rounded-lg">
+        <i data-lucide="users" class="w-6 h-6 text-red-600"></i>
+      </div>
+      <div class="ml-4">
+        <p class="text-sm text-gray-500">Employees Needing Training</p>
+        <p id="kpiEmployeesNeedingTraining" class="text-2xl font-bold text-gray-900">-</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+    <div class="flex items-center">
+      <div class="p-2 bg-amber-50 rounded-lg">
+        <i data-lucide="target" class="w-6 h-6 text-amber-500"></i>
+      </div>
+      <div class="ml-4">
+        <p class="text-sm text-gray-500">Total Training Needs</p>
+        <p id="kpiTotalTrainingNeeds" class="text-2xl font-bold text-gray-900">-</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+    <div class="flex items-center">
+      <div class="p-2 bg-red-50 rounded-lg">
+        <i data-lucide="trending-down" class="w-6 h-6 text-red-600"></i>
+      </div>
+      <div class="ml-4">
+        <p class="text-sm text-gray-500">% Below Benchmark</p>
+        <p id="kpiPercentBelowBenchmark" class="text-2xl font-bold text-gray-900">-</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+    <div class="flex items-center">
+      <div class="p-2 bg-blue-50 rounded-lg">
+        <i data-lucide="alert-triangle" class="w-6 h-6 text-blue-700"></i>
+      </div>
+      <div class="ml-4">
+        <p class="text-sm text-gray-500">Top Critical Skill</p>
+        <p id="kpiTopCriticalSkill" class="text-sm font-semibold text-gray-900">-</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Main Content Grid -->
+<div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+  <!-- Filters Sidebar -->
+  <div class="lg:col-span-1">
+    <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 sticky top-6">
+      <h3 class="text-lg font-semibold text-gray-900 mb-4">Filters</h3>
+      
+      <!-- Department Filter -->
+      <div class="mb-6">
+        <label class="block text-sm font-medium text-gray-700 mb-2">Departments</label>
+        <div id="departmentFilters" class="space-y-2 max-h-32 overflow-y-auto">
+          <!-- Dynamically populated -->
+        </div>
+      </div>
+
+      <!-- Skill Filter -->
+      <div class="mb-6">
+        <label class="block text-sm font-medium text-gray-700 mb-2">Skills</label>
+        <div id="skillFilters" class="space-y-2 max-h-32 overflow-y-auto">
+          <!-- Dynamically populated -->
+        </div>
+      </div>
+
+      <!-- Team Lead Filter -->
+      <div class="mb-6">
+        <label for="teamLeadFilter" class="block text-sm font-medium text-gray-700 mb-2">Team Lead</label>
+        <select id="teamLeadFilter" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+          <option value="">All Team Leads</option>
+          <!-- Dynamically populated -->
+        </select>
+      </div>
+
+      <!-- Criticality Filter -->
+      <div class="mb-6">
+        <label class="block text-sm font-medium text-gray-700 mb-2">Criticality Levels</label>
+        <div id="criticalityFilters" class="space-y-2">
+          <!-- Dynamically populated -->
+        </div>
+      </div>
+
+      <!-- Gap Range Filter -->
+      <div class="mb-6">
+        <label class="block text-sm font-medium text-gray-700 mb-2">Gap Range</label>
+        <div class="flex items-center space-x-2">
+          <input type="range" id="gapRangeMin" min="1" max="9" value="1" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
+        </div>
+        <div class="flex justify-between text-xs text-gray-500 mt-1">
+          <span>1</span>
+          <span id="gapRangeValue">1+</span>
+          <span>9+</span>
+        </div>
+      </div>
+
+      <div class="flex space-x-2">
+        <button onclick="funApplyFilters()" class="flex-1 px-4 py-2 bg-blue-700 text-white text-sm font-medium rounded-lg hover:bg-blue-600 transition-colors">
+          Apply Filters
+        </button>
+        <button onclick="funClearFilters()" class="flex-1 px-4 py-2 bg-gray-100 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-200 transition-colors">
+          Clear
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Table Area -->
+  <div class="lg:col-span-3">
+    <!-- Bulk Actions -->
+    <div id="bulkActions" class="hidden bg-blue-50 border border-blue-200 p-4 rounded-lg mb-6">
+      <div class="flex items-center justify-between">
+        <span id="selectedCount" class="text-sm font-medium text-blue-800">0 items selected</span>
+        <button onclick="funOpenBulkAssignModal()" class="inline-flex items-center px-4 py-2 bg-blue-700 text-white text-sm font-medium rounded-lg hover:bg-blue-600 transition-colors">
+          <i data-lucide="user-plus" class="w-4 h-4 mr-2"></i>
+          Assign Training
+        </button>
+      </div>
+    </div>
+
+    <!-- Training Needs Grid -->
+    <div class="bg-white rounded-xl shadow-sm border border-slate-200">
+      <div id="tniGrid" class="p-6"></div>
+      <div id="tniEmptyState" class="hidden text-center py-12">
+        <i data-lucide="target" class="w-12 h-12 mx-auto text-gray-400 mb-4"></i>
+        <h3 class="text-lg font-medium text-gray-900 mb-2">No training needs found</h3>
+        <p class="text-gray-500">All employees are meeting their skill benchmarks!</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Charts Section -->
+<div class="mt-8 grid grid-cols-1 lg:grid-cols-2 gap-8">
+  <!-- Top Skills Chart -->
+  <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+    <h3 class="text-lg font-semibold text-gray-900 mb-4">Top 10 Skills by Training Needs</h3>
+    <div id="topSkillsChart" class="h-64">
+      <canvas id="topSkillsCanvas" width="400" height="200"></canvas>
+    </div>
+  </div>
+
+  <!-- Criticality Distribution Chart -->
+  <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+    <h3 class="text-lg font-semibold text-gray-900 mb-4">TNI Distribution by Criticality</h3>
+    <div id="criticalityChart" class="h-64">
+      <canvas id="criticalityCanvas" width="400" height="200"></canvas>
+    </div>
+  </div>
+</div>
+
+<!-- Bulk Assign Training Modal -->
+<div id="bulkAssignModal" data-portal="body" class="fixed inset-0 z-50 hidden">
+  <div class="flex items-center justify-center min-h-screen p-4 bg-black/50">
+    <div class="bg-white rounded-xl shadow-xl w-[min(92vw,42rem)] max-h-[90vh] overflow-y-auto">
+      <!-- Modal Header -->
+      <div class="flex items-center justify-between p-6 border-b border-gray-200">
+        <h3 class="text-lg font-semibold text-gray-900">Assign Training</h3>
+        <button onclick="funCloseBulkAssignModal()" class="text-gray-400 hover:text-gray-600">
+          <i data-lucide="x" class="w-6 h-6"></i>
+        </button>
+      </div>
+
+      <!-- Modal Body -->
+      <div class="p-6">
+        <div class="mb-4">
+          <p class="text-sm text-gray-600">
+            <span id="modalSelectedCount">0</span> employees selected for 
+            <span id="modalSkillName" class="font-medium">-</span>
+          </p>
+        </div>
+
+        <div id="modalSelectedEmployees" class="mb-6 p-4 bg-gray-50 rounded-lg max-h-32 overflow-y-auto">
+          <!-- Selected employees list -->
+        </div>
+
+        <div class="space-y-4">
+          <div>
+            <input type="radio" id="addToExisting" name="trainingOption" value="existing" class="mr-2" onchange="funToggleTrainingOption()">
+            <label for="addToExisting" class="text-sm font-medium text-gray-700">Add to existing session</label>
+          </div>
+
+          <div id="existingSessionSelect" class="ml-6 hidden">
+            <select id="existingSessionDropdown" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+              <option value="">Select a session...</option>
+              <!-- Dynamically populated -->
+            </select>
+          </div>
+
+          <div>
+            <input type="radio" id="createNew" name="trainingOption" value="new" class="mr-2" onchange="funToggleTrainingOption()" checked="">
+            <label for="createNew" class="text-sm font-medium text-gray-700">Create new session</label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="flex justify-end space-x-3 p-6 border-t border-gray-200">
+        <button onclick="funCloseBulkAssignModal()" class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors">
+          Cancel
+        </button>
+        <button id="assignButton" onclick="funProcessBulkAssign()" class="px-4 py-2 text-sm font-medium text-white bg-blue-700 rounded-lg hover:bg-blue-600 transition-colors">
+          Create Session
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+</main>
+
+    <script src="app.js"></script>
+    <script src="app_data.js"></script>
+    <script id="container-script">
+      (function () {
+        const TemplateUtils = (window.TemplateUtils =
+          window.TemplateUtils || {});
+
+        TemplateUtils.UserUtils =
+          TemplateUtils.UserUtils ||
+          (function createUserUtils() {
+            return {
+              getCurrentUser() {
+                try {
+                  let currentUserId = localStorage.getItem("currentUserId");
+                  if (!currentUserId) {
+                    localStorage.setItem("currentUserId", "usr_001");
+                    currentUserId = "usr_001";
+                  }
+
+                  const users = JSON.parse(localStorage.getItem("users") || "[]");
+                  return users.find(user => user.id === currentUserId) || null;
+                } catch (error) {
+                  console.error("Error retrieving user data:", error);
+                  return null;
+                }
+              },
+              signOut() {
+                try {
+                  localStorage.removeItem("currentUserId");
+                  window.location.reload();
+                } catch (error) {
+                  console.error("Error signing out:", error);
+                }
+              },
+              getUserDisplayName(user) {
+                if (!user) return "Guest";
+                return user.firstName && user.lastName
+                  ? `${user.firstName} ${user.lastName}`
+                  : user.firstName || user.lastName || "User";
+              },
+              getUserInitials(user) {
+                if (!user) return "?";
+                const first = user.firstName?.charAt(0) || "";
+                const last = user.lastName?.charAt(0) || "";
+                return (first + last).toUpperCase() || "U";
+              },
+            };
+          })();
+
+        if (TemplateUtils.__bootstrapped) {
+          if (typeof window.lucide?.createIcons === "function") {
+            window.lucide.createIcons();
+          }
+          return;
+        }
+
+        TemplateUtils.__bootstrapped = true;
+
+        const state = {
+          popoverVisible: false,
+          sidebarOpen: false,
+          resizeTimer: null,
+          debounceTimer: null,
+          isUpdatingIcons: false,
+          observer: null,
+          refs: {},
+        };
+
+        function ready(fn) {
+          if (document.readyState === "loading") {
+            document.addEventListener("DOMContentLoaded", fn, { once: true });
+          } else if (typeof queueMicrotask === "function") {
+            queueMicrotask(fn);
+          } else {
+            Promise.resolve().then(fn);
+          }
+        }
+
+        function safeLucide(callback) {
+          if (typeof window.lucide?.createIcons === "function") {
+            callback();
+          }
+        }
+
+        function cacheRefs() {
+          state.refs = {
+            userProfileButton: document.getElementById("userProfileButton"),
+            userProfilePopover: document.getElementById("userProfilePopover"),
+            userAvatar: document.getElementById("userAvatar"),
+            userName: document.getElementById("userName"),
+            popoverUserAvatar: document.getElementById("popoverUserAvatar"),
+            popoverUserName: document.getElementById("popoverUserName"),
+            popoverUserEmail: document.getElementById("popoverUserEmail"),
+            signOutButton: document.getElementById("signOutButton"),
+            mobileMenuToggle: document.getElementById("mobileMenuToggle"),
+            sidebar: document.getElementById("sidebar"),
+            sidebarBackdrop: document.getElementById("sidebarBackdrop"),
+            navLinks: document.querySelectorAll(".nav-link"),
+            pageContent: document.getElementById("pageContent"),
+          };
+        }
+
+        function initializeUserProfile() {
+          const { userAvatar, userName } = state.refs;
+          if (!userAvatar || !userName) return;
+
+          const currentUser = TemplateUtils.UserUtils.getCurrentUser();
+          if (currentUser) {
+            userAvatar.textContent =
+              TemplateUtils.UserUtils.getUserInitials(currentUser);
+            userName.textContent =
+              TemplateUtils.UserUtils.getUserDisplayName(currentUser);
+          } else {
+            userAvatar.textContent = "?";
+            userName.textContent = "Guest";
+          }
+        }
+
+        function populatePopover() {
+          const currentUser = TemplateUtils.UserUtils.getCurrentUser();
+          const { popoverUserAvatar, popoverUserName, popoverUserEmail } =
+            state.refs;
+          if (!popoverUserAvatar || !popoverUserName || !popoverUserEmail)
+            return;
+
+          if (currentUser) {
+            popoverUserAvatar.textContent =
+              TemplateUtils.UserUtils.getUserInitials(currentUser);
+            popoverUserName.textContent =
+              TemplateUtils.UserUtils.getUserDisplayName(currentUser);
+            popoverUserEmail.textContent = currentUser.email || "No email";
+          } else {
+            popoverUserAvatar.textContent = "?";
+            popoverUserName.textContent = "Guest";
+            popoverUserEmail.textContent = "Not logged in";
+          }
+        }
+
+        function toggleUserPopover(forceClose = false) {
+          const { userProfilePopover, userProfileButton } = state.refs;
+          if (!userProfilePopover || !userProfileButton) return;
+
+          const shouldOpen = forceClose ? false : !state.popoverVisible;
+          if (shouldOpen) {
+            populatePopover();
+            userProfilePopover.classList.add("visible");
+            userProfileButton.setAttribute("aria-expanded", "true");
+            state.popoverVisible = true;
+            const firstButton = userProfilePopover.querySelector("button");
+            if (firstButton) {
+              setTimeout(() => firstButton.focus(), 50);
+            }
+          } else {
+            userProfilePopover.classList.remove("visible");
+            userProfileButton.setAttribute("aria-expanded", "false");
+            state.popoverVisible = false;
+          }
+        }
+
+        function hideUserPopover() {
+          if (state.popoverVisible) {
+            toggleUserPopover(true);
+          }
+        }
+
+        function toggleMobileSidebar(forceClose = false) {
+          const { sidebar, sidebarBackdrop, mobileMenuToggle } = state.refs;
+          if (!sidebar || !sidebarBackdrop || !mobileMenuToggle) return;
+
+          const shouldOpen = forceClose ? false : !state.sidebarOpen;
+          state.sidebarOpen = shouldOpen;
+
+          sidebar.classList.toggle("open", shouldOpen);
+          sidebarBackdrop.classList.toggle("active", shouldOpen);
+          document.body.classList.toggle("sidebar-open", shouldOpen);
+          mobileMenuToggle.setAttribute(
+            "aria-expanded",
+            shouldOpen ? "true" : "false"
+          );
+
+          const icon = mobileMenuToggle.querySelector("[data-lucide]");
+          if (icon) {
+            icon.setAttribute("data-lucide", shouldOpen ? "x" : "menu");
+            safeLucide(() => window.lucide.createIcons());
+          }
+        }
+
+        function closeMobileSidebar() {
+          if (state.sidebarOpen) {
+            toggleMobileSidebar(true);
+          }
+        }
+
+        function setActiveNavLink(pageId) {
+          if (!pageId) return;
+          const { navLinks } = state.refs;
+          navLinks?.forEach((link) => {
+            if (link.dataset.page === pageId) {
+              link.classList.add("active");
+            } else {
+              link.classList.remove("active");
+            }
+          });
+        }
+
+        TemplateUtils.setActiveNavLink = setActiveNavLink;
+        TemplateUtils.closeMobileSidebar = closeMobileSidebar;
+
+        function handleDocumentClick(event) {
+          const { userProfilePopover, userProfileButton } = state.refs;
+          if (
+            state.popoverVisible &&
+            userProfilePopover &&
+            userProfileButton &&
+            !userProfilePopover.contains(event.target) &&
+            !userProfileButton.contains(event.target)
+          ) {
+            hideUserPopover();
+          }
+        }
+
+        function handleKeydown(event) {
+          if (event.key !== "Escape") return;
+          if (state.popoverVisible) {
+            hideUserPopover();
+            state.refs.userProfileButton?.focus();
+          }
+          if (state.sidebarOpen) {
+            closeMobileSidebar();
+            state.refs.mobileMenuToggle?.focus();
+          }
+        }
+
+        function handleResize() {
+          clearTimeout(state.resizeTimer);
+          state.resizeTimer = setTimeout(() => {
+            if (window.innerWidth >= 768) {
+              closeMobileSidebar();
+            }
+          }, 200);
+        }
+
+        function bindEvents() {
+          const {
+            userProfileButton,
+            mobileMenuToggle,
+            sidebarBackdrop,
+            signOutButton,
+            navLinks,
+          } = state.refs;
+
+          userProfileButton?.addEventListener("click", (event) => {
+            event.stopPropagation();
+            toggleUserPopover();
+          });
+
+          mobileMenuToggle?.addEventListener("click", (event) => {
+            event.stopPropagation();
+            toggleMobileSidebar();
+          });
+
+          sidebarBackdrop?.addEventListener("click", () =>
+            closeMobileSidebar()
+          );
+
+          signOutButton?.addEventListener("click", () => {
+            if (confirm("Are you sure you want to sign out?")) {
+              TemplateUtils.UserUtils.signOut();
+            }
+          });
+
+          navLinks?.forEach((link) => {
+            link.addEventListener("click", () => closeMobileSidebar());
+          });
+
+          document.addEventListener("click", handleDocumentClick);
+          document.addEventListener("keydown", handleKeydown);
+          window.addEventListener("resize", handleResize);
+
+          window.addEventListener("pagehide", cleanup);
+        }
+
+        function cleanup() {
+          if (state.resizeTimer) clearTimeout(state.resizeTimer);
+          if (state.debounceTimer) clearTimeout(state.debounceTimer);
+          if (state.observer) {
+            state.observer.disconnect();
+            state.observer = null;
+          }
+          document.removeEventListener("click", handleDocumentClick);
+          document.removeEventListener("keydown", handleKeydown);
+          window.removeEventListener("resize", handleResize);
+        }
+
+        function initializePortalTargets() {
+          document.querySelectorAll('[data-portal="body"]').forEach((node) => {
+            if (node.parentElement !== document.body) {
+              document.body.appendChild(node);
+            }
+          });
+        }
+
+        function observePageContent() {
+          const { pageContent } = state.refs;
+          if (!pageContent || typeof MutationObserver !== "function") return;
+
+          const observer = new MutationObserver((mutations) => {
+            if (state.isUpdatingIcons) return;
+
+            const isLucideUpdate = mutations.every((m) => {
+              if (m.type !== "childList") return false;
+              const nodes = [...m.addedNodes, ...m.removedNodes];
+              return nodes.every(
+                (n) =>
+                  n.nodeType !== Node.ELEMENT_NODE ||
+                  n.nodeName.toLowerCase() === "svg" ||
+                  n.classList?.contains("lucide")
+              );
+            });
+            if (isLucideUpdate) return;
+
+            if (state.debounceTimer) clearTimeout(state.debounceTimer);
+            state.debounceTimer = setTimeout(() => {
+              state.debounceTimer = null;
+              state.isUpdatingIcons = true;
+              safeLucide(() => {
+                window.lucide.createIcons();
+                requestAnimationFrame(() => {
+                  state.isUpdatingIcons = false;
+                });
+              });
+            }, 100);
+          });
+
+          observer.observe(pageContent, { childList: true, subtree: true });
+          state.observer = observer;
+        }
+
+        function bootstrap() {
+          cacheRefs();
+          initializePortalTargets();
+          initializeUserProfile();
+          bindEvents();
+          safeLucide(() => window.lucide.createIcons());
+          observePageContent();
+        }
+
+        ready(bootstrap);
+      })();
+    </script>
+  
+
+<script>
+let tniGridInstance = null;
+let allTrainingNeeds = [];
+let filteredTrainingNeeds = [];
+let selectedTNIRecords = [];
+
+// Safe data retrieval
+function getDataSafely(key) {
+  try {
+    const data = localStorage.getItem(key);
+    return data ? JSON.parse(data) : [];
+  } catch (error) {
+    console.error(`Error parsing ${key}:`, error);
+    return [];
+  }
+}
+
+// Initialize page data
+function funInitTNIDashboard() {
+  funLoadTNIData();
+  funCalculateKPIs();
+  funInitFilters();
+  funInitTNIGrid();
+  funRenderCharts();
+}
+
+// Load and process TNI data
+function funLoadTNIData() {
+  const trainingNeeds = getDataSafely('trainingNeeds') || [];
+  const users = getDataSafely('users') || [];
+  const skills = getDataSafely('skills') || [];
+  const departments = getDataSafely('departments') || [];
+  const skillCriticalities = getDataSafely('skillCriticalities') || [];
+  const trainingSessions = getDataSafely('trainingSessions') || [];
+
+  // Process training needs with related data
+  allTrainingNeeds = trainingNeeds
+    .filter(tni => tni.tniStatus === 'trainingRequired')
+    .map(tni => {
+      const employee = users.find(u => u.id === tni.employeeId);
+      const skill = skills.find(s => s.id === tni.skillId);
+      const department = departments.find(d => d.id === employee?.departmentId);
+      const criticality = skillCriticalities.find(c => c.id === skill?.criticalityId);
+      
+      // Determine training status
+      let trainingStatus = 'Not Assigned';
+      const upcomingSessions = trainingSessions.filter(ts => 
+        ts.skillId === tni.skillId && 
+        ts.status === 'scheduled' &&
+        ts.assignedEmployees?.some(ae => ae.employeeId === tni.employeeId)
+      );
+      
+      const completedSessions = trainingSessions.filter(ts => 
+        ts.skillId === tni.skillId && 
+        ts.status === 'completed' &&
+        ts.assignedEmployees?.some(ae => ae.employeeId === tni.employeeId && ae.attendanceStatus === 'attended')
+      );
+
+      if (completedSessions.length > 0) {
+        trainingStatus = 'Completed';
+      } else if (upcomingSessions.length > 0) {
+        trainingStatus = 'Assigned';
+      }
+
+      return {
+        ...tni,
+        employeeName: employee ? `${employee.firstName} ${employee.lastName}` : 'Unknown',
+        employeeId: employee?.id || '',
+        skillName: skill?.name || 'Unknown',
+        departmentName: department?.name || 'Unknown',
+        criticalityName: criticality?.criticalityName || 'Unknown',
+        criticalityWeight: criticality?.weight || 1,
+        trainingStatus,
+        teamLeadId: employee?.teamLeadId || null
+      };
+    });
+
+  filteredTrainingNeeds = [...allTrainingNeeds];
+}
+
+// Calculate KPIs
+function funCalculateKPIs() {
+  const uniqueEmployees = new Set(allTrainingNeeds.map(tni => tni.employeeId));
+  const totalActiveEmployees = getDataSafely('users').filter(u => u.employeeStatus === 'active').length;
+  const percentBelowBenchmark = totalActiveEmployees > 0 ? ((uniqueEmployees.size / totalActiveEmployees) * 100).toFixed(1) : '0';
+
+  // Find top critical skill by weighted demand
+  const skillDemand = {};
+  allTrainingNeeds.forEach(tni => {
+    if (!skillDemand[tni.skillName]) {
+      skillDemand[tni.skillName] = { count: 0, weight: tni.criticalityWeight };
+    }
+    skillDemand[tni.skillName].count++;
+  });
+
+  let topSkill = 'None';
+  let maxWeightedDemand = 0;
+  Object.entries(skillDemand).forEach(([skill, data]) => {
+    const weightedDemand = data.count * data.weight;
+    if (weightedDemand > maxWeightedDemand) {
+      maxWeightedDemand = weightedDemand;
+      topSkill = skill;
+    }
+  });
+
+  // Update KPI displays
+  document.getElementById('kpiEmployeesNeedingTraining').textContent = uniqueEmployees.size;
+  document.getElementById('kpiTotalTrainingNeeds').textContent = allTrainingNeeds.length;
+  document.getElementById('kpiPercentBelowBenchmark').textContent = `${percentBelowBenchmark}%`;
+  document.getElementById('kpiTopCriticalSkill').textContent = topSkill;
+}
+
+// Initialize filters
+function funInitFilters() {
+  const departments = [...new Set(allTrainingNeeds.map(tni => tni.departmentName))];
+  const skills = [...new Set(allTrainingNeeds.map(tni => tni.skillName))];
+  const criticalities = [...new Set(allTrainingNeeds.map(tni => tni.criticalityName))];
+  const users = getDataSafely('users') || [];
+  const teamLeads = users.filter(u => u.role === 'teamLead' || u.role === 'systemAdmin');
+
+  // Populate department filters
+  const departmentContainer = document.getElementById('departmentFilters');
+  departmentContainer.innerHTML = departments.map(dept => `
+    <label class="flex items-center">
+      <input type="checkbox" value="${dept}" class="mr-2 department-filter" onchange="funUpdateSelectedCount()">
+      <span class="text-sm text-gray-700">${dept}</span>
+    </label>
+  `).join('');
+
+  // Populate skill filters
+  const skillContainer = document.getElementById('skillFilters');
+  skillContainer.innerHTML = skills.map(skill => `
+    <label class="flex items-center">
+      <input type="checkbox" value="${skill}" class="mr-2 skill-filter" onchange="funUpdateSelectedCount()">
+      <span class="text-sm text-gray-700">${skill}</span>
+    </label>
+  `).join('');
+
+  // Populate team lead filter
+  const teamLeadSelect = document.getElementById('teamLeadFilter');
+  teamLeadSelect.innerHTML = '<option value="">All Team Leads</option>' + 
+    teamLeads.map(tl => `<option value="${tl.id}">${tl.firstName} ${tl.lastName}</option>`).join('');
+
+  // Populate criticality filters
+  const criticalityContainer = document.getElementById('criticalityFilters');
+  criticalityContainer.innerHTML = criticalities.map(crit => `
+    <label class="flex items-center">
+      <input type="checkbox" value="${crit}" class="mr-2 criticality-filter" onchange="funUpdateSelectedCount()">
+      <span class="text-sm text-gray-700">${crit}</span>
+    </label>
+  `).join('');
+
+  // Initialize gap range display
+  document.getElementById('gapRangeMin').addEventListener('input', function() {
+    document.getElementById('gapRangeValue').textContent = `${this.value}+`;
+  });
+}
+
+// Apply filters
+function funApplyFilters() {
+  const selectedDepartments = Array.from(document.querySelectorAll('.department-filter:checked')).map(cb => cb.value);
+  const selectedSkills = Array.from(document.querySelectorAll('.skill-filter:checked')).map(cb => cb.value);
+  const selectedCriticalities = Array.from(document.querySelectorAll('.criticality-filter:checked')).map(cb => cb.value);
+  const selectedTeamLead = document.getElementById('teamLeadFilter').value;
+  const gapMin = parseInt(document.getElementById('gapRangeMin').value);
+
+  filteredTrainingNeeds = allTrainingNeeds.filter(tni => {
+    if (selectedDepartments.length && !selectedDepartments.includes(tni.departmentName)) return false;
+    if (selectedSkills.length && !selectedSkills.includes(tni.skillName)) return false;
+    if (selectedCriticalities.length && !selectedCriticalities.includes(tni.criticalityName)) return false;
+    if (selectedTeamLead && tni.teamLeadId !== selectedTeamLead) return false;
+    if (tni.gap < gapMin) return false;
+    return true;
+  });
+
+  funRefreshTNIGrid();
+}
+
+// Clear filters
+function funClearFilters() {
+  document.querySelectorAll('.department-filter, .skill-filter, .criticality-filter').forEach(cb => cb.checked = false);
+  document.getElementById('teamLeadFilter').value = '';
+  document.getElementById('gapRangeMin').value = 1;
+  document.getElementById('gapRangeValue').textContent = '1+';
+  filteredTrainingNeeds = [...allTrainingNeeds];
+  funRefreshTNIGrid();
+}
+
+// Initialize TNI Grid
+function funInitTNIGrid() {
+  if (!window.TiramaiGrid) {
+    console.error('TiramaiGrid is not available');
+    return;
+  }
+
+  const gridContainer = document.getElementById('tniGrid');
+  const emptyState = document.getElementById('tniEmptyState');
+  
+  if (filteredTrainingNeeds.length === 0) {
+    gridContainer.classList.add('hidden');
+    emptyState.classList.remove('hidden');
+    return;
+  }
+  
+  gridContainer.classList.remove('hidden');
+  emptyState.classList.add('hidden');
+
+  const tniColumns = [
+    {
+      field: 'employeeName',
+      header: 'Employee',
+      sortable: true,
+      filterable: true,
+      isLink: true,
+      linkHref: (row) => `employee_detail.html?id=${row.employeeId}`
+    },
+    {
+      field: 'departmentName',
+      header: 'Department',
+      sortable: true,
+      filterable: true
+    },
+    {
+      field: 'skillName',
+      header: 'Skill',
+      sortable: true,
+      filterable: true,
+      isLink: true,
+      linkHref: (row) => `skill_detail.html?id=${row.skillId}`
+    },
+    {
+      field: 'criticalityName',
+      header: 'Criticality',
+      sortable: true,
+      filterable: true,
+      filterType: 'enum',
+      filterEnumValues: ['Mission Critical', 'High', 'Medium'],
+      render: (value, row) => {
+        const colors = {
+          'Mission Critical': 'bg-red-100 text-red-800',
+          'High': 'bg-amber-100 text-amber-800',
+          'Medium': 'bg-blue-100 text-blue-800'
+        };
+        return `<span class="inline-flex px-2 py-1 text-xs font-medium rounded ${colors[value] || 'bg-gray-100 text-gray-800'}">${value}</span>`;
+      }
+    },
+    {
+      field: 'gap',
+      header: 'Gap Score',
+      type: 'number',
+      sortable: true,
+      align: 'center',
+      render: (value) => `<span class="font-semibold text-red-600">${value}</span>`
+    },
+    {
+      field: 'benchmarkScore',
+      header: 'Benchmark',
+      type: 'number',
+      sortable: true,
+      align: 'center'
+    },
+    {
+      field: 'employeeScore',
+      header: 'Employee Score',
+      type: 'number',
+      sortable: true,
+      align: 'center'
+    },
+    {
+      field: 'trainingStatus',
+      header: 'Training Status',
+      sortable: true,
+      filterable: true,
+      filterType: 'enum',
+      filterEnumValues: ['Not Assigned', 'Assigned', 'Completed'],
+      render: (value) => {
+        const colors = {
+          'Not Assigned': 'bg-gray-100 text-gray-800',
+          'Assigned': 'bg-blue-100 text-blue-800',
+          'Completed': 'bg-green-100 text-green-800'
+        };
+        return `<span class="inline-flex px-2 py-1 text-xs font-medium rounded ${colors[value] || 'bg-gray-100 text-gray-800'}">${value}</span>`;
+      }
+    }
+  ];
+
+  try {
+    tniGridInstance = new TiramaiGrid('#tniGrid', {
+      data: filteredTrainingNeeds,
+      columns: tniColumns,
+      theme: 'light',
+      sortable: true,
+      filterable: true,
+      globalSearch: true,
+      pagination: {
+        enabled: true,
+        pageSize: 10,
+        pageSizeOptions: [10, 20, 50],
+        showFirstLast: true,
+        showPrevNext: true,
+        showPageInfo: true
+      },
+      selection: {
+        enabled: true,
+        multiple: true,
+        showSelectAll: true
+      },
+      export: {
+        enabled: true,
+        filename: 'training-needs-identification.csv',
+        includeHeaders: true,
+        delimiter: ','
+      },
+      onSelectionChange: (selectedRows) => {
+        selectedTNIRecords = selectedRows;
+        funUpdateBulkActions();
+      },
+      onRowClick: (row, rowIndex, event) => {
+        if (event.target.tagName !== 'INPUT' && event.target.tagName !== 'BUTTON' && event.target.tagName !== 'A') {
+          // Could implement row expansion here if needed
+        }
+      }
+    });
+  } catch (error) {
+    console.error('Failed to initialize TNI grid:', error);
+  }
+}
+
+// Refresh grid data
+function funRefreshTNIGrid() {
+  if (!tniGridInstance) return;
+  
+  const gridContainer = document.getElementById('tniGrid');
+  const emptyState = document.getElementById('tniEmptyState');
+  
+  if (filteredTrainingNeeds.length === 0) {
+    gridContainer.classList.add('hidden');
+    emptyState.classList.remove('hidden');
+  } else {
+    gridContainer.classList.remove('hidden');
+    emptyState.classList.add('hidden');
+    tniGridInstance.setData(filteredTrainingNeeds);
+  }
+}
+
+// Update bulk actions visibility
+function funUpdateBulkActions() {
+  const bulkActions = document.getElementById('bulkActions');
+  const selectedCount = document.getElementById('selectedCount');
+  
+  if (selectedTNIRecords.length > 0) {
+    bulkActions.classList.remove('hidden');
+    selectedCount.textContent = `${selectedTNIRecords.length} items selected`;
+  } else {
+    bulkActions.classList.add('hidden');
+  }
+}
+
+// Update selected count in filters
+function funUpdateSelectedCount() {
+  // This function is called when filter checkboxes change
+  // Could add visual feedback for selected filters here
+}
+
+// Open bulk assign modal
+function funOpenBulkAssignModal() {
+  if (selectedTNIRecords.length === 0) return;
+
+  // Check if all selected records are for the same skill
+  const uniqueSkills = [...new Set(selectedTNIRecords.map(r => r.skillId))];
+  if (uniqueSkills.length > 1) {
+    alert('Please select training needs for only one skill at a time.');
+    return;
+  }
+
+  const skill = selectedTNIRecords[0];
+  document.getElementById('modalSelectedCount').textContent = selectedTNIRecords.length;
+  document.getElementById('modalSkillName').textContent = skill.skillName;
+
+  // Populate selected employees
+  const employeesContainer = document.getElementById('modalSelectedEmployees');
+  employeesContainer.innerHTML = selectedTNIRecords.map(record => 
+    `<div class="text-sm text-gray-700">${record.employeeName}</div>`
+  ).join('');
+
+  // Populate existing sessions
+  const sessions = getDataSafely('trainingSessions') || [];
+  const availableSessions = sessions.filter(s => 
+    s.skillId === skill.skillId && 
+    s.status === 'scheduled'
+  );
+
+  const sessionSelect = document.getElementById('existingSessionDropdown');
+  sessionSelect.innerHTML = '<option value="">Select a session...</option>' + 
+    availableSessions.map(session => {
+      const date = new Date(session.scheduledDate).toLocaleDateString('en-US');
+      return `<option value="${session.id}">${date} - ${session.mode}</option>`;
+    }).join('');
+
+  document.getElementById('bulkAssignModal').classList.remove('hidden');
+}
+
+// Close bulk assign modal
+function funCloseBulkAssignModal() {
+  document.getElementById('bulkAssignModal').classList.add('hidden');
+  document.getElementById('createNew').checked = true;
+  funToggleTrainingOption();
+}
+
+// Toggle training option
+function funToggleTrainingOption() {
+  const existingOption = document.getElementById('addToExisting').checked;
+  const existingSelect = document.getElementById('existingSessionSelect');
+  const assignButton = document.getElementById('assignButton');
+
+  if (existingOption) {
+    existingSelect.classList.remove('hidden');
+    assignButton.textContent = 'Assign';
+  } else {
+    existingSelect.classList.add('hidden');
+    assignButton.textContent = 'Create Session';
+  }
+}
+
+// Process bulk assign
+function funProcessBulkAssign() {
+  const existingOption = document.getElementById('addToExisting').checked;
+  
+  if (existingOption) {
+    const sessionId = document.getElementById('existingSessionDropdown').value;
+    if (!sessionId) {
+      alert('Please select a training session.');
+      return;
+    }
+    
+    // Add employees to existing session
+    const sessions = getDataSafely('trainingSessions') || [];
+    const sessionIndex = sessions.findIndex(s => s.id === sessionId);
+    if (sessionIndex !== -1) {
+      selectedTNIRecords.forEach(record => {
+        const existingAssignment = sessions[sessionIndex].assignedEmployees?.find(ae => ae.employeeId === record.employeeId);
+        if (!existingAssignment) {
+          sessions[sessionIndex].assignedEmployees = sessions[sessionIndex].assignedEmployees || [];
+          sessions[sessionIndex].assignedEmployees.push({
+            employeeId: record.employeeId,
+            assignmentDate: new Date().toISOString(),
+            attendanceStatus: 'assigned'
+          });
+        }
+      });
+      
+      localStorage.setItem('trainingSessions', JSON.stringify(sessions));
+      alert('Employees successfully assigned to training session.');
+    }
+  } else {
+    // Redirect to create new session with pre-selected skill and employees
+    const skill = selectedTNIRecords[0];
+    const employeeIds = selectedTNIRecords.map(r => r.employeeId);
+    const params = new URLSearchParams({
+      skillId: skill.skillId,
+      employeeIds: employeeIds.join(',')
+    });
+    window.location.href = `training_session_create.html?${params.toString()}`;
+    return;
+  }
+  
+  funCloseBulkAssignModal();
+  funLoadTNIData(); // Refresh data
+  funRefreshTNIGrid();
+}
+
+// Export TNI data
+function funExportTNI() {
+  if (tniGridInstance) {
+    tniGridInstance.exportCSV('tni-dashboard-export.csv');
+  }
+}
+
+// Render charts
+function funRenderCharts() {
+  funRenderTopSkillsChart();
+  funRenderCriticalityChart();
+}
+
+// Render top skills chart
+function funRenderTopSkillsChart() {
+  const canvas = document.getElementById('topSkillsCanvas');
+  const ctx = canvas.getContext('2d');
+  
+  // Calculate skill counts
+  const skillCounts = {};
+  allTrainingNeeds.forEach(tni => {
+    skillCounts[tni.skillName] = (skillCounts[tni.skillName] || 0) + 1;
+  });
+
+  const sortedSkills = Object.entries(skillCounts)
+    .sort(([,a], [,b]) => b - a)
+    .slice(0, 10);
+
+  if (sortedSkills.length === 0) {
+    ctx.fillStyle = '#6b7280';
+    ctx.font = '14px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('No data available', canvas.width / 2, canvas.height / 2);
+    return;
+  }
+
+  // Simple bar chart
+  const maxCount = Math.max(...sortedSkills.map(([,count]) => count));
+  const barHeight = 15;
+  const barSpacing = 5;
+  const startY = 20;
+
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  
+  sortedSkills.forEach(([skill, count], index) => {
+    const y = startY + index * (barHeight + barSpacing);
+    const barWidth = (count / maxCount) * (canvas.width - 150);
+    
+    // Draw bar
+    ctx.fillStyle = '#3b82f6';
+    ctx.fillRect(0, y, barWidth, barHeight);
+    
+    // Draw label
+    ctx.fillStyle = '#374151';
+    ctx.font = '12px sans-serif';
+    ctx.textAlign = 'left';
+    ctx.fillText(`${skill} (${count})`, barWidth + 5, y + 12);
+  });
+}
+
+// Render criticality distribution chart
+function funRenderCriticalityChart() {
+  const canvas = document.getElementById('criticalityCanvas');
+  const ctx = canvas.getContext('2d');
+  
+  // Calculate criticality distribution
+  const criticalityCounts = {};
+  allTrainingNeeds.forEach(tni => {
+    criticalityCounts[tni.criticalityName] = (criticalityCounts[tni.criticalityName] || 0) + 1;
+  });
+
+  const data = Object.entries(criticalityCounts);
+  
+  if (data.length === 0) {
+    ctx.fillStyle = '#6b7280';
+    ctx.font = '14px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('No data available', canvas.width / 2, canvas.height / 2);
+    return;
+  }
+
+  // Simple pie chart
+  const centerX = canvas.width / 2;
+  const centerY = canvas.height / 2;
+  const radius = Math.min(centerX, centerY) - 20;
+  const total = data.reduce((sum, [,count]) => sum + count, 0);
+  
+  const colors = ['#ef4444', '#f59e0b', '#3b82f6', '#10b981'];
+  
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  
+  let startAngle = 0;
+  data.forEach(([criticality, count], index) => {
+    const sliceAngle = (count / total) * 2 * Math.PI;
+    
+    // Draw slice
+    ctx.beginPath();
+    ctx.moveTo(centerX, centerY);
+    ctx.arc(centerX, centerY, radius, startAngle, startAngle + sliceAngle);
+    ctx.closePath();
+    ctx.fillStyle = colors[index % colors.length];
+    ctx.fill();
+    
+    // Draw label
+    const labelAngle = startAngle + sliceAngle / 2;
+    const labelX = centerX + Math.cos(labelAngle) * (radius + 15);
+    const labelY = centerY + Math.sin(labelAngle) * (radius + 15);
+    
+    ctx.fillStyle = '#374151';
+    ctx.font = '11px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(`${criticality}: ${count}`, labelX, labelY);
+    
+    startAngle += sliceAngle;
+  });
+}
+
+// Initialize dashboard on page load
+document.addEventListener('DOMContentLoaded', funInitTNIDashboard);
+</script></body></html>

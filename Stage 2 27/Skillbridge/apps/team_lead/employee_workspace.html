@@ -1,0 +1,2408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SkillBridge Competency Management Platform</title>
+
+    <!-- Required: Main JS Script -->
+    <script type="module" src="scripts/main.js" data-tiramai="web-gen"></script>
+
+    <!-- Required: TailwindCSS -->
+    <script src="./lib/tailwindcss/tailwindcss.js" fetchpriority="high" data-tiramai="web-gen"></script>
+
+    <!-- Tailwind Configuration -->
+    <script data-tiramai="web-gen">
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#1e293b',
+                        secondary: '#475569',
+                        accent: '#2563eb',
+                        gold: '#CBA35C',
+                        success: '#16A34A',
+                        warning: '#D97706',
+                        error: '#DC2626',
+                        info: '#0EA5E9',
+                        neutral: {
+                            50: '#F8FAFC',
+                            100: '#F1F5F9',
+                            200: '#E2E8F0',
+                            400: '#94A3B8',
+                            700: '#334155',
+                            900: '#0F172A',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['IBM Plex Sans', '-apple-system', 'Segoe UI', 'Roboto', 'Helvetica Neue', 'Arial', 'sans-serif'],
+                        mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', 'Liberation Mono', 'Courier New', 'monospace']
+                    },
+                    spacing: {
+                        '18': '72px'
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Required: Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest" data-tiramai="web-gen"></script>
+
+    <!-- Required: Favicon -->
+    <link rel="icon" href="assets/imgs/logo.ico" type="image/x-icon" data-tiramai="web-gen"/>
+
+    <!-- ECharts Support (for charts/graphs) -->
+    <script defer src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js" data-tiramai="web-gen"></script>
+
+    <!-- Markdown Support (for content rendering) -->
+    <script defer src="https://cdn.jsdelivr.net/npm/marked/marked.min.js" data-tiramai="web-gen"></script>
+</head>
+<body class="bg-neutral-50 min-h-screen text-neutral-700 font-sans">
+    <!-- Top Navigation -->
+    <header class="fixed top-0 left-0 right-0 bg-white border-b border-neutral-200 flex items-center justify-between px-6 py-4 z-30 h-18">
+        <div class="flex items-center gap-4">
+            <div class="w-8 h-8">
+                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 400 400" fill="none">
+                    <rect x="100" y="100" width="200" height="200" rx="16" stroke="#1e293b" stroke-width="16" fill="none"/>
+                    <path d="M150 250V170c0-11 9-20 20-20h60c11 0 20 9 20 20v80" stroke="#2563eb" stroke-width="14" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                    <circle cx="200" cy="170" r="18" stroke="#1e293b" stroke-width="12" fill="none"/>
+                    <path d="M150 250h100m-60-30h20" stroke="#2563eb" stroke-width="12" stroke-linecap="round" fill="none"/>
+                    <path d="M170 220v0" stroke="#1e293b" stroke-width="12" stroke-linecap="round"/>
+                    <path d="M230 220v0" stroke="#1e293b" stroke-width="12" stroke-linecap="round"/>
+                </svg>
+            </div>
+            <span class="text-lg font-semibold text-primary">SkillBridge</span>
+        </div>
+        
+        <!-- Mobile Menu Toggle -->
+        <button id="mobileMenuToggle" class="md:hidden p-2 rounded-md hover:bg-neutral-100 focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2">
+            <i data-lucide="menu" class="w-6 h-6 text-secondary"></i>
+        </button>
+
+        <!-- Desktop Navigation Right -->
+        <div class="hidden md:flex items-center gap-4">
+            <div class="relative">
+                <button id="userProfileDropdown" class="flex items-center gap-2 p-2 rounded-md hover:bg-neutral-100 focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2">
+                    <div class="w-8 h-8 bg-accent rounded-full flex items-center justify-center">
+                        <i data-lucide="user" class="w-4 h-4 text-white"></i>
+                    </div>
+                    <span id="userDisplayName" class="text-sm text-secondary hidden lg:block">Loading...</span>
+                    <i data-lucide="chevron-down" class="w-4 h-4 text-secondary"></i>
+                </button>
+                
+                <!-- Dropdown Menu -->
+                <div id="userDropdownMenu" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-md shadow border border-neutral-200 py-1 z-40">
+                    <div class="px-4 py-2 border-b border-neutral-200">
+                        <p id="dropdownUserEmail" class="text-sm text-neutral-700 font-medium">Loading...</p>
+                        <p class="text-xs text-neutral-400">Team Lead</p>
+                    </div>
+                    <button id="signOutBtn" class="w-full text-left px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50 flex items-center gap-2">
+                        <i data-lucide="log-out" class="w-4 h-4"></i>
+                        Sign Out
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="flex pt-18">
+        <!-- Side Navigation -->
+        <aside id="sidebar" class="w-64 bg-white border-r border-neutral-200 h-screen sticky top-18 overflow-y-auto hidden md:block">
+            <nav class="p-4 space-y-2">
+                <!-- Team Home -->
+                <div class="space-y-1">
+                    <a href="team_home.html" 
+                       class="nav-link flex items-center gap-3 px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-accent transition-colors duration-150"
+                       data-page="team_home">
+                        <i data-lucide="home" class="w-5 h-5"></i>
+                        <span class="font-medium">Team Home</span>
+                    </a>
+                    
+                    <!-- Team Home Children -->
+                    <div class="ml-8 space-y-1">
+                        <a href="team_dashboard.html" 
+                           class="nav-link flex items-center gap-3 px-3 py-2 rounded-md text-sm text-neutral-600 hover:bg-neutral-50 hover:text-accent transition-colors duration-150"
+                           data-page="team_dashboard">
+                            <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
+                            <span>Team Dashboard</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Navigation Section Divider -->
+                <div class="pt-4 border-t border-neutral-200 mt-6">
+                    <p class="text-xs text-neutral-400 font-medium uppercase tracking-wide mb-2">Analytics & Insights</p>
+                </div>
+
+            </nav>
+            
+            <!-- Footer Attribution -->
+            <div class="absolute bottom-20 w-full text-center text-xs text-neutral-400 bg-white px-4 py-2">
+                Made with ❤️ by TiramAi
+            </div>
+        </aside>
+
+        <!-- Mobile Sidebar Overlay -->
+        <div id="mobileOverlay" class="hidden fixed inset-0 bg-black bg-opacity-50 z-40 md:hidden"></div>
+        
+        <!-- Mobile Sidebar -->
+        <aside id="mobileSidebar" class="fixed left-0 top-18 w-64 h-screen bg-white border-r border-neutral-200 transform -translate-x-full transition-transform duration-300 z-50 md:hidden overflow-y-auto">
+            <nav class="p-4 space-y-2">
+                <!-- Mobile User Profile -->
+                <div class="pb-4 border-b border-neutral-200 mb-4">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 bg-accent rounded-full flex items-center justify-center">
+                            <i data-lucide="user" class="w-5 h-5 text-white"></i>
+                        </div>
+                        <div>
+                            <p id="mobileUserEmail" class="text-sm font-medium text-neutral-700">Loading...</p>
+                            <p class="text-xs text-neutral-400">Team Lead</p>
+                        </div>
+                    </div>
+                    <button id="mobileSignOutBtn" class="w-full mt-2 flex items-center gap-2 px-3 py-2 text-sm text-neutral-600 hover:bg-neutral-50 rounded-md">
+                        <i data-lucide="log-out" class="w-4 h-4"></i>
+                        Sign Out
+                    </button>
+                </div>
+
+                <!-- Team Home -->
+                <div class="space-y-1">
+                    <a href="team_home.html" 
+                       class="nav-link flex items-center gap-3 px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-accent transition-colors duration-150"
+                       data-page="team_home">
+                        <i data-lucide="home" class="w-5 h-5"></i>
+                        <span class="font-medium">Team Home</span>
+                    </a>
+                    
+                    <!-- Team Home Children -->
+                    <div class="ml-8 space-y-1">
+                        <a href="team_dashboard.html" 
+                           class="nav-link flex items-center gap-3 px-3 py-2 rounded-md text-sm text-neutral-600 hover:bg-neutral-50 hover:text-accent transition-colors duration-150"
+                           data-page="team_dashboard">
+                            <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
+                            <span>Team Dashboard</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Navigation Section Divider -->
+                <div class="pt-4 border-t border-neutral-200 mt-6">
+                    <p class="text-xs text-neutral-400 font-medium uppercase tracking-wide mb-2">Analytics & Insights</p>
+                </div>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main id="pageContent" class="flex-1 p-6 overflow-y-auto">
+            
+<!-- Breadcrumb Header -->
+<div class="mb-6">
+  <nav class="flex items-center gap-2 text-sm text-neutral-600 mb-4">
+    <button id="btn-back-team-home" class="inline-flex items-center gap-1 text-accent hover:text-accent/80 focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 rounded-md px-2 py-1">
+      <i data-lucide="arrow-left" class="w-4 h-4"></i>
+      Back to Team Home
+    </button>
+    <i data-lucide="chevron-right" class="w-4 h-4 text-neutral-400"></i>
+    <span id="breadcrumb-employee-name" class="text-neutral-700 font-medium">Loading...</span>
+  </nav>
+
+  <!-- Employee Header Context Panel -->
+  <div class="bg-white rounded-md border border-neutral-200 p-6 shadow-sm">
+    <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
+      <div class="flex-1">
+        <div class="flex items-center gap-3 mb-2">
+          <div class="w-12 h-12 bg-accent rounded-full flex items-center justify-center">
+            <i data-lucide="user" class="w-6 h-6 text-white"></i>
+          </div>
+          <div>
+            <h1 id="employee-name" class="text-2xl font-bold text-primary">Loading...</h1>
+            <p id="employee-email" class="text-sm text-neutral-600">Loading...</p>
+          </div>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+          <div>
+            <span class="text-neutral-500">Job Title:</span>
+            <span id="employee-job-title" class="ml-2 text-neutral-700 font-medium">Loading...</span>
+          </div>
+          <div>
+            <span class="text-neutral-500">Department:</span>
+            <span id="employee-department" class="ml-2 text-neutral-700 font-medium">Loading...</span>
+          </div>
+          <div>
+            <span class="text-neutral-500">Status:</span>
+            <span id="employee-status" class="ml-2">Loading...</span>
+          </div>
+        </div>
+      </div>
+      <div class="text-right">
+        <div id="active-cycle-chip" class="inline-flex items-center gap-2 px-3 py-2 bg-neutral-100 rounded-full text-sm">
+          <span class="w-2 h-2 rounded-full bg-warning"></span>
+          <span id="cycle-info">Loading cycle...</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Tabs Navigation -->
+<div class="mb-6">
+  <div class="border-b border-neutral-200">
+    <nav class="flex space-x-8">
+      <button id="tab-mapping" class="tab-button py-2 px-1 border-b-2 font-medium text-sm transition-colors duration-150" data-tab="mapping">
+        Mapping
+      </button>
+      <button id="tab-assessments" class="tab-button py-2 px-1 border-b-2 font-medium text-sm transition-colors duration-150" data-tab="assessments">
+        Assessments
+      </button>
+      <button id="tab-insights" class="tab-button py-2 px-1 border-b-2 font-medium text-sm transition-colors duration-150" data-tab="insights">
+        Insights
+      </button>
+    </nav>
+  </div>
+</div>
+
+<!-- Tab Content Container -->
+<div id="tab-content">
+  
+  <!-- Mapping Tab -->
+  <div id="content-mapping" class="tab-content hidden">
+    <!-- Toolbar -->
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
+      <div class="flex items-center gap-4">
+        <input 
+          type="text" 
+          id="search-skills" 
+          placeholder="Search skills..." 
+          class="border border-neutral-200 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2"
+        />
+        <select id="filter-category" class="border border-neutral-200 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2">
+          <option value="">All Categories</option>
+        </select>
+        <select id="filter-criticality" class="border border-neutral-200 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2">
+          <option value="">All Criticalities</option>
+        </select>
+      </div>
+      <div class="flex items-center gap-2">
+        <label class="inline-flex items-center gap-2 text-sm">
+          <input type="checkbox" id="show-inactive" class="rounded border-neutral-300 text-accent focus:ring-accent focus:ring-offset-2"/>
+          <span class="text-neutral-700">Show inactive</span>
+        </label>
+        <button id="btn-add-skills" class="inline-flex items-center gap-2 bg-accent text-white rounded-md px-4 py-2 hover:bg-accent/90 focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2">
+          <i data-lucide="plus" class="w-4 h-4"></i>
+          Add from Library
+        </button>
+      </div>
+    </div>
+
+    <!-- Skills Table -->
+    <div class="bg-white rounded-md border border-neutral-200 overflow-hidden">
+      <div class="overflow-x-auto">
+        <table class="w-full">
+          <thead class="bg-neutral-50 sticky top-0">
+            <tr class="text-secondary text-xs">
+              <th class="text-left px-4 py-3 border-b border-neutral-200">Skill</th>
+              <th class="text-left px-4 py-3 border-b border-neutral-200">Category</th>
+              <th class="text-left px-4 py-3 border-b border-neutral-200">Criticality</th>
+              <th class="text-left px-4 py-3 border-b border-neutral-200">Weight</th>
+              <th class="text-left px-4 py-3 border-b border-neutral-200">Current Benchmark</th>
+              <th class="text-left px-4 py-3 border-b border-neutral-200">Status</th>
+              <th class="text-left px-4 py-3 border-b border-neutral-200">Mapped At</th>
+              <th class="text-left px-4 py-3 border-b border-neutral-200">Mapped By</th>
+              <th class="text-left px-4 py-3 border-b border-neutral-200">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="skills-table-body" class="text-sm divide-y divide-neutral-100">
+            <!-- Loading skeleton -->
+            <tr id="skills-loading">
+              <td colspan="9" class="px-4 py-8 text-center text-neutral-500">
+                <div class="flex items-center justify-center gap-2">
+                  <div class="w-4 h-4 border-2 border-accent border-t-transparent rounded-full animate-spin"></div>
+                  Loading skills...
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Assessments Tab -->
+  <div id="content-assessments" class="tab-content hidden">
+    <!-- Current Cycle Panel -->
+    <div id="current-cycle-panel" class="bg-white rounded-md border border-neutral-200 p-6 mb-6 shadow-sm">
+      <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <div>
+          <h2 class="text-lg font-semibold text-primary mb-2">Current Cycle Assessment</h2>
+          <div id="assessment-status-content">
+            <p class="text-sm text-neutral-600">Loading assessment status...</p>
+          </div>
+        </div>
+        <div id="assessment-actions" class="flex gap-2">
+          <!-- Actions will be populated dynamically -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Assessment Grid Container -->
+    <div id="assessment-grid-container" class="hidden bg-white rounded-md border border-neutral-200 overflow-hidden">
+      <div class="p-4 bg-neutral-50 border-b border-neutral-200">
+        <h3 class="font-medium text-primary">Assessment Scoring Grid</h3>
+        <p class="text-sm text-neutral-600 mt-1">Score each skill from 1-10. Comments are required when score is below threshold.</p>
+      </div>
+      <div class="overflow-x-auto">
+        <table class="w-full">
+          <thead class="bg-neutral-50 sticky top-0">
+            <tr class="text-secondary text-xs">
+              <th class="text-left px-4 py-3 border-b border-neutral-200">Skill</th>
+              <th class="text-left px-4 py-3 border-b border-neutral-200">Category</th>
+              <th class="text-left px-4 py-3 border-b border-neutral-200">Criticality</th>
+              <th class="text-left px-4 py-3 border-b border-neutral-200">Weight</th>
+              <th class="text-left px-4 py-3 border-b border-neutral-200">Benchmark</th>
+              <th class="text-left px-4 py-3 border-b border-neutral-200">Score</th>
+              <th class="text-left px-4 py-3 border-b border-neutral-200">Comment</th>
+              <th class="text-left px-4 py-3 border-b border-neutral-200">Gap</th>
+              <th class="text-left px-4 py-3 border-b border-neutral-200">TNI</th>
+            </tr>
+          </thead>
+          <tbody id="assessment-grid-body" class="text-sm divide-y divide-neutral-100">
+            <!-- Assessment items will be populated dynamically -->
+          </tbody>
+        </table>
+      </div>
+      <div class="p-4 bg-neutral-50 border-t border-neutral-200">
+        <div class="flex justify-end gap-2">
+          <button id="btn-cancel-assessment" class="px-4 py-2 text-secondary border border-neutral-200 rounded-md hover:bg-neutral-50 focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2">
+            Cancel
+          </button>
+          <button id="btn-submit-assessment" class="px-4 py-2 bg-accent text-white rounded-md hover:bg-accent/90 focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+            Submit Assessment
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Reassessment Panel -->
+    <div id="reassessment-panel" class="hidden mt-6 bg-white rounded-md border border-neutral-200 p-6 shadow-sm">
+      <h2 class="text-lg font-semibold text-primary mb-4">Reassessment Tasks</h2>
+      <div id="reassessment-content">
+        <!-- Reassessment content will be populated dynamically -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Insights Tab -->
+  <div id="content-insights" class="tab-content hidden">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      
+      <!-- Latest Gap Summary Card -->
+      <div class="bg-white rounded-md border border-neutral-200 p-6 shadow-sm">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="text-lg font-semibold text-primary">Top Gaps</h3>
+          <button id="btn-refresh-gaps" class="text-neutral-400 hover:text-neutral-600 focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 rounded-md p-1">
+            <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+          </button>
+        </div>
+        <div id="gaps-content">
+          <div class="space-y-3">
+            <!-- Skeleton loading -->
+            <div class="animate-pulse">
+              <div class="flex justify-between items-center">
+                <div class="h-4 bg-neutral-200 rounded w-24"></div>
+                <div class="h-4 bg-neutral-200 rounded w-8"></div>
+              </div>
+            </div>
+            <div class="animate-pulse">
+              <div class="flex justify-between items-center">
+                <div class="h-4 bg-neutral-200 rounded w-20"></div>
+                <div class="h-4 bg-neutral-200 rounded w-8"></div>
+              </div>
+            </div>
+            <div class="animate-pulse">
+              <div class="flex justify-between items-center">
+                <div class="h-4 bg-neutral-200 rounded w-28"></div>
+                <div class="h-4 bg-neutral-200 rounded w-8"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Score Trend Card -->
+      <div class="bg-white rounded-md border border-neutral-200 p-6 shadow-sm">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="text-lg font-semibold text-primary">Score Trends</h3>
+          <button id="btn-refresh-trends" class="text-neutral-400 hover:text-neutral-600 focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 rounded-md p-1">
+            <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+          </button>
+        </div>
+        <div id="trends-chart-container" style="height: 200px;">
+          <!-- Chart will be rendered here -->
+        </div>
+      </div>
+
+      <!-- Training Impact Card -->
+      <div class="bg-white rounded-md border border-neutral-200 p-6 shadow-sm">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="text-lg font-semibold text-primary">Training Impact</h3>
+          <button id="btn-refresh-impact" class="text-neutral-400 hover:text-neutral-600 focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 rounded-md p-1">
+            <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+          </button>
+        </div>
+        <div id="impact-content">
+          <div class="text-center text-neutral-500 py-8">
+            <i data-lucide="trending-up" class="w-8 h-8 mx-auto mb-2 text-neutral-400"></i>
+            <p class="text-sm">Training impact analysis will appear here</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Deep Analytics Link -->
+    <div class="mt-6 p-4 bg-neutral-50 rounded-md border border-neutral-200">
+      <div class="flex items-center justify-between">
+        <div>
+          <h4 class="font-medium text-primary">Need more detailed analytics?</h4>
+          <p class="text-sm text-neutral-600 mt-1">View comprehensive team and employee analytics</p>
+        </div>
+        <button id="btn-view-team-dashboard" class="inline-flex items-center gap-2 text-accent hover:text-accent/80 focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 rounded-md px-3 py-2">
+          <span class="text-sm font-medium">View in Team Dashboard</span>
+          <i data-lucide="external-link" class="w-4 h-4"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modals -->
+
+<!-- Add Skill from Library Modal -->
+<div id="modal-add-skills" class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50 hidden">
+  <div class="bg-white rounded-lg shadow-lg w-full max-w-4xl max-h-[90vh] overflow-hidden">
+    <div class="flex items-center justify-between p-6 border-b border-neutral-200">
+      <h2 class="text-xl font-semibold text-primary">Add Skills from Library</h2>
+      <button id="close-add-skills-modal" class="p-2 hover:bg-neutral-100 rounded-md focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2">
+        <i data-lucide="x" class="w-5 h-5 text-neutral-500"></i>
+      </button>
+    </div>
+    
+    <div class="p-6">
+      <!-- Search and Filters -->
+      <div class="flex flex-col md:flex-row gap-4 mb-6">
+        <input 
+          type="text" 
+          id="modal-search-skills" 
+          placeholder="Search skills..." 
+          class="flex-1 border border-neutral-200 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2"
+        />
+        <select id="modal-filter-category" class="border border-neutral-200 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2">
+          <option value="">All Categories</option>
+        </select>
+        <select id="modal-filter-criticality" class="border border-neutral-200 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2">
+          <option value="">All Criticalities</option>
+        </select>
+      </div>
+
+      <!-- Skills List -->
+      <div class="border border-neutral-200 rounded-md max-h-96 overflow-y-auto">
+        <table class="w-full">
+          <thead class="bg-neutral-50 sticky top-0">
+            <tr class="text-secondary text-xs">
+              <th class="text-left px-4 py-3 border-b border-neutral-200">
+                <input type="checkbox" id="select-all-skills" class="rounded border-neutral-300 text-accent focus:ring-accent focus:ring-offset-2"/>
+              </th>
+              <th class="text-left px-4 py-3 border-b border-neutral-200">Skill</th>
+              <th class="text-left px-4 py-3 border-b border-neutral-200">Category</th>
+              <th class="text-left px-4 py-3 border-b border-neutral-200">Criticality</th>
+              <th class="text-left px-4 py-3 border-b border-neutral-200">Weight</th>
+              <th class="text-left px-4 py-3 border-b border-neutral-200">Status</th>
+            </tr>
+          </thead>
+          <tbody id="modal-skills-list" class="text-sm divide-y divide-neutral-100">
+            <!-- Skills will be populated dynamically -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="flex justify-between items-center p-6 border-t border-neutral-200 bg-neutral-50">
+      <span id="selected-skills-count" class="text-sm text-neutral-600">0 skills selected</span>
+      <div class="flex gap-2">
+        <button id="cancel-add-skills" class="px-4 py-2 text-secondary border border-neutral-200 rounded-md hover:bg-neutral-50 focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2">
+          Cancel
+        </button>
+        <button id="save-add-skills" class="px-4 py-2 bg-accent text-white rounded-md hover:bg-accent/90 focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+          Add Selected Skills
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Performance History Modal -->
+<div id="modal-performance-history" class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50 hidden">
+  <div class="bg-white rounded-lg shadow-lg w-full max-w-4xl max-h-[90vh] overflow-hidden">
+    <div class="flex items-center justify-between p-6 border-b border-neutral-200">
+      <h2 class="text-xl font-semibold text-primary">Performance History - <span id="history-skill-name">Skill Name</span></h2>
+      <button id="close-performance-history-modal" class="p-2 hover:bg-neutral-100 rounded-md focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2">
+        <i data-lucide="x" class="w-5 h-5 text-neutral-500"></i>
+      </button>
+    </div>
+    
+    <div class="p-6 overflow-y-auto max-h-96">
+      <div class="border border-neutral-200 rounded-md overflow-hidden">
+        <table class="w-full">
+          <thead class="bg-neutral-50">
+            <tr class="text-secondary text-xs">
+              <th class="text-left px-4 py-3 border-b border-neutral-200">Cycle</th>
+              <th class="text-left px-4 py-3 border-b border-neutral-200">Type</th>
+              <th class="text-left px-4 py-3 border-b border-neutral-200">Score</th>
+              <th class="text-left px-4 py-3 border-b border-neutral-200">Benchmark</th>
+              <th class="text-left px-4 py-3 border-b border-neutral-200">Gap</th>
+              <th class="text-left px-4 py-3 border-b border-neutral-200">TNI</th>
+              <th class="text-left px-4 py-3 border-b border-neutral-200">Weight</th>
+              <th class="text-left px-4 py-3 border-b border-neutral-200">Date</th>
+            </tr>
+          </thead>
+          <tbody id="performance-history-body" class="text-sm divide-y divide-neutral-100">
+            <!-- History will be populated dynamically -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Deactivate Mapping Confirmation Modal -->
+<div id="modal-deactivate-mapping" class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50 hidden">
+  <div class="bg-white rounded-lg shadow-lg w-full max-w-md">
+    <div class="p-6">
+      <div class="flex items-center gap-3 mb-4">
+        <div class="w-10 h-10 bg-warning/10 rounded-full flex items-center justify-center">
+          <i data-lucide="alert-triangle" class="w-5 h-5 text-warning"></i>
+        </div>
+        <div>
+          <h3 class="text-lg font-semibold text-primary">Deactivate Skill Mapping</h3>
+          <p class="text-sm text-neutral-600">This action will soft-delete the mapping</p>
+        </div>
+      </div>
+      
+      <div class="bg-neutral-50 rounded-md p-4 mb-6">
+        <p class="text-sm text-neutral-700 mb-2">
+          <strong>Skill:</strong> <span id="deactivate-skill-name">Skill Name</span>
+        </p>
+        <p class="text-sm text-neutral-600">
+          Historical assessments will remain unchanged. This mapping can be reactivated later if needed.
+        </p>
+      </div>
+
+      <div class="flex gap-2 justify-end">
+        <button id="cancel-deactivate-mapping" class="px-4 py-2 text-secondary border border-neutral-200 rounded-md hover:bg-neutral-50 focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2">
+          Cancel
+        </button>
+        <button id="confirm-deactivate-mapping" class="px-4 py-2 bg-error text-white rounded-md hover:bg-error/90 focus:outline-none focus:ring-2 focus:ring-error focus:ring-offset-2">
+          Deactivate Mapping
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Submit Assessment Confirmation Modal -->
+<div id="modal-submit-assessment" class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50 hidden">
+  <div class="bg-white rounded-lg shadow-lg w-full max-w-md">
+    <div class="p-6">
+      <div class="flex items-center gap-3 mb-4">
+        <div class="w-10 h-10 bg-accent/10 rounded-full flex items-center justify-center">
+          <i data-lucide="check-circle" class="w-5 h-5 text-accent"></i>
+        </div>
+        <div>
+          <h3 class="text-lg font-semibold text-primary">Submit Assessment</h3>
+          <p class="text-sm text-neutral-600">Confirm assessment submission</p>
+        </div>
+      </div>
+      
+      <div class="bg-neutral-50 rounded-md p-4 mb-6">
+        <div class="space-y-2 text-sm">
+          <p><strong>Total Skills:</strong> <span id="submit-total-skills">0</span></p>
+          <p><strong>Skills with Comments:</strong> <span id="submit-skills-with-comments">0</span></p>
+          <p><strong>Cycle:</strong> <span id="submit-cycle-name">Active Cycle</span></p>
+        </div>
+        <div class="mt-3 p-3 bg-warning/10 border border-warning/20 rounded text-sm text-warning">
+          <strong>Important:</strong> Once submitted, this assessment will be locked and cannot be modified.
+        </div>
+      </div>
+
+      <div class="flex gap-2 justify-end">
+        <button id="cancel-submit-assessment" class="px-4 py-2 text-secondary border border-neutral-200 rounded-md hover:bg-neutral-50 focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2">
+          Cancel
+        </button>
+        <button id="confirm-submit-assessment" class="px-4 py-2 bg-accent text-white rounded-md hover:bg-accent/90 focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2">
+          Submit Assessment
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+        </main>
+    </div>
+
+    <!-- Required: JavaScript -->
+    <script type="module" data-tiramai="web-gen">
+        import { showToast, showLoader, hideLoader, env } from "./scripts/main.js";
+        import { auth, db, storage } from "./scripts/firebase.js";
+        import { onAuthStateChanged, getAuth, signOut } from 'https://www.gstatic.com/firebasejs/10.12.4/firebase-auth.js';
+        import { doc, getDoc } from 'https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js';
+
+        // Initialize Lucide icons
+        lucide.createIcons();
+
+        // DOM Elements
+        const userProfileDropdown = document.getElementById('userProfileDropdown');
+        const userDropdownMenu = document.getElementById('userDropdownMenu');
+        const userDisplayName = document.getElementById('userDisplayName');
+        const dropdownUserEmail = document.getElementById('dropdownUserEmail');
+        const mobileUserEmail = document.getElementById('mobileUserEmail');
+        const signOutBtn = document.getElementById('signOutBtn');
+        const mobileSignOutBtn = document.getElementById('mobileSignOutBtn');
+        const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+        const mobileOverlay = document.getElementById('mobileOverlay');
+        const mobileSidebar = document.getElementById('mobileSidebar');
+
+        // Mobile Menu Toggle
+        mobileMenuToggle?.addEventListener('click', () => {
+            mobileOverlay.classList.remove('hidden');
+            mobileSidebar.classList.remove('-translate-x-full');
+        });
+
+        mobileOverlay?.addEventListener('click', () => {
+            mobileOverlay.classList.add('hidden');
+            mobileSidebar.classList.add('-translate-x-full');
+        });
+
+        // User Profile Dropdown Toggle
+        userProfileDropdown?.addEventListener('click', () => {
+            userDropdownMenu.classList.toggle('hidden');
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!userProfileDropdown?.contains(e.target)) {
+                userDropdownMenu?.classList.add('hidden');
+            }
+        });
+
+        // Sign Out Functionality
+        const handleSignOut = async () => {
+            try {
+                await signOut(auth);
+                window.location.href = 'auth.html';
+            } catch (error) {
+                console.error('Sign out error:', error);
+                showToast('Error signing out. Please try again.', 'error');
+            }
+        };
+
+        signOutBtn?.addEventListener('click', handleSignOut);
+        mobileSignOutBtn?.addEventListener('click', handleSignOut);
+
+        // Navigation Active State
+        function setActiveNavigation() {
+            const currentPage = window.location.pathname.split('/').pop().replace('.html', '') || 'team_home';
+            const navLinks = document.querySelectorAll('.nav-link');
+            
+            navLinks.forEach(link => {
+                const pageName = link.getAttribute('data-page');
+                if (pageName === currentPage) {
+                    link.classList.add('bg-accent', 'text-white');
+                    link.classList.remove('text-neutral-700', 'text-neutral-600', 'hover:bg-neutral-50', 'hover:text-accent');
+                } else {
+                    link.classList.remove('bg-accent', 'text-white');
+                    link.classList.add('hover:bg-neutral-50', 'hover:text-accent');
+                }
+            });
+        }
+
+        // Auth State Management
+        onAuthStateChanged(auth, async (user) => {
+            if (!user) {
+                window.location.href = 'auth.html';
+                return;
+            }
+
+            try {
+                // Try to get user data from Firestore
+                const userDocRef = doc(db, 'users', user.uid);
+                const userDoc = await getDoc(userDocRef);
+                
+                let displayName = '';
+                let userEmail = user.email || 'user@skillbridge.com';
+                
+                if (userDoc.exists()) {
+                    const userData = userDoc.data();
+                    const firstName = userData.firstName || '';
+                    const lastName = userData.lastName || '';
+                    displayName = firstName && lastName ? `${firstName} ${lastName}` : userEmail.split('@')[0];
+                } else {
+                    // Fallback for users without Firestore data
+                    displayName = userEmail === 'johndoe@example.com' ? 'John Doe' : userEmail.split('@')[0];
+                }
+
+                // Update UI elements
+                if (userDisplayName) userDisplayName.textContent = displayName;
+                if (dropdownUserEmail) dropdownUserEmail.textContent = userEmail;
+                if (mobileUserEmail) mobileUserEmail.textContent = userEmail;
+                
+            } catch (error) {
+                console.error('Error fetching user data:', error);
+                // Fallback to email-based display
+                const userEmail = user.email || 'user@skillbridge.com';
+                const displayName = userEmail.split('@')[0];
+                
+                if (userDisplayName) userDisplayName.textContent = displayName;
+                if (dropdownUserEmail) dropdownUserEmail.textContent = userEmail;
+                if (mobileUserEmail) mobileUserEmail.textContent = userEmail;
+            }
+        });
+
+        // Initialize navigation state
+        document.addEventListener('DOMContentLoaded', () => {
+            setActiveNavigation();
+        });
+    </script>
+
+    
+<script id="data-script" type="module" data-tiramai="web-gen">
+import { onAuthStateChanged, getAuth, signOut } from 'https://www.gstatic.com/firebasejs/10.12.4/firebase-auth.js';
+import { 
+  collection, getDocs, setDoc, addDoc, doc, getDoc, updateDoc, deleteDoc, writeBatch,
+  query, where, orderBy, limit, startAfter, endBefore, onSnapshot, Timestamp,
+  getCountFromServer, enableIndexedDbPersistence
+} from "https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js";
+import { auth, getDb, storage } from "./scripts/firebase.js";
+import { showToast, showLoader, hideLoader, env } from "./scripts/main.js";
+
+const db = getDb();
+
+// Global state
+let state = {
+  employeeId: null,
+  activeTab: 'mapping',
+  cycleId: null,
+  focusSkillIds: [],
+  currentEmployee: null,
+  activeCycle: null,
+  currentTeamLeadId: null,
+  skillsData: {
+    skills: [],
+    categories: [],
+    criticalities: [],
+    benchmarks: [],
+    mappings: [],
+    filteredMappings: []
+  },
+  assessmentData: {
+    items: [],
+    commentThreshold: 7,
+    tniThreshold: 1
+  }
+};
+
+// Utility functions
+const yieldToFrame = () => new Promise(r => requestAnimationFrame(() => r()));
+
+function createSemaphore(max = 2) {
+  const queue = [];
+  let active = 0;
+  const next = () => {
+    if (active >= max || queue.length === 0) return;
+    active++;
+    const { fn, res, rej } = queue.shift();
+    Promise.resolve()
+      .then(fn)
+      .then(v => res(v))
+      .catch(e => rej(e))
+      .finally(() => { active--; next(); });
+  };
+  return (fn) => new Promise((res, rej) => { queue.push({ fn, res, rej }); next(); });
+}
+const withLimit = createSemaphore(2);
+
+let currentAbort;
+async function abortableFetch(buildQuery) {
+  if (currentAbort) currentAbort.abort();
+  currentAbort = new AbortController();
+  const signal = currentAbort.signal;
+
+  try {
+    const q = buildQuery();
+    const snapshot = await getDocs(q);
+    if (signal.aborted) return { items: [], cursor: null };
+    return {
+      items: snapshot.docs.map(d => ({ id: d.id, ...d.data() })),
+      cursor: snapshot.docs.at(-1) || null,
+    };
+  } catch (err) {
+    if (signal.aborted) return { items: [], cursor: null };
+    showToast(err?.message || "Failed to load data");
+    return { items: [], cursor: null };
+  }
+}
+
+// Page URL parameters
+function getPageParams() {
+  const urlParams = new URLSearchParams(window.location.search);
+  return {
+    employeeId: urlParams.get('employeeId'),
+    activeTab: urlParams.get('activeTab') || 'assessments',
+    cycleId: urlParams.get('cycleId'),
+    focusSkillIds: urlParams.get('focusSkillIds')?.split(',').filter(Boolean) || []
+  };
+}
+
+// Date formatting
+function formatDate(dateString) {
+  if (!dateString) return 'N/A';
+  try {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-IN', { 
+      day: '2-digit',
+      month: '2-digit', 
+      year: 'numeric'
+    });
+  } catch {
+    return 'N/A';
+  }
+}
+
+// Auth and initialization
+onAuthStateChanged(auth, async (user) => {
+  if (!user) {
+    location.href = "auth.html?redirect=" + encodeURIComponent(location.pathname + location.search);
+    return;
+  }
+
+  const params = getPageParams();
+  if (!params.employeeId) {
+    showToast('Employee ID is required', 'error');
+    location.href = 'team_home.html';
+    return;
+  }
+
+  state.employeeId = params.employeeId;
+  state.activeTab = params.activeTab;
+  state.cycleId = params.cycleId;
+  state.focusSkillIds = params.focusSkillIds;
+
+  try {
+    // Get current team lead employee record
+    const currentUser = await withLimit(() => getDoc(doc(db, 'users', user.uid)));
+    if (!currentUser.exists()) throw new Error('User not found');
+
+    const employeeQuery = query(collection(db, 'employees'), where('userId', '==', user.uid));
+    const teamLeadResult = await withLimit(() => getDocs(employeeQuery));
+    if (teamLeadResult.empty) throw new Error('Team lead employee record not found');
+
+    state.currentTeamLeadId = teamLeadResult.docs[0].id;
+
+    await funInitializePage();
+  } catch (error) {
+    console.error('Initialization error:', error);
+    showToast('Failed to initialize page', 'error');
+    location.href = 'team_home.html';
+  }
+});
+
+// Main initialization function
+async function funInitializePage() {
+  try {
+    showLoader();
+
+    // Load employee data and validate team lead relationship
+    await funLoadEmployeeData();
+    
+    // Load supporting data
+    await Promise.all([
+      funLoadActiveCycle(),
+      funLoadSkillsData(),
+    ]);
+
+    await funSetupUI();
+    await funSwitchTab(state.activeTab);
+
+    hideLoader();
+  } catch (error) {
+    hideLoader();
+    console.error('Page initialization error:', error);
+    showToast('Failed to load page data', 'error');
+  }
+}
+
+// Employee data loading and validation
+async function funLoadEmployeeData() {
+  const employeeDoc = await withLimit(() => getDoc(doc(db, 'employees', state.employeeId)));
+  
+  if (!employeeDoc.exists()) {
+    throw new Error('Employee not found');
+  }
+
+  const employee = { id: employeeDoc.id, ...employeeDoc.data() };
+  
+  // Validate team lead relationship
+  if (employee.teamLeadId !== state.currentTeamLeadId) {
+    throw new Error('You are not authorized to manage this employee');
+  }
+
+  state.currentEmployee = employee;
+
+  // Load department info
+  let departmentName = 'N/A';
+  if (employee.departmentId) {
+    try {
+      const deptDoc = await withLimit(() => getDoc(doc(db, 'departments', employee.departmentId)));
+      if (deptDoc.exists()) {
+        departmentName = deptDoc.data().name || 'N/A';
+      }
+    } catch (error) {
+      console.warn('Failed to load department:', error);
+    }
+  }
+
+  // Update UI
+  document.getElementById('breadcrumb-employee-name').textContent = employee.name || 'Unknown Employee';
+  document.getElementById('employee-name').textContent = employee.name || 'Unknown Employee';
+  document.getElementById('employee-email').textContent = employee.email || 'N/A';
+  document.getElementById('employee-job-title').textContent = employee.jobTitle || 'N/A';
+  document.getElementById('employee-department').textContent = departmentName;
+  
+  const statusEl = document.getElementById('employee-status');
+  if (employee.status === 'active') {
+    statusEl.innerHTML = '<span class="inline-flex items-center gap-1 text-success"><span class="w-2 h-2 rounded-full bg-success"></span>Active</span>';
+  } else {
+    statusEl.innerHTML = '<span class="inline-flex items-center gap-1 text-error"><span class="w-2 h-2 rounded-full bg-error"></span>Inactive</span>';
+  }
+}
+
+// Load active cycle
+async function funLoadActiveCycle() {
+  try {
+    const cyclesQuery = query(
+      collection(db, 'assessmentCycles'),
+      where('status', '==', 'active'),
+      orderBy('startDate', 'desc'),
+      limit(1)
+    );
+    
+    const result = await withLimit(() => getDocs(cyclesQuery));
+    
+    if (!result.empty) {
+      state.activeCycle = { id: result.docs[0].id, ...result.docs[0].data() };
+      
+      const cycle = state.activeCycle;
+      const endDate = new Date(cycle.endDate);
+      const isEnding = endDate - new Date() < 7 * 24 * 60 * 60 * 1000; // 7 days
+      
+      document.getElementById('cycle-info').innerHTML = `
+        <span class="font-medium">${cycle.name}</span>
+        <span class="text-neutral-500">•</span>
+        <span class="text-xs">Ends ${formatDate(cycle.endDate)}</span>
+      `;
+      
+      const chip = document.getElementById('active-cycle-chip');
+      if (isEnding) {
+        chip.className = chip.className.replace('bg-neutral-100', 'bg-warning/10 border border-warning/20');
+      }
+    } else {
+      document.getElementById('cycle-info').textContent = 'No active cycle';
+      document.getElementById('active-cycle-chip').className += ' opacity-50';
+    }
+  } catch (error) {
+    console.error('Failed to load active cycle:', error);
+    document.getElementById('cycle-info').textContent = 'Failed to load cycle';
+  }
+}
+
+// Load skills related data
+async function funLoadSkillsData() {
+  try {
+    const [skillsResult, categoriesResult, criticalitiesResult] = await Promise.all([
+      withLimit(() => getDocs(collection(db, 'skills'))),
+      withLimit(() => getDocs(collection(db, 'skillCategories'))),
+      withLimit(() => getDocs(collection(db, 'skillCriticalities')))
+    ]);
+
+    state.skillsData.skills = skillsResult.docs.map(d => ({ id: d.id, ...d.data() }));
+    state.skillsData.categories = categoriesResult.docs.map(d => ({ id: d.id, ...d.data() }));
+    state.skillsData.criticalities = criticalitiesResult.docs.map(d => ({ id: d.id, ...d.data() }));
+
+    // Load benchmarks and mappings
+    await Promise.all([
+      funLoadBenchmarks(),
+      funLoadMappings()
+    ]);
+  } catch (error) {
+    console.error('Failed to load skills data:', error);
+    throw error;
+  }
+}
+
+// Load skill benchmarks
+async function funLoadBenchmarks() {
+  try {
+    const benchmarksResult = await withLimit(() => getDocs(collection(db, 'skillBenchmarkVersions')));
+    state.skillsData.benchmarks = benchmarksResult.docs.map(d => ({ id: d.id, ...d.data() }));
+  } catch (error) {
+    console.error('Failed to load benchmarks:', error);
+  }
+}
+
+// Load employee skill mappings
+async function funLoadMappings() {
+  try {
+    const mappingsQuery = query(
+      collection(db, 'employeeSkillMappings'),
+      where('employeeId', '==', state.employeeId)
+    );
+    
+    const result = await withLimit(() => getDocs(mappingsQuery));
+    state.skillsData.mappings = result.docs.map(d => ({ id: d.id, ...d.data() }));
+    
+    funFilterMappings();
+  } catch (error) {
+    console.error('Failed to load mappings:', error);
+  }
+}
+
+// Filter mappings based on current settings
+function funFilterMappings() {
+  const showInactive = document.getElementById('show-inactive')?.checked || false;
+  const searchTerm = document.getElementById('search-skills')?.value?.toLowerCase() || '';
+  const categoryFilter = document.getElementById('filter-category')?.value || '';
+  const criticalityFilter = document.getElementById('filter-criticality')?.value || '';
+
+  let filtered = state.skillsData.mappings.filter(mapping => {
+    if (!showInactive && mapping.status !== 'active') return false;
+    
+    const skill = state.skillsData.skills.find(s => s.id === mapping.skillId);
+    if (!skill) return false;
+
+    if (searchTerm && !skill.name?.toLowerCase().includes(searchTerm)) return false;
+    if (categoryFilter && skill.categoryId !== categoryFilter) return false;
+    if (criticalityFilter && skill.criticalityId !== criticalityFilter) return false;
+
+    return true;
+  });
+
+  state.skillsData.filteredMappings = filtered;
+}
+
+// UI Setup
+async function funSetupUI() {
+  // Initialize Lucide icons
+  lucide.createIcons();
+
+  // Setup tab switching
+  document.querySelectorAll('.tab-button').forEach(button => {
+    button.addEventListener('click', (e) => {
+      const tab = e.target.dataset.tab;
+      funSwitchTab(tab);
+    });
+  });
+
+  // Setup navigation
+  document.getElementById('btn-back-team-home')?.addEventListener('click', () => {
+    location.href = 'team_home.html';
+  });
+
+  document.getElementById('btn-view-team-dashboard')?.addEventListener('click', () => {
+    const params = new URLSearchParams();
+    if (state.cycleId) params.set('cycleId', state.cycleId);
+    params.set('preselectEmployeeId', state.employeeId);
+    location.href = 'team_dashboard.html?' + params.toString();
+  });
+
+  // Setup mapping tab
+  funSetupMappingTab();
+
+  // Setup assessments tab
+  funSetupAssessmentsTab();
+
+  // Setup insights tab  
+  funSetupInsightsTab();
+
+  // Setup modals
+  funSetupModals();
+}
+
+// Tab switching
+async function funSwitchTab(tabName) {
+  state.activeTab = tabName;
+
+  // Update tab buttons
+  document.querySelectorAll('.tab-button').forEach(button => {
+    if (button.dataset.tab === tabName) {
+      button.className = 'tab-button py-2 px-1 border-b-2 border-accent text-accent font-medium text-sm';
+    } else {
+      button.className = 'tab-button py-2 px-1 border-b-2 border-transparent text-neutral-500 hover:text-neutral-700 hover:border-neutral-300 font-medium text-sm transition-colors duration-150';
+    }
+  });
+
+  // Hide all content
+  document.querySelectorAll('.tab-content').forEach(content => {
+    content.classList.add('hidden');
+  });
+
+  // Show selected content
+  document.getElementById(`content-${tabName}`)?.classList.remove('hidden');
+
+  // Load tab-specific data
+  switch (tabName) {
+    case 'mapping':
+      await funLoadMappingContent();
+      break;
+    case 'assessments':
+      await funLoadAssessmentsContent();
+      break;
+    case 'insights':
+      await funLoadInsightsContent();
+      break;
+  }
+
+  // Update URL
+  const url = new URL(window.location);
+  url.searchParams.set('activeTab', tabName);
+  history.replaceState(null, '', url);
+}
+
+// Mapping Tab Setup and Functions
+function funSetupMappingTab() {
+  // Populate filter dropdowns
+  const categorySelect = document.getElementById('filter-category');
+  const criticalitySelect = document.getElementById('filter-criticality');
+
+  // Categories
+  categorySelect.innerHTML = '<option value="">All Categories</option>';
+  state.skillsData.categories.forEach(category => {
+    if (category.status === 'active') {
+      const option = document.createElement('option');
+      option.value = category.id;
+      option.textContent = category.name || 'Unnamed Category';
+      categorySelect.appendChild(option);
+    }
+  });
+
+  // Criticalities
+  criticalitySelect.innerHTML = '<option value="">All Criticalities</option>';
+  state.skillsData.criticalities.forEach(criticality => {
+    if (criticality.status === 'active') {
+      const option = document.createElement('option');
+      option.value = criticality.id;
+      option.textContent = criticality.name || 'Unnamed Criticality';
+      criticalitySelect.appendChild(option);
+    }
+  });
+
+  // Search and filter event listeners
+  const searchInput = document.getElementById('search-skills');
+  let searchTimeout;
+  searchInput.addEventListener('input', () => {
+    clearTimeout(searchTimeout);
+    searchTimeout = setTimeout(() => {
+      funFilterMappings();
+      funRenderSkillsTable();
+    }, 300);
+  });
+
+  categorySelect.addEventListener('change', () => {
+    funFilterMappings();
+    funRenderSkillsTable();
+  });
+
+  criticalitySelect.addEventListener('change', () => {
+    funFilterMappings();
+    funRenderSkillsTable();
+  });
+
+  document.getElementById('show-inactive').addEventListener('change', () => {
+    funFilterMappings();
+    funRenderSkillsTable();
+  });
+
+  // Add skills button
+  document.getElementById('btn-add-skills').addEventListener('click', () => {
+    funOpenAddSkillsModal();
+  });
+}
+
+async function funLoadMappingContent() {
+  await funLoadMappings();
+  funRenderSkillsTable();
+}
+
+function funRenderSkillsTable() {
+  const tbody = document.getElementById('skills-table-body');
+  
+  if (state.skillsData.filteredMappings.length === 0) {
+    tbody.innerHTML = `
+      <tr>
+        <td colspan="9" class="px-4 py-8 text-center text-neutral-500">
+          <div class="flex flex-col items-center gap-2">
+            <i data-lucide="search" class="w-8 h-8 text-neutral-400"></i>
+            <p>No skill mappings found</p>
+            <button onclick="funOpenAddSkillsModal()" class="text-accent hover:text-accent/80 text-sm">
+              Add skills from library
+            </button>
+          </div>
+        </td>
+      </tr>
+    `;
+    lucide.createIcons();
+    return;
+  }
+
+  tbody.innerHTML = state.skillsData.filteredMappings.map(mapping => {
+    const skill = state.skillsData.skills.find(s => s.id === mapping.skillId);
+    const category = state.skillsData.categories.find(c => c.id === skill?.categoryId);
+    const criticality = state.skillsData.criticalities.find(c => c.id === skill?.criticalityId);
+    const benchmark = funGetCurrentBenchmark(mapping.skillId);
+    const mappedBy = state.currentTeamLeadId === mapping.mappedByTeamLeadId ? 'You' : 'Another Team Lead';
+
+    const statusBadge = mapping.status === 'active' 
+      ? '<span class="inline-flex items-center gap-1 text-success text-xs"><span class="w-2 h-2 rounded-full bg-success"></span>Active</span>'
+      : '<span class="inline-flex items-center gap-1 text-neutral-500 text-xs"><span class="w-2 h-2 rounded-full bg-neutral-400"></span>Inactive</span>';
+
+    return `
+      <tr class="odd:bg-white even:bg-neutral-50">
+        <td class="px-4 py-3 text-neutral-700 font-medium">${skill?.name || 'Unknown Skill'}</td>
+        <td class="px-4 py-3 text-neutral-600">${category?.name || 'N/A'}</td>
+        <td class="px-4 py-3 text-neutral-600">${criticality?.name || 'N/A'}</td>
+        <td class="px-4 py-3 text-neutral-600">${criticality?.weight || 'N/A'}</td>
+        <td class="px-4 py-3 text-neutral-600">${benchmark?.score || 'N/A'}</td>
+        <td class="px-4 py-3">${statusBadge}</td>
+        <td class="px-4 py-3 text-neutral-600 text-xs">${formatDate(mapping.mappedAt)}</td>
+        <td class="px-4 py-3 text-neutral-600 text-xs">${mappedBy}</td>
+        <td class="px-4 py-3">
+          <div class="flex items-center gap-1">
+            <button onclick="funShowPerformanceHistory('${mapping.skillId}')" 
+              class="p-1 text-neutral-400 hover:text-accent focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 rounded-md" 
+              title="Performance History">
+              <i data-lucide="bar-chart" class="w-4 h-4"></i>
+            </button>
+            ${mapping.status === 'active' 
+              ? `<button onclick="funDeactivateMapping('${mapping.id}', '${skill?.name || 'Unknown'}')" 
+                  class="p-1 text-neutral-400 hover:text-error focus:outline-none focus:ring-2 focus:ring-error focus:ring-offset-2 rounded-md" 
+                  title="Deactivate">
+                  <i data-lucide="trash-2" class="w-4 h-4"></i>
+                </button>`
+              : `<button onclick="funReactivateMapping('${mapping.id}')" 
+                  class="p-1 text-neutral-400 hover:text-success focus:outline-none focus:ring-2 focus:ring-success focus:ring-offset-2 rounded-md" 
+                  title="Reactivate">
+                  <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
+                </button>`
+            }
+          </div>
+        </td>
+      </tr>
+    `;
+  }).join('');
+
+  lucide.createIcons();
+}
+
+function funGetCurrentBenchmark(skillId) {
+  const now = new Date().toISOString();
+  return state.skillsData.benchmarks
+    .filter(b => 
+      b.skillId === skillId && 
+      b.effectiveStartDate <= now && 
+      (!b.effectiveEndDate || b.effectiveEndDate >= now)
+    )
+    .sort((a, b) => new Date(b.effectiveStartDate) - new Date(a.effectiveStartDate))[0];
+}
+
+// Modal and Actions Setup
+function funSetupModals() {
+  // Add Skills Modal
+  document.getElementById('close-add-skills-modal')?.addEventListener('click', funCloseAddSkillsModal);
+  document.getElementById('cancel-add-skills')?.addEventListener('click', funCloseAddSkillsModal);
+  document.getElementById('save-add-skills')?.addEventListener('click', funSaveSelectedSkills);
+
+  // Performance History Modal
+  document.getElementById('close-performance-history-modal')?.addEventListener('click', funClosePerformanceHistoryModal);
+
+  // Deactivate Mapping Modal
+  document.getElementById('cancel-deactivate-mapping')?.addEventListener('click', funCloseDeactivateMappingModal);
+  document.getElementById('confirm-deactivate-mapping')?.addEventListener('click', funConfirmDeactivateMapping);
+
+  // Submit Assessment Modal
+  document.getElementById('cancel-submit-assessment')?.addEventListener('click', funCloseSubmitAssessmentModal);
+  document.getElementById('confirm-submit-assessment')?.addEventListener('click', funConfirmSubmitAssessment);
+
+  // Close modals on backdrop click
+  document.querySelectorAll('[id^="modal-"]').forEach(modal => {
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) {
+        modal.classList.add('hidden');
+      }
+    });
+  });
+}
+
+async function funOpenAddSkillsModal() {
+  const modal = document.getElementById('modal-add-skills');
+  const modalCategorySelect = document.getElementById('modal-filter-category');
+  const modalCriticalitySelect = document.getElementById('modal-filter-criticality');
+  const skillsList = document.getElementById('modal-skills-list');
+
+  // Populate filter dropdowns
+  modalCategorySelect.innerHTML = '<option value="">All Categories</option>';
+  state.skillsData.categories.forEach(category => {
+    if (category.status === 'active') {
+      const option = document.createElement('option');
+      option.value = category.id;
+      option.textContent = category.name || 'Unnamed Category';
+      modalCategorySelect.appendChild(option);
+    }
+  });
+
+  modalCriticalitySelect.innerHTML = '<option value="">All Criticalities</option>';
+  state.skillsData.criticalities.forEach(criticality => {
+    if (criticality.status === 'active') {
+      const option = document.createElement('option');
+      option.value = criticality.id;
+      option.textContent = criticality.name || 'Unnamed Criticality';
+      modalCriticalitySelect.appendChild(option);
+    }
+  });
+
+  // Render skills
+  funRenderModalSkillsList();
+
+  // Setup event listeners for modal search and filters
+  const modalSearchInput = document.getElementById('modal-search-skills');
+  let modalSearchTimeout;
+  modalSearchInput.addEventListener('input', () => {
+    clearTimeout(modalSearchTimeout);
+    modalSearchTimeout = setTimeout(funRenderModalSkillsList, 300);
+  });
+
+  modalCategorySelect.addEventListener('change', funRenderModalSkillsList);
+  modalCriticalitySelect.addEventListener('change', funRenderModalSkillsList);
+
+  // Setup select all checkbox
+  document.getElementById('select-all-skills').addEventListener('change', (e) => {
+    const checkboxes = skillsList.querySelectorAll('input[type="checkbox"]:not(:disabled)');
+    checkboxes.forEach(cb => cb.checked = e.target.checked);
+    funUpdateSelectedSkillsCount();
+  });
+
+  modal.classList.remove('hidden');
+  modalSearchInput.focus();
+}
+
+function funRenderModalSkillsList() {
+  const searchTerm = document.getElementById('modal-search-skills')?.value?.toLowerCase() || '';
+  const categoryFilter = document.getElementById('modal-filter-category')?.value || '';
+  const criticalityFilter = document.getElementById('modal-filter-criticality')?.value || '';
+  const skillsList = document.getElementById('modal-skills-list');
+
+  // Filter active skills not already mapped (or inactive)
+  const existingMappings = new Map(
+    state.skillsData.mappings.map(m => [m.skillId, m])
+  );
+
+  const filteredSkills = state.skillsData.skills.filter(skill => {
+    if (skill.status !== 'active') return false;
+    if (searchTerm && !skill.name?.toLowerCase().includes(searchTerm)) return false;
+    if (categoryFilter && skill.categoryId !== categoryFilter) return false;
+    if (criticalityFilter && skill.criticalityId !== criticalityFilter) return false;
+    return true;
+  });
+
+  if (filteredSkills.length === 0) {
+    skillsList.innerHTML = `
+      <tr>
+        <td colspan="6" class="px-4 py-8 text-center text-neutral-500">
+          <i data-lucide="search" class="w-8 h-8 mx-auto mb-2 text-neutral-400"></i>
+          <p>No skills found</p>
+        </td>
+      </tr>
+    `;
+    lucide.createIcons();
+    return;
+  }
+
+  skillsList.innerHTML = filteredSkills.map(skill => {
+    const category = state.skillsData.categories.find(c => c.id === skill.categoryId);
+    const criticality = state.skillsData.criticalities.find(c => c.id === skill.criticalityId);
+    const existingMapping = existingMappings.get(skill.id);
+
+    let checkboxHtml = '';
+    let statusBadge = '';
+
+    if (existingMapping) {
+      if (existingMapping.status === 'active') {
+        checkboxHtml = '<input type="checkbox" disabled class="rounded border-neutral-300 text-neutral-400 opacity-50" />';
+        statusBadge = '<span class="inline-flex items-center gap-1 text-success text-xs"><span class="w-2 h-2 rounded-full bg-success"></span>Mapped</span>';
+      } else {
+        checkboxHtml = `<input type="checkbox" data-skill-id="${skill.id}" data-action="reactivate" class="rounded border-neutral-300 text-accent focus:ring-accent focus:ring-offset-2" />`;
+        statusBadge = '<span class="inline-flex items-center gap-1 text-warning text-xs"><span class="w-2 h-2 rounded-full bg-warning"></span>Reactivate</span>';
+      }
+    } else {
+      checkboxHtml = `<input type="checkbox" data-skill-id="${skill.id}" data-action="add" class="rounded border-neutral-300 text-accent focus:ring-accent focus:ring-offset-2" />`;
+      statusBadge = '<span class="inline-flex items-center gap-1 text-accent text-xs"><span class="w-2 h-2 rounded-full bg-accent"></span>Available</span>';
+    }
+
+    return `
+      <tr class="odd:bg-white even:bg-neutral-50">
+        <td class="px-4 py-3">${checkboxHtml}</td>
+        <td class="px-4 py-3 text-neutral-700 font-medium">${skill.name || 'Unnamed Skill'}</td>
+        <td class="px-4 py-3 text-neutral-600">${category?.name || 'N/A'}</td>
+        <td class="px-4 py-3 text-neutral-600">${criticality?.name || 'N/A'}</td>
+        <td class="px-4 py-3 text-neutral-600">${criticality?.weight || 'N/A'}</td>
+        <td class="px-4 py-3">${statusBadge}</td>
+      </tr>
+    `;
+  }).join('');
+
+  // Setup checkbox event listeners
+  skillsList.querySelectorAll('input[type="checkbox"]:not(:disabled)').forEach(cb => {
+    cb.addEventListener('change', funUpdateSelectedSkillsCount);
+  });
+
+  funUpdateSelectedSkillsCount();
+  lucide.createIcons();
+}
+
+function funUpdateSelectedSkillsCount() {
+  const checkedBoxes = document.getElementById('modal-skills-list').querySelectorAll('input[type="checkbox"]:checked:not(:disabled)');
+  const count = checkedBoxes.length;
+  
+  document.getElementById('selected-skills-count').textContent = `${count} skill${count !== 1 ? 's' : ''} selected`;
+  document.getElementById('save-add-skills').disabled = count === 0;
+}
+
+async function funSaveSelectedSkills() {
+  const checkedBoxes = document.getElementById('modal-skills-list').querySelectorAll('input[type="checkbox"]:checked:not(:disabled)');
+  
+  if (checkedBoxes.length === 0) return;
+
+  try {
+    showLoader();
+    const batch = writeBatch(db);
+    const now = new Date().toISOString();
+
+    for (const checkbox of checkedBoxes) {
+      const skillId = checkbox.dataset.skillId;
+      const action = checkbox.dataset.action;
+
+      if (action === 'reactivate') {
+        // Update existing mapping
+        const existingMapping = state.skillsData.mappings.find(m => m.skillId === skillId);
+        if (existingMapping) {
+          const mappingRef = doc(db, 'employeeSkillMappings', existingMapping.id);
+          batch.update(mappingRef, {
+            status: 'active',
+            mappedAt: now,
+            mappedByTeamLeadId: state.currentTeamLeadId
+          });
+        }
+      } else {
+        // Create new mapping
+        const newMappingRef = doc(collection(db, 'employeeSkillMappings'));
+        batch.set(newMappingRef, {
+          employeeId: state.employeeId,
+          skillId: skillId,
+          mappedByTeamLeadId: state.currentTeamLeadId,
+          mappedAt: now,
+          status: 'active'
+        });
+      }
+    }
+
+    await batch.commit();
+    
+    // Refresh data
+    await funLoadMappings();
+    funRenderSkillsTable();
+    funCloseAddSkillsModal();
+    
+    showToast(`${checkedBoxes.length} skill${checkedBoxes.length !== 1 ? 's' : ''} successfully mapped`, 'success');
+    hideLoader();
+  } catch (error) {
+    hideLoader();
+    console.error('Error saving skills:', error);
+    showToast('Failed to save selected skills', 'error');
+  }
+}
+
+function funCloseAddSkillsModal() {
+  document.getElementById('modal-add-skills').classList.add('hidden');
+  // Clear search and selections
+  document.getElementById('modal-search-skills').value = '';
+  document.getElementById('modal-filter-category').value = '';
+  document.getElementById('modal-filter-criticality').value = '';
+  document.getElementById('select-all-skills').checked = false;
+}
+
+// Performance History Modal
+async function funShowPerformanceHistory(skillId) {
+  const modal = document.getElementById('modal-performance-history');
+  const skillNameEl = document.getElementById('history-skill-name');
+  const historyBody = document.getElementById('performance-history-body');
+
+  const skill = state.skillsData.skills.find(s => s.id === skillId);
+  skillNameEl.textContent = skill?.name || 'Unknown Skill';
+
+  historyBody.innerHTML = `
+    <tr>
+      <td colspan="8" class="px-4 py-8 text-center text-neutral-500">
+        <div class="flex items-center justify-center gap-2">
+          <div class="w-4 h-4 border-2 border-accent border-t-transparent rounded-full animate-spin"></div>
+          Loading assessment history...
+        </div>
+      </td>
+    </tr>
+  `;
+
+  modal.classList.remove('hidden');
+
+  try {
+    // Query assessments for this employee that contain this skill
+    const assessmentsQuery = query(
+      collection(db, 'assessments'),
+      where('employeeId', '==', state.employeeId),
+      orderBy('submittedAt', 'desc')
+    );
+    
+    const assessmentsResult = await withLimit(() => getDocs(assessmentsQuery));
+    
+    // Get cycles info for display
+    const cyclesMap = new Map();
+    if (!assessmentsResult.empty) {
+      const cycleIds = [...new Set(assessmentsResult.docs.map(d => d.data().cycleId))];
+      const cyclesResults = await Promise.all(
+        cycleIds.map(id => withLimit(() => getDoc(doc(db, 'assessmentCycles', id))))
+      );
+      cyclesResults.forEach(cycleDoc => {
+        if (cycleDoc.exists()) {
+          cyclesMap.set(cycleDoc.id, cycleDoc.data());
+        }
+      });
+    }
+
+    // Filter assessments that have this skill and build history
+    const history = [];
+    assessmentsResult.docs.forEach(assessmentDoc => {
+      const assessment = assessmentDoc.data();
+      const skillItem = assessment.items?.find(item => item.skillId === skillId);
+      
+      if (skillItem) {
+        const cycle = cyclesMap.get(assessment.cycleId);
+        history.push({
+          cycleName: cycle?.name || 'Unknown Cycle',
+          type: assessment.type || 'initial',
+          employeeScore: skillItem.employeeScore || 'N/A',
+          benchmarkScore: skillItem.benchmarkScoreUsed || 'N/A',
+          gap: skillItem.gap || 'N/A',
+          tni: skillItem.TNI ? 'YES' : 'NO',
+          criticalityWeight: skillItem.criticalityWeight || 'N/A',
+          submittedAt: assessment.submittedAt
+        });
+      }
+    });
+
+    if (history.length === 0) {
+      historyBody.innerHTML = `
+        <tr>
+          <td colspan="8" class="px-4 py-8 text-center text-neutral-500">
+            <i data-lucide="bar-chart" class="w-8 h-8 mx-auto mb-2 text-neutral-400"></i>
+            <p>No assessment history found for this skill</p>
+          </td>
+        </tr>
+      `;
+      lucide.createIcons();
+      return;
+    }
+
+    historyBody.innerHTML = history.map(item => {
+      const gapClass = item.gap > 2 ? 'text-error' : item.gap > 0 ? 'text-warning' : 'text-success';
+      const tniClass = item.tni === 'YES' ? 'text-error' : 'text-success';
+      
+      return `
+        <tr class="odd:bg-white even:bg-neutral-50">
+          <td class="px-4 py-3 text-neutral-700">${item.cycleName}</td>
+          <td class="px-4 py-3">
+            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs ${
+              item.type === 'reassessment' 
+                ? 'bg-info/10 text-info' 
+                : 'bg-neutral-100 text-neutral-700'
+            }">
+              ${item.type === 'reassessment' ? 'Reassessment' : 'Initial'}
+            </span>
+          </td>
+          <td class="px-4 py-3 text-neutral-700 font-medium">${item.employeeScore}</td>
+          <td class="px-4 py-3 text-neutral-600">${item.benchmarkScore}</td>
+          <td class="px-4 py-3 ${gapClass} font-medium">${item.gap}</td>
+          <td class="px-4 py-3 ${tniClass} font-medium">${item.tni}</td>
+          <td class="px-4 py-3 text-neutral-600">${item.criticalityWeight}</td>
+          <td class="px-4 py-3 text-neutral-600 text-xs">${formatDate(item.submittedAt)}</td>
+        </tr>
+      `;
+    }).join('');
+
+  } catch (error) {
+    console.error('Failed to load performance history:', error);
+    historyBody.innerHTML = `
+      <tr>
+        <td colspan="8" class="px-4 py-8 text-center text-error">
+          Failed to load performance history
+        </td>
+      </tr>
+    `;
+  }
+}
+
+function funClosePerformanceHistoryModal() {
+  document.getElementById('modal-performance-history').classList.add('hidden');
+}
+
+// Deactivate/Reactivate Mappings
+let pendingDeactivateMapping = null;
+
+function funDeactivateMapping(mappingId, skillName) {
+  pendingDeactivateMapping = mappingId;
+  document.getElementById('deactivate-skill-name').textContent = skillName;
+  document.getElementById('modal-deactivate-mapping').classList.remove('hidden');
+}
+
+async function funConfirmDeactivateMapping() {
+  if (!pendingDeactivateMapping) return;
+
+  try {
+    showLoader();
+    
+    const mappingRef = doc(db, 'employeeSkillMappings', pendingDeactivateMapping);
+    await updateDoc(mappingRef, {
+      status: 'inactive'
+    });
+
+    // Refresh data
+    await funLoadMappings();
+    funRenderSkillsTable();
+    funCloseDeactivateMappingModal();
+    
+    showToast('Skill mapping deactivated successfully', 'success');
+    hideLoader();
+  } catch (error) {
+    hideLoader();
+    console.error('Error deactivating mapping:', error);
+    showToast('Failed to deactivate skill mapping', 'error');
+  }
+}
+
+function funCloseDeactivateMappingModal() {
+  document.getElementById('modal-deactivate-mapping').classList.add('hidden');
+  pendingDeactivateMapping = null;
+}
+
+async function funReactivateMapping(mappingId) {
+  try {
+    showLoader();
+    
+    const now = new Date().toISOString();
+    const mappingRef = doc(db, 'employeeSkillMappings', mappingId);
+    await updateDoc(mappingRef, {
+      status: 'active',
+      mappedAt: now,
+      mappedByTeamLeadId: state.currentTeamLeadId
+    });
+
+    // Refresh data
+    await funLoadMappings();
+    funRenderSkillsTable();
+    
+    showToast('Skill mapping reactivated successfully', 'success');
+    hideLoader();
+  } catch (error) {
+    hideLoader();
+    console.error('Error reactivating mapping:', error);
+    showToast('Failed to reactivate skill mapping', 'error');
+  }
+}
+
+// Assessments Tab Functions
+function funSetupAssessmentsTab() {
+  // Setup event listeners for assessment actions
+  // These will be set up dynamically based on assessment status
+}
+
+async function funLoadAssessmentsContent() {
+  if (!state.activeCycle) {
+    document.getElementById('assessment-status-content').innerHTML = `
+      <p class="text-warning">No active assessment cycle. Assessment scoring is disabled.</p>
+    `;
+    document.getElementById('assessment-actions').innerHTML = '';
+    return;
+  }
+
+  try {
+    // Check for existing assessment in current cycle
+    const assessmentQuery = query(
+      collection(db, 'assessments'),
+      where('employeeId', '==', state.employeeId),
+      where('cycleId', '==', state.activeCycle.id),
+      where('type', '==', 'initial')
+    );
+    
+    const assessmentResult = await withLimit(() => getDocs(assessmentQuery));
+    
+    if (!assessmentResult.empty) {
+      // Assessment exists - show read-only summary
+      const assessment = { id: assessmentResult.docs[0].id, ...assessmentResult.docs[0].data() };
+      funShowAssessmentSummary(assessment);
+    } else {
+      // Check if employee has active skill mappings
+      const activeMappings = state.skillsData.mappings.filter(m => m.status === 'active');
+      
+      if (activeMappings.length === 0) {
+        document.getElementById('assessment-status-content').innerHTML = `
+          <p class="text-warning">No active skill mappings found. Please add skills to this employee before starting assessment.</p>
+        `;
+        document.getElementById('assessment-actions').innerHTML = `
+          <button onclick="funSwitchTab('mapping')" class="inline-flex items-center gap-2 bg-accent text-white rounded-md px-4 py-2 hover:bg-accent/90 focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2">
+            <i data-lucide="plus" class="w-4 h-4"></i>
+            Go to Mapping
+          </button>
+        `;
+      } else {
+        // Show pending assessment status
+        document.getElementById('assessment-status-content').innerHTML = `
+          <p class="text-accent">Initial assessment is pending for current cycle.</p>
+          <p class="text-sm text-neutral-600 mt-1">Ready to assess ${activeMappings.length} skill${activeMappings.length !== 1 ? 's' : ''}.</p>
+        `;
+        document.getElementById('assessment-actions').innerHTML = `
+          <button id="btn-start-assessment" class="inline-flex items-center gap-2 bg-accent text-white rounded-md px-4 py-2 hover:bg-accent/90 focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2">
+            <i data-lucide="play" class="w-4 h-4"></i>
+            Start Assessment
+          </button>
+        `;
+        
+        // Setup start assessment handler
+        document.getElementById('btn-start-assessment').addEventListener('click', funStartAssessment);
+      }
+    }
+
+    // Load reassessment tasks
+    await funLoadReassessmentTasks();
+    lucide.createIcons();
+  } catch (error) {
+    console.error('Failed to load assessment content:', error);
+    document.getElementById('assessment-status-content').innerHTML = `
+      <p class="text-error">Failed to load assessment status.</p>
+    `;
+  }
+}
+
+function funShowAssessmentSummary(assessment) {
+  document.getElementById('assessment-status-content').innerHTML = `
+    <div class="flex items-center gap-3">
+      <div class="w-8 h-8 bg-success/10 rounded-full flex items-center justify-center">
+        <i data-lucide="check" class="w-4 h-4 text-success"></i>
+      </div>
+      <div>
+        <p class="text-success font-medium">Assessment completed and locked</p>
+        <p class="text-sm text-neutral-600">Submitted on ${formatDate(assessment.submittedAt)} • ${assessment.items?.length || 0} skills assessed</p>
+      </div>
+    </div>
+  `;
+  
+  document.getElementById('assessment-actions').innerHTML = `
+    <button onclick="funViewAssessmentDetails('${assessment.id}')" class="inline-flex items-center gap-2 text-accent border border-accent rounded-md px-4 py-2 hover:bg-accent/5 focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2">
+      <i data-lucide="eye" class="w-4 h-4"></i>
+      View Details
+    </button>
+  `;
+}
+
+async function funStartAssessment() {
+  try {
+    showLoader();
+    
+    // Get active mappings and build assessment items
+    const activeMappings = state.skillsData.mappings.filter(m => m.status === 'active');
+    const assessmentItems = [];
+
+    // Get comment and TNI thresholds
+    let commentThreshold = 7;
+    let tniThreshold = 1;
+
+    if (state.activeCycle.commentThreshold) {
+      commentThreshold = state.activeCycle.commentThreshold;
+    } else {
+      // Get from org settings
+      const orgSettingsQuery = query(
+        collection(db, 'orgSettings'),
+        where('effectiveStartDate', '<=', new Date().toISOString()),
+        orderBy('effectiveStartDate', 'desc'),
+        limit(1)
+      );
+      const orgResult = await withLimit(() => getDocs(orgSettingsQuery));
+      if (!orgResult.empty) {
+        const settings = orgResult.docs[0].data();
+        commentThreshold = settings.mandatoryCommentThreshold || 7;
+        tniThreshold = settings.tniIgnoreThreshold || 1;
+      }
+    }
+
+    state.assessmentData.commentThreshold = commentThreshold;
+    state.assessmentData.tniThreshold = tniThreshold;
+
+    // Build assessment items
+    for (const mapping of activeMappings) {
+      const skill = state.skillsData.skills.find(s => s.id === mapping.skillId);
+      const category = state.skillsData.categories.find(c => c.id === skill?.categoryId);
+      const criticality = state.skillsData.criticalities.find(c => c.id === skill?.criticalityId);
+      const benchmark = funGetCurrentBenchmark(mapping.skillId);
+
+      assessmentItems.push({
+        skillId: mapping.skillId,
+        skillName: skill?.name || 'Unknown Skill',
+        categoryName: category?.name || 'N/A',
+        criticalityName: criticality?.name || 'N/A',
+        criticalityWeight: criticality?.weight || 1,
+        benchmarkScore: benchmark?.score || 5,
+        employeeScore: null,
+        comment: '',
+        gap: null,
+        TNI: false
+      });
+    }
+
+    state.assessmentData.items = assessmentItems;
+
+    // Hide current cycle panel and show assessment grid
+    document.getElementById('current-cycle-panel').style.display = 'none';
+    document.getElementById('assessment-grid-container').classList.remove('hidden');
+    
+    funRenderAssessmentGrid();
+    funSetupAssessmentHandlers();
+    
+    hideLoader();
+  } catch (error) {
+    hideLoader();
+    console.error('Failed to start assessment:', error);
+    showToast('Failed to start assessment', 'error');
+  }
+}
+
+function funRenderAssessmentGrid() {
+  const tbody = document.getElementById('assessment-grid-body');
+  
+  tbody.innerHTML = state.assessmentData.items.map((item, index) => {
+    const gap = item.employeeScore !== null ? item.benchmarkScore - item.employeeScore : null;
+    const tni = gap !== null && gap > state.assessmentData.tniThreshold;
+    const requiresComment = item.employeeScore !== null && item.employeeScore < state.assessmentData.commentThreshold;
+    
+    // Determine row color based on gap and criticality
+    let rowClass = 'odd:bg-white even:bg-neutral-50';
+    if (gap !== null) {
+      if (gap > state.assessmentData.tniThreshold && item.criticalityName?.toLowerCase().includes('high')) {
+        rowClass = 'bg-error/10';
+      } else if (gap > 0) {
+        rowClass = 'bg-warning/10';
+      } else {
+        rowClass = 'bg-success/10';
+      }
+    }
+
+    return `
+      <tr class="${rowClass}" data-item-index="${index}">
+        <td class="px-4 py-3 text-neutral-700 font-medium">${item.skillName}</td>
+        <td class="px-4 py-3 text-neutral-600">${item.categoryName}</td>
+        <td class="px-4 py-3 text-neutral-600">${item.criticalityName}</td>
+        <td class="px-4 py-3 text-neutral-600">${item.criticalityWeight}</td>
+        <td class="px-4 py-3 text-neutral-700 font-medium">${item.benchmarkScore}</td>
+        <td class="px-4 py-3">
+          <div class="flex items-center gap-2">
+            <button onclick="funChangeScore(${index}, -1)" class="w-8 h-8 bg-neutral-100 hover:bg-neutral-200 rounded-md flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2" ${item.employeeScore <= 1 ? 'disabled' : ''}>
+              <i data-lucide="minus" class="w-3 h-3"></i>
+            </button>
+            <input 
+              type="number" 
+              min="1" 
+              max="10" 
+              value="${item.employeeScore || ''}" 
+              onchange="funUpdateScore(${index}, this.value)"
+              class="w-16 px-2 py-1 border border-neutral-200 rounded text-center focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2"
+              placeholder="1-10"
+            />
+            <button onclick="funChangeScore(${index}, 1)" class="w-8 h-8 bg-neutral-100 hover:bg-neutral-200 rounded-md flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2" ${item.employeeScore >= 10 ? 'disabled' : ''}>
+              <i data-lucide="plus" class="w-3 h-3"></i>
+            </button>
+          </div>
+        </td>
+        <td class="px-4 py-3">
+          <div class="relative">
+            <textarea 
+              onchange="funUpdateComment(${index}, this.value)"
+              rows="2" 
+              placeholder="${requiresComment ? 'Comment required' : 'Optional comment'}"
+              class="w-full px-3 py-2 border ${requiresComment && !item.comment ? 'border-error' : 'border-neutral-200'} rounded text-sm focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 resize-none"
+            >${item.comment}</textarea>
+            ${requiresComment ? '<span class="absolute -top-1 -right-1 w-2 h-2 bg-error rounded-full"></span>' : ''}
+          </div>
+        </td>
+        <td class="px-4 py-3">
+          <span class="font-medium ${gap > 0 ? 'text-error' : gap < 0 ? 'text-success' : 'text-neutral-600'}">
+            ${gap !== null ? gap : '—'}
+          </span>
+        </td>
+        <td class="px-4 py-3">
+          <span class="font-medium ${tni ? 'text-error' : 'text-success'}">
+            ${item.employeeScore !== null ? (tni ? 'YES' : 'NO') : '—'}
+          </span>
+        </td>
+      </tr>
+    `;
+  }).join('');
+
+  lucide.createIcons();
+}
+
+function funSetupAssessmentHandlers() {
+  // Cancel assessment
+  document.getElementById('btn-cancel-assessment').addEventListener('click', () => {
+    if (confirm('Are you sure you want to cancel this assessment? All entered data will be lost.')) {
+      document.getElementById('current-cycle-panel').style.display = 'block';
+      document.getElementById('assessment-grid-container').classList.add('hidden');
+      state.assessmentData.items = [];
+    }
+  });
+
+  // Submit assessment
+  document.getElementById('btn-submit-assessment').addEventListener('click', () => {
+    if (funValidateAssessment()) {
+      funOpenSubmitAssessmentModal();
+    }
+  });
+}
+
+function funChangeScore(index, change) {
+  const item = state.assessmentData.items[index];
+  const currentScore = item.employeeScore || 5;
+  const newScore = Math.max(1, Math.min(10, currentScore + change));
+  funUpdateScore(index, newScore);
+}
+
+function funUpdateScore(index, value) {
+  const score = parseInt(value);
+  if (isNaN(score) || score < 1 || score > 10) return;
+
+  state.assessmentData.items[index].employeeScore = score;
+  state.assessmentData.items[index].gap = state.assessmentData.items[index].benchmarkScore - score;
+  state.assessmentData.items[index].TNI = state.assessmentData.items[index].gap > state.assessmentData.tniThreshold;
+
+  funRenderAssessmentGrid();
+  funUpdateSubmitButton();
+}
+
+function funUpdateComment(index, comment) {
+  state.assessmentData.items[index].comment = comment.trim();
+  funUpdateSubmitButton();
+}
+
+function funValidateAssessment() {
+  const items = state.assessmentData.items;
+  
+  // Check all items have scores
+  for (const item of items) {
+    if (item.employeeScore === null) {
+      showToast('Please provide scores for all skills', 'error');
+      return false;
+    }
+  }
+
+  // Check required comments
+  for (const item of items) {
+    const requiresComment = item.employeeScore < state.assessmentData.commentThreshold;
+    if (requiresComment && !item.comment) {
+      showToast(`Comment required for ${item.skillName} (score below ${state.assessmentData.commentThreshold})`, 'error');
+      return false;
+    }
+  }
+
+  return true;
+}
+
+function funUpdateSubmitButton() {
+  const isValid = funValidateAssessment();
+  document.getElementById('btn-submit-assessment').disabled = !isValid;
+}
+
+// Submit Assessment Modal
+function funOpenSubmitAssessmentModal() {
+  const totalSkills = state.assessmentData.items.length;
+  const skillsWithComments = state.assessmentData.items.filter(item => item.comment).length;
+  
+  document.getElementById('submit-total-skills').textContent = totalSkills;
+  document.getElementById('submit-skills-with-comments').textContent = skillsWithComments;
+  document.getElementById('submit-cycle-name').textContent = state.activeCycle?.name || 'Current Cycle';
+  
+  document.getElementById('modal-submit-assessment').classList.remove('hidden');
+}
+
+function funCloseSubmitAssessmentModal() {
+  document.getElementById('modal-submit-assessment').classList.add('hidden');
+}
+
+async function funConfirmSubmitAssessment() {
+  try {
+    showLoader();
+    
+    // Prepare assessment document
+    const assessmentData = {
+      cycleId: state.activeCycle.id,
+      employeeId: state.employeeId,
+      teamLeadId: state.currentTeamLeadId,
+      type: 'initial',
+      items: state.assessmentData.items.map(item => ({
+        skillId: item.skillId,
+        employeeScore: item.employeeScore,
+        comment: item.comment,
+        benchmarkScoreUsed: item.benchmarkScore,
+        criticalityWeight: item.criticalityWeight,
+        gap: item.gap,
+        TNI: item.TNI
+      })),
+      submittedAt: new Date().toISOString(),
+      locked: true,
+      status: 'submitted'
+    };
+
+    // Save assessment
+    const assessmentRef = doc(collection(db, 'assessments'));
+    await setDoc(assessmentRef, assessmentData);
+
+    funCloseSubmitAssessmentModal();
+    
+    // Refresh assessments content
+    await funLoadAssessmentsContent();
+    
+    showToast('Assessment submitted successfully', 'success');
+    hideLoader();
+  } catch (error) {
+    hideLoader();
+    console.error('Failed to submit assessment:', error);
+    showToast('Failed to submit assessment', 'error');
+  }
+}
+
+async function funLoadReassessmentTasks() {
+  try {
+    if (!state.activeCycle) return;
+
+    const now = new Date().toISOString();
+    const tasksQuery = query(
+      collection(db, 'reassessmentTasks'),
+      where('employeeId', '==', state.employeeId),
+      where('status', '==', 'pending'),
+      where('openDate', '<=', now)
+    );
+    
+    const tasksResult = await withLimit(() => getDocs(tasksQuery));
+    
+    if (tasksResult.empty) {
+      document.getElementById('reassessment-panel').classList.add('hidden');
+      return;
+    }
+
+    const tasks = tasksResult.docs.map(d => ({ id: d.id, ...d.data() }));
+    
+    // Filter tasks within due date if specified
+    const availableTasks = tasks.filter(task => {
+      return !task.dueDate || task.dueDate >= now;
+    });
+
+    if (availableTasks.length === 0) {
+      document.getElementById('reassessment-panel').classList.add('hidden');
+      return;
+    }
+
+    // Show reassessment panel
+    document.getElementById('reassessment-panel').classList.remove('hidden');
+    
+    const content = document.getElementById('reassessment-content');
+    content.innerHTML = `
+      <div class="bg-info/10 border border-info/20 rounded-md p-4 mb-4">
+        <div class="flex items-start gap-3">
+          <i data-lucide="refresh-cw" class="w-5 h-5 text-info mt-0.5"></i>
+          <div>
+            <h4 class="font-medium text-info">Reassessment Available</h4>
+            <p class="text-sm text-info/80 mt-1">
+              ${availableTasks.length} skill${availableTasks.length !== 1 ? 's' : ''} ready for reassessment after training.
+            </p>
+          </div>
+        </div>
+      </div>
+      <div class="space-y-3">
+        ${availableTasks.map(task => {
+          const skill = state.skillsData.skills.find(s => s.id === task.skillId);
+          return `
+            <div class="flex items-center justify-between p-3 border border-neutral-200 rounded-md">
+              <div>
+                <p class="font-medium text-neutral-700">${skill?.name || 'Unknown Skill'}</p>
+                <p class="text-sm text-neutral-600">
+                  Available since ${formatDate(task.openDate)}
+                  ${task.dueDate ? ` • Due ${formatDate(task.dueDate)}` : ''}
+                </p>
+              </div>
+              <button onclick="funStartReassessment('${task.id}')" 
+                class="inline-flex items-center gap-2 bg-info text-white rounded-md px-3 py-2 text-sm hover:bg-info/90 focus:outline-none focus:ring-2 focus:ring-info focus:ring-offset-2">
+                <i data-lucide="play" class="w-3 h-3"></i>
+                Start Reassessment
+              </button>
+            </div>
+          `;
+        }).join('')}
+      </div>
+    `;
+    
+    lucide.createIcons();
+  } catch (error) {
+    console.error('Failed to load reassessment tasks:', error);
+  }
+}
+
+async function funStartReassessment(taskId) {
+  showToast('Reassessment functionality will be implemented in next iteration', 'info');
+  // TODO: Implement reassessment workflow
+}
+
+async function funViewAssessmentDetails(assessmentId) {
+  showToast('Assessment details view will be implemented in next iteration', 'info');
+  // TODO: Implement assessment details modal
+}
+
+// Insights Tab Functions
+function funSetupInsightsTab() {
+  // Setup refresh buttons
+  document.getElementById('btn-refresh-gaps')?.addEventListener('click', () => funRefreshGaps());
+  document.getElementById('btn-refresh-trends')?.addEventListener('click', () => funRefreshTrends());
+  document.getElementById('btn-refresh-impact')?.addEventListener('click', () => funRefreshImpact());
+}
+
+async function funLoadInsightsContent() {
+  // Load insights data concurrently
+  await Promise.all([
+    funLoadTopGaps(),
+    funLoadScoreTrends(),
+    funLoadTrainingImpact()
+  ]);
+}
+
+async function funLoadTopGaps() {
+  if (!state.activeCycle) {
+    document.getElementById('gaps-content').innerHTML = `
+      <div class="text-center text-neutral-500 py-4">
+        <p class="text-sm">No active cycle for gap analysis</p>
+      </div>
+    `;
+    return;
+  }
+
+  try {
+    // Get latest assessment for current cycle
+    const assessmentQuery = query(
+      collection(db, 'assessments'),
+      where('employeeId', '==', state.employeeId),
+      where('cycleId', '==', state.activeCycle.id),
+      where('type', '==', 'initial'),
+      limit(1)
+    );
+    
+    const assessmentResult = await withLimit(() => getDocs(assessmentQuery));
+    
+    if (assessmentResult.empty) {
+      document.getElementById('gaps-content').innerHTML = `
+        <div class="text-center text-neutral-500 py-4">
+          <i data-lucide="trending-down" class="w-6 h-6 mx-auto mb-2 text-neutral-400"></i>
+          <p class="text-sm">No assessment data available</p>
+          <p class="text-xs text-neutral-400 mt-1">Complete initial assessment to view gaps</p>
+        </div>
+      `;
+      lucide.createIcons();
+      return;
+    }
+
+    const assessment = assessmentResult.docs[0].data();
+    const gaps = assessment.items
+      ?.filter(item => item.gap > 0)
+      .map(item => ({
+        skillName: state.skillsData.skills.find(s => s.id === item.skillId)?.name || 'Unknown',
+        gap: item.gap,
+        weightedGap: item.gap * item.criticalityWeight
+      }))
+      .sort((a, b) => b.weightedGap - a.weightedGap)
+      .slice(0, 3) || [];
+
+    if (gaps.length === 0) {
+      document.getElementById('gaps-content').innerHTML = `
+        <div class="text-center text-success py-4">
+          <i data-lucide="check-circle" class="w-6 h-6 mx-auto mb-2"></i>
+          <p class="text-sm">No significant gaps identified</p>
+          <p class="text-xs text-neutral-600 mt-1">All skills meet or exceed benchmarks</p>
+        </div>
+      `;
+      lucide.createIcons();
+      return;
+    }
+
+    document.getElementById('gaps-content').innerHTML = `
+      <div class="space-y-3">
+        ${gaps.map((gap, index) => `
+          <div class="flex justify-between items-center">
+            <div class="flex-1">
+              <p class="text-sm font-medium text-neutral-700 truncate">${gap.skillName}</p>
+              <p class="text-xs text-neutral-500">Weight: ${gap.weightedGap.toFixed(1)}</p>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="text-sm font-medium text-error">${gap.gap}</span>
+              <div class="w-2 h-2 rounded-full ${index === 0 ? 'bg-error' : index === 1 ? 'bg-warning' : 'bg-neutral-400'}"></div>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+    `;
+  } catch (error) {
+    console.error('Failed to load top gaps:', error);
+    document.getElementById('gaps-content').innerHTML = `
+      <div class="text-center text-error py-4">
+        <p class="text-sm">Failed to load gap data</p>
+      </div>
+    `;
+  }
+}
+
+async function funLoadScoreTrends() {
+  try {
+    // For now, show a placeholder chart
+    if (typeof echarts !== 'undefined') {
+      await yieldToFrame();
+      
+      const chartContainer = document.getElementById('trends-chart-container');
+      const chart = echarts.init(chartContainer);
+      
+      // Sample data - in real implementation, fetch from assessments
+      const option = {
+        grid: {
+          top: 20,
+          left: 40,
+          right: 20,
+          bottom: 40
+        },
+        xAxis: {
+          type: 'category',
+          data: ['Q1 2024', 'Q2 2024', 'Q3 2024', 'Q4 2024'],
+          axisLabel: { fontSize: 10 }
+        },
+        yAxis: {
+          type: 'value',
+          min: 0,
+          max: 10,
+          axisLabel: { fontSize: 10 }
+        },
+        series: [{
+          type: 'line',
+          data: [6.2, 6.8, 7.1, 7.4],
+          smooth: true,
+          lineStyle: { color: '#2563eb', width: 2 },
+          itemStyle: { color: '#2563eb' }
+        }],
+        tooltip: {
+          trigger: 'axis',
+          formatter: 'Average Score: {c}'
+        }
+      };
+      
+      chart.setOption(option);
+    } else {
+      document.getElementById('trends-chart-container').innerHTML = `
+        <div class="h-full flex items-center justify-center text-neutral-500">
+          <div class="text-center">
+            <i data-lucide="trending-up" class="w-8 h-8 mx-auto mb-2 text-neutral-400"></i>
+            <p class="text-sm">Chart library not available</p>
+          </div>
+        </div>
+      `;
+      lucide.createIcons();
+    }
+  } catch (error) {
+    console.error('Failed to load score trends:', error);
+  }
+}
+
+async function funLoadTrainingImpact() {
+  try {
+    // This would analyze training sessions and subsequent reassessments
+    // For now, show placeholder
+    document.getElementById('impact-content').innerHTML = `
+      <div class="space-y-3">
+        <div class="text-center text-neutral-500">
+          <i data-lucide="trending-up" class="w-6 h-6 mx-auto mb-2 text-neutral-400"></i>
+          <p class="text-sm">Training impact analysis</p>
+          <p class="text-xs text-neutral-400 mt-1">Available after training sessions and reassessments</p>
+        </div>
+      </div>
+    `;
+    lucide.createIcons();
+  } catch (error) {
+    console.error('Failed to load training impact:', error);
+  }
+}
+
+async function funRefreshGaps() {
+  const btn = document.getElementById('btn-refresh-gaps');
+  const icon = btn.querySelector('i');
+  icon.classList.add('animate-spin');
+  await funLoadTopGaps();
+  icon.classList.remove('animate-spin');
+}
+
+async function funRefreshTrends() {
+  const btn = document.getElementById('btn-refresh-trends');
+  const icon = btn.querySelector('i');
+  icon.classList.add('animate-spin');
+  await funLoadScoreTrends();
+  icon.classList.remove('animate-spin');
+}
+
+async function funRefreshImpact() {
+  const btn = document.getElementById('btn-refresh-impact');
+  const icon = btn.querySelector('i');
+  icon.classList.add('animate-spin');
+  await funLoadTrainingImpact();
+  icon.classList.remove('animate-spin');
+}
+
+// Global functions for onclick handlers
+window.funOpenAddSkillsModal = funOpenAddSkillsModal;
+window.funShowPerformanceHistory = funShowPerformanceHistory;
+window.funDeactivateMapping = funDeactivateMapping;
+window.funReactivateMapping = funReactivateMapping;
+window.funSwitchTab = funSwitchTab;
+window.funChangeScore = funChangeScore;
+window.funUpdateScore = funUpdateScore;
+window.funUpdateComment = funUpdateComment;
+window.funStartReassessment = funStartReassessment;
+window.funViewAssessmentDetails = funViewAssessmentDetails;
+
+// Initialize Lucide icons
+lucide.createIcons();
+</script>
+
+</body>
+</html>

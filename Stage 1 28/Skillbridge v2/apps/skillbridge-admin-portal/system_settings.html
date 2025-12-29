@@ -1,0 +1,1494 @@
+<html lang="en"><head>
+    <meta charset="UTF-8">
+    <title>SkillBridge Admin Portal</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Always add this import for data grid implementation - Important -->
+    <script src="https://tiramai-grid-lib.tiram.app/tiramai-grid.umd.js"></script>
+    <style type="text/tailwindcss">
+      @theme {
+        /* Brand Colors from SkillBridge Design System */
+        --color-primary: #1E40AF; /* Primary blue for navigation, CTAs */
+        --color-secondary: #059669; /* Success/progress green */
+        --color-accent: #F59E0B; /* Training/notification amber */
+        --color-surface: #FFFFFF; /* Cards, modals, form containers */
+        --color-background: #F8FAFC; /* Main background */
+        --color-border: #E2E8F0; /* Dividers, borders */
+        --color-error: #DC2626; /* Error states */
+
+        /* Layout Constants */
+        --header-height: 4rem; /* 64px header */
+        --sidebar-width: 16rem; /* 256px sidebar */
+
+        /* Typography Scale */
+        --text-xs: 12px;
+        --text-sm: 14px;
+        --text-base: 14px;
+        --text-lg: 16px;
+        --text-xl: 18px;
+        --text-2xl: 20px;
+        --text-3xl: 24px;
+        --text-4xl: 30px;
+        --text-5xl: 36px;
+        --text-6xl: 48px;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+      }
+      ::-webkit-scrollbar-track {
+        background: #f1f1f1;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+        border-radius: 4px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: #94a3b8;
+      }
+
+      .app-header {
+        height: var(--header-height, 4rem);
+      }
+      .app-sidebar {
+        top: var(--header-height, 4rem);
+        width: var(--sidebar-width, 16rem);
+        height: calc(100vh - var(--header-height, 4rem));
+        overflow-y: auto;
+        overflow-x: hidden;
+      }
+      .app-main {
+        margin-top: var(--header-height, 4rem);
+        min-height: calc(100vh - var(--header-height, 4rem));
+      }
+      @media (min-width: 768px) {
+        .app-main {
+          margin-left: var(--sidebar-width, 16rem);
+        }
+      }
+
+      body.sidebar-open {
+        overflow: hidden;
+      }
+
+      @media (max-width: 767px) {
+        .app-sidebar {
+          left: calc(-1 * var(--sidebar-width, 16rem));
+          transition: left 0.3s ease-in-out;
+        }
+        .app-sidebar.open {
+          left: 0;
+        }
+      }
+
+      .nav-link.active {
+        background: #1E40AF;
+        color: white;
+      }
+      .nav-link.active:hover {
+        background: #1E40AF;
+        opacity: 0.9;
+      }
+
+      .popover {
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(-8px);
+        transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out,
+          visibility 0.2s ease-in-out;
+      }
+      .popover.visible {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+      }
+
+      .sidebar-backdrop {
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+      }
+      .sidebar-backdrop.active {
+        opacity: 1;
+        visibility: visible;
+      }
+
+      button,
+      a {
+        font-size: 14px;
+      }
+    </style>
+  <title>System Settings - SkillBridge Admin Portal</title></head>
+  <body class="bg-slate-50 text-gray-800 overflow-x-hidden">
+    <header class="app-header fixed top-0 left-0 right-0 bg-white border-b border-slate-200 z-40">
+      <div class="h-full max-w-[1920px] mx-auto px-4 md:px-6 flex justify-between items-center">
+        <div class="flex items-center gap-3">
+          <button id="mobileMenuToggle" class="flex items-center justify-center w-10 h-10 rounded text-gray-500 hover:bg-gray-100 hover:text-gray-900 transition-all duration-200 cursor-pointer border-0 bg-transparent md:hidden focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-700 focus-visible:outline-offset-2" aria-label="Toggle navigation menu" aria-expanded="false">
+            <i data-lucide="menu" class="w-6 h-6"></i>
+          </button>
+
+          <div class="flex items-center gap-3">
+            <div class="w-8 h-8">
+              <svg viewBox="0 0 400 400" width="32" height="32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <g>
+                  <path d="M80 230 Q200 80 320 230" stroke="#1E40AF" stroke-width="26" fill="none" stroke-linecap="round"></path>
+                  <rect x="95" y="230" width="24" height="80" rx="8" fill="#059669"></rect>
+                  <rect x="281" y="230" width="24" height="80" rx="8" fill="#059669"></rect>
+                  <rect x="189" y="196" width="22" height="114" rx="7" fill="#1E40AF"></rect>
+                  <circle cx="130" cy="180" r="15" fill="#1E40AF"></circle>
+                  <circle cx="270" cy="180" r="15" fill="#1E40AF"></circle>
+                  <circle cx="200" cy="106" r="17" fill="#059669"></circle>
+                  <rect x="192" y="126" width="16" height="36" rx="6" fill="#059669"></rect>
+                </g>
+              </svg>
+            </div>
+            <h1 class="text-lg md:text-xl font-bold text-gray-900">
+              SkillBridge
+            </h1>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-2 md:gap-3">
+          <button id="userProfileButton" class="flex items-center gap-3 px-3 py-2 rounded-lg border border-transparent hover:bg-gray-50 hover:border-gray-200 transition-all duration-200 cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-700 focus-visible:outline-offset-2" aria-label="User profile menu" aria-expanded="false" aria-haspopup="true">
+            <div id="userAvatar" class="w-8 h-8 bg-blue-700 text-white rounded-full flex items-center justify-center text-sm font-semibold shrink-0"></div>
+            <div class="hidden sm:flex flex-col items-start max-w-[150px]">
+              <div id="userName" class="text-sm font-medium text-gray-900 truncate w-full"></div>
+            </div>
+            <i data-lucide="chevron-down" class="w-4 h-4 text-gray-500 hidden sm:block"></i>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <div id="userProfilePopover" class="popover fixed top-[4.5rem] right-4 md:right-6 w-72 bg-white border border-gray-200 rounded-lg shadow-xl z-50" role="dialog" aria-labelledby="popoverUserName" data-portal="body">
+      <div class="p-4">
+        <div class="flex items-center gap-3 pb-3 mb-3 border-b border-gray-100">
+          <div id="popoverUserAvatar" class="w-8 h-8 bg-blue-700 text-white rounded-full flex items-center justify-center text-sm font-semibold shrink-0"></div>
+          <div class="flex-1 min-w-0">
+            <div id="popoverUserName" class="font-semibold text-gray-900 truncate"></div>
+            <div id="popoverUserEmail" class="text-xs text-gray-500 truncate"></div>
+          </div>
+        </div>
+
+        <div class="space-y-1">
+          <button id="signOutButton" class="w-full flex items-center gap-3 px-3 py-2 text-sm font-medium text-red-600 hover:bg-red-50 rounded transition-all duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-700 focus-visible:outline-offset-2">
+            <i data-lucide="log-out" class="w-4 h-4"></i>
+            Sign Out
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div id="sidebarBackdrop" class="sidebar-backdrop fixed inset-0 bg-black/50 z-20 md:hidden" style="top: var(--header-height, 4rem)"></div>
+
+    <aside id="sidebar" class="app-sidebar fixed left-0 bg-white border-r border-slate-200 overflow-y-auto z-30">
+      <nav class="p-4" role="navigation" aria-label="Main navigation">
+        <div class="py-6 border-b border-gray-100 first:pt-0 last:border-b-0">
+          <div class="px-4 pb-2 text-xs font-semibold uppercase tracking-wider text-gray-400">
+            Dashboard
+          </div>
+          <div class="space-y-1">
+            <a href="dashboard.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline active" data-page="dashboard">
+              <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
+              <span>Admin Dashboard</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="py-6 border-b border-gray-100 last:border-b-0">
+          <div class="px-4 pb-2 text-xs font-semibold uppercase tracking-wider text-gray-400">
+            Organization Setup
+          </div>
+          <div class="space-y-1">
+            <a href="departments_list.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline" data-page="departments">
+              <i data-lucide="building" class="w-5 h-5"></i>
+              <span>Departments</span>
+            </a>
+            <a href="assessment_cycles_list.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline" data-page="assessment_cycles">
+              <i data-lucide="calendar" class="w-5 h-5"></i>
+              <span>Assessment Cycles</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="py-6 border-b border-gray-100 last:border-b-0">
+          <div class="px-4 pb-2 text-xs font-semibold uppercase tracking-wider text-gray-400">
+            Competency Framework
+          </div>
+          <div class="space-y-1">
+            <a href="skill_categories_list.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline" data-page="skill_categories">
+              <i data-lucide="folder" class="w-5 h-5"></i>
+              <span>Skill Categories</span>
+            </a>
+            <a href="skill_criticalities_list.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline" data-page="skill_criticalities">
+              <i data-lucide="alert-triangle" class="w-5 h-5"></i>
+              <span>Criticality Levels</span>
+            </a>
+            <a href="skills_list.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline" data-page="skills">
+              <i data-lucide="star" class="w-5 h-5"></i>
+              <span>Skills</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="py-6 border-b border-gray-100 last:border-b-0">
+          <div class="px-4 pb-2 text-xs font-semibold uppercase tracking-wider text-gray-400">
+            People Management
+          </div>
+          <div class="space-y-1">
+            <a href="employees_list.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline" data-page="employees">
+              <i data-lucide="users" class="w-5 h-5"></i>
+              <span>Employees</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="py-6 border-b border-gray-100 last:border-b-0">
+          <div class="px-4 pb-2 text-xs font-semibold uppercase tracking-wider text-gray-400">
+            Training
+          </div>
+          <div class="space-y-1">
+            <a href="training_sessions_list.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline" data-page="training_sessions">
+              <i data-lucide="graduation-cap" class="w-5 h-5"></i>
+              <span>Training Sessions</span>
+            </a>
+            <a href="trainers_list.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline" data-page="trainers">
+              <i data-lucide="user-check" class="w-5 h-5"></i>
+              <span>Trainers</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="py-6 border-b border-gray-100 last:border-b-0">
+          <div class="px-4 pb-2 text-xs font-semibold uppercase tracking-wider text-gray-400">
+            Disputes
+          </div>
+          <div class="space-y-1">
+            <a href="disputes_list.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline" data-page="disputes">
+              <i data-lucide="message-circle" class="w-5 h-5"></i>
+              <span>Disputes</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="py-6 border-b border-gray-100 last:border-b-0">
+          <div class="px-4 pb-2 text-xs font-semibold uppercase tracking-wider text-gray-400">
+            Analytics
+          </div>
+          <div class="space-y-1">
+            <a href="analytics_skill_gap_heatmap.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline" data-page="skill_gap_heatmap">
+              <i data-lucide="map" class="w-5 h-5"></i>
+              <span>Skill Gap Heatmap</span>
+            </a>
+            <a href="analytics_tni_dashboard.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline" data-page="tni_dashboard">
+              <i data-lucide="target" class="w-5 h-5"></i>
+              <span>TNI Dashboard</span>
+            </a>
+            <a href="analytics_training_forecast.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline" data-page="training_forecast">
+              <i data-lucide="trending-up" class="w-5 h-5"></i>
+              <span>Training Demand Forecast</span>
+            </a>
+            <a href="analytics_assessment_completion.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline" data-page="assessment_completion">
+              <i data-lucide="check-circle" class="w-5 h-5"></i>
+              <span>Assessment Completion</span>
+            </a>
+            <a href="analytics_dispute_metrics.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline" data-page="dispute_metrics">
+              <i data-lucide="bar-chart-3" class="w-5 h-5"></i>
+              <span>Dispute Metrics</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="py-6">
+          <div class="px-4 pb-2 text-xs font-semibold uppercase tracking-wider text-gray-400">
+            Settings
+          </div>
+          <div class="space-y-1">
+            <a href="system_settings.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline" data-page="system_settings">
+              <i data-lucide="settings" class="w-5 h-5"></i>
+              <span>System Settings</span>
+            </a>
+          </div>
+        </div>
+      </nav>
+    </aside>
+
+    <main class="app-main max-w-7xl mx-auto p-4 md:p-6 lg:p-8" id="pageContent" role="main"><nav class="flex items-center space-x-2 text-sm text-gray-600 mb-6" aria-label="Breadcrumb">
+  <a href="dashboard.html" class="hover:text-gray-900">Home</a>
+  <i data-lucide="chevron-right" class="w-4 h-4"></i>
+  <span class="text-gray-900 font-medium">System Settings</span>
+</nav>
+
+<!-- Page Title -->
+<h1 class="text-2xl font-bold text-gray-900 mb-6">System Settings</h1>
+
+<!-- Tab Navigation -->
+<div class="border-b border-gray-200 mb-6">
+  <nav class="-mb-px flex space-x-8" aria-label="Settings tabs">
+    <button id="generalTab" class="tab-button border-b-2 border-blue-700 text-blue-600 py-2 px-1 text-sm font-medium">
+      General Settings
+    </button>
+    <button id="dataManagementTab" class="tab-button border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 py-2 px-1 text-sm font-medium">
+      Data Management
+    </button>
+  </nav>
+</div>
+
+<!-- General Settings Tab Content -->
+<div id="generalSettingsContent" class="tab-content">
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    
+    <!-- TNI Configuration Section -->
+    <div class="bg-white rounded-lg border border-gray-200 p-6">
+      <div class="flex items-center mb-4">
+        <i data-lucide="target" class="w-5 h-5 text-blue-600 mr-3"></i>
+        <h3 class="text-lg font-semibold text-gray-900">TNI Configuration</h3>
+      </div>
+      <form id="tniConfigForm">
+        <div class="mb-4">
+          <label for="gapIgnoreThreshold" class="block text-sm font-medium text-gray-700 mb-2">
+            Gap Ignore Threshold
+          </label>
+          <input type="number" id="gapIgnoreThreshold" name="gapIgnoreThreshold" min="0" max="10" step="1" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+          <p class="text-xs text-gray-500 mt-1">Gaps at or below this value will not flag TNI</p>
+        </div>
+        <button type="submit" class="inline-flex items-center px-4 py-2 bg-blue-700 text-white text-sm font-medium rounded-lg hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+          <i data-lucide="save" class="w-4 h-4 mr-2"></i>
+          Save
+        </button>
+      </form>
+    </div>
+
+    <!-- Dispute Configuration Section -->
+    <div class="bg-white rounded-lg border border-gray-200 p-6">
+      <div class="flex items-center mb-4">
+        <i data-lucide="message-circle" class="w-5 h-5 text-blue-600 mr-3"></i>
+        <h3 class="text-lg font-semibold text-gray-900">Dispute Configuration</h3>
+      </div>
+      <form id="disputeConfigForm">
+        <div class="mb-4">
+          <label for="highDisputeRateThreshold" class="block text-sm font-medium text-gray-700 mb-2">
+            High Dispute Rate Threshold %
+          </label>
+          <input type="number" id="highDisputeRateThreshold" name="highDisputeRateThreshold" min="0" max="100" step="1" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+          <p class="text-xs text-gray-500 mt-1">Used in analytics for dispute rate reporting</p>
+        </div>
+        <button type="submit" class="inline-flex items-center px-4 py-2 bg-blue-700 text-white text-sm font-medium rounded-lg hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+          <i data-lucide="save" class="w-4 h-4 mr-2"></i>
+          Save
+        </button>
+      </form>
+    </div>
+
+    <!-- Display Preferences Section -->
+    <div class="bg-white rounded-lg border border-gray-200 p-6 lg:col-span-2">
+      <div class="flex items-center mb-4">
+        <i data-lucide="monitor" class="w-5 h-5 text-blue-600 mr-3"></i>
+        <h3 class="text-lg font-semibold text-gray-900">Display Preferences</h3>
+      </div>
+      <form id="displayPreferencesForm">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+          <div>
+            <label for="defaultPageSize" class="block text-sm font-medium text-gray-700 mb-2">
+              Default Page Size
+            </label>
+            <select id="defaultPageSize" name="defaultPageSize" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+              <option value="10">10</option>
+              <option value="25">25</option>
+              <option value="50">50</option>
+              <option value="100">100</option>
+            </select>
+          </div>
+          <div>
+            <label for="dateFormat" class="block text-sm font-medium text-gray-700 mb-2">
+              Date Format
+            </label>
+            <select id="dateFormat" name="dateFormat" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+              <option value="mm/dd/yyyy">MM/DD/YYYY</option>
+              <option value="dd/mm/yyyy">DD/MM/YYYY</option>
+              <option value="yyyy-mm-dd">YYYY-MM-DD</option>
+            </select>
+          </div>
+        </div>
+        <button type="submit" class="inline-flex items-center px-4 py-2 bg-blue-700 text-white text-sm font-medium rounded-lg hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+          <i data-lucide="save" class="w-4 h-4 mr-2"></i>
+          Save
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Data Management Tab Content -->
+<div id="dataManagementContent" class="tab-content hidden">
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    
+    <!-- Export Data Section -->
+    <div class="bg-white rounded-lg border border-gray-200 p-6">
+      <div class="flex items-center mb-4">
+        <i data-lucide="download" class="w-5 h-5 text-blue-600 mr-3"></i>
+        <h3 class="text-lg font-semibold text-gray-900">Export Data</h3>
+      </div>
+      
+      <div class="space-y-4">
+        <div>
+          <button id="exportAllDataBtn" class="w-full inline-flex items-center justify-center px-4 py-2 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2">
+            <i data-lucide="download" class="w-4 h-4 mr-2"></i>
+            Export All Data
+          </button>
+          <p class="text-xs text-gray-500 mt-1">Downloads complete Local Storage as JSON file</p>
+        </div>
+        
+        <div class="border-t border-gray-200 pt-4">
+          <h4 class="text-sm font-medium text-gray-700 mb-3">Export Selected Collections:</h4>
+          <div id="collectionCheckboxes" class="space-y-2 mb-4">
+            <!-- Checkboxes will be populated dynamically -->
+          </div>
+          <button id="exportSelectedBtn" class="w-full inline-flex items-center justify-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+            <i data-lucide="download" class="w-4 h-4 mr-2"></i>
+            Export Selected
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Import Data Section -->
+    <div class="bg-white rounded-lg border border-gray-200 p-6">
+      <div class="flex items-center mb-4">
+        <i data-lucide="upload" class="w-5 h-5 text-blue-600 mr-3"></i>
+        <h3 class="text-lg font-semibold text-gray-900">Import Data</h3>
+      </div>
+      
+      <div class="space-y-4">
+        <div>
+          <label for="importFile" class="block text-sm font-medium text-gray-700 mb-2">
+            Select JSON File
+          </label>
+          <input type="file" id="importFile" accept=".json" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
+        </div>
+        
+        <div class="space-y-2">
+          <button id="validateBtn" disabled="" class="w-full inline-flex items-center justify-center px-4 py-2 bg-amber-600 text-white text-sm font-medium rounded-lg hover:bg-amber-700 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed">
+            <i data-lucide="check-circle" class="w-4 h-4 mr-2"></i>
+            Validate
+          </button>
+          
+          <button id="importBtn" disabled="" class="w-full inline-flex items-center justify-center px-4 py-2 bg-red-600 text-white text-sm font-medium rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed">
+            <i data-lucide="upload" class="w-4 h-4 mr-2"></i>
+            Import
+          </button>
+        </div>
+        
+        <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
+          <div class="flex">
+            <i data-lucide="alert-triangle" class="w-4 h-4 text-yellow-600 mt-0.5 mr-2"></i>
+            <p class="text-xs text-yellow-700">
+              <strong>Warning:</strong> Importing will overwrite existing data
+            </p>
+          </div>
+        </div>
+        
+        <div id="validationResults" class="hidden">
+          <!-- Validation results will be populated here -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Data Reset Section (Danger Zone) -->
+    <div class="lg:col-span-2">
+      <div class="bg-white rounded-lg border-2 border-red-200 p-6">
+        <div class="flex items-center mb-4">
+          <i data-lucide="alert-triangle" class="w-5 h-5 text-red-600 mr-3"></i>
+          <h3 class="text-lg font-semibold text-red-900">Danger Zone</h3>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <h4 class="text-sm font-medium text-gray-900 mb-2">Reset Demo Data</h4>
+            <p class="text-xs text-gray-600 mb-3">Restore default sample data for development and testing</p>
+            <button id="resetDemoDataBtn" class="inline-flex items-center px-4 py-2 bg-amber-600 text-white text-sm font-medium rounded-lg hover:bg-amber-700 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2">
+              <i data-lucide="refresh-cw" class="w-4 h-4 mr-2"></i>
+              Reset Demo Data
+            </button>
+          </div>
+          
+          <div>
+            <h4 class="text-sm font-medium text-gray-900 mb-2">Clear All Data</h4>
+            <p class="text-xs text-gray-600 mb-3">Permanently delete ALL application data</p>
+            <button id="clearAllDataBtn" class="inline-flex items-center px-4 py-2 bg-red-600 text-white text-sm font-medium rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2">
+              <i data-lucide="trash-2" class="w-4 h-4 mr-2"></i>
+              Clear All Data
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Clear All Data Confirmation Modal -->
+<div id="clearAllDataModal" data-portal="body" class="fixed inset-0 z-50 hidden">
+  <div class="flex items-center justify-center min-h-screen p-4 bg-black/50">
+    <div class="bg-white rounded-xl shadow-xl w-[min(92vw,32rem)] max-h-[90vh] overflow-y-auto">
+      <div class="p-6">
+        <div class="flex items-center mb-4">
+          <i data-lucide="alert-triangle" class="w-6 h-6 text-red-600 mr-3"></i>
+          <h3 class="text-lg font-semibold text-gray-900">Clear All Data</h3>
+        </div>
+        
+        <div class="mb-6">
+          <p class="text-sm text-gray-700 mb-4">
+            <strong>WARNING:</strong> This will permanently delete ALL application data including employees, skills, assessments, and training records. This action cannot be undone.
+          </p>
+          <p class="text-sm text-gray-700 mb-4">
+            Type <strong>"DELETE"</strong> to confirm:
+          </p>
+          <input type="text" id="deleteConfirmationInput" placeholder="Type DELETE to confirm" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500">
+        </div>
+        
+        <div class="flex gap-3 justify-end">
+          <button id="cancelClearDataBtn" class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2">
+            Cancel
+          </button>
+          <button id="confirmClearDataBtn" disabled="" class="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed">
+            Clear All Data
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Import Validation Results Modal -->
+<div id="validationModal" data-portal="body" class="fixed inset-0 z-50 hidden">
+  <div class="flex items-center justify-center min-h-screen p-4 bg-black/50">
+    <div class="bg-white rounded-xl shadow-xl w-[min(92vw,48rem)] max-h-[90vh] overflow-y-auto">
+      <div class="p-6">
+        <div class="flex items-center mb-4">
+          <i data-lucide="check-circle" class="w-6 h-6 text-green-600 mr-3"></i>
+          <h3 class="text-lg font-semibold text-gray-900">Import Validation Results</h3>
+        </div>
+        
+        <div id="validationResultsContent" class="mb-6">
+          <!-- Validation results will be populated here -->
+        </div>
+        
+        <div class="flex gap-3 justify-end">
+          <button id="cancelImportBtn" class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2">
+            Cancel
+          </button>
+          <button id="proceedImportBtn" disabled="" class="px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed">
+            Proceed with Import
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Toast Container -->
+<div id="toastContainer" class="fixed top-4 right-4 z-50 space-y-2">
+  <!-- Toasts will be added here -->
+</div>
+
+</main>
+
+    <script src="app.js"></script>
+    <script src="app_data.js"></script>
+    <script id="container-script">
+      (function () {
+        const TemplateUtils = (window.TemplateUtils =
+          window.TemplateUtils || {});
+
+        TemplateUtils.UserUtils =
+          TemplateUtils.UserUtils ||
+          (function createUserUtils() {
+            return {
+              getCurrentUser() {
+                try {
+                  let currentUserId = localStorage.getItem("currentUserId");
+                  if (!currentUserId) {
+                    localStorage.setItem("currentUserId", "usr_001");
+                    currentUserId = "usr_001";
+                  }
+
+                  const users = JSON.parse(localStorage.getItem("users") || "[]");
+                  return users.find(user => user.id === currentUserId) || null;
+                } catch (error) {
+                  console.error("Error retrieving user data:", error);
+                  return null;
+                }
+              },
+              signOut() {
+                try {
+                  localStorage.removeItem("currentUserId");
+                  window.location.reload();
+                } catch (error) {
+                  console.error("Error signing out:", error);
+                }
+              },
+              getUserDisplayName(user) {
+                if (!user) return "Guest";
+                return user.firstName && user.lastName
+                  ? `${user.firstName} ${user.lastName}`
+                  : user.firstName || user.lastName || "User";
+              },
+              getUserInitials(user) {
+                if (!user) return "?";
+                const first = user.firstName?.charAt(0) || "";
+                const last = user.lastName?.charAt(0) || "";
+                return (first + last).toUpperCase() || "U";
+              },
+            };
+          })();
+
+        if (TemplateUtils.__bootstrapped) {
+          if (typeof window.lucide?.createIcons === "function") {
+            window.lucide.createIcons();
+          }
+          return;
+        }
+
+        TemplateUtils.__bootstrapped = true;
+
+        const state = {
+          popoverVisible: false,
+          sidebarOpen: false,
+          resizeTimer: null,
+          debounceTimer: null,
+          isUpdatingIcons: false,
+          observer: null,
+          refs: {},
+        };
+
+        function ready(fn) {
+          if (document.readyState === "loading") {
+            document.addEventListener("DOMContentLoaded", fn, { once: true });
+          } else if (typeof queueMicrotask === "function") {
+            queueMicrotask(fn);
+          } else {
+            Promise.resolve().then(fn);
+          }
+        }
+
+        function safeLucide(callback) {
+          if (typeof window.lucide?.createIcons === "function") {
+            callback();
+          }
+        }
+
+        function cacheRefs() {
+          state.refs = {
+            userProfileButton: document.getElementById("userProfileButton"),
+            userProfilePopover: document.getElementById("userProfilePopover"),
+            userAvatar: document.getElementById("userAvatar"),
+            userName: document.getElementById("userName"),
+            popoverUserAvatar: document.getElementById("popoverUserAvatar"),
+            popoverUserName: document.getElementById("popoverUserName"),
+            popoverUserEmail: document.getElementById("popoverUserEmail"),
+            signOutButton: document.getElementById("signOutButton"),
+            mobileMenuToggle: document.getElementById("mobileMenuToggle"),
+            sidebar: document.getElementById("sidebar"),
+            sidebarBackdrop: document.getElementById("sidebarBackdrop"),
+            navLinks: document.querySelectorAll(".nav-link"),
+            pageContent: document.getElementById("pageContent"),
+          };
+        }
+
+        function initializeUserProfile() {
+          const { userAvatar, userName } = state.refs;
+          if (!userAvatar || !userName) return;
+
+          const currentUser = TemplateUtils.UserUtils.getCurrentUser();
+          if (currentUser) {
+            userAvatar.textContent =
+              TemplateUtils.UserUtils.getUserInitials(currentUser);
+            userName.textContent =
+              TemplateUtils.UserUtils.getUserDisplayName(currentUser);
+          } else {
+            userAvatar.textContent = "?";
+            userName.textContent = "Guest";
+          }
+        }
+
+        function populatePopover() {
+          const currentUser = TemplateUtils.UserUtils.getCurrentUser();
+          const { popoverUserAvatar, popoverUserName, popoverUserEmail } =
+            state.refs;
+          if (!popoverUserAvatar || !popoverUserName || !popoverUserEmail)
+            return;
+
+          if (currentUser) {
+            popoverUserAvatar.textContent =
+              TemplateUtils.UserUtils.getUserInitials(currentUser);
+            popoverUserName.textContent =
+              TemplateUtils.UserUtils.getUserDisplayName(currentUser);
+            popoverUserEmail.textContent = currentUser.email || "No email";
+          } else {
+            popoverUserAvatar.textContent = "?";
+            popoverUserName.textContent = "Guest";
+            popoverUserEmail.textContent = "Not logged in";
+          }
+        }
+
+        function toggleUserPopover(forceClose = false) {
+          const { userProfilePopover, userProfileButton } = state.refs;
+          if (!userProfilePopover || !userProfileButton) return;
+
+          const shouldOpen = forceClose ? false : !state.popoverVisible;
+          if (shouldOpen) {
+            populatePopover();
+            userProfilePopover.classList.add("visible");
+            userProfileButton.setAttribute("aria-expanded", "true");
+            state.popoverVisible = true;
+            const firstButton = userProfilePopover.querySelector("button");
+            if (firstButton) {
+              setTimeout(() => firstButton.focus(), 50);
+            }
+          } else {
+            userProfilePopover.classList.remove("visible");
+            userProfileButton.setAttribute("aria-expanded", "false");
+            state.popoverVisible = false;
+          }
+        }
+
+        function hideUserPopover() {
+          if (state.popoverVisible) {
+            toggleUserPopover(true);
+          }
+        }
+
+        function toggleMobileSidebar(forceClose = false) {
+          const { sidebar, sidebarBackdrop, mobileMenuToggle } = state.refs;
+          if (!sidebar || !sidebarBackdrop || !mobileMenuToggle) return;
+
+          const shouldOpen = forceClose ? false : !state.sidebarOpen;
+          state.sidebarOpen = shouldOpen;
+
+          sidebar.classList.toggle("open", shouldOpen);
+          sidebarBackdrop.classList.toggle("active", shouldOpen);
+          document.body.classList.toggle("sidebar-open", shouldOpen);
+          mobileMenuToggle.setAttribute(
+            "aria-expanded",
+            shouldOpen ? "true" : "false"
+          );
+
+          const icon = mobileMenuToggle.querySelector("[data-lucide]");
+          if (icon) {
+            icon.setAttribute("data-lucide", shouldOpen ? "x" : "menu");
+            safeLucide(() => window.lucide.createIcons());
+          }
+        }
+
+        function closeMobileSidebar() {
+          if (state.sidebarOpen) {
+            toggleMobileSidebar(true);
+          }
+        }
+
+        function setActiveNavLink(pageId) {
+          if (!pageId) return;
+          const { navLinks } = state.refs;
+          navLinks?.forEach((link) => {
+            if (link.dataset.page === pageId) {
+              link.classList.add("active");
+            } else {
+              link.classList.remove("active");
+            }
+          });
+        }
+
+        TemplateUtils.setActiveNavLink = setActiveNavLink;
+        TemplateUtils.closeMobileSidebar = closeMobileSidebar;
+
+        function handleDocumentClick(event) {
+          const { userProfilePopover, userProfileButton } = state.refs;
+          if (
+            state.popoverVisible &&
+            userProfilePopover &&
+            userProfileButton &&
+            !userProfilePopover.contains(event.target) &&
+            !userProfileButton.contains(event.target)
+          ) {
+            hideUserPopover();
+          }
+        }
+
+        function handleKeydown(event) {
+          if (event.key !== "Escape") return;
+          if (state.popoverVisible) {
+            hideUserPopover();
+            state.refs.userProfileButton?.focus();
+          }
+          if (state.sidebarOpen) {
+            closeMobileSidebar();
+            state.refs.mobileMenuToggle?.focus();
+          }
+        }
+
+        function handleResize() {
+          clearTimeout(state.resizeTimer);
+          state.resizeTimer = setTimeout(() => {
+            if (window.innerWidth >= 768) {
+              closeMobileSidebar();
+            }
+          }, 200);
+        }
+
+        function bindEvents() {
+          const {
+            userProfileButton,
+            mobileMenuToggle,
+            sidebarBackdrop,
+            signOutButton,
+            navLinks,
+          } = state.refs;
+
+          userProfileButton?.addEventListener("click", (event) => {
+            event.stopPropagation();
+            toggleUserPopover();
+          });
+
+          mobileMenuToggle?.addEventListener("click", (event) => {
+            event.stopPropagation();
+            toggleMobileSidebar();
+          });
+
+          sidebarBackdrop?.addEventListener("click", () =>
+            closeMobileSidebar()
+          );
+
+          signOutButton?.addEventListener("click", () => {
+            if (confirm("Are you sure you want to sign out?")) {
+              TemplateUtils.UserUtils.signOut();
+            }
+          });
+
+          navLinks?.forEach((link) => {
+            link.addEventListener("click", () => closeMobileSidebar());
+          });
+
+          document.addEventListener("click", handleDocumentClick);
+          document.addEventListener("keydown", handleKeydown);
+          window.addEventListener("resize", handleResize);
+
+          window.addEventListener("pagehide", cleanup);
+        }
+
+        function cleanup() {
+          if (state.resizeTimer) clearTimeout(state.resizeTimer);
+          if (state.debounceTimer) clearTimeout(state.debounceTimer);
+          if (state.observer) {
+            state.observer.disconnect();
+            state.observer = null;
+          }
+          document.removeEventListener("click", handleDocumentClick);
+          document.removeEventListener("keydown", handleKeydown);
+          window.removeEventListener("resize", handleResize);
+        }
+
+        function initializePortalTargets() {
+          document.querySelectorAll('[data-portal="body"]').forEach((node) => {
+            if (node.parentElement !== document.body) {
+              document.body.appendChild(node);
+            }
+          });
+        }
+
+        function observePageContent() {
+          const { pageContent } = state.refs;
+          if (!pageContent || typeof MutationObserver !== "function") return;
+
+          const observer = new MutationObserver((mutations) => {
+            if (state.isUpdatingIcons) return;
+
+            const isLucideUpdate = mutations.every((m) => {
+              if (m.type !== "childList") return false;
+              const nodes = [...m.addedNodes, ...m.removedNodes];
+              return nodes.every(
+                (n) =>
+                  n.nodeType !== Node.ELEMENT_NODE ||
+                  n.nodeName.toLowerCase() === "svg" ||
+                  n.classList?.contains("lucide")
+              );
+            });
+            if (isLucideUpdate) return;
+
+            if (state.debounceTimer) clearTimeout(state.debounceTimer);
+            state.debounceTimer = setTimeout(() => {
+              state.debounceTimer = null;
+              state.isUpdatingIcons = true;
+              safeLucide(() => {
+                window.lucide.createIcons();
+                requestAnimationFrame(() => {
+                  state.isUpdatingIcons = false;
+                });
+              });
+            }, 100);
+          });
+
+          observer.observe(pageContent, { childList: true, subtree: true });
+          state.observer = observer;
+        }
+
+        function bootstrap() {
+          cacheRefs();
+          initializePortalTargets();
+          initializeUserProfile();
+          bindEvents();
+          safeLucide(() => window.lucide.createIcons());
+          observePageContent();
+        }
+
+        ready(bootstrap);
+      })();
+    </script>
+  
+
+<script>
+// Utility functions
+function getDataSafely(key) {
+  try {
+    const data = localStorage.getItem(key);
+    return data ? JSON.parse(data) : null;
+  } catch (error) {
+    console.error(`Error parsing ${key}:`, error);
+    return null;
+  }
+}
+
+function saveDataSafely(key, data) {
+  try {
+    localStorage.setItem(key, JSON.stringify(data));
+    return true;
+  } catch (error) {
+    console.error(`Error saving ${key}:`, error);
+    return false;
+  }
+}
+
+function showToast(message, type = 'success') {
+  const toastContainer = document.getElementById('toastContainer');
+  if (!toastContainer) return;
+  
+  const toast = document.createElement('div');
+  const bgColor = type === 'success' ? 'bg-green-600' : type === 'error' ? 'bg-red-600' : 'bg-blue-600';
+  
+  toast.className = `flex items-center p-4 text-white text-sm rounded-lg shadow-lg ${bgColor} transform translate-x-full transition-transform duration-300`;
+  toast.innerHTML = `
+    <i data-lucide="${type === 'success' ? 'check-circle' : type === 'error' ? 'x-circle' : 'info'}" class="w-4 h-4 mr-3"></i>
+    <span>${message}</span>
+  `;
+  
+  toastContainer.appendChild(toast);
+  
+  // Trigger animation
+  setTimeout(() => {
+    toast.classList.remove('translate-x-full');
+    if (typeof window.lucide?.createIcons === 'function') {
+      window.lucide.createIcons();
+    }
+  }, 100);
+  
+  // Remove toast after 3 seconds
+  setTimeout(() => {
+    toast.classList.add('translate-x-full');
+    setTimeout(() => toast.remove(), 300);
+  }, 3000);
+}
+
+function funGetSystemSettings() {
+  return getDataSafely('systemSettings') || {
+    gapIgnoreThreshold: 1,
+    highDisputeRateThreshold: 15,
+    defaultPageSize: 10,
+    dateFormat: 'mm/dd/yyyy'
+  };
+}
+
+function funSaveSystemSettings(settings) {
+  return saveDataSafely('systemSettings', settings);
+}
+
+// Tab management
+function funInitTabs() {
+  const generalTab = document.getElementById('generalTab');
+  const dataManagementTab = document.getElementById('dataManagementTab');
+  const generalContent = document.getElementById('generalSettingsContent');
+  const dataContent = document.getElementById('dataManagementContent');
+  
+  generalTab?.addEventListener('click', () => {
+    funSwitchTab('general', generalTab, dataManagementTab, generalContent, dataContent);
+  });
+  
+  dataManagementTab?.addEventListener('click', () => {
+    funSwitchTab('data', dataManagementTab, generalTab, dataContent, generalContent);
+  });
+}
+
+function funSwitchTab(tabType, activeTab, inactiveTab, activeContent, inactiveContent) {
+  // Update tab styling
+  activeTab.classList.remove('border-transparent', 'text-gray-500');
+  activeTab.classList.add('border-blue-700', 'text-blue-600');
+  
+  inactiveTab.classList.remove('border-blue-700', 'text-blue-600');
+  inactiveTab.classList.add('border-transparent', 'text-gray-500');
+  
+  // Update content visibility
+  activeContent.classList.remove('hidden');
+  inactiveContent.classList.add('hidden');
+}
+
+// Settings forms
+function funInitGeneralSettings() {
+  const settings = funGetSystemSettings();
+  
+  // Populate form fields
+  const gapThreshold = document.getElementById('gapIgnoreThreshold');
+  const disputeThreshold = document.getElementById('highDisputeRateThreshold');
+  const pageSize = document.getElementById('defaultPageSize');
+  const dateFormat = document.getElementById('dateFormat');
+  
+  if (gapThreshold) gapThreshold.value = settings.gapIgnoreThreshold;
+  if (disputeThreshold) disputeThreshold.value = settings.highDisputeRateThreshold;
+  if (pageSize) pageSize.value = settings.defaultPageSize;
+  if (dateFormat) dateFormat.value = settings.dateFormat;
+  
+  // Bind form submissions
+  document.getElementById('tniConfigForm')?.addEventListener('submit', funHandleTniConfigSave);
+  document.getElementById('disputeConfigForm')?.addEventListener('submit', funHandleDisputeConfigSave);
+  document.getElementById('displayPreferencesForm')?.addEventListener('submit', funHandleDisplayPreferencesSave);
+}
+
+function funHandleTniConfigSave(e) {
+  e.preventDefault();
+  const settings = funGetSystemSettings();
+  const gapThreshold = parseInt(document.getElementById('gapIgnoreThreshold').value);
+  
+  if (isNaN(gapThreshold) || gapThreshold < 0 || gapThreshold > 10) {
+    showToast('Please enter a valid threshold (0-10)', 'error');
+    return;
+  }
+  
+  settings.gapIgnoreThreshold = gapThreshold;
+  
+  if (funSaveSystemSettings(settings)) {
+    showToast('TNI Configuration saved successfully');
+  } else {
+    showToast('Failed to save TNI Configuration', 'error');
+  }
+}
+
+function funHandleDisputeConfigSave(e) {
+  e.preventDefault();
+  const settings = funGetSystemSettings();
+  const disputeThreshold = parseInt(document.getElementById('highDisputeRateThreshold').value);
+  
+  if (isNaN(disputeThreshold) || disputeThreshold < 0 || disputeThreshold > 100) {
+    showToast('Please enter a valid threshold (0-100)', 'error');
+    return;
+  }
+  
+  settings.highDisputeRateThreshold = disputeThreshold;
+  
+  if (funSaveSystemSettings(settings)) {
+    showToast('Dispute Configuration saved successfully');
+  } else {
+    showToast('Failed to save Dispute Configuration', 'error');
+  }
+}
+
+function funHandleDisplayPreferencesSave(e) {
+  e.preventDefault();
+  const settings = funGetSystemSettings();
+  const pageSize = parseInt(document.getElementById('defaultPageSize').value);
+  const dateFormat = document.getElementById('dateFormat').value;
+  
+  settings.defaultPageSize = pageSize;
+  settings.dateFormat = dateFormat;
+  
+  if (funSaveSystemSettings(settings)) {
+    showToast('Display Preferences saved successfully');
+  } else {
+    showToast('Failed to save Display Preferences', 'error');
+  }
+}
+
+// Data management
+function funInitDataManagement() {
+  funPopulateCollectionCheckboxes();
+  
+  // Bind export buttons
+  document.getElementById('exportAllDataBtn')?.addEventListener('click', funExportAllData);
+  document.getElementById('exportSelectedBtn')?.addEventListener('click', funExportSelectedData);
+  
+  // Bind import controls
+  document.getElementById('importFile')?.addEventListener('change', funHandleFileSelect);
+  document.getElementById('validateBtn')?.addEventListener('click', funValidateImportFile);
+  document.getElementById('importBtn')?.addEventListener('click', funShowValidationModal);
+  
+  // Bind reset buttons
+  document.getElementById('resetDemoDataBtn')?.addEventListener('click', funResetDemoData);
+  document.getElementById('clearAllDataBtn')?.addEventListener('click', funShowClearDataModal);
+}
+
+function funPopulateCollectionCheckboxes() {
+  const container = document.getElementById('collectionCheckboxes');
+  if (!container) return;
+  
+  const collections = [
+    'users', 'departments', 'skillCategories', 'skillCriticalities', 'skills',
+    'skillBenchmarks', 'assessmentCycles', 'skillMappings', 'assessments',
+    'disputes', 'trainingSessions', 'trainerEligibility', 'externalTrainers',
+    'trainingNeeds', 'trainingFeedback', 'systemSettings'
+  ];
+  
+  container.innerHTML = '';
+  
+  collections.forEach(collection => {
+    const data = getDataSafely(collection) || [];
+    const count = Array.isArray(data) ? data.length : (data ? 1 : 0);
+    
+    const checkbox = document.createElement('label');
+    checkbox.className = 'flex items-center text-sm';
+    checkbox.innerHTML = `
+      <input type="checkbox" value="${collection}" class="mr-3 rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+      <span class="flex-1">${collection}</span>
+      <span class="text-xs text-gray-500">(${count} records)</span>
+    `;
+    container.appendChild(checkbox);
+  });
+}
+
+function funExportAllData() {
+  try {
+    const allData = {};
+    const collections = [
+      'users', 'departments', 'skillCategories', 'skillCriticalities', 'skills',
+      'skillBenchmarks', 'assessmentCycles', 'skillMappings', 'assessments',
+      'disputes', 'trainingSessions', 'trainerEligibility', 'externalTrainers',
+      'trainingNeeds', 'trainingFeedback', 'systemSettings'
+    ];
+    
+    collections.forEach(collection => {
+      allData[collection] = getDataSafely(collection) || [];
+    });
+    
+    const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+    const filename = `skillbridge-data-export-${timestamp}.json`;
+    
+    funDownloadJSON(allData, filename);
+    showToast('All data exported successfully');
+  } catch (error) {
+    console.error('Export error:', error);
+    showToast('Failed to export data', 'error');
+  }
+}
+
+function funExportSelectedData() {
+  try {
+    const checkboxes = document.querySelectorAll('#collectionCheckboxes input[type="checkbox"]:checked');
+    if (checkboxes.length === 0) {
+      showToast('Please select at least one collection to export', 'error');
+      return;
+    }
+    
+    const selectedData = {};
+    checkboxes.forEach(checkbox => {
+      const collection = checkbox.value;
+      selectedData[collection] = getDataSafely(collection) || [];
+    });
+    
+    const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+    const filename = `skillbridge-selected-export-${timestamp}.json`;
+    
+    funDownloadJSON(selectedData, filename);
+    showToast(`Exported ${checkboxes.length} collections successfully`);
+  } catch (error) {
+    console.error('Export error:', error);
+    showToast('Failed to export selected data', 'error');
+  }
+}
+
+function funDownloadJSON(data, filename) {
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = filename;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(url);
+}
+
+// Import functionality
+let selectedFile = null;
+let validationResults = null;
+
+function funHandleFileSelect(e) {
+  selectedFile = e.target.files[0];
+  const validateBtn = document.getElementById('validateBtn');
+  if (validateBtn) {
+    validateBtn.disabled = !selectedFile;
+  }
+}
+
+function funValidateImportFile() {
+  if (!selectedFile) {
+    showToast('Please select a file first', 'error');
+    return;
+  }
+  
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      const data = JSON.parse(e.target.result);
+      validationResults = funValidateImportData(data);
+      funShowValidationModal();
+    } catch (error) {
+      showToast('Invalid JSON file', 'error');
+    }
+  };
+  reader.readAsText(selectedFile);
+}
+
+function funValidateImportData(data) {
+  const results = {
+    overall: 'valid',
+    collections: []
+  };
+  
+  const expectedCollections = [
+    'users', 'departments', 'skillCategories', 'skillCriticalities', 'skills',
+    'skillBenchmarks', 'assessmentCycles', 'skillMappings', 'assessments',
+    'disputes', 'trainingSessions', 'trainerEligibility', 'externalTrainers',
+    'trainingNeeds', 'trainingFeedback'
+  ];
+  
+  expectedCollections.forEach(collection => {
+    const collectionData = data[collection];
+    const result = {
+      name: collection,
+      count: 0,
+      status: 'missing',
+      errors: []
+    };
+    
+    if (collectionData) {
+      if (Array.isArray(collectionData)) {
+        result.count = collectionData.length;
+        result.status = 'valid';
+      } else if (typeof collectionData === 'object') {
+        result.count = 1;
+        result.status = 'valid';
+      } else {
+        result.status = 'invalid';
+        result.errors.push('Invalid data format');
+      }
+    }
+    
+    results.collections.push(result);
+  });
+  
+  const hasErrors = results.collections.some(c => c.status === 'invalid');
+  if (hasErrors) {
+    results.overall = 'invalid';
+  }
+  
+  return results;
+}
+
+function funShowValidationModal() {
+  if (!validationResults) return;
+  
+  const modal = document.getElementById('validationModal');
+  const content = document.getElementById('validationResultsContent');
+  const proceedBtn = document.getElementById('proceedImportBtn');
+  
+  if (!modal || !content || !proceedBtn) return;
+  
+  // Populate validation results
+  content.innerHTML = `
+    <div class="mb-4">
+      <div class="flex items-center mb-2">
+        <i data-lucide="${validationResults.overall === 'valid' ? 'check-circle' : 'x-circle'}" class="w-5 h-5 ${validationResults.overall === 'valid' ? 'text-green-600' : 'text-red-600'} mr-2"></i>
+        <span class="font-medium">Overall Status: ${validationResults.overall === 'valid' ? 'Valid' : 'Invalid'}</span>
+      </div>
+    </div>
+    
+    <div class="space-y-2 max-h-64 overflow-y-auto">
+      ${validationResults.collections.map(col => `
+        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+          <div class="flex items-center">
+            <i data-lucide="${col.status === 'valid' ? 'check-circle' : col.status === 'missing' ? 'minus-circle' : 'x-circle'}" class="w-4 h-4 ${col.status === 'valid' ? 'text-green-600' : col.status === 'missing' ? 'text-gray-400' : 'text-red-600'} mr-2"></i>
+            <span class="font-medium">${col.name}</span>
+          </div>
+          <div class="text-right">
+            <div class="text-sm text-gray-600">${col.count} records</div>
+            <div class="text-xs ${col.status === 'valid' ? 'text-green-600' : col.status === 'missing' ? 'text-gray-400' : 'text-red-600'}">${col.status}</div>
+            ${col.errors.length > 0 ? `<div class="text-xs text-red-600">${col.errors.join(', ')}</div>` : ''}
+          </div>
+        </div>
+      `).join('')}
+    </div>
+  `;
+  
+  proceedBtn.disabled = validationResults.overall !== 'valid';
+  modal.classList.remove('hidden');
+  
+  if (typeof window.lucide?.createIcons === 'function') {
+    window.lucide.createIcons();
+  }
+}
+
+function funPerformImport() {
+  if (!selectedFile || !validationResults || validationResults.overall !== 'valid') {
+    showToast('Cannot perform import - validation failed', 'error');
+    return;
+  }
+  
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      const data = JSON.parse(e.target.result);
+      
+      // Import data
+      Object.keys(data).forEach(collection => {
+        if (data[collection]) {
+          saveDataSafely(collection, data[collection]);
+        }
+      });
+      
+      showToast('Data imported successfully');
+      funHideValidationModal();
+      
+      // Refresh collection checkboxes
+      funPopulateCollectionCheckboxes();
+    } catch (error) {
+      console.error('Import error:', error);
+      showToast('Failed to import data', 'error');
+    }
+  };
+  reader.readAsText(selectedFile);
+}
+
+// Modal controls
+function funShowClearDataModal() {
+  const modal = document.getElementById('clearAllDataModal');
+  if (modal) {
+    modal.classList.remove('hidden');
+    document.getElementById('deleteConfirmationInput')?.focus();
+  }
+}
+
+function funHideClearDataModal() {
+  const modal = document.getElementById('clearAllDataModal');
+  const input = document.getElementById('deleteConfirmationInput');
+  if (modal) {
+    modal.classList.add('hidden');
+    if (input) input.value = '';
+  }
+  funUpdateClearDataButton();
+}
+
+function funHideValidationModal() {
+  const modal = document.getElementById('validationModal');
+  if (modal) {
+    modal.classList.add('hidden');
+  }
+  validationResults = null;
+}
+
+function funUpdateClearDataButton() {
+  const input = document.getElementById('deleteConfirmationInput');
+  const button = document.getElementById('confirmClearDataBtn');
+  if (input && button) {
+    button.disabled = input.value !== 'DELETE';
+  }
+}
+
+function funClearAllData() {
+  try {
+    const collections = [
+      'users', 'departments', 'skillCategories', 'skillCriticalities', 'skills',
+      'skillBenchmarks', 'assessmentCycles', 'skillMappings', 'assessments',
+      'disputes', 'trainingSessions', 'trainerEligibility', 'externalTrainers',
+      'trainingNeeds', 'trainingFeedback', 'systemSettings', 'appInitialized', 'appVersion'
+    ];
+    
+    collections.forEach(collection => {
+      localStorage.removeItem(collection);
+    });
+    
+    showToast('All data cleared successfully');
+    funHideClearDataModal();
+    funPopulateCollectionCheckboxes();
+  } catch (error) {
+    console.error('Clear data error:', error);
+    showToast('Failed to clear data', 'error');
+  }
+}
+
+function funResetDemoData() {
+  if (!confirm('Are you sure you want to reset all data to demo defaults? This will overwrite all current data.')) {
+    return;
+  }
+  
+  try {
+    // Clear existing data
+    localStorage.clear();
+    
+    // Reinitialize demo data
+    if (typeof AppData !== 'undefined' && AppData.init) {
+      AppData.init();
+      showToast('Demo data reset successfully');
+      funPopulateCollectionCheckboxes();
+    } else {
+      showToast('Demo data initialization not available', 'error');
+    }
+  } catch (error) {
+    console.error('Reset demo data error:', error);
+    showToast('Failed to reset demo data', 'error');
+  }
+}
+
+// Initialize page
+document.addEventListener('DOMContentLoaded', () => {
+  funInitTabs();
+  funInitGeneralSettings();
+  funInitDataManagement();
+  
+  // Modal event listeners
+  document.getElementById('cancelClearDataBtn')?.addEventListener('click', funHideClearDataModal);
+  document.getElementById('confirmClearDataBtn')?.addEventListener('click', funClearAllData);
+  document.getElementById('deleteConfirmationInput')?.addEventListener('input', funUpdateClearDataButton);
+  
+  document.getElementById('cancelImportBtn')?.addEventListener('click', funHideValidationModal);
+  document.getElementById('proceedImportBtn')?.addEventListener('click', funPerformImport);
+  
+  // Close modals on backdrop click
+  document.getElementById('clearAllDataModal')?.addEventListener('click', (e) => {
+    if (e.target.id === 'clearAllDataModal') {
+      funHideClearDataModal();
+    }
+  });
+  
+  document.getElementById('validationModal')?.addEventListener('click', (e) => {
+    if (e.target.id === 'validationModal') {
+      funHideValidationModal();
+    }
+  });
+  
+  // Set active navigation
+  if (typeof TemplateUtils?.setActiveNavLink === 'function') {
+    TemplateUtils.setActiveNavLink('system_settings');
+  }
+});
+</script></body></html>

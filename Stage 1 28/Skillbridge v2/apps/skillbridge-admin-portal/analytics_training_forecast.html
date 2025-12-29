@@ -1,0 +1,1475 @@
+<html lang="en"><head>
+    <meta charset="UTF-8">
+    <title>SkillBridge Admin Portal</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Always add this import for data grid implementation - Important -->
+    <script src="https://tiramai-grid-lib.tiram.app/tiramai-grid.umd.js"></script>
+    <style type="text/tailwindcss">
+      @theme {
+        /* Brand Colors from SkillBridge Design System */
+        --color-primary: #1E40AF; /* Primary blue for navigation, CTAs */
+        --color-secondary: #059669; /* Success/progress green */
+        --color-accent: #F59E0B; /* Training/notification amber */
+        --color-surface: #FFFFFF; /* Cards, modals, form containers */
+        --color-background: #F8FAFC; /* Main background */
+        --color-border: #E2E8F0; /* Dividers, borders */
+        --color-error: #DC2626; /* Error states */
+
+        /* Layout Constants */
+        --header-height: 4rem; /* 64px header */
+        --sidebar-width: 16rem; /* 256px sidebar */
+
+        /* Typography Scale */
+        --text-xs: 12px;
+        --text-sm: 14px;
+        --text-base: 14px;
+        --text-lg: 16px;
+        --text-xl: 18px;
+        --text-2xl: 20px;
+        --text-3xl: 24px;
+        --text-4xl: 30px;
+        --text-5xl: 36px;
+        --text-6xl: 48px;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+      }
+      ::-webkit-scrollbar-track {
+        background: #f1f1f1;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+        border-radius: 4px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: #94a3b8;
+      }
+
+      .app-header {
+        height: var(--header-height, 4rem);
+      }
+      .app-sidebar {
+        top: var(--header-height, 4rem);
+        width: var(--sidebar-width, 16rem);
+        height: calc(100vh - var(--header-height, 4rem));
+        overflow-y: auto;
+        overflow-x: hidden;
+      }
+      .app-main {
+        margin-top: var(--header-height, 4rem);
+        min-height: calc(100vh - var(--header-height, 4rem));
+      }
+      @media (min-width: 768px) {
+        .app-main {
+          margin-left: var(--sidebar-width, 16rem);
+        }
+      }
+
+      body.sidebar-open {
+        overflow: hidden;
+      }
+
+      @media (max-width: 767px) {
+        .app-sidebar {
+          left: calc(-1 * var(--sidebar-width, 16rem));
+          transition: left 0.3s ease-in-out;
+        }
+        .app-sidebar.open {
+          left: 0;
+        }
+      }
+
+      .nav-link.active {
+        background: #1E40AF;
+        color: white;
+      }
+      .nav-link.active:hover {
+        background: #1E40AF;
+        opacity: 0.9;
+      }
+
+      .popover {
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(-8px);
+        transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out,
+          visibility 0.2s ease-in-out;
+      }
+      .popover.visible {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+      }
+
+      .sidebar-backdrop {
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+      }
+      .sidebar-backdrop.active {
+        opacity: 1;
+        visibility: visible;
+      }
+
+      button,
+      a {
+        font-size: 14px;
+      }
+    </style>
+  <title>Training Demand Forecast - SkillBridge Admin Portal</title></head>
+  <body class="bg-slate-50 text-gray-800 overflow-x-hidden">
+    <header class="app-header fixed top-0 left-0 right-0 bg-white border-b border-slate-200 z-40">
+      <div class="h-full max-w-[1920px] mx-auto px-4 md:px-6 flex justify-between items-center">
+        <div class="flex items-center gap-3">
+          <button id="mobileMenuToggle" class="flex items-center justify-center w-10 h-10 rounded text-gray-500 hover:bg-gray-100 hover:text-gray-900 transition-all duration-200 cursor-pointer border-0 bg-transparent md:hidden focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-700 focus-visible:outline-offset-2" aria-label="Toggle navigation menu" aria-expanded="false">
+            <i data-lucide="menu" class="w-6 h-6"></i>
+          </button>
+
+          <div class="flex items-center gap-3">
+            <div class="w-8 h-8">
+              <svg viewBox="0 0 400 400" width="32" height="32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <g>
+                  <path d="M80 230 Q200 80 320 230" stroke="#1E40AF" stroke-width="26" fill="none" stroke-linecap="round"></path>
+                  <rect x="95" y="230" width="24" height="80" rx="8" fill="#059669"></rect>
+                  <rect x="281" y="230" width="24" height="80" rx="8" fill="#059669"></rect>
+                  <rect x="189" y="196" width="22" height="114" rx="7" fill="#1E40AF"></rect>
+                  <circle cx="130" cy="180" r="15" fill="#1E40AF"></circle>
+                  <circle cx="270" cy="180" r="15" fill="#1E40AF"></circle>
+                  <circle cx="200" cy="106" r="17" fill="#059669"></circle>
+                  <rect x="192" y="126" width="16" height="36" rx="6" fill="#059669"></rect>
+                </g>
+              </svg>
+            </div>
+            <h1 class="text-lg md:text-xl font-bold text-gray-900">
+              SkillBridge
+            </h1>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-2 md:gap-3">
+          <button id="userProfileButton" class="flex items-center gap-3 px-3 py-2 rounded-lg border border-transparent hover:bg-gray-50 hover:border-gray-200 transition-all duration-200 cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-700 focus-visible:outline-offset-2" aria-label="User profile menu" aria-expanded="false" aria-haspopup="true">
+            <div id="userAvatar" class="w-8 h-8 bg-blue-700 text-white rounded-full flex items-center justify-center text-sm font-semibold shrink-0"></div>
+            <div class="hidden sm:flex flex-col items-start max-w-[150px]">
+              <div id="userName" class="text-sm font-medium text-gray-900 truncate w-full"></div>
+            </div>
+            <i data-lucide="chevron-down" class="w-4 h-4 text-gray-500 hidden sm:block"></i>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <div id="userProfilePopover" class="popover fixed top-[4.5rem] right-4 md:right-6 w-72 bg-white border border-gray-200 rounded-lg shadow-xl z-50" role="dialog" aria-labelledby="popoverUserName" data-portal="body">
+      <div class="p-4">
+        <div class="flex items-center gap-3 pb-3 mb-3 border-b border-gray-100">
+          <div id="popoverUserAvatar" class="w-8 h-8 bg-blue-700 text-white rounded-full flex items-center justify-center text-sm font-semibold shrink-0"></div>
+          <div class="flex-1 min-w-0">
+            <div id="popoverUserName" class="font-semibold text-gray-900 truncate"></div>
+            <div id="popoverUserEmail" class="text-xs text-gray-500 truncate"></div>
+          </div>
+        </div>
+
+        <div class="space-y-1">
+          <button id="signOutButton" class="w-full flex items-center gap-3 px-3 py-2 text-sm font-medium text-red-600 hover:bg-red-50 rounded transition-all duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-700 focus-visible:outline-offset-2">
+            <i data-lucide="log-out" class="w-4 h-4"></i>
+            Sign Out
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div id="sidebarBackdrop" class="sidebar-backdrop fixed inset-0 bg-black/50 z-20 md:hidden" style="top: var(--header-height, 4rem)"></div>
+
+    <aside id="sidebar" class="app-sidebar fixed left-0 bg-white border-r border-slate-200 overflow-y-auto z-30">
+      <nav class="p-4" role="navigation" aria-label="Main navigation">
+        <div class="py-6 border-b border-gray-100 first:pt-0 last:border-b-0">
+          <div class="px-4 pb-2 text-xs font-semibold uppercase tracking-wider text-gray-400">
+            Dashboard
+          </div>
+          <div class="space-y-1">
+            <a href="dashboard.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline active" data-page="dashboard">
+              <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
+              <span>Admin Dashboard</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="py-6 border-b border-gray-100 last:border-b-0">
+          <div class="px-4 pb-2 text-xs font-semibold uppercase tracking-wider text-gray-400">
+            Organization Setup
+          </div>
+          <div class="space-y-1">
+            <a href="departments_list.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline" data-page="departments">
+              <i data-lucide="building" class="w-5 h-5"></i>
+              <span>Departments</span>
+            </a>
+            <a href="assessment_cycles_list.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline" data-page="assessment_cycles">
+              <i data-lucide="calendar" class="w-5 h-5"></i>
+              <span>Assessment Cycles</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="py-6 border-b border-gray-100 last:border-b-0">
+          <div class="px-4 pb-2 text-xs font-semibold uppercase tracking-wider text-gray-400">
+            Competency Framework
+          </div>
+          <div class="space-y-1">
+            <a href="skill_categories_list.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline" data-page="skill_categories">
+              <i data-lucide="folder" class="w-5 h-5"></i>
+              <span>Skill Categories</span>
+            </a>
+            <a href="skill_criticalities_list.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline" data-page="skill_criticalities">
+              <i data-lucide="alert-triangle" class="w-5 h-5"></i>
+              <span>Criticality Levels</span>
+            </a>
+            <a href="skills_list.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline" data-page="skills">
+              <i data-lucide="star" class="w-5 h-5"></i>
+              <span>Skills</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="py-6 border-b border-gray-100 last:border-b-0">
+          <div class="px-4 pb-2 text-xs font-semibold uppercase tracking-wider text-gray-400">
+            People Management
+          </div>
+          <div class="space-y-1">
+            <a href="employees_list.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline" data-page="employees">
+              <i data-lucide="users" class="w-5 h-5"></i>
+              <span>Employees</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="py-6 border-b border-gray-100 last:border-b-0">
+          <div class="px-4 pb-2 text-xs font-semibold uppercase tracking-wider text-gray-400">
+            Training
+          </div>
+          <div class="space-y-1">
+            <a href="training_sessions_list.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline" data-page="training_sessions">
+              <i data-lucide="graduation-cap" class="w-5 h-5"></i>
+              <span>Training Sessions</span>
+            </a>
+            <a href="trainers_list.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline" data-page="trainers">
+              <i data-lucide="user-check" class="w-5 h-5"></i>
+              <span>Trainers</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="py-6 border-b border-gray-100 last:border-b-0">
+          <div class="px-4 pb-2 text-xs font-semibold uppercase tracking-wider text-gray-400">
+            Disputes
+          </div>
+          <div class="space-y-1">
+            <a href="disputes_list.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline" data-page="disputes">
+              <i data-lucide="message-circle" class="w-5 h-5"></i>
+              <span>Disputes</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="py-6 border-b border-gray-100 last:border-b-0">
+          <div class="px-4 pb-2 text-xs font-semibold uppercase tracking-wider text-gray-400">
+            Analytics
+          </div>
+          <div class="space-y-1">
+            <a href="analytics_skill_gap_heatmap.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline" data-page="skill_gap_heatmap">
+              <i data-lucide="map" class="w-5 h-5"></i>
+              <span>Skill Gap Heatmap</span>
+            </a>
+            <a href="analytics_tni_dashboard.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline" data-page="tni_dashboard">
+              <i data-lucide="target" class="w-5 h-5"></i>
+              <span>TNI Dashboard</span>
+            </a>
+            <a href="analytics_training_forecast.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline" data-page="training_forecast">
+              <i data-lucide="trending-up" class="w-5 h-5"></i>
+              <span>Training Demand Forecast</span>
+            </a>
+            <a href="analytics_assessment_completion.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline" data-page="assessment_completion">
+              <i data-lucide="check-circle" class="w-5 h-5"></i>
+              <span>Assessment Completion</span>
+            </a>
+            <a href="analytics_dispute_metrics.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline" data-page="dispute_metrics">
+              <i data-lucide="bar-chart-3" class="w-5 h-5"></i>
+              <span>Dispute Metrics</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="py-6">
+          <div class="px-4 pb-2 text-xs font-semibold uppercase tracking-wider text-gray-400">
+            Settings
+          </div>
+          <div class="space-y-1">
+            <a href="system_settings.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline" data-page="system_settings">
+              <i data-lucide="settings" class="w-5 h-5"></i>
+              <span>System Settings</span>
+            </a>
+          </div>
+        </div>
+      </nav>
+    </aside>
+
+    <main class="app-main max-w-7xl mx-auto p-4 md:p-6 lg:p-8" id="pageContent" role="main"><nav class="flex items-center space-x-2 text-sm text-gray-600 mb-6" aria-label="Breadcrumb">
+  <a href="dashboard.html" class="hover:text-gray-900">Home</a>
+  <i data-lucide="chevron-right" class="w-4 h-4"></i>
+  <span class="text-gray-600">Analytics</span>
+  <i data-lucide="chevron-right" class="w-4 h-4"></i>
+  <span class="text-gray-900 font-medium">Training Demand Forecast</span>
+</nav>
+
+<!-- Page Header -->
+<div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
+  <h1 class="text-2xl font-bold text-gray-900">Training Demand Forecast</h1>
+  <div class="flex items-center gap-3">
+    <button onclick="funRefreshData()" class="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+      <i data-lucide="refresh-cw" class="w-4 h-4 mr-2"></i>
+      Refresh
+    </button>
+    <button onclick="funExportAnalytics()" class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-blue-700 border border-transparent rounded-lg hover:bg-blue-600 transition-colors">
+      <i data-lucide="download" class="w-4 h-4 mr-2"></i>
+      Export
+    </button>
+  </div>
+</div>
+
+<!-- Filter Bar -->
+<div class="bg-white p-4 rounded-lg shadow-sm border border-slate-200 mb-6">
+  <div class="flex flex-col sm:flex-row gap-4">
+    <div class="flex-1">
+      <label for="departmentFilter" class="block text-sm font-medium text-gray-700 mb-2">Department</label>
+      <select id="departmentFilter" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-700 focus:border-blue-700">
+        <option value="">All Departments</option>
+      </select>
+    </div>
+    <div class="flex-1">
+      <label for="criticalityFilter" class="block text-sm font-medium text-gray-700 mb-2">Criticality Level</label>
+      <select id="criticalityFilter" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-700 focus:border-blue-700">
+        <option value="">All Criticalities</option>
+      </select>
+    </div>
+    <div class="flex-1">
+      <label for="timeHorizonFilter" class="block text-sm font-medium text-gray-700 mb-2">Time Horizon</label>
+      <select id="timeHorizonFilter" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-700 focus:border-blue-700">
+        <option value="current">Current Unmet Demand</option>
+        <option value="upcoming">Upcoming Training Needs</option>
+        <option value="all">All Training Needs</option>
+      </select>
+    </div>
+  </div>
+</div>
+
+<!-- Main Analytics Widgets -->
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+  <!-- Widget 1: High Demand Skills -->
+  <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+    <div class="flex items-center justify-between mb-6">
+      <h2 class="text-lg font-semibold text-gray-900">High Demand Skills</h2>
+      <span class="text-sm text-gray-500">Top 10 Skills</span>
+    </div>
+    <div id="highDemandChart" class="h-80"></div>
+    <div id="highDemandEmpty" class="hidden text-center py-12">
+      <i data-lucide="bar-chart" class="w-12 h-12 mx-auto text-gray-400 mb-4"></i>
+      <h3 class="text-lg font-medium text-gray-900 mb-2">No Training Demands</h3>
+      <p class="text-gray-500">All employees are meeting skill benchmarks.</p>
+    </div>
+  </div>
+
+  <!-- Widget 2: Trainer Availability -->
+  <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+    <div class="flex items-center justify-between mb-6">
+      <h2 class="text-lg font-semibold text-gray-900">Trainer Availability</h2>
+      <span class="text-sm text-gray-500">Demand vs Capacity</span>
+    </div>
+    <div id="trainerAvailabilityGrid"></div>
+    <div id="trainerAvailabilityEmpty" class="hidden text-center py-12">
+      <i data-lucide="user-check" class="w-12 h-12 mx-auto text-gray-400 mb-4"></i>
+      <h3 class="text-lg font-medium text-gray-900 mb-2">No Data Available</h3>
+      <p class="text-gray-500">No training demands to analyze.</p>
+    </div>
+  </div>
+</div>
+
+<!-- Widget 3: Demand vs Capacity Gaps -->
+<div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 mb-8">
+  <div class="flex items-center justify-between mb-6">
+    <h2 class="text-lg font-semibold text-gray-900">Demand vs Capacity Gaps</h2>
+    <span class="text-sm text-gray-500">Critical Shortages</span>
+  </div>
+  <div id="capacityGapsList"></div>
+  <div id="capacityGapsEmpty" class="hidden text-center py-12">
+    <i data-lucide="alert-circle" class="w-12 h-12 mx-auto text-gray-400 mb-4"></i>
+    <h3 class="text-lg font-medium text-gray-900 mb-2">No Capacity Gaps</h3>
+    <p class="text-gray-500">Training capacity meets current demand.</p>
+  </div>
+</div>
+
+<!-- Recommendations Section -->
+<div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+  <div class="flex items-center mb-6">
+    <i data-lucide="lightbulb" class="w-6 h-6 text-amber-500 mr-3"></i>
+    <h2 class="text-lg font-semibold text-gray-900">AI Recommendations</h2>
+  </div>
+  <div id="recommendationsList" class="space-y-4"></div>
+  <div id="recommendationsEmpty" class="hidden text-center py-8">
+    <i data-lucide="check-circle" class="w-12 h-12 mx-auto text-green-600 mb-4"></i>
+    <h3 class="text-lg font-medium text-gray-900 mb-2">All Systems Optimal</h3>
+    <p class="text-gray-500">No immediate recommendations at this time.</p>
+  </div>
+</div>
+
+<!-- Employee List Modal -->
+<div id="employeeListModal" data-portal="body" class="fixed inset-0 z-50 hidden">
+  <div class="flex items-center justify-center min-h-screen p-4 bg-black/50">
+    <div class="bg-white rounded-xl shadow-xl w-[min(92vw,42rem)] max-h-[90vh] overflow-y-auto">
+      <div class="flex items-center justify-between p-6 border-b border-gray-200">
+        <h3 id="employeeModalTitle" class="text-lg font-semibold text-gray-900"></h3>
+        <button onclick="funCloseEmployeeModal()" class="p-2 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+      <div class="p-6">
+        <div id="employeeListGrid"></div>
+      </div>
+      <div class="flex justify-end gap-3 p-6 border-t border-gray-200">
+        <button onclick="funCloseEmployeeModal()" class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50">
+          Close
+        </button>
+        <button id="scheduleTrainingBtn" onclick="funScheduleTrainingForEmployees()" class="px-4 py-2 text-sm font-medium text-white bg-blue-700 rounded-lg hover:bg-blue-600">
+          Schedule Training for These
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Trainer List Modal -->
+<div id="trainerListModal" data-portal="body" class="fixed inset-0 z-50 hidden">
+  <div class="flex items-center justify-center min-h-screen p-4 bg-black/50">
+    <div class="bg-white rounded-xl shadow-xl w-[min(92vw,48rem)] max-h-[90vh] overflow-y-auto">
+      <div class="flex items-center justify-between p-6 border-b border-gray-200">
+        <h3 id="trainerModalTitle" class="text-lg font-semibold text-gray-900"></h3>
+        <button onclick="funCloseTrainerModal()" class="p-2 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+      <div class="p-6">
+        <!-- Trainer Tabs -->
+        <div class="flex border-b border-gray-200 mb-6">
+          <button onclick="funShowTrainerTab('internal')" id="internalTrainersTab" class="px-6 py-3 text-sm font-medium text-gray-500 border-b-2 border-transparent hover:text-blue-700 hover:border-blue-700 active">
+            Internal Trainers
+          </button>
+          <button onclick="funShowTrainerTab('external')" id="externalTrainersTab" class="px-6 py-3 text-sm font-medium text-gray-500 border-b-2 border-transparent hover:text-blue-700 hover:border-blue-700">
+            External Trainers
+          </button>
+        </div>
+        <div id="internalTrainersList" class="trainer-tab-content"></div>
+        <div id="externalTrainersList" class="trainer-tab-content hidden"></div>
+      </div>
+      <div class="flex justify-end p-6 border-t border-gray-200">
+        <button onclick="funCloseTrainerModal()" class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50">
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+</main>
+
+    <script src="app.js"></script>
+    <script src="app_data.js"></script>
+    <script id="container-script">
+      (function () {
+        const TemplateUtils = (window.TemplateUtils =
+          window.TemplateUtils || {});
+
+        TemplateUtils.UserUtils =
+          TemplateUtils.UserUtils ||
+          (function createUserUtils() {
+            return {
+              getCurrentUser() {
+                try {
+                  let currentUserId = localStorage.getItem("currentUserId");
+                  if (!currentUserId) {
+                    localStorage.setItem("currentUserId", "usr_001");
+                    currentUserId = "usr_001";
+                  }
+
+                  const users = JSON.parse(localStorage.getItem("users") || "[]");
+                  return users.find(user => user.id === currentUserId) || null;
+                } catch (error) {
+                  console.error("Error retrieving user data:", error);
+                  return null;
+                }
+              },
+              signOut() {
+                try {
+                  localStorage.removeItem("currentUserId");
+                  window.location.reload();
+                } catch (error) {
+                  console.error("Error signing out:", error);
+                }
+              },
+              getUserDisplayName(user) {
+                if (!user) return "Guest";
+                return user.firstName && user.lastName
+                  ? `${user.firstName} ${user.lastName}`
+                  : user.firstName || user.lastName || "User";
+              },
+              getUserInitials(user) {
+                if (!user) return "?";
+                const first = user.firstName?.charAt(0) || "";
+                const last = user.lastName?.charAt(0) || "";
+                return (first + last).toUpperCase() || "U";
+              },
+            };
+          })();
+
+        if (TemplateUtils.__bootstrapped) {
+          if (typeof window.lucide?.createIcons === "function") {
+            window.lucide.createIcons();
+          }
+          return;
+        }
+
+        TemplateUtils.__bootstrapped = true;
+
+        const state = {
+          popoverVisible: false,
+          sidebarOpen: false,
+          resizeTimer: null,
+          debounceTimer: null,
+          isUpdatingIcons: false,
+          observer: null,
+          refs: {},
+        };
+
+        function ready(fn) {
+          if (document.readyState === "loading") {
+            document.addEventListener("DOMContentLoaded", fn, { once: true });
+          } else if (typeof queueMicrotask === "function") {
+            queueMicrotask(fn);
+          } else {
+            Promise.resolve().then(fn);
+          }
+        }
+
+        function safeLucide(callback) {
+          if (typeof window.lucide?.createIcons === "function") {
+            callback();
+          }
+        }
+
+        function cacheRefs() {
+          state.refs = {
+            userProfileButton: document.getElementById("userProfileButton"),
+            userProfilePopover: document.getElementById("userProfilePopover"),
+            userAvatar: document.getElementById("userAvatar"),
+            userName: document.getElementById("userName"),
+            popoverUserAvatar: document.getElementById("popoverUserAvatar"),
+            popoverUserName: document.getElementById("popoverUserName"),
+            popoverUserEmail: document.getElementById("popoverUserEmail"),
+            signOutButton: document.getElementById("signOutButton"),
+            mobileMenuToggle: document.getElementById("mobileMenuToggle"),
+            sidebar: document.getElementById("sidebar"),
+            sidebarBackdrop: document.getElementById("sidebarBackdrop"),
+            navLinks: document.querySelectorAll(".nav-link"),
+            pageContent: document.getElementById("pageContent"),
+          };
+        }
+
+        function initializeUserProfile() {
+          const { userAvatar, userName } = state.refs;
+          if (!userAvatar || !userName) return;
+
+          const currentUser = TemplateUtils.UserUtils.getCurrentUser();
+          if (currentUser) {
+            userAvatar.textContent =
+              TemplateUtils.UserUtils.getUserInitials(currentUser);
+            userName.textContent =
+              TemplateUtils.UserUtils.getUserDisplayName(currentUser);
+          } else {
+            userAvatar.textContent = "?";
+            userName.textContent = "Guest";
+          }
+        }
+
+        function populatePopover() {
+          const currentUser = TemplateUtils.UserUtils.getCurrentUser();
+          const { popoverUserAvatar, popoverUserName, popoverUserEmail } =
+            state.refs;
+          if (!popoverUserAvatar || !popoverUserName || !popoverUserEmail)
+            return;
+
+          if (currentUser) {
+            popoverUserAvatar.textContent =
+              TemplateUtils.UserUtils.getUserInitials(currentUser);
+            popoverUserName.textContent =
+              TemplateUtils.UserUtils.getUserDisplayName(currentUser);
+            popoverUserEmail.textContent = currentUser.email || "No email";
+          } else {
+            popoverUserAvatar.textContent = "?";
+            popoverUserName.textContent = "Guest";
+            popoverUserEmail.textContent = "Not logged in";
+          }
+        }
+
+        function toggleUserPopover(forceClose = false) {
+          const { userProfilePopover, userProfileButton } = state.refs;
+          if (!userProfilePopover || !userProfileButton) return;
+
+          const shouldOpen = forceClose ? false : !state.popoverVisible;
+          if (shouldOpen) {
+            populatePopover();
+            userProfilePopover.classList.add("visible");
+            userProfileButton.setAttribute("aria-expanded", "true");
+            state.popoverVisible = true;
+            const firstButton = userProfilePopover.querySelector("button");
+            if (firstButton) {
+              setTimeout(() => firstButton.focus(), 50);
+            }
+          } else {
+            userProfilePopover.classList.remove("visible");
+            userProfileButton.setAttribute("aria-expanded", "false");
+            state.popoverVisible = false;
+          }
+        }
+
+        function hideUserPopover() {
+          if (state.popoverVisible) {
+            toggleUserPopover(true);
+          }
+        }
+
+        function toggleMobileSidebar(forceClose = false) {
+          const { sidebar, sidebarBackdrop, mobileMenuToggle } = state.refs;
+          if (!sidebar || !sidebarBackdrop || !mobileMenuToggle) return;
+
+          const shouldOpen = forceClose ? false : !state.sidebarOpen;
+          state.sidebarOpen = shouldOpen;
+
+          sidebar.classList.toggle("open", shouldOpen);
+          sidebarBackdrop.classList.toggle("active", shouldOpen);
+          document.body.classList.toggle("sidebar-open", shouldOpen);
+          mobileMenuToggle.setAttribute(
+            "aria-expanded",
+            shouldOpen ? "true" : "false"
+          );
+
+          const icon = mobileMenuToggle.querySelector("[data-lucide]");
+          if (icon) {
+            icon.setAttribute("data-lucide", shouldOpen ? "x" : "menu");
+            safeLucide(() => window.lucide.createIcons());
+          }
+        }
+
+        function closeMobileSidebar() {
+          if (state.sidebarOpen) {
+            toggleMobileSidebar(true);
+          }
+        }
+
+        function setActiveNavLink(pageId) {
+          if (!pageId) return;
+          const { navLinks } = state.refs;
+          navLinks?.forEach((link) => {
+            if (link.dataset.page === pageId) {
+              link.classList.add("active");
+            } else {
+              link.classList.remove("active");
+            }
+          });
+        }
+
+        TemplateUtils.setActiveNavLink = setActiveNavLink;
+        TemplateUtils.closeMobileSidebar = closeMobileSidebar;
+
+        function handleDocumentClick(event) {
+          const { userProfilePopover, userProfileButton } = state.refs;
+          if (
+            state.popoverVisible &&
+            userProfilePopover &&
+            userProfileButton &&
+            !userProfilePopover.contains(event.target) &&
+            !userProfileButton.contains(event.target)
+          ) {
+            hideUserPopover();
+          }
+        }
+
+        function handleKeydown(event) {
+          if (event.key !== "Escape") return;
+          if (state.popoverVisible) {
+            hideUserPopover();
+            state.refs.userProfileButton?.focus();
+          }
+          if (state.sidebarOpen) {
+            closeMobileSidebar();
+            state.refs.mobileMenuToggle?.focus();
+          }
+        }
+
+        function handleResize() {
+          clearTimeout(state.resizeTimer);
+          state.resizeTimer = setTimeout(() => {
+            if (window.innerWidth >= 768) {
+              closeMobileSidebar();
+            }
+          }, 200);
+        }
+
+        function bindEvents() {
+          const {
+            userProfileButton,
+            mobileMenuToggle,
+            sidebarBackdrop,
+            signOutButton,
+            navLinks,
+          } = state.refs;
+
+          userProfileButton?.addEventListener("click", (event) => {
+            event.stopPropagation();
+            toggleUserPopover();
+          });
+
+          mobileMenuToggle?.addEventListener("click", (event) => {
+            event.stopPropagation();
+            toggleMobileSidebar();
+          });
+
+          sidebarBackdrop?.addEventListener("click", () =>
+            closeMobileSidebar()
+          );
+
+          signOutButton?.addEventListener("click", () => {
+            if (confirm("Are you sure you want to sign out?")) {
+              TemplateUtils.UserUtils.signOut();
+            }
+          });
+
+          navLinks?.forEach((link) => {
+            link.addEventListener("click", () => closeMobileSidebar());
+          });
+
+          document.addEventListener("click", handleDocumentClick);
+          document.addEventListener("keydown", handleKeydown);
+          window.addEventListener("resize", handleResize);
+
+          window.addEventListener("pagehide", cleanup);
+        }
+
+        function cleanup() {
+          if (state.resizeTimer) clearTimeout(state.resizeTimer);
+          if (state.debounceTimer) clearTimeout(state.debounceTimer);
+          if (state.observer) {
+            state.observer.disconnect();
+            state.observer = null;
+          }
+          document.removeEventListener("click", handleDocumentClick);
+          document.removeEventListener("keydown", handleKeydown);
+          window.removeEventListener("resize", handleResize);
+        }
+
+        function initializePortalTargets() {
+          document.querySelectorAll('[data-portal="body"]').forEach((node) => {
+            if (node.parentElement !== document.body) {
+              document.body.appendChild(node);
+            }
+          });
+        }
+
+        function observePageContent() {
+          const { pageContent } = state.refs;
+          if (!pageContent || typeof MutationObserver !== "function") return;
+
+          const observer = new MutationObserver((mutations) => {
+            if (state.isUpdatingIcons) return;
+
+            const isLucideUpdate = mutations.every((m) => {
+              if (m.type !== "childList") return false;
+              const nodes = [...m.addedNodes, ...m.removedNodes];
+              return nodes.every(
+                (n) =>
+                  n.nodeType !== Node.ELEMENT_NODE ||
+                  n.nodeName.toLowerCase() === "svg" ||
+                  n.classList?.contains("lucide")
+              );
+            });
+            if (isLucideUpdate) return;
+
+            if (state.debounceTimer) clearTimeout(state.debounceTimer);
+            state.debounceTimer = setTimeout(() => {
+              state.debounceTimer = null;
+              state.isUpdatingIcons = true;
+              safeLucide(() => {
+                window.lucide.createIcons();
+                requestAnimationFrame(() => {
+                  state.isUpdatingIcons = false;
+                });
+              });
+            }, 100);
+          });
+
+          observer.observe(pageContent, { childList: true, subtree: true });
+          state.observer = observer;
+        }
+
+        function bootstrap() {
+          cacheRefs();
+          initializePortalTargets();
+          initializeUserProfile();
+          bindEvents();
+          safeLucide(() => window.lucide.createIcons());
+          observePageContent();
+        }
+
+        ready(bootstrap);
+      })();
+    </script>
+  
+
+<script>
+// Global variables
+let analyticsData = {};
+let chartData = [];
+let currentFilters = {
+  department: '',
+  criticality: '',
+  timeHorizon: 'current'
+};
+let trainerAvailabilityGridInstance = null;
+let employeeListGridInstance = null;
+let currentSelectedSkill = null;
+
+// Utility functions
+function getDataSafely(key) {
+  try {
+    const data = localStorage.getItem(key);
+    return data ? JSON.parse(data) : [];
+  } catch (error) {
+    console.error(`Error parsing ${key}:`, error);
+    return [];
+  }
+}
+
+function formatDate(dateString) {
+  if (!dateString) return '';
+  try {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US');
+  } catch (error) {
+    return dateString;
+  }
+}
+
+// Data processing functions
+function funProcessAnalyticsData() {
+  const trainingNeeds = getDataSafely('trainingNeeds') || [];
+  const skills = getDataSafely('skills') || [];
+  const users = getDataSafely('users') || [];
+  const departments = getDataSafely('departments') || [];
+  const skillCriticalities = getDataSafely('skillCriticalities') || [];
+  const trainerEligibility = getDataSafely('trainerEligibility') || [];
+  const externalTrainers = getDataSafely('externalTrainers') || [];
+  const trainingSessions = getDataSafely('trainingSessions') || [];
+
+  // Filter training needs based on current filters
+  let filteredNeeds = trainingNeeds.filter(need => need.tniStatus === 'trainingRequired');
+  
+  // Apply filters
+  if (currentFilters.department) {
+    const deptUsers = users.filter(u => u.departmentId === currentFilters.department);
+    const deptUserIds = deptUsers.map(u => u.id);
+    filteredNeeds = filteredNeeds.filter(need => deptUserIds.includes(need.employeeId));
+  }
+  
+  if (currentFilters.criticality) {
+    const critSkills = skills.filter(s => s.criticalityId === currentFilters.criticality);
+    const critSkillIds = critSkills.map(s => s.id);
+    filteredNeeds = filteredNeeds.filter(need => critSkillIds.includes(need.skillId));
+  }
+
+  // Aggregate demand by skill
+  const skillDemandMap = {};
+  filteredNeeds.forEach(need => {
+    if (!skillDemandMap[need.skillId]) {
+      const skill = skills.find(s => s.id === need.skillId);
+      const criticality = skillCriticalities.find(c => c.id === skill?.criticalityId);
+      skillDemandMap[need.skillId] = {
+        skillId: need.skillId,
+        skillName: skill?.name || 'Unknown Skill',
+        demand: 0,
+        employees: [],
+        criticalityWeight: criticality?.weight || 1,
+        criticalityName: criticality?.criticalityName || 'Unknown'
+      };
+    }
+    const employee = users.find(u => u.id === need.employeeId);
+    skillDemandMap[need.skillId].demand++;
+    skillDemandMap[need.skillId].employees.push({
+      ...need,
+      employeeName: employee ? `${employee.firstName} ${employee.lastName}` : 'Unknown',
+      department: departments.find(d => d.id === employee?.departmentId)?.name || 'Unknown'
+    });
+  });
+
+  // Calculate trainer availability
+  Object.values(skillDemandMap).forEach(skillData => {
+    // Internal trainers
+    const internalTrainers = trainerEligibility
+      .filter(t => t.skillId === skillData.skillId && t.status === 'active')
+      .map(t => users.find(u => u.id === t.employeeId))
+      .filter(Boolean);
+
+    // External trainers
+    const externalTrainersForSkill = externalTrainers
+      .filter(t => t.status === 'active' && t.skills.some(s => s.skillId === skillData.skillId));
+
+    skillData.internalTrainers = internalTrainers;
+    skillData.externalTrainers = externalTrainersForSkill;
+    skillData.totalTrainers = internalTrainers.length + externalTrainersForSkill.length;
+    skillData.demandTrainerRatio = skillData.totalTrainers > 0 ? skillData.demand / skillData.totalTrainers : Infinity;
+    
+    // Color coding based on ratio
+    if (skillData.demandTrainerRatio < 5) {
+      skillData.statusColor = 'text-green-600 bg-green-50';
+      skillData.status = 'Good';
+    } else if (skillData.demandTrainerRatio <= 10) {
+      skillData.statusColor = 'text-amber-600 bg-amber-50';
+      skillData.status = 'Caution';
+    } else {
+      skillData.statusColor = 'text-red-600 bg-red-50';
+      skillData.status = 'Critical';
+    }
+  });
+
+  analyticsData = {
+    skillDemand: Object.values(skillDemandMap).sort((a, b) => b.demand - a.demand),
+    capacityGaps: Object.values(skillDemandMap)
+      .filter(s => s.demandTrainerRatio > 5)
+      .sort((a, b) => b.demandTrainerRatio - a.demandTrainerRatio)
+  };
+
+  return analyticsData;
+}
+
+// Chart rendering functions
+function funRenderHighDemandChart() {
+  const chartContainer = document.getElementById('highDemandChart');
+  const emptyState = document.getElementById('highDemandEmpty');
+  
+  if (!chartContainer || !emptyState) return;
+
+  const topSkills = analyticsData.skillDemand.slice(0, 10);
+  
+  if (topSkills.length === 0) {
+    chartContainer.classList.add('hidden');
+    emptyState.classList.remove('hidden');
+    return;
+  }
+  
+  chartContainer.classList.remove('hidden');
+  emptyState.classList.add('hidden');
+
+  // Simple bar chart using CSS
+  const maxDemand = Math.max(...topSkills.map(s => s.demand));
+  
+  chartContainer.innerHTML = `
+    <div class="space-y-3">
+      ${topSkills.map(skill => `
+        <div class="cursor-pointer hover:bg-gray-50 p-3 rounded-lg transition-colors" onclick="funShowEmployeeList('${skill.skillId}')">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-sm font-medium text-gray-900 truncate">${skill.skillName}</span>
+            <span class="text-sm font-bold text-blue-700">${skill.demand}</span>
+          </div>
+          <div class="w-full bg-gray-200 rounded-full h-3">
+            <div class="bg-blue-600 h-3 rounded-full transition-all duration-300" style="width: ${(skill.demand / maxDemand) * 100}%"></div>
+          </div>
+          <div class="flex items-center justify-between mt-1">
+            <span class="text-xs text-gray-500">${skill.criticalityName} Priority</span>
+            <span class="text-xs text-gray-500">Click to view employees</span>
+          </div>
+        </div>
+      `).join('')}
+    </div>
+  `;
+}
+
+function funRenderTrainerAvailabilityGrid() {
+  const gridContainer = document.getElementById('trainerAvailabilityGrid');
+  const emptyState = document.getElementById('trainerAvailabilityEmpty');
+  
+  if (!gridContainer || !emptyState) return;
+
+  if (analyticsData.skillDemand.length === 0) {
+    gridContainer.classList.add('hidden');
+    emptyState.classList.remove('hidden');
+    return;
+  }
+
+  gridContainer.classList.remove('hidden');
+  emptyState.classList.add('hidden');
+
+  const columns = [
+    { field: 'skillName', header: 'Skill Name', filterable: true, sortable: true },
+    { field: 'demand', header: 'Demand', type: 'number', align: 'center', sortable: true },
+    { field: 'internalCount', header: 'Internal', type: 'number', align: 'center', sortable: true },
+    { field: 'externalCount', header: 'External', type: 'number', align: 'center', sortable: true },
+    { field: 'totalTrainers', header: 'Total', type: 'number', align: 'center', sortable: true },
+    {
+      field: 'status',
+      header: 'Status',
+      sortable: true,
+      render: (value, row) => {
+        return `<span class="inline-flex px-2 py-1 text-xs font-medium rounded ${row.statusColor}">${row.status}</span>`;
+      }
+    }
+  ];
+
+  const gridData = analyticsData.skillDemand.map(skill => ({
+    ...skill,
+    internalCount: skill.internalTrainers.length,
+    externalCount: skill.externalTrainers.length
+  }));
+
+  try {
+    if (trainerAvailabilityGridInstance) {
+      trainerAvailabilityGridInstance.destroy();
+    }
+
+    trainerAvailabilityGridInstance = new TiramaiGrid('#trainerAvailabilityGrid', {
+      data: gridData,
+      columns: columns,
+      theme: 'light',
+      sortable: true,
+      filterable: true,
+      pagination: {
+        enabled: true,
+        pageSize: 10
+      },
+      onRowClick: (row) => {
+        funShowTrainerList(row.skillId);
+      }
+    });
+  } catch (error) {
+    console.error('Failed to initialize trainer availability grid:', error);
+  }
+}
+
+function funRenderCapacityGaps() {
+  const gapsList = document.getElementById('capacityGapsList');
+  const emptyState = document.getElementById('capacityGapsEmpty');
+  
+  if (!gapsList || !emptyState) return;
+
+  if (analyticsData.capacityGaps.length === 0) {
+    gapsList.classList.add('hidden');
+    emptyState.classList.remove('hidden');
+    return;
+  }
+
+  gapsList.classList.remove('hidden');
+  emptyState.classList.add('hidden');
+
+  gapsList.innerHTML = `
+    <div class="space-y-4">
+      ${analyticsData.capacityGaps.map(gap => `
+        <div class="flex items-center justify-between p-4 border border-red-200 rounded-lg bg-red-50">
+          <div class="flex-1">
+            <div class="flex items-center gap-3">
+              <i data-lucide="alert-triangle" class="w-5 h-5 text-red-600"></i>
+              <div>
+                <h4 class="font-medium text-red-900">${gap.skillName}</h4>
+                <p class="text-sm text-red-700">
+                  ${gap.demand} employees need training, ${gap.totalTrainers} trainer${gap.totalTrainers === 1 ? '' : 's'} available
+                  ${gap.demandTrainerRatio === Infinity ? ' (No trainers)' : ` (${gap.demandTrainerRatio.toFixed(1)}:1 ratio)`}
+                </p>
+              </div>
+            </div>
+          </div>
+          <button onclick="funScheduleTraining('${gap.skillId}')" class="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 transition-colors">
+            Schedule Training
+          </button>
+        </div>
+      `).join('')}
+    </div>
+  `;
+}
+
+function funRenderRecommendations() {
+  const recommendationsList = document.getElementById('recommendationsList');
+  const emptyState = document.getElementById('recommendationsEmpty');
+  
+  if (!recommendationsList || !emptyState) return;
+
+  const recommendations = funGenerateRecommendations();
+  
+  if (recommendations.length === 0) {
+    recommendationsList.classList.add('hidden');
+    emptyState.classList.remove('hidden');
+    return;
+  }
+
+  recommendationsList.classList.remove('hidden');
+  emptyState.classList.add('hidden');
+
+  recommendationsList.innerHTML = `
+    ${recommendations.map(rec => `
+      <div class="flex items-start gap-3 p-4 border border-amber-200 rounded-lg bg-amber-50">
+        <i data-lucide="${rec.icon}" class="w-5 h-5 text-amber-600 mt-0.5"></i>
+        <div class="flex-1">
+          <h4 class="font-medium text-amber-900">${rec.title}</h4>
+          <p class="text-sm text-amber-700 mt-1">${rec.description}</p>
+        </div>
+        ${rec.action ? `
+          <button onclick="${rec.action}" class="px-3 py-1 text-xs font-medium text-amber-700 bg-amber-100 rounded hover:bg-amber-200 transition-colors">
+            Take Action
+          </button>
+        ` : ''}
+      </div>
+    `).join('')}
+  `;
+}
+
+function funGenerateRecommendations() {
+  const recommendations = [];
+  
+  // High demand skills without trainers
+  const skillsWithoutTrainers = analyticsData.skillDemand.filter(s => s.totalTrainers === 0);
+  skillsWithoutTrainers.forEach(skill => {
+    recommendations.push({
+      icon: 'user-plus',
+      title: `Urgent: No trainers available for ${skill.skillName}`,
+      description: `${skill.demand} employees need training but no internal or external trainers are available.`,
+      action: `funScheduleTraining('${skill.skillId}')`
+    });
+  });
+
+  // High ratio skills
+  const highRatioSkills = analyticsData.skillDemand.filter(s => s.demandTrainerRatio > 10 && s.totalTrainers > 0);
+  highRatioSkills.slice(0, 3).forEach(skill => {
+    recommendations.push({
+      icon: 'users',
+      title: `Consider adding external trainers for ${skill.skillName}`,
+      description: `High demand with ${skill.demandTrainerRatio.toFixed(1)}:1 employee-to-trainer ratio.`,
+      action: `funScheduleTraining('${skill.skillId}')`
+    });
+  });
+
+  // Mission critical skills with gaps
+  const criticalSkills = analyticsData.skillDemand.filter(s => 
+    s.criticalityName === 'Mission Critical' && s.demandTrainerRatio > 5
+  );
+  criticalSkills.forEach(skill => {
+    recommendations.push({
+      icon: 'alert-circle',
+      title: `Priority scheduling needed for ${skill.skillName}`,
+      description: `Mission critical skill with capacity constraints - immediate attention required.`,
+      action: `funScheduleTraining('${skill.skillId}')`
+    });
+  });
+
+  return recommendations.slice(0, 5); // Limit to top 5
+}
+
+// Filter functions
+function funInitializeFilters() {
+  const departments = getDataSafely('departments') || [];
+  const criticalities = getDataSafely('skillCriticalities') || [];
+  
+  const departmentFilter = document.getElementById('departmentFilter');
+  const criticalityFilter = document.getElementById('criticalityFilter');
+  
+  if (departmentFilter) {
+    departmentFilter.innerHTML = '<option value="">All Departments</option>' +
+      departments.filter(d => d.status === 'active')
+        .map(d => `<option value="${d.id}">${d.name}</option>`)
+        .join('');
+  }
+  
+  if (criticalityFilter) {
+    criticalityFilter.innerHTML = '<option value="">All Criticalities</option>' +
+      criticalities.filter(c => c.status === 'active')
+        .map(c => `<option value="${c.id}">${c.criticalityName}</option>`)
+        .join('');
+  }
+
+  // Bind filter events
+  [departmentFilter, criticalityFilter, document.getElementById('timeHorizonFilter')].forEach(filter => {
+    if (filter) {
+      filter.addEventListener('change', funApplyFilters);
+    }
+  });
+}
+
+function funApplyFilters() {
+  currentFilters = {
+    department: document.getElementById('departmentFilter')?.value || '',
+    criticality: document.getElementById('criticalityFilter')?.value || '',
+    timeHorizon: document.getElementById('timeHorizonFilter')?.value || 'current'
+  };
+  
+  funRefreshData();
+}
+
+// Modal functions
+function funShowEmployeeList(skillId) {
+  const skill = analyticsData.skillDemand.find(s => s.skillId === skillId);
+  if (!skill) return;
+
+  currentSelectedSkill = skillId;
+  const modal = document.getElementById('employeeListModal');
+  const title = document.getElementById('employeeModalTitle');
+  
+  if (title) {
+    title.textContent = `${skill.skillName} - Employees Needing Training`;
+  }
+
+  const columns = [
+    {
+      field: 'employeeName',
+      header: 'Employee Name',
+      isLink: true,
+      linkHref: (row) => `employee_detail.html?id=${row.employeeId}`,
+      sortable: true
+    },
+    { field: 'department', header: 'Department', sortable: true, filterable: true },
+    { field: 'gap', header: 'Gap Score', type: 'number', align: 'center', sortable: true }
+  ];
+
+  try {
+    if (employeeListGridInstance) {
+      employeeListGridInstance.destroy();
+    }
+
+    employeeListGridInstance = new TiramaiGrid('#employeeListGrid', {
+      data: skill.employees,
+      columns: columns,
+      theme: 'light',
+      sortable: true,
+      filterable: true,
+      pagination: {
+        enabled: true,
+        pageSize: 10
+      }
+    });
+  } catch (error) {
+    console.error('Failed to initialize employee list grid:', error);
+  }
+
+  if (modal) {
+    modal.classList.remove('hidden');
+  }
+}
+
+function funCloseEmployeeModal() {
+  const modal = document.getElementById('employeeListModal');
+  if (modal) {
+    modal.classList.add('hidden');
+  }
+  if (employeeListGridInstance) {
+    employeeListGridInstance.destroy();
+    employeeListGridInstance = null;
+  }
+}
+
+function funShowTrainerList(skillId) {
+  const skill = analyticsData.skillDemand.find(s => s.skillId === skillId);
+  if (!skill) return;
+
+  const modal = document.getElementById('trainerListModal');
+  const title = document.getElementById('trainerModalTitle');
+  
+  if (title) {
+    title.textContent = `${skill.skillName} - Available Trainers`;
+  }
+
+  // Populate internal trainers
+  funPopulateInternalTrainers(skill.internalTrainers);
+  
+  // Populate external trainers
+  funPopulateExternalTrainers(skill.externalTrainers);
+
+  // Show internal tab by default
+  funShowTrainerTab('internal');
+
+  if (modal) {
+    modal.classList.remove('hidden');
+  }
+}
+
+function funPopulateInternalTrainers(trainers) {
+  const container = document.getElementById('internalTrainersList');
+  if (!container) return;
+
+  if (trainers.length === 0) {
+    container.innerHTML = `
+      <div class="text-center py-8">
+        <i data-lucide="user-x" class="w-12 h-12 mx-auto text-gray-400 mb-4"></i>
+        <p class="text-gray-500">No internal trainers available for this skill.</p>
+      </div>
+    `;
+    return;
+  }
+
+  container.innerHTML = `
+    <div class="space-y-4">
+      ${trainers.map(trainer => `
+        <div class="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 bg-blue-700 text-white rounded-full flex items-center justify-center text-sm font-semibold">
+              ${trainer.firstName?.charAt(0) || ''}${trainer.lastName?.charAt(0) || ''}
+            </div>
+            <div>
+              <h4 class="font-medium text-gray-900">${trainer.firstName} ${trainer.lastName}</h4>
+              <p class="text-sm text-gray-500">${trainer.jobTitle}</p>
+              <p class="text-xs text-gray-400">${trainer.email}</p>
+            </div>
+          </div>
+          <div class="text-right">
+            <div class="text-sm text-gray-600">Upcoming Sessions</div>
+            <div class="text-lg font-semibold text-blue-700">0</div>
+          </div>
+        </div>
+      `).join('')}
+    </div>
+  `;
+}
+
+function funPopulateExternalTrainers(trainers) {
+  const container = document.getElementById('externalTrainersList');
+  if (!container) return;
+
+  if (trainers.length === 0) {
+    container.innerHTML = `
+      <div class="text-center py-8">
+        <i data-lucide="user-x" class="w-12 h-12 mx-auto text-gray-400 mb-4"></i>
+        <p class="text-gray-500">No external trainers available for this skill.</p>
+      </div>
+    `;
+    return;
+  }
+
+  container.innerHTML = `
+    <div class="space-y-4">
+      ${trainers.map(trainer => `
+        <div class="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 bg-green-600 text-white rounded-full flex items-center justify-center text-sm font-semibold">
+              ${trainer.name?.charAt(0) || 'E'}
+            </div>
+            <div>
+              <h4 class="font-medium text-gray-900">${trainer.name}</h4>
+              <p class="text-sm text-gray-500">${trainer.email}</p>
+              <p class="text-xs text-gray-400">${trainer.contactInfo?.phone || 'No phone'}</p>
+            </div>
+          </div>
+          <div class="text-right">
+            <div class="text-sm text-gray-600">Upcoming Sessions</div>
+            <div class="text-lg font-semibold text-green-600">0</div>
+          </div>
+        </div>
+      `).join('')}
+    </div>
+  `;
+}
+
+function funShowTrainerTab(type) {
+  const internalTab = document.getElementById('internalTrainersTab');
+  const externalTab = document.getElementById('externalTrainersTab');
+  const internalList = document.getElementById('internalTrainersList');
+  const externalList = document.getElementById('externalTrainersList');
+
+  if (type === 'internal') {
+    internalTab?.classList.add('text-blue-700', 'border-blue-700');
+    internalTab?.classList.remove('text-gray-500', 'border-transparent');
+    externalTab?.classList.remove('text-blue-700', 'border-blue-700');
+    externalTab?.classList.add('text-gray-500', 'border-transparent');
+    internalList?.classList.remove('hidden');
+    externalList?.classList.add('hidden');
+  } else {
+    externalTab?.classList.add('text-blue-700', 'border-blue-700');
+    externalTab?.classList.remove('text-gray-500', 'border-transparent');
+    internalTab?.classList.remove('text-blue-700', 'border-blue-700');
+    internalTab?.classList.add('text-gray-500', 'border-transparent');
+    externalList?.classList.remove('hidden');
+    internalList?.classList.add('hidden');
+  }
+}
+
+function funCloseTrainerModal() {
+  const modal = document.getElementById('trainerListModal');
+  if (modal) {
+    modal.classList.add('hidden');
+  }
+}
+
+// Action functions
+function funScheduleTraining(skillId) {
+  window.location.href = `training_session_create.html?skillId=${skillId}`;
+}
+
+function funScheduleTrainingForEmployees() {
+  if (currentSelectedSkill) {
+    window.location.href = `training_session_create.html?skillId=${currentSelectedSkill}`;
+  }
+}
+
+function funRefreshData() {
+  funProcessAnalyticsData();
+  funRenderHighDemandChart();
+  funRenderTrainerAvailabilityGrid();
+  funRenderCapacityGaps();
+  funRenderRecommendations();
+}
+
+function funExportAnalytics() {
+  const csvData = funGenerateCSVData();
+  const blob = new Blob([csvData], { type: 'text/csv' });
+  const url = window.URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `training-demand-forecast-${new Date().toISOString().split('T')[0]}.csv`;
+  a.click();
+  window.URL.revokeObjectURL(url);
+}
+
+function funGenerateCSVData() {
+  const headers = ['Skill Name', 'Demand', 'Internal Trainers', 'External Trainers', 'Total Trainers', 'Ratio', 'Status', 'Criticality'];
+  const rows = analyticsData.skillDemand.map(skill => [
+    skill.skillName,
+    skill.demand,
+    skill.internalTrainers.length,
+    skill.externalTrainers.length,
+    skill.totalTrainers,
+    skill.demandTrainerRatio === Infinity ? 'No Trainers' : skill.demandTrainerRatio.toFixed(2),
+    skill.status,
+    skill.criticalityName
+  ]);
+
+  return [headers, ...rows].map(row => 
+    row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(',')
+  ).join('\n');
+}
+
+// Initialize page
+document.addEventListener('DOMContentLoaded', function() {
+  funInitializeFilters();
+  funRefreshData();
+  
+  // Set active navigation
+  if (typeof window.TemplateUtils?.setActiveNavLink === 'function') {
+    window.TemplateUtils.setActiveNavLink('training_forecast');
+  }
+});
+</script></body></html>

@@ -1,0 +1,970 @@
+<html lang="en"><head>
+    <meta charset="UTF-8">
+    <title>SkillBridge Employee Portal</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://tiramai-grid-lib.tiram.app/tiramai-grid.umd.js"></script>
+    <style type="text/tailwindcss">
+      @theme {
+        --color-primary: #1E40AF;
+        --color-secondary: #059669;
+        --color-accent: #F59E0B;
+        --color-surface: #FFFFFF;
+        --color-background: #F8FAFC;
+        --color-border: #E2E8F0;
+
+        --header-height: 4rem;
+        --sidebar-width: 16rem;
+
+        --text-xs: 12px;
+        --text-sm: 14px;
+        --text-base: 14px;
+        --text-lg: 16px;
+        --text-xl: 18px;
+        --text-2xl: 20px;
+        --text-3xl: 24px;
+
+        --radius-sm: 4px;
+        --radius: 8px;
+        --radius-lg: 16px;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+      }
+      ::-webkit-scrollbar-track {
+        background: #f1f1f1;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+        border-radius: 4px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: #94a3b8;
+      }
+
+      .app-header {
+        height: var(--header-height, 4rem);
+      }
+      .app-sidebar {
+        top: var(--header-height, 4rem);
+        width: var(--sidebar-width, 16rem);
+        height: calc(100vh - var(--header-height, 4rem));
+        overflow-y: auto;
+        overflow-x: hidden;
+      }
+      .app-main {
+        margin-top: var(--header-height, 4rem);
+        min-height: calc(100vh - var(--header-height, 4rem));
+      }
+      @media (min-width: 768px) {
+        .app-main {
+          margin-left: var(--sidebar-width, 16rem);
+        }
+      }
+
+      body.sidebar-open {
+        overflow: hidden;
+      }
+
+      @media (max-width: 767px) {
+        .app-sidebar {
+          left: calc(-1 * var(--sidebar-width, 16rem));
+          transition: left 0.3s ease-in-out;
+        }
+        .app-sidebar.open {
+          left: 0;
+        }
+      }
+
+      .nav-link.active {
+        background: var(--color-primary);
+        color: white;
+      }
+      .nav-link.active:hover {
+        background: var(--color-primary);
+        opacity: 0.9;
+      }
+
+      .popover {
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(-8px);
+        transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out,
+          visibility 0.2s ease-in-out;
+      }
+      .popover.visible {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+      }
+
+      .sidebar-backdrop {
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+      }
+      .sidebar-backdrop.active {
+        opacity: 1;
+        visibility: visible;
+      }
+      
+      button,
+      a {
+        font-size: 14px;
+      }
+    </style>
+  <title>My Profile</title></head>
+  <body class="bg-slate-50 text-gray-800 overflow-x-hidden">
+    <header class="app-header fixed top-0 left-0 right-0 bg-white border-b border-slate-200 z-40">
+      <div class="h-full max-w-[1920px] mx-auto px-4 md:px-6 flex justify-between items-center">
+        <div class="flex items-center gap-3">
+          <button id="mobileMenuToggle" class="flex items-center justify-center w-10 h-10 rounded-md text-gray-500 hover:bg-gray-100 hover:text-gray-900 transition-all duration-200 cursor-pointer border-0 bg-transparent md:hidden focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-700 focus-visible:outline-offset-2" aria-label="Toggle navigation menu" aria-expanded="false">
+            <i data-lucide="menu" class="w-6 h-6"></i>
+          </button>
+
+          <div class="flex items-center gap-3">
+            <div class="w-8 h-8 flex items-center justify-center">
+              <svg viewBox="0 0 400 400" width="32" height="32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <g>
+                  <path d="M80 230 Q200 80 320 230" stroke="#1E40AF" stroke-width="26" fill="none" stroke-linecap="round"></path>
+                  <rect x="95" y="230" width="24" height="80" rx="8" fill="#059669"></rect>
+                  <rect x="281" y="230" width="24" height="80" rx="8" fill="#059669"></rect>
+                  <rect x="189" y="196" width="22" height="114" rx="7" fill="#1E40AF"></rect>
+                  <circle cx="130" cy="180" r="15" fill="#1E40AF"></circle>
+                  <circle cx="270" cy="180" r="15" fill="#1E40AF"></circle>
+                  <circle cx="200" cy="106" r="17" fill="#059669"></circle>
+                  <rect x="192" y="126" width="16" height="36" rx="6" fill="#059669"></rect>
+                </g>
+              </svg>
+            </div>
+            <h1 class="text-lg md:text-xl font-bold text-gray-900">
+              SkillBridge
+            </h1>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-2 md:gap-3">
+          <button id="userProfileButton" class="flex items-center gap-3 px-3 py-2 rounded-lg border border-transparent hover:bg-gray-50 hover:border-gray-200 transition-all duration-200 cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-700 focus-visible:outline-offset-2" aria-label="User profile menu" aria-expanded="false" aria-haspopup="true">
+            <div id="userAvatar" class="w-8 h-8 bg-blue-700 text-white rounded-full flex items-center justify-center text-sm font-semibold shrink-0"></div>
+            <div class="hidden sm:flex flex-col items-start max-w-[150px]">
+              <div id="userName" class="text-sm font-medium text-gray-900 truncate w-full"></div>
+            </div>
+            <i data-lucide="chevron-down" class="w-4 h-4 text-gray-500 hidden sm:block"></i>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <div id="userProfilePopover" class="popover fixed top-[4.5rem] right-4 md:right-6 w-72 bg-white border border-slate-200 rounded-lg shadow-xl z-50" role="dialog" aria-labelledby="popoverUserName" data-portal="body">
+      <div class="p-4">
+        <div class="flex items-center gap-3 pb-3 mb-3 border-b border-gray-100">
+          <div id="popoverUserAvatar" class="w-8 h-8 bg-blue-700 text-white rounded-full flex items-center justify-center text-sm font-semibold shrink-0"></div>
+          <div class="flex-1 min-w-0">
+            <div id="popoverUserName" class="font-semibold text-gray-900 truncate"></div>
+            <div id="popoverUserEmail" class="text-xs text-gray-500 truncate"></div>
+          </div>
+        </div>
+
+        <div class="space-y-1">
+          <button id="signOutButton" class="w-full flex items-center gap-3 px-3 py-2 text-sm font-medium text-red-600 hover:bg-red-50 rounded-md transition-all duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-700 focus-visible:outline-offset-2">
+            <i data-lucide="log-out" class="w-4 h-4"></i>
+            Sign Out
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div id="sidebarBackdrop" class="sidebar-backdrop fixed inset-0 bg-black/50 z-20 md:hidden" style="top: var(--header-height, 4rem)"></div>
+
+    <aside id="sidebar" class="app-sidebar fixed left-0 bg-white border-r border-slate-200 overflow-y-auto z-30">
+      <nav class="p-4" role="navigation" aria-label="Main navigation">
+        <div class="py-6 border-b border-gray-100 first:pt-0 last:border-b-0">
+          <div class="px-4 pb-2 text-xs font-semibold uppercase tracking-wider text-gray-400">
+            Main
+          </div>
+          <div class="space-y-1">
+            <a href="employee_dashboard.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline active" data-page="employee_dashboard">
+              <i data-lucide="home" class="w-5 h-5"></i>
+              <span>Dashboard</span>
+            </a>
+            <a href="my_skills.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline" data-page="my_skills">
+              <i data-lucide="target" class="w-5 h-5"></i>
+              <span>My Skills</span>
+            </a>
+            <a href="my_training_sessions.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline" data-page="my_training_sessions">
+              <i data-lucide="graduation-cap" class="w-5 h-5"></i>
+              <span>My Training</span>
+            </a>
+            <a href="my_disputes.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline" data-page="my_disputes">
+              <i data-lucide="flag" class="w-5 h-5"></i>
+              <span>My Disputes</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="py-6 border-b border-gray-100 last:border-b-0">
+          <div class="px-4 pb-2 text-xs font-semibold uppercase tracking-wider text-gray-400">
+            Account
+          </div>
+          <div class="space-y-1">
+            <a href="my_profile.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline" data-page="my_profile">
+              <i data-lucide="user" class="w-5 h-5"></i>
+              <span>My Profile</span>
+            </a>
+          </div>
+        </div>
+      </nav>
+    </aside>
+
+    <main class="app-main max-w-7xl mx-auto p-4 md:p-6 lg:p-8" id="pageContent" role="main"><nav class="flex items-center space-x-2 text-sm text-gray-600 mb-6" aria-label="Breadcrumb">
+  <a href="employee_dashboard.html" class="hover:text-gray-900">Dashboard</a>
+  <i data-lucide="chevron-right" class="w-4 h-4"></i>
+  <span class="text-gray-900 font-medium">My Profile</span>
+</nav>
+
+<!-- Back Button -->
+<button onclick="history.back()" class="inline-flex items-center text-gray-600 hover:text-gray-900 mb-4 transition-colors">
+  <i data-lucide="arrow-left" class="w-4 h-4 mr-2"></i>
+  Back
+</button>
+
+<!-- Page Title -->
+<h1 class="text-2xl font-bold text-gray-900 mb-6">My Profile</h1>
+
+<!-- Profile Header Section -->
+<div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 mb-6">
+  <div class="flex items-center gap-6">
+    <!-- Avatar -->
+    <div id="profileAvatar" class="w-20 h-20 bg-blue-700 text-white rounded-full flex items-center justify-center text-2xl font-bold shrink-0">
+    </div>
+    
+    <!-- Profile Info -->
+    <div class="flex-1">
+      <h2 id="profileFullName" class="text-xl font-semibold text-gray-900 mb-1"></h2>
+      <p id="profileJobTitle" class="text-gray-600 mb-2"></p>
+      <div class="flex items-center gap-4">
+        <span id="profileDepartment" class="text-gray-600"></span>
+        <span id="profileStatus" class="inline-flex px-2 py-1 text-xs font-medium rounded"></span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Personal Information Card -->
+<div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 mb-6">
+  <h3 class="text-lg font-semibold text-gray-900 mb-4">Personal Information</h3>
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div>
+      <label class="block text-sm font-medium text-gray-700 mb-1">Employee ID</label>
+      <p id="personalEmployeeId" class="text-gray-900 text-sm"></p>
+    </div>
+    <div>
+      <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+      <p id="personalEmail" class="text-gray-900 text-sm break-all"></p>
+    </div>
+    <div>
+      <label class="block text-sm font-medium text-gray-700 mb-1">First Name</label>
+      <p id="personalFirstName" class="text-gray-900 text-sm"></p>
+    </div>
+    <div>
+      <label class="block text-sm font-medium text-gray-700 mb-1">Last Name</label>
+      <p id="personalLastName" class="text-gray-900 text-sm"></p>
+    </div>
+    <div>
+      <label class="block text-sm font-medium text-gray-700 mb-1">Status</label>
+      <p id="personalStatus" class="inline-flex px-2 py-1 text-xs font-medium rounded"></p>
+    </div>
+  </div>
+</div>
+
+<!-- Job Information Card -->
+<div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 mb-6">
+  <h3 class="text-lg font-semibold text-gray-900 mb-4">Job Information</h3>
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div>
+      <label class="block text-sm font-medium text-gray-700 mb-1">Job Title</label>
+      <p id="jobTitle" class="text-gray-900 text-sm"></p>
+    </div>
+    <div>
+      <label class="block text-sm font-medium text-gray-700 mb-1">Department</label>
+      <p id="jobDepartment" class="text-gray-900 text-sm"></p>
+    </div>
+    <div>
+      <label class="block text-sm font-medium text-gray-700 mb-1">System Role</label>
+      <p id="jobSystemRole" class="inline-flex px-2 py-1 text-xs font-medium rounded"></p>
+    </div>
+    <div>
+      <label class="block text-sm font-medium text-gray-700 mb-1">Team Lead</label>
+      <p id="jobTeamLead" class="text-gray-900 text-sm"></p>
+    </div>
+  </div>
+</div>
+
+<!-- Account Information Card -->
+<div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 mb-6">
+  <h3 class="text-lg font-semibold text-gray-900 mb-4">Account Information</h3>
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div>
+      <label class="block text-sm font-medium text-gray-700 mb-1">Account Created</label>
+      <p id="accountCreated" class="text-gray-900 text-sm"></p>
+    </div>
+    <div>
+      <label class="block text-sm font-medium text-gray-700 mb-1">Last Modified</label>
+      <p id="accountModified" class="text-gray-900 text-sm"></p>
+    </div>
+  </div>
+</div>
+
+<!-- Skills Summary Card -->
+<div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 mb-6">
+  <div class="flex items-center justify-between mb-4">
+    <h3 class="text-lg font-semibold text-gray-900">My Skills Overview</h3>
+    <a href="my_skills.html" class="text-blue-700 hover:text-blue-800 text-sm font-medium transition-colors">
+      View All Skills
+    </a>
+  </div>
+  <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+    <div class="text-center">
+      <div id="totalSkills" class="text-2xl font-bold text-gray-900 mb-1">0</div>
+      <p class="text-sm text-gray-600">Total Skills Assigned</p>
+    </div>
+    <div class="text-center">
+      <div id="skillsMeetingBenchmark" class="text-2xl font-bold text-green-600 mb-1">0</div>
+      <div class="flex items-center justify-center gap-1">
+        <div class="w-2 h-2 bg-green-600 rounded-full"></div>
+        <p class="text-sm text-gray-600">Meeting Benchmark</p>
+      </div>
+    </div>
+    <div class="text-center">
+      <div id="skillsNeedingImprovement" class="text-2xl font-bold text-amber-500 mb-1">0</div>
+      <div class="flex items-center justify-center gap-1">
+        <div class="w-2 h-2 bg-amber-500 rounded-full"></div>
+        <p class="text-sm text-gray-600">Needing Improvement</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Note Section -->
+<div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+  <div class="flex items-start gap-3">
+    <i data-lucide="info" class="w-5 h-5 text-blue-600 shrink-0 mt-0.5"></i>
+    <div>
+      <h4 class="text-sm font-medium text-blue-900 mb-1">Information</h4>
+      <p class="text-sm text-blue-800">To update your profile information, please contact your Team Lead or System Administrator.</p>
+    </div>
+  </div>
+</div>
+
+</main>
+
+    <script src="app.js"></script>
+    <script src="app_data.js"></script>
+    <script id="container-script">
+      (function () {
+        const TemplateUtils = (window.TemplateUtils =
+          window.TemplateUtils || {});
+
+        TemplateUtils.UserUtils =
+          TemplateUtils.UserUtils ||
+          (function createUserUtils() {
+            return {
+              getCurrentUser() {
+                try {
+                  let currentUserId = localStorage.getItem("currentUserId");
+                  if (!currentUserId) {
+                    localStorage.setItem("currentUserId", "user_001_alice_web");
+                    currentUserId = "user_001_alice_web";
+                  }
+
+                  const userData = localStorage.getItem(
+                    `users_${currentUserId}`
+                  );
+                  if (userData) {
+                    return JSON.parse(userData);
+                  }
+
+                  const users = JSON.parse(localStorage.getItem('users') || '[]');
+                  const user = users.find(u => u.id === 'usr_004');
+                  if (user) {
+                    localStorage.setItem(`users_${currentUserId}`, JSON.stringify(user));
+                    return user;
+                  }
+                  
+                  return null;
+                } catch (error) {
+                  console.error("Error retrieving user data:", error);
+                  return null;
+                }
+              },
+              signOut() {
+                try {
+                  localStorage.removeItem("currentUserId");
+                  window.location.reload();
+                } catch (error) {
+                  console.error("Error signing out:", error);
+                }
+              },
+              getUserDisplayName(user) {
+                if (!user) return "Guest";
+                return user.firstName && user.lastName
+                  ? `${user.firstName} ${user.lastName}`
+                  : user.firstName || user.lastName || "User";
+              },
+              getUserInitials(user) {
+                if (!user) return "?";
+                const first = user.firstName?.charAt(0) || "";
+                const last = user.lastName?.charAt(0) || "";
+                return (first + last).toUpperCase() || "U";
+              },
+            };
+          })();
+
+        if (TemplateUtils.__bootstrapped) {
+          if (typeof window.lucide?.createIcons === "function") {
+            window.lucide.createIcons();
+          }
+          return;
+        }
+
+        TemplateUtils.__bootstrapped = true;
+
+        const state = {
+          popoverVisible: false,
+          sidebarOpen: false,
+          resizeTimer: null,
+          debounceTimer: null,
+          isUpdatingIcons: false,
+          observer: null,
+          refs: {},
+        };
+
+        function ready(fn) {
+          if (document.readyState === "loading") {
+            document.addEventListener("DOMContentLoaded", fn, { once: true });
+          } else if (typeof queueMicrotask === "function") {
+            queueMicrotask(fn);
+          } else {
+            Promise.resolve().then(fn);
+          }
+        }
+
+        function safeLucide(callback) {
+          if (typeof window.lucide?.createIcons === "function") {
+            callback();
+          }
+        }
+
+        function cacheRefs() {
+          state.refs = {
+            userProfileButton: document.getElementById("userProfileButton"),
+            userProfilePopover: document.getElementById("userProfilePopover"),
+            userAvatar: document.getElementById("userAvatar"),
+            userName: document.getElementById("userName"),
+            popoverUserAvatar: document.getElementById("popoverUserAvatar"),
+            popoverUserName: document.getElementById("popoverUserName"),
+            popoverUserEmail: document.getElementById("popoverUserEmail"),
+            signOutButton: document.getElementById("signOutButton"),
+            mobileMenuToggle: document.getElementById("mobileMenuToggle"),
+            sidebar: document.getElementById("sidebar"),
+            sidebarBackdrop: document.getElementById("sidebarBackdrop"),
+            navLinks: document.querySelectorAll(".nav-link"),
+            pageContent: document.getElementById("pageContent"),
+          };
+        }
+
+        function initializeUserProfile() {
+          const { userAvatar, userName } = state.refs;
+          if (!userAvatar || !userName) return;
+
+          const currentUser = TemplateUtils.UserUtils.getCurrentUser();
+          if (currentUser) {
+            userAvatar.textContent =
+              TemplateUtils.UserUtils.getUserInitials(currentUser);
+            userName.textContent =
+              TemplateUtils.UserUtils.getUserDisplayName(currentUser);
+          } else {
+            userAvatar.textContent = "?";
+            userName.textContent = "Guest";
+          }
+        }
+
+        function populatePopover() {
+          const currentUser = TemplateUtils.UserUtils.getCurrentUser();
+          const { popoverUserAvatar, popoverUserName, popoverUserEmail } =
+            state.refs;
+          if (!popoverUserAvatar || !popoverUserName || !popoverUserEmail)
+            return;
+
+          if (currentUser) {
+            popoverUserAvatar.textContent =
+              TemplateUtils.UserUtils.getUserInitials(currentUser);
+            popoverUserName.textContent =
+              TemplateUtils.UserUtils.getUserDisplayName(currentUser);
+            popoverUserEmail.textContent = currentUser.email || "No email";
+          } else {
+            popoverUserAvatar.textContent = "?";
+            popoverUserName.textContent = "Guest";
+            popoverUserEmail.textContent = "Not logged in";
+          }
+        }
+
+        function toggleUserPopover(forceClose = false) {
+          const { userProfilePopover, userProfileButton } = state.refs;
+          if (!userProfilePopover || !userProfileButton) return;
+
+          const shouldOpen = forceClose ? false : !state.popoverVisible;
+          if (shouldOpen) {
+            populatePopover();
+            userProfilePopover.classList.add("visible");
+            userProfileButton.setAttribute("aria-expanded", "true");
+            state.popoverVisible = true;
+            const firstButton = userProfilePopover.querySelector("button");
+            if (firstButton) {
+              setTimeout(() => firstButton.focus(), 50);
+            }
+          } else {
+            userProfilePopover.classList.remove("visible");
+            userProfileButton.setAttribute("aria-expanded", "false");
+            state.popoverVisible = false;
+          }
+        }
+
+        function hideUserPopover() {
+          if (state.popoverVisible) {
+            toggleUserPopover(true);
+          }
+        }
+
+        function toggleMobileSidebar(forceClose = false) {
+          const { sidebar, sidebarBackdrop, mobileMenuToggle } = state.refs;
+          if (!sidebar || !sidebarBackdrop || !mobileMenuToggle) return;
+
+          const shouldOpen = forceClose ? false : !state.sidebarOpen;
+          state.sidebarOpen = shouldOpen;
+
+          sidebar.classList.toggle("open", shouldOpen);
+          sidebarBackdrop.classList.toggle("active", shouldOpen);
+          document.body.classList.toggle("sidebar-open", shouldOpen);
+          mobileMenuToggle.setAttribute(
+            "aria-expanded",
+            shouldOpen ? "true" : "false"
+          );
+
+          const icon = mobileMenuToggle.querySelector("[data-lucide]");
+          if (icon) {
+            icon.setAttribute("data-lucide", shouldOpen ? "x" : "menu");
+            safeLucide(() => window.lucide.createIcons());
+          }
+        }
+
+        function closeMobileSidebar() {
+          if (state.sidebarOpen) {
+            toggleMobileSidebar(true);
+          }
+        }
+
+        function setActiveNavLink(pageId) {
+          if (!pageId) return;
+          const { navLinks } = state.refs;
+          navLinks?.forEach((link) => {
+            if (link.dataset.page === pageId) {
+              link.classList.add("active");
+            } else {
+              link.classList.remove("active");
+            }
+          });
+        }
+
+        TemplateUtils.setActiveNavLink = setActiveNavLink;
+        TemplateUtils.closeMobileSidebar = closeMobileSidebar;
+
+        function handleDocumentClick(event) {
+          const { userProfilePopover, userProfileButton } = state.refs;
+          if (
+            state.popoverVisible &&
+            userProfilePopover &&
+            userProfileButton &&
+            !userProfilePopover.contains(event.target) &&
+            !userProfileButton.contains(event.target)
+          ) {
+            hideUserPopover();
+          }
+        }
+
+        function handleKeydown(event) {
+          if (event.key !== "Escape") return;
+          if (state.popoverVisible) {
+            hideUserPopover();
+            state.refs.userProfileButton?.focus();
+          }
+          if (state.sidebarOpen) {
+            closeMobileSidebar();
+            state.refs.mobileMenuToggle?.focus();
+          }
+        }
+
+        function handleResize() {
+          clearTimeout(state.resizeTimer);
+          state.resizeTimer = setTimeout(() => {
+            if (window.innerWidth >= 768) {
+              closeMobileSidebar();
+            }
+          }, 200);
+        }
+
+        function bindEvents() {
+          const {
+            userProfileButton,
+            mobileMenuToggle,
+            sidebarBackdrop,
+            signOutButton,
+            navLinks,
+          } = state.refs;
+
+          userProfileButton?.addEventListener("click", (event) => {
+            event.stopPropagation();
+            toggleUserPopover();
+          });
+
+          mobileMenuToggle?.addEventListener("click", (event) => {
+            event.stopPropagation();
+            toggleMobileSidebar();
+          });
+
+          sidebarBackdrop?.addEventListener("click", () =>
+            closeMobileSidebar()
+          );
+
+          signOutButton?.addEventListener("click", () => {
+            if (confirm("Are you sure you want to sign out?")) {
+              TemplateUtils.UserUtils.signOut();
+            }
+          });
+
+          navLinks?.forEach((link) => {
+            link.addEventListener("click", () => closeMobileSidebar());
+          });
+
+          document.addEventListener("click", handleDocumentClick);
+          document.addEventListener("keydown", handleKeydown);
+          window.addEventListener("resize", handleResize);
+
+          window.addEventListener("pagehide", cleanup);
+        }
+
+        function cleanup() {
+          if (state.resizeTimer) clearTimeout(state.resizeTimer);
+          if (state.debounceTimer) clearTimeout(state.debounceTimer);
+          if (state.observer) {
+            state.observer.disconnect();
+            state.observer = null;
+          }
+          document.removeEventListener("click", handleDocumentClick);
+          document.removeEventListener("keydown", handleKeydown);
+          window.removeEventListener("resize", handleResize);
+        }
+
+        function initializePortalTargets() {
+          document.querySelectorAll('[data-portal="body"]').forEach((node) => {
+            if (node.parentElement !== document.body) {
+              document.body.appendChild(node);
+            }
+          });
+        }
+
+        function observePageContent() {
+          const { pageContent } = state.refs;
+          if (!pageContent || typeof MutationObserver !== "function") return;
+
+          const observer = new MutationObserver((mutations) => {
+            if (state.isUpdatingIcons) return;
+
+            const isLucideUpdate = mutations.every((m) => {
+              if (m.type !== "childList") return false;
+              const nodes = [...m.addedNodes, ...m.removedNodes];
+              return nodes.every(
+                (n) =>
+                  n.nodeType !== Node.ELEMENT_NODE ||
+                  n.nodeName.toLowerCase() === "svg" ||
+                  n.classList?.contains("lucide")
+              );
+            });
+            if (isLucideUpdate) return;
+
+            if (state.debounceTimer) clearTimeout(state.debounceTimer);
+            state.debounceTimer = setTimeout(() => {
+              state.debounceTimer = null;
+              state.isUpdatingIcons = true;
+              safeLucide(() => {
+                window.lucide.createIcons();
+                requestAnimationFrame(() => {
+                  state.isUpdatingIcons = false;
+                });
+              });
+            }, 100);
+          });
+
+          observer.observe(pageContent, { childList: true, subtree: true });
+          state.observer = observer;
+        }
+
+        function bootstrap() {
+          cacheRefs();
+          initializePortalTargets();
+          initializeUserProfile();
+          bindEvents();
+          safeLucide(() => window.lucide.createIcons());
+          observePageContent();
+        }
+
+        ready(bootstrap);
+      })();
+    </script>
+  
+
+<script>
+  // Safe data retrieval function
+  function getDataSafely(key) {
+    try {
+      const data = localStorage.getItem(key);
+      return data ? JSON.parse(data) : [];
+    } catch (error) {
+      console.error(`Error parsing ${key}:`, error);
+      return [];
+    }
+  }
+
+  // Safe element update function
+  function updateElement(id, content, isHtml = false) {
+    const element = document.getElementById(id);
+    if (element) {
+      if (isHtml) {
+        element.innerHTML = content || '';
+      } else {
+        element.textContent = content || '';
+      }
+    }
+  }
+
+  // Get current user
+  function funGetCurrentUser() {
+    try {
+      const users = getDataSafely('users');
+      // Get the actual current user - using usr_004 as per the layout's user utility
+      return users.find(user => user.id === 'usr_004') || null;
+    } catch (error) {
+      console.error('Error getting current user:', error);
+      return null;
+    }
+  }
+
+  // Get department by ID
+  function funGetDepartmentById(departmentId) {
+    try {
+      const departments = getDataSafely('departments');
+      return departments.find(dept => dept.id === departmentId) || null;
+    } catch (error) {
+      console.error('Error getting department:', error);
+      return null;
+    }
+  }
+
+  // Get team lead by ID
+  function funGetTeamLeadById(teamLeadId) {
+    try {
+      if (!teamLeadId) return null;
+      const users = getDataSafely('users');
+      return users.find(user => user.id === teamLeadId) || null;
+    } catch (error) {
+      console.error('Error getting team lead:', error);
+      return null;
+    }
+  }
+
+  // Get user initials
+  function funGetUserInitials(user) {
+    if (!user) return '?';
+    const first = user.firstName?.charAt(0) || '';
+    const last = user.lastName?.charAt(0) || '';
+    return (first + last).toUpperCase() || 'U';
+  }
+
+  // Format date according to US format (mm/dd/yyyy)
+  function funFormatDate(isoString) {
+    try {
+      if (!isoString) return 'Not available';
+      const date = new Date(isoString);
+      return date.toLocaleDateString('en-US'); // mm/dd/yyyy format
+    } catch (error) {
+      console.error('Error formatting date:', error);
+      return 'Invalid date';
+    }
+  }
+
+  // Get status badge HTML
+  function funGetStatusBadge(status) {
+    const statusConfig = {
+      active: { class: 'text-green-600 bg-green-50 border border-green-200', text: 'Active' },
+      inactive: { class: 'text-red-600 bg-red-50 border border-red-200', text: 'Inactive' }
+    };
+    
+    const config = statusConfig[status?.toLowerCase()] || statusConfig.inactive;
+    return {
+      class: `inline-flex px-2 py-1 text-xs font-medium rounded ${config.class}`,
+      text: config.text
+    };
+  }
+
+  // Get system role badge HTML
+  function funGetSystemRoleBadge(role) {
+    const roleConfig = {
+      systemAdmin: { class: 'text-purple-600 bg-purple-50 border border-purple-200', text: 'System Admin' },
+      employee: { class: 'text-blue-600 bg-blue-50 border border-blue-200', text: 'Employee' }
+    };
+    
+    const config = roleConfig[role?.toLowerCase()] || roleConfig.employee;
+    return {
+      class: `inline-flex px-2 py-1 text-xs font-medium rounded ${config.class}`,
+      text: config.text
+    };
+  }
+
+  // Calculate skills statistics
+  function funCalculateSkillsStats(currentUser) {
+    try {
+      const skillMappings = getDataSafely('skillMappings').filter(
+        mapping => mapping.employeeId === currentUser.id && mapping.status === 'active'
+      );
+      const totalSkills = skillMappings.length;
+
+      if (totalSkills === 0) {
+        return { totalSkills: 0, meetingBenchmark: 0, needingImprovement: 0 };
+      }
+
+      const assessments = getDataSafely('assessments');
+      const skillBenchmarks = getDataSafely('skillBenchmarks');
+
+      let meetingBenchmark = 0;
+      let needingImprovement = 0;
+
+      skillMappings.forEach(mapping => {
+        // Get most recent assessment for this skill
+        const skillAssessments = assessments.filter(
+          assessment => assessment.employeeId === currentUser.id && 
+                       assessment.skillId === mapping.skillId &&
+                       assessment.status === 'active'
+        ).sort((a, b) => new Date(b.assessmentTimestamp) - new Date(a.assessmentTimestamp));
+
+        if (skillAssessments.length > 0) {
+          const latestAssessment = skillAssessments[0];
+          const gap = latestAssessment.benchmarkAtTimeOfAssessment - latestAssessment.score;
+          
+          if (gap <= 0) {
+            meetingBenchmark++;
+          } else {
+            needingImprovement++;
+          }
+        } else {
+          // No assessment yet, consider as needing improvement
+          needingImprovement++;
+        }
+      });
+
+      return { totalSkills, meetingBenchmark, needingImprovement };
+    } catch (error) {
+      console.error('Error calculating skills stats:', error);
+      return { totalSkills: 0, meetingBenchmark: 0, needingImprovement: 0 };
+    }
+  }
+
+  // Initialize profile page
+  function funInitializeProfile() {
+    const currentUser = funGetCurrentUser();
+    
+    if (!currentUser) {
+      console.error('No current user found');
+      updateElement('profileFullName', 'User Not Found');
+      return;
+    }
+
+    try {
+      // Get related data
+      const department = funGetDepartmentById(currentUser.departmentId);
+      const teamLead = funGetTeamLeadById(currentUser.teamLeadId);
+      
+      // Profile Header Section
+      const initials = funGetUserInitials(currentUser);
+      const fullName = `${currentUser.firstName || ''} ${currentUser.lastName || ''}`.trim();
+      
+      updateElement('profileAvatar', initials);
+      updateElement('profileFullName', fullName);
+      updateElement('profileJobTitle', currentUser.jobTitle || 'No job title');
+      updateElement('profileDepartment', department?.name || 'No department');
+      
+      const statusBadge = funGetStatusBadge(currentUser.employeeStatus);
+      const statusElement = document.getElementById('profileStatus');
+      if (statusElement) {
+        statusElement.className = statusBadge.class;
+        statusElement.textContent = statusBadge.text;
+      }
+
+      // Personal Information Card
+      updateElement('personalEmployeeId', currentUser.employeeId || 'Not assigned');
+      updateElement('personalEmail', currentUser.email || 'No email');
+      updateElement('personalFirstName', currentUser.firstName || 'Not provided');
+      updateElement('personalLastName', currentUser.lastName || 'Not provided');
+      
+      const personalStatusElement = document.getElementById('personalStatus');
+      if (personalStatusElement) {
+        personalStatusElement.className = statusBadge.class;
+        personalStatusElement.textContent = statusBadge.text;
+      }
+
+      // Job Information Card
+      updateElement('jobTitle', currentUser.jobTitle || 'No job title');
+      updateElement('jobDepartment', department?.name || 'No department');
+      updateElement('jobTeamLead', teamLead ? `${teamLead.firstName || ''} ${teamLead.lastName || ''}`.trim() : 'Not Assigned');
+      
+      const systemRoleBadge = funGetSystemRoleBadge(currentUser.systemRole);
+      const systemRoleElement = document.getElementById('jobSystemRole');
+      if (systemRoleElement) {
+        systemRoleElement.className = systemRoleBadge.class;
+        systemRoleElement.textContent = systemRoleBadge.text;
+      }
+
+      // Account Information Card
+      updateElement('accountCreated', funFormatDate(currentUser.createdTimestamp));
+      updateElement('accountModified', funFormatDate(currentUser.modifiedTimestamp));
+
+      // Skills Summary Card
+      const skillsStats = funCalculateSkillsStats(currentUser);
+      updateElement('totalSkills', skillsStats.totalSkills.toString());
+      updateElement('skillsMeetingBenchmark', skillsStats.meetingBenchmark.toString());
+      updateElement('skillsNeedingImprovement', skillsStats.needingImprovement.toString());
+
+      console.log('Profile initialized successfully for user:', fullName);
+      
+    } catch (error) {
+      console.error('Error initializing profile:', error);
+      updateElement('profileFullName', 'Error Loading Profile');
+    }
+  }
+
+  // Initialize on DOM ready
+  document.addEventListener('DOMContentLoaded', function() {
+    funInitializeProfile();
+    
+    // Set active navigation
+    if (typeof window.TemplateUtils?.setActiveNavLink === 'function') {
+      window.TemplateUtils.setActiveNavLink('my_profile');
+    }
+  });
+</script></body></html>

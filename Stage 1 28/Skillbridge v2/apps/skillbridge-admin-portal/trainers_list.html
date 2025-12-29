@@ -1,0 +1,1444 @@
+<html lang="en"><head>
+    <meta charset="UTF-8">
+    <title>SkillBridge Admin Portal</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Always add this import for data grid implementation - Important -->
+    <script src="https://tiramai-grid-lib.tiram.app/tiramai-grid.umd.js"></script>
+    <style type="text/tailwindcss">
+      @theme {
+        /* Brand Colors from SkillBridge Design System */
+        --color-primary: #1E40AF; /* Primary blue for navigation, CTAs */
+        --color-secondary: #059669; /* Success/progress green */
+        --color-accent: #F59E0B; /* Training/notification amber */
+        --color-surface: #FFFFFF; /* Cards, modals, form containers */
+        --color-background: #F8FAFC; /* Main background */
+        --color-border: #E2E8F0; /* Dividers, borders */
+        --color-error: #DC2626; /* Error states */
+
+        /* Layout Constants */
+        --header-height: 4rem; /* 64px header */
+        --sidebar-width: 16rem; /* 256px sidebar */
+
+        /* Typography Scale */
+        --text-xs: 12px;
+        --text-sm: 14px;
+        --text-base: 14px;
+        --text-lg: 16px;
+        --text-xl: 18px;
+        --text-2xl: 20px;
+        --text-3xl: 24px;
+        --text-4xl: 30px;
+        --text-5xl: 36px;
+        --text-6xl: 48px;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+      }
+      ::-webkit-scrollbar-track {
+        background: #f1f1f1;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+        border-radius: 4px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: #94a3b8;
+      }
+
+      .app-header {
+        height: var(--header-height, 4rem);
+      }
+      .app-sidebar {
+        top: var(--header-height, 4rem);
+        width: var(--sidebar-width, 16rem);
+        height: calc(100vh - var(--header-height, 4rem));
+        overflow-y: auto;
+        overflow-x: hidden;
+      }
+      .app-main {
+        margin-top: var(--header-height, 4rem);
+        min-height: calc(100vh - var(--header-height, 4rem));
+      }
+      @media (min-width: 768px) {
+        .app-main {
+          margin-left: var(--sidebar-width, 16rem);
+        }
+      }
+
+      body.sidebar-open {
+        overflow: hidden;
+      }
+
+      @media (max-width: 767px) {
+        .app-sidebar {
+          left: calc(-1 * var(--sidebar-width, 16rem));
+          transition: left 0.3s ease-in-out;
+        }
+        .app-sidebar.open {
+          left: 0;
+        }
+      }
+
+      .nav-link.active {
+        background: #1E40AF;
+        color: white;
+      }
+      .nav-link.active:hover {
+        background: #1E40AF;
+        opacity: 0.9;
+      }
+
+      .popover {
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(-8px);
+        transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out,
+          visibility 0.2s ease-in-out;
+      }
+      .popover.visible {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+      }
+
+      .sidebar-backdrop {
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+      }
+      .sidebar-backdrop.active {
+        opacity: 1;
+        visibility: visible;
+      }
+
+      button,
+      a {
+        font-size: 14px;
+      }
+    </style>
+  <title>Trainer Pool - SkillBridge</title></head>
+  <body class="bg-slate-50 text-gray-800 overflow-x-hidden">
+    <header class="app-header fixed top-0 left-0 right-0 bg-white border-b border-slate-200 z-40">
+      <div class="h-full max-w-[1920px] mx-auto px-4 md:px-6 flex justify-between items-center">
+        <div class="flex items-center gap-3">
+          <button id="mobileMenuToggle" class="flex items-center justify-center w-10 h-10 rounded text-gray-500 hover:bg-gray-100 hover:text-gray-900 transition-all duration-200 cursor-pointer border-0 bg-transparent md:hidden focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-700 focus-visible:outline-offset-2" aria-label="Toggle navigation menu" aria-expanded="false">
+            <i data-lucide="menu" class="w-6 h-6"></i>
+          </button>
+
+          <div class="flex items-center gap-3">
+            <div class="w-8 h-8">
+              <svg viewBox="0 0 400 400" width="32" height="32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <g>
+                  <path d="M80 230 Q200 80 320 230" stroke="#1E40AF" stroke-width="26" fill="none" stroke-linecap="round"></path>
+                  <rect x="95" y="230" width="24" height="80" rx="8" fill="#059669"></rect>
+                  <rect x="281" y="230" width="24" height="80" rx="8" fill="#059669"></rect>
+                  <rect x="189" y="196" width="22" height="114" rx="7" fill="#1E40AF"></rect>
+                  <circle cx="130" cy="180" r="15" fill="#1E40AF"></circle>
+                  <circle cx="270" cy="180" r="15" fill="#1E40AF"></circle>
+                  <circle cx="200" cy="106" r="17" fill="#059669"></circle>
+                  <rect x="192" y="126" width="16" height="36" rx="6" fill="#059669"></rect>
+                </g>
+              </svg>
+            </div>
+            <h1 class="text-lg md:text-xl font-bold text-gray-900">
+              SkillBridge
+            </h1>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-2 md:gap-3">
+          <button id="userProfileButton" class="flex items-center gap-3 px-3 py-2 rounded-lg border border-transparent hover:bg-gray-50 hover:border-gray-200 transition-all duration-200 cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-700 focus-visible:outline-offset-2" aria-label="User profile menu" aria-expanded="false" aria-haspopup="true">
+            <div id="userAvatar" class="w-8 h-8 bg-blue-700 text-white rounded-full flex items-center justify-center text-sm font-semibold shrink-0"></div>
+            <div class="hidden sm:flex flex-col items-start max-w-[150px]">
+              <div id="userName" class="text-sm font-medium text-gray-900 truncate w-full"></div>
+            </div>
+            <i data-lucide="chevron-down" class="w-4 h-4 text-gray-500 hidden sm:block"></i>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <div id="userProfilePopover" class="popover fixed top-[4.5rem] right-4 md:right-6 w-72 bg-white border border-gray-200 rounded-lg shadow-xl z-50" role="dialog" aria-labelledby="popoverUserName" data-portal="body">
+      <div class="p-4">
+        <div class="flex items-center gap-3 pb-3 mb-3 border-b border-gray-100">
+          <div id="popoverUserAvatar" class="w-8 h-8 bg-blue-700 text-white rounded-full flex items-center justify-center text-sm font-semibold shrink-0"></div>
+          <div class="flex-1 min-w-0">
+            <div id="popoverUserName" class="font-semibold text-gray-900 truncate"></div>
+            <div id="popoverUserEmail" class="text-xs text-gray-500 truncate"></div>
+          </div>
+        </div>
+
+        <div class="space-y-1">
+          <button id="signOutButton" class="w-full flex items-center gap-3 px-3 py-2 text-sm font-medium text-red-600 hover:bg-red-50 rounded transition-all duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-700 focus-visible:outline-offset-2">
+            <i data-lucide="log-out" class="w-4 h-4"></i>
+            Sign Out
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div id="sidebarBackdrop" class="sidebar-backdrop fixed inset-0 bg-black/50 z-20 md:hidden" style="top: var(--header-height, 4rem)"></div>
+
+    <aside id="sidebar" class="app-sidebar fixed left-0 bg-white border-r border-slate-200 overflow-y-auto z-30">
+      <nav class="p-4" role="navigation" aria-label="Main navigation">
+        <div class="py-6 border-b border-gray-100 first:pt-0 last:border-b-0">
+          <div class="px-4 pb-2 text-xs font-semibold uppercase tracking-wider text-gray-400">
+            Dashboard
+          </div>
+          <div class="space-y-1">
+            <a href="dashboard.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline active" data-page="dashboard">
+              <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
+              <span>Admin Dashboard</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="py-6 border-b border-gray-100 last:border-b-0">
+          <div class="px-4 pb-2 text-xs font-semibold uppercase tracking-wider text-gray-400">
+            Organization Setup
+          </div>
+          <div class="space-y-1">
+            <a href="departments_list.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline" data-page="departments">
+              <i data-lucide="building" class="w-5 h-5"></i>
+              <span>Departments</span>
+            </a>
+            <a href="assessment_cycles_list.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline" data-page="assessment_cycles">
+              <i data-lucide="calendar" class="w-5 h-5"></i>
+              <span>Assessment Cycles</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="py-6 border-b border-gray-100 last:border-b-0">
+          <div class="px-4 pb-2 text-xs font-semibold uppercase tracking-wider text-gray-400">
+            Competency Framework
+          </div>
+          <div class="space-y-1">
+            <a href="skill_categories_list.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline" data-page="skill_categories">
+              <i data-lucide="folder" class="w-5 h-5"></i>
+              <span>Skill Categories</span>
+            </a>
+            <a href="skill_criticalities_list.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline" data-page="skill_criticalities">
+              <i data-lucide="alert-triangle" class="w-5 h-5"></i>
+              <span>Criticality Levels</span>
+            </a>
+            <a href="skills_list.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline" data-page="skills">
+              <i data-lucide="star" class="w-5 h-5"></i>
+              <span>Skills</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="py-6 border-b border-gray-100 last:border-b-0">
+          <div class="px-4 pb-2 text-xs font-semibold uppercase tracking-wider text-gray-400">
+            People Management
+          </div>
+          <div class="space-y-1">
+            <a href="employees_list.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline" data-page="employees">
+              <i data-lucide="users" class="w-5 h-5"></i>
+              <span>Employees</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="py-6 border-b border-gray-100 last:border-b-0">
+          <div class="px-4 pb-2 text-xs font-semibold uppercase tracking-wider text-gray-400">
+            Training
+          </div>
+          <div class="space-y-1">
+            <a href="training_sessions_list.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline" data-page="training_sessions">
+              <i data-lucide="graduation-cap" class="w-5 h-5"></i>
+              <span>Training Sessions</span>
+            </a>
+            <a href="trainers_list.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline" data-page="trainers">
+              <i data-lucide="user-check" class="w-5 h-5"></i>
+              <span>Trainers</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="py-6 border-b border-gray-100 last:border-b-0">
+          <div class="px-4 pb-2 text-xs font-semibold uppercase tracking-wider text-gray-400">
+            Disputes
+          </div>
+          <div class="space-y-1">
+            <a href="disputes_list.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline" data-page="disputes">
+              <i data-lucide="message-circle" class="w-5 h-5"></i>
+              <span>Disputes</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="py-6 border-b border-gray-100 last:border-b-0">
+          <div class="px-4 pb-2 text-xs font-semibold uppercase tracking-wider text-gray-400">
+            Analytics
+          </div>
+          <div class="space-y-1">
+            <a href="analytics_skill_gap_heatmap.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline" data-page="skill_gap_heatmap">
+              <i data-lucide="map" class="w-5 h-5"></i>
+              <span>Skill Gap Heatmap</span>
+            </a>
+            <a href="analytics_tni_dashboard.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline" data-page="tni_dashboard">
+              <i data-lucide="target" class="w-5 h-5"></i>
+              <span>TNI Dashboard</span>
+            </a>
+            <a href="analytics_training_forecast.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline" data-page="training_forecast">
+              <i data-lucide="trending-up" class="w-5 h-5"></i>
+              <span>Training Demand Forecast</span>
+            </a>
+            <a href="analytics_assessment_completion.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline" data-page="assessment_completion">
+              <i data-lucide="check-circle" class="w-5 h-5"></i>
+              <span>Assessment Completion</span>
+            </a>
+            <a href="analytics_dispute_metrics.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline" data-page="dispute_metrics">
+              <i data-lucide="bar-chart-3" class="w-5 h-5"></i>
+              <span>Dispute Metrics</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="py-6">
+          <div class="px-4 pb-2 text-xs font-semibold uppercase tracking-wider text-gray-400">
+            Settings
+          </div>
+          <div class="space-y-1">
+            <a href="system_settings.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline" data-page="system_settings">
+              <i data-lucide="settings" class="w-5 h-5"></i>
+              <span>System Settings</span>
+            </a>
+          </div>
+        </div>
+      </nav>
+    </aside>
+
+    <main class="app-main max-w-7xl mx-auto p-4 md:p-6 lg:p-8" id="pageContent" role="main"><nav class="flex items-center space-x-2 text-sm text-gray-600 mb-6" aria-label="Breadcrumb">
+  <a href="dashboard.html" class="hover:text-gray-900">Home</a>
+  <i data-lucide="chevron-right" class="w-4 h-4"></i>
+  <span class="text-gray-600">Training</span>
+  <i data-lucide="chevron-right" class="w-4 h-4"></i>
+  <span class="text-gray-900 font-medium">Trainers</span>
+</nav>
+
+<!-- Page Header -->
+<div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6">
+  <h1 class="text-2xl font-bold text-gray-900 mb-4 sm:mb-0">Trainer Pool</h1>
+  <button onclick="funNavigateToAddTrainer()" class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-blue-700 rounded-lg hover:bg-blue-700/90 transition-colors">
+    <i data-lucide="plus" class="w-4 h-4 mr-2"></i>
+    Add External Trainer
+  </button>
+</div>
+
+<!-- Tab Navigation -->
+<div class="border-b border-slate-200 mb-6">
+  <nav class="-mb-px flex space-x-8">
+    <button id="internalTrainersTab" onclick="funSwitchTab('internal')" class="py-2 px-1 border-b-2 border-blue-700 font-medium text-sm text-blue-700 whitespace-nowrap">
+      Internal Trainers
+    </button>
+    <button id="externalTrainersTab" onclick="funSwitchTab('external')" class="py-2 px-1 border-b-2 border-transparent font-medium text-sm text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap transition-colors">
+      External Trainers
+    </button>
+  </nav>
+</div>
+
+<!-- Internal Trainers Tab Content -->
+<div id="internalTrainersContent" class="tab-content">
+  <!-- Info Message -->
+  <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+    <div class="flex">
+      <i data-lucide="info" class="w-5 h-5 text-blue-600 mt-0.5 mr-3 shrink-0"></i>
+      <p class="text-sm text-blue-800">
+        Internal trainers are employees who have been flagged by their Team Leads as eligible to conduct training sessions for specific skills.
+      </p>
+    </div>
+  </div>
+
+  <!-- Filters -->
+  <div class="bg-white rounded-lg border border-slate-200 p-4 mb-6">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div>
+        <label for="departmentFilter" class="block text-sm font-medium text-gray-700 mb-2">Department</label>
+        <select id="departmentFilter" class="w-full px-3 py-2 border border-slate-200 rounded text-sm focus:ring-2 focus:ring-blue-700 focus:border-blue-700">
+          <option value="">All Departments</option>
+        </select>
+      </div>
+      <div>
+        <label for="skillFilter" class="block text-sm font-medium text-gray-700 mb-2">Skill</label>
+        <select id="skillFilter" class="w-full px-3 py-2 border border-slate-200 rounded text-sm focus:ring-2 focus:ring-blue-700 focus:border-blue-700">
+          <option value="">All Skills</option>
+        </select>
+      </div>
+      <div>
+        <label for="searchFilter" class="block text-sm font-medium text-gray-700 mb-2">Search</label>
+        <input type="text" id="searchFilter" placeholder="Search by name..." class="w-full px-3 py-2 border border-slate-200 rounded text-sm focus:ring-2 focus:ring-blue-700 focus:border-blue-700">
+      </div>
+    </div>
+    <div class="mt-4 flex justify-end">
+      <button onclick="funClearInternalFilters()" class="px-3 py-2 text-sm text-gray-600 hover:text-gray-900">
+        Clear Filters
+      </button>
+    </div>
+  </div>
+
+  <!-- Internal Trainers Grid -->
+  <div id="internalTrainersGrid" class="mt-6"></div>
+  <div id="internalTrainersEmptyState" class="hidden text-center py-12">
+    <i data-lucide="user-check" class="w-12 h-12 mx-auto text-gray-400 mb-4"></i>
+    <h3 class="text-lg font-medium text-gray-900 mb-2">No internal trainers found</h3>
+    <p class="text-gray-500">Internal trainers are flagged by Team Leads based on their expertise in specific skills.</p>
+  </div>
+</div>
+
+<!-- External Trainers Tab Content -->
+<div id="externalTrainersContent" class="tab-content hidden">
+  <!-- Filters -->
+  <div class="bg-white rounded-lg border border-slate-200 p-4 mb-6">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div>
+        <label for="externalSkillFilter" class="block text-sm font-medium text-gray-700 mb-2">Skill</label>
+        <select id="externalSkillFilter" class="w-full px-3 py-2 border border-slate-200 rounded text-sm focus:ring-2 focus:ring-blue-700 focus:border-blue-700">
+          <option value="">All Skills</option>
+        </select>
+      </div>
+      <div>
+        <label for="statusFilter" class="block text-sm font-medium text-gray-700 mb-2">Status</label>
+        <select id="statusFilter" class="w-full px-3 py-2 border border-slate-200 rounded text-sm focus:ring-2 focus:ring-blue-700 focus:border-blue-700">
+          <option value="">All Statuses</option>
+          <option value="active">Active</option>
+          <option value="inactive">Inactive</option>
+        </select>
+      </div>
+      <div>
+        <label for="externalSearchFilter" class="block text-sm font-medium text-gray-700 mb-2">Search</label>
+        <input type="text" id="externalSearchFilter" placeholder="Search by name..." class="w-full px-3 py-2 border border-slate-200 rounded text-sm focus:ring-2 focus:ring-blue-700 focus:border-blue-700">
+      </div>
+    </div>
+    <div class="mt-4 flex justify-end">
+      <button onclick="funClearExternalFilters()" class="px-3 py-2 text-sm text-gray-600 hover:text-gray-900">
+        Clear Filters
+      </button>
+    </div>
+  </div>
+
+  <!-- External Trainers Grid -->
+  <div id="externalTrainersGrid" class="mt-6"></div>
+  <div id="externalTrainersEmptyState" class="hidden text-center py-12">
+    <i data-lucide="user-check" class="w-12 h-12 mx-auto text-gray-400 mb-4"></i>
+    <h3 class="text-lg font-medium text-gray-900 mb-2">No external trainers found</h3>
+    <p class="text-gray-500 mb-4">Get started by adding your first external trainer.</p>
+    <button onclick="funNavigateToAddTrainer()" class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-blue-700 rounded-lg hover:bg-blue-700/90">
+      <i data-lucide="plus" class="w-4 h-4 mr-2"></i>
+      Add External Trainer
+    </button>
+  </div>
+</div>
+
+<!-- Delete External Trainer Modal -->
+<div id="deleteTrainerModal" data-portal="body" class="fixed inset-0 z-50 hidden">
+  <div class="flex items-center justify-center min-h-screen p-4 bg-black/50">
+    <div class="bg-white rounded-xl shadow-xl w-[min(92vw,28rem)] max-h-[90vh] overflow-y-auto">
+      <div class="p-6">
+        <div class="flex items-center mb-4">
+          <div class="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center mr-3">
+            <i data-lucide="trash-2" class="w-5 h-5 text-red-600"></i>
+          </div>
+          <h3 class="text-lg font-semibold text-gray-900">Delete External Trainer</h3>
+        </div>
+        
+        <div class="mb-6">
+          <p class="text-gray-700 mb-4">
+            Are you sure you want to mark <strong id="deleteTrainerName"></strong> as inactive?
+          </p>
+          <div id="deleteTrainerWarning" class="bg-amber-50 border border-amber-200 rounded-lg p-3 hidden">
+            <div class="flex">
+              <i data-lucide="alert-triangle" class="w-5 h-5 text-amber-600 mr-2 mt-0.5 shrink-0"></i>
+              <p class="text-sm text-amber-800">
+                This trainer has <span id="upcomingSessionsCount"></span> upcoming training session(s). Consider reassigning these sessions before proceeding.
+              </p>
+            </div>
+          </div>
+        </div>
+        
+        <div class="flex gap-3 justify-end">
+          <button onclick="funCloseDeleteModal()" class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50">
+            Cancel
+          </button>
+          <button onclick="funConfirmDeleteTrainer()" class="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700">
+            Delete
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</main>
+
+    <script src="app.js"></script>
+    <script src="app_data.js"></script>
+    <script id="container-script">
+      (function () {
+        const TemplateUtils = (window.TemplateUtils =
+          window.TemplateUtils || {});
+
+        TemplateUtils.UserUtils =
+          TemplateUtils.UserUtils ||
+          (function createUserUtils() {
+            return {
+              getCurrentUser() {
+                try {
+                  let currentUserId = localStorage.getItem("currentUserId");
+                  if (!currentUserId) {
+                    localStorage.setItem("currentUserId", "usr_001");
+                    currentUserId = "usr_001";
+                  }
+
+                  const users = JSON.parse(localStorage.getItem("users") || "[]");
+                  return users.find(user => user.id === currentUserId) || null;
+                } catch (error) {
+                  console.error("Error retrieving user data:", error);
+                  return null;
+                }
+              },
+              signOut() {
+                try {
+                  localStorage.removeItem("currentUserId");
+                  window.location.reload();
+                } catch (error) {
+                  console.error("Error signing out:", error);
+                }
+              },
+              getUserDisplayName(user) {
+                if (!user) return "Guest";
+                return user.firstName && user.lastName
+                  ? `${user.firstName} ${user.lastName}`
+                  : user.firstName || user.lastName || "User";
+              },
+              getUserInitials(user) {
+                if (!user) return "?";
+                const first = user.firstName?.charAt(0) || "";
+                const last = user.lastName?.charAt(0) || "";
+                return (first + last).toUpperCase() || "U";
+              },
+            };
+          })();
+
+        if (TemplateUtils.__bootstrapped) {
+          if (typeof window.lucide?.createIcons === "function") {
+            window.lucide.createIcons();
+          }
+          return;
+        }
+
+        TemplateUtils.__bootstrapped = true;
+
+        const state = {
+          popoverVisible: false,
+          sidebarOpen: false,
+          resizeTimer: null,
+          debounceTimer: null,
+          isUpdatingIcons: false,
+          observer: null,
+          refs: {},
+        };
+
+        function ready(fn) {
+          if (document.readyState === "loading") {
+            document.addEventListener("DOMContentLoaded", fn, { once: true });
+          } else if (typeof queueMicrotask === "function") {
+            queueMicrotask(fn);
+          } else {
+            Promise.resolve().then(fn);
+          }
+        }
+
+        function safeLucide(callback) {
+          if (typeof window.lucide?.createIcons === "function") {
+            callback();
+          }
+        }
+
+        function cacheRefs() {
+          state.refs = {
+            userProfileButton: document.getElementById("userProfileButton"),
+            userProfilePopover: document.getElementById("userProfilePopover"),
+            userAvatar: document.getElementById("userAvatar"),
+            userName: document.getElementById("userName"),
+            popoverUserAvatar: document.getElementById("popoverUserAvatar"),
+            popoverUserName: document.getElementById("popoverUserName"),
+            popoverUserEmail: document.getElementById("popoverUserEmail"),
+            signOutButton: document.getElementById("signOutButton"),
+            mobileMenuToggle: document.getElementById("mobileMenuToggle"),
+            sidebar: document.getElementById("sidebar"),
+            sidebarBackdrop: document.getElementById("sidebarBackdrop"),
+            navLinks: document.querySelectorAll(".nav-link"),
+            pageContent: document.getElementById("pageContent"),
+          };
+        }
+
+        function initializeUserProfile() {
+          const { userAvatar, userName } = state.refs;
+          if (!userAvatar || !userName) return;
+
+          const currentUser = TemplateUtils.UserUtils.getCurrentUser();
+          if (currentUser) {
+            userAvatar.textContent =
+              TemplateUtils.UserUtils.getUserInitials(currentUser);
+            userName.textContent =
+              TemplateUtils.UserUtils.getUserDisplayName(currentUser);
+          } else {
+            userAvatar.textContent = "?";
+            userName.textContent = "Guest";
+          }
+        }
+
+        function populatePopover() {
+          const currentUser = TemplateUtils.UserUtils.getCurrentUser();
+          const { popoverUserAvatar, popoverUserName, popoverUserEmail } =
+            state.refs;
+          if (!popoverUserAvatar || !popoverUserName || !popoverUserEmail)
+            return;
+
+          if (currentUser) {
+            popoverUserAvatar.textContent =
+              TemplateUtils.UserUtils.getUserInitials(currentUser);
+            popoverUserName.textContent =
+              TemplateUtils.UserUtils.getUserDisplayName(currentUser);
+            popoverUserEmail.textContent = currentUser.email || "No email";
+          } else {
+            popoverUserAvatar.textContent = "?";
+            popoverUserName.textContent = "Guest";
+            popoverUserEmail.textContent = "Not logged in";
+          }
+        }
+
+        function toggleUserPopover(forceClose = false) {
+          const { userProfilePopover, userProfileButton } = state.refs;
+          if (!userProfilePopover || !userProfileButton) return;
+
+          const shouldOpen = forceClose ? false : !state.popoverVisible;
+          if (shouldOpen) {
+            populatePopover();
+            userProfilePopover.classList.add("visible");
+            userProfileButton.setAttribute("aria-expanded", "true");
+            state.popoverVisible = true;
+            const firstButton = userProfilePopover.querySelector("button");
+            if (firstButton) {
+              setTimeout(() => firstButton.focus(), 50);
+            }
+          } else {
+            userProfilePopover.classList.remove("visible");
+            userProfileButton.setAttribute("aria-expanded", "false");
+            state.popoverVisible = false;
+          }
+        }
+
+        function hideUserPopover() {
+          if (state.popoverVisible) {
+            toggleUserPopover(true);
+          }
+        }
+
+        function toggleMobileSidebar(forceClose = false) {
+          const { sidebar, sidebarBackdrop, mobileMenuToggle } = state.refs;
+          if (!sidebar || !sidebarBackdrop || !mobileMenuToggle) return;
+
+          const shouldOpen = forceClose ? false : !state.sidebarOpen;
+          state.sidebarOpen = shouldOpen;
+
+          sidebar.classList.toggle("open", shouldOpen);
+          sidebarBackdrop.classList.toggle("active", shouldOpen);
+          document.body.classList.toggle("sidebar-open", shouldOpen);
+          mobileMenuToggle.setAttribute(
+            "aria-expanded",
+            shouldOpen ? "true" : "false"
+          );
+
+          const icon = mobileMenuToggle.querySelector("[data-lucide]");
+          if (icon) {
+            icon.setAttribute("data-lucide", shouldOpen ? "x" : "menu");
+            safeLucide(() => window.lucide.createIcons());
+          }
+        }
+
+        function closeMobileSidebar() {
+          if (state.sidebarOpen) {
+            toggleMobileSidebar(true);
+          }
+        }
+
+        function setActiveNavLink(pageId) {
+          if (!pageId) return;
+          const { navLinks } = state.refs;
+          navLinks?.forEach((link) => {
+            if (link.dataset.page === pageId) {
+              link.classList.add("active");
+            } else {
+              link.classList.remove("active");
+            }
+          });
+        }
+
+        TemplateUtils.setActiveNavLink = setActiveNavLink;
+        TemplateUtils.closeMobileSidebar = closeMobileSidebar;
+
+        function handleDocumentClick(event) {
+          const { userProfilePopover, userProfileButton } = state.refs;
+          if (
+            state.popoverVisible &&
+            userProfilePopover &&
+            userProfileButton &&
+            !userProfilePopover.contains(event.target) &&
+            !userProfileButton.contains(event.target)
+          ) {
+            hideUserPopover();
+          }
+        }
+
+        function handleKeydown(event) {
+          if (event.key !== "Escape") return;
+          if (state.popoverVisible) {
+            hideUserPopover();
+            state.refs.userProfileButton?.focus();
+          }
+          if (state.sidebarOpen) {
+            closeMobileSidebar();
+            state.refs.mobileMenuToggle?.focus();
+          }
+        }
+
+        function handleResize() {
+          clearTimeout(state.resizeTimer);
+          state.resizeTimer = setTimeout(() => {
+            if (window.innerWidth >= 768) {
+              closeMobileSidebar();
+            }
+          }, 200);
+        }
+
+        function bindEvents() {
+          const {
+            userProfileButton,
+            mobileMenuToggle,
+            sidebarBackdrop,
+            signOutButton,
+            navLinks,
+          } = state.refs;
+
+          userProfileButton?.addEventListener("click", (event) => {
+            event.stopPropagation();
+            toggleUserPopover();
+          });
+
+          mobileMenuToggle?.addEventListener("click", (event) => {
+            event.stopPropagation();
+            toggleMobileSidebar();
+          });
+
+          sidebarBackdrop?.addEventListener("click", () =>
+            closeMobileSidebar()
+          );
+
+          signOutButton?.addEventListener("click", () => {
+            if (confirm("Are you sure you want to sign out?")) {
+              TemplateUtils.UserUtils.signOut();
+            }
+          });
+
+          navLinks?.forEach((link) => {
+            link.addEventListener("click", () => closeMobileSidebar());
+          });
+
+          document.addEventListener("click", handleDocumentClick);
+          document.addEventListener("keydown", handleKeydown);
+          window.addEventListener("resize", handleResize);
+
+          window.addEventListener("pagehide", cleanup);
+        }
+
+        function cleanup() {
+          if (state.resizeTimer) clearTimeout(state.resizeTimer);
+          if (state.debounceTimer) clearTimeout(state.debounceTimer);
+          if (state.observer) {
+            state.observer.disconnect();
+            state.observer = null;
+          }
+          document.removeEventListener("click", handleDocumentClick);
+          document.removeEventListener("keydown", handleKeydown);
+          window.removeEventListener("resize", handleResize);
+        }
+
+        function initializePortalTargets() {
+          document.querySelectorAll('[data-portal="body"]').forEach((node) => {
+            if (node.parentElement !== document.body) {
+              document.body.appendChild(node);
+            }
+          });
+        }
+
+        function observePageContent() {
+          const { pageContent } = state.refs;
+          if (!pageContent || typeof MutationObserver !== "function") return;
+
+          const observer = new MutationObserver((mutations) => {
+            if (state.isUpdatingIcons) return;
+
+            const isLucideUpdate = mutations.every((m) => {
+              if (m.type !== "childList") return false;
+              const nodes = [...m.addedNodes, ...m.removedNodes];
+              return nodes.every(
+                (n) =>
+                  n.nodeType !== Node.ELEMENT_NODE ||
+                  n.nodeName.toLowerCase() === "svg" ||
+                  n.classList?.contains("lucide")
+              );
+            });
+            if (isLucideUpdate) return;
+
+            if (state.debounceTimer) clearTimeout(state.debounceTimer);
+            state.debounceTimer = setTimeout(() => {
+              state.debounceTimer = null;
+              state.isUpdatingIcons = true;
+              safeLucide(() => {
+                window.lucide.createIcons();
+                requestAnimationFrame(() => {
+                  state.isUpdatingIcons = false;
+                });
+              });
+            }, 100);
+          });
+
+          observer.observe(pageContent, { childList: true, subtree: true });
+          state.observer = observer;
+        }
+
+        function bootstrap() {
+          cacheRefs();
+          initializePortalTargets();
+          initializeUserProfile();
+          bindEvents();
+          safeLucide(() => window.lucide.createIcons());
+          observePageContent();
+        }
+
+        ready(bootstrap);
+      })();
+    </script>
+  
+
+<script>
+// Global variables
+let currentTab = 'internal';
+let internalTrainersGridInstance = null;
+let externalTrainersGridInstance = null;
+let deleteTrainerId = null;
+
+// Safe data retrieval
+function getDataSafely(key) {
+  try {
+    const data = localStorage.getItem(key);
+    return data ? JSON.parse(data) : [];
+  } catch (error) {
+    console.error(`Error parsing ${key}:`, error);
+    return [];
+  }
+}
+
+// Navigation functions
+function funNavigateToAddTrainer() {
+  window.location.href = 'external_trainer_create.html';
+}
+
+function funNavigateToInternalTrainerDetail(trainerId) {
+  window.location.href = `internal_trainer_detail.html?id=${trainerId}`;
+}
+
+function funNavigateToExternalTrainerDetail(trainerId) {
+  window.location.href = `external_trainer_detail.html?id=${trainerId}`;
+}
+
+function funNavigateToExternalTrainerEdit(trainerId) {
+  window.location.href = `external_trainer_edit.html?id=${trainerId}`;
+}
+
+// Tab switching
+function funSwitchTab(tab) {
+  currentTab = tab;
+  
+  const internalTab = document.getElementById('internalTrainersTab');
+  const externalTab = document.getElementById('externalTrainersTab');
+  const internalContent = document.getElementById('internalTrainersContent');
+  const externalContent = document.getElementById('externalTrainersContent');
+  
+  if (tab === 'internal') {
+    internalTab.className = 'py-2 px-1 border-b-2 border-blue-700 font-medium text-sm text-blue-700 whitespace-nowrap';
+    externalTab.className = 'py-2 px-1 border-b-2 border-transparent font-medium text-sm text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap transition-colors';
+    internalContent.classList.remove('hidden');
+    externalContent.classList.add('hidden');
+    
+    if (!internalTrainersGridInstance) {
+      funInitInternalTrainersGrid();
+    }
+  } else {
+    externalTab.className = 'py-2 px-1 border-b-2 border-blue-700 font-medium text-sm text-blue-700 whitespace-nowrap';
+    internalTab.className = 'py-2 px-1 border-b-2 border-transparent font-medium text-sm text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap transition-colors';
+    externalContent.classList.remove('hidden');
+    internalContent.classList.add('hidden');
+    
+    if (!externalTrainersGridInstance) {
+      funInitExternalTrainersGrid();
+    }
+  }
+}
+
+// Get upcoming sessions count for a trainer
+function getUpcomingSessionsCount(trainerId, trainerType) {
+  const sessions = getDataSafely('trainingSessions') || [];
+  const today = new Date().toISOString();
+  
+  return sessions.filter(session => {
+    if (session.trainerId !== trainerId || session.trainerType !== trainerType) return false;
+    if (session.status !== 'scheduled') return false;
+    return session.scheduledDate >= today;
+  }).length;
+}
+
+// Get total sessions count for a trainer
+function getTotalSessionsCount(trainerId, trainerType) {
+  const sessions = getDataSafely('trainingSessions') || [];
+  return sessions.filter(session => 
+    session.trainerId === trainerId && session.trainerType === trainerType
+  ).length;
+}
+
+// Get internal trainer data
+function getInternalTrainersData() {
+  const users = getDataSafely('users') || [];
+  const departments = getDataSafely('departments') || [];
+  const trainerEligibility = getDataSafely('trainerEligibility') || [];
+  const skills = getDataSafely('skills') || [];
+  
+  const departmentMap = departments.reduce((acc, dept) => {
+    acc[dept.id] = dept.name;
+    return acc;
+  }, {});
+  
+  const skillMap = skills.reduce((acc, skill) => {
+    acc[skill.id] = skill.name;
+    return acc;
+  }, {});
+  
+  // Group eligible skills by employee
+  const trainerSkills = trainerEligibility
+    .filter(elig => elig.status === 'active')
+    .reduce((acc, elig) => {
+      if (!acc[elig.employeeId]) acc[elig.employeeId] = [];
+      acc[elig.employeeId].push(elig.skillId);
+      return acc;
+    }, {});
+  
+  // Get trainers (employees with skills in trainerEligibility)
+  const trainers = users
+    .filter(user => user.employeeStatus === 'active' && trainerSkills[user.id])
+    .map(user => {
+      const eligibleSkills = trainerSkills[user.id] || [];
+      const skillNames = eligibleSkills.map(skillId => skillMap[skillId] || 'Unknown').join(', ');
+      
+      return {
+        id: user.id,
+        employeeName: `${user.firstName} ${user.lastName}`,
+        jobTitle: user.jobTitle || '',
+        department: departmentMap[user.departmentId] || 'Unknown',
+        eligibleSkills: skillNames,
+        eligibleSkillsCount: eligibleSkills.length,
+        upcomingSessions: getUpcomingSessionsCount(user.id, 'internal'),
+        totalSessions: getTotalSessionsCount(user.id, 'internal'),
+        departmentId: user.departmentId,
+        skillIds: eligibleSkills
+      };
+    });
+  
+  return trainers;
+}
+
+// Get external trainer data
+function getExternalTrainersData() {
+  const externalTrainers = getDataSafely('externalTrainers') || [];
+  const skills = getDataSafely('skills') || [];
+  
+  const skillMap = skills.reduce((acc, skill) => {
+    acc[skill.id] = skill.name;
+    return acc;
+  }, {});
+  
+  return externalTrainers.map(trainer => {
+    const skillNames = (trainer.skills || [])
+      .map(s => skillMap[s.skillId] || 'Unknown')
+      .join(', ');
+    
+    return {
+      id: trainer.id,
+      name: trainer.name,
+      email: trainer.email || '',
+      skills: skillNames,
+      skillsCount: trainer.skills ? trainer.skills.length : 0,
+      upcomingSessions: getUpcomingSessionsCount(trainer.id, 'external'),
+      totalSessions: getTotalSessionsCount(trainer.id, 'external'),
+      status: trainer.status,
+      skillIds: (trainer.skills || []).map(s => s.skillId)
+    };
+  });
+}
+
+// Initialize filter dropdowns
+function funInitializeFilters() {
+  const departments = getDataSafely('departments') || [];
+  const skills = getDataSafely('skills') || [];
+  
+  const departmentFilter = document.getElementById('departmentFilter');
+  const skillFilter = document.getElementById('skillFilter');
+  const externalSkillFilter = document.getElementById('externalSkillFilter');
+  
+  if (departmentFilter) {
+    departmentFilter.innerHTML = '<option value="">All Departments</option>' +
+      departments
+        .filter(dept => dept.status === 'active')
+        .map(dept => `<option value="${dept.id}">${dept.name}</option>`)
+        .join('');
+  }
+  
+  const skillOptions = '<option value="">All Skills</option>' +
+    skills
+      .filter(skill => skill.status === 'active')
+      .map(skill => `<option value="${skill.id}">${skill.name}</option>`)
+      .join('');
+  
+  if (skillFilter) skillFilter.innerHTML = skillOptions;
+  if (externalSkillFilter) externalSkillFilter.innerHTML = skillOptions;
+}
+
+// Apply internal trainers filters
+function funApplyInternalFilters() {
+  if (!internalTrainersGridInstance) return;
+  
+  const departmentId = document.getElementById('departmentFilter').value;
+  const skillId = document.getElementById('skillFilter').value;
+  const searchTerm = document.getElementById('searchFilter').value.toLowerCase().trim();
+  
+  let trainers = getInternalTrainersData();
+  
+  if (departmentId) {
+    trainers = trainers.filter(trainer => trainer.departmentId === departmentId);
+  }
+  
+  if (skillId) {
+    trainers = trainers.filter(trainer => trainer.skillIds.includes(skillId));
+  }
+  
+  if (searchTerm) {
+    trainers = trainers.filter(trainer => 
+      trainer.employeeName.toLowerCase().includes(searchTerm)
+    );
+  }
+  
+  internalTrainersGridInstance.setData(trainers);
+  funToggleEmptyState(trainers, 'internalTrainersGrid', 'internalTrainersEmptyState');
+}
+
+// Apply external trainers filters
+function funApplyExternalFilters() {
+  if (!externalTrainersGridInstance) return;
+  
+  const skillId = document.getElementById('externalSkillFilter').value;
+  const status = document.getElementById('statusFilter').value;
+  const searchTerm = document.getElementById('externalSearchFilter').value.toLowerCase().trim();
+  
+  let trainers = getExternalTrainersData();
+  
+  if (skillId) {
+    trainers = trainers.filter(trainer => trainer.skillIds.includes(skillId));
+  }
+  
+  if (status) {
+    trainers = trainers.filter(trainer => trainer.status === status);
+  }
+  
+  if (searchTerm) {
+    trainers = trainers.filter(trainer => 
+      trainer.name.toLowerCase().includes(searchTerm)
+    );
+  }
+  
+  externalTrainersGridInstance.setData(trainers);
+  funToggleEmptyState(trainers, 'externalTrainersGrid', 'externalTrainersEmptyState');
+}
+
+// Clear filters
+function funClearInternalFilters() {
+  document.getElementById('departmentFilter').value = '';
+  document.getElementById('skillFilter').value = '';
+  document.getElementById('searchFilter').value = '';
+  funApplyInternalFilters();
+}
+
+function funClearExternalFilters() {
+  document.getElementById('externalSkillFilter').value = '';
+  document.getElementById('statusFilter').value = '';
+  document.getElementById('externalSearchFilter').value = '';
+  funApplyExternalFilters();
+}
+
+// Toggle empty state
+function funToggleEmptyState(data, gridContainerId, emptyStateId) {
+  const gridContainer = document.getElementById(gridContainerId);
+  const emptyState = document.getElementById(emptyStateId);
+  if (!gridContainer || !emptyState) return;
+  
+  if (data.length === 0) {
+    gridContainer.classList.add('hidden');
+    emptyState.classList.remove('hidden');
+  } else {
+    gridContainer.classList.remove('hidden');
+    emptyState.classList.add('hidden');
+  }
+}
+
+// Initialize Internal Trainers Grid
+function funInitInternalTrainersGrid() {
+  if (!window.TiramaiGrid) {
+    console.error('TiramaiGrid is not available');
+    return;
+  }
+  
+  const trainers = getInternalTrainersData();
+  
+  funToggleEmptyState(trainers, 'internalTrainersGrid', 'internalTrainersEmptyState');
+  
+  if (trainers.length === 0) return;
+  
+  const columns = [
+    {
+      field: 'employeeName',
+      header: 'Employee Name',
+      sortable: true,
+      filterable: true,
+      isLink: true,
+      linkHref: (row) => `internal_trainer_detail.html?id=${row.id}`,
+      className: 'text-blue-700 hover:text-blue-800 font-medium'
+    },
+    {
+      field: 'jobTitle',
+      header: 'Job Title',
+      sortable: true,
+      filterable: true
+    },
+    {
+      field: 'department',
+      header: 'Department',
+      sortable: true,
+      filterable: true
+    },
+    {
+      field: 'eligibleSkills',
+      header: 'Eligible Skills',
+      sortable: false,
+      filterable: false,
+      render: (value, row) => {
+        if (row.eligibleSkillsCount <= 2) {
+          return value;
+        }
+        return `<span title="${value}">${row.eligibleSkillsCount} skills</span>`;
+      }
+    },
+    {
+      field: 'upcomingSessions',
+      header: 'Upcoming Sessions',
+      type: 'number',
+      align: 'center',
+      sortable: true
+    },
+    {
+      field: 'totalSessions',
+      header: 'Total Sessions',
+      type: 'number',
+      align: 'center',
+      sortable: true
+    },
+    {
+      field: 'actions',
+      header: 'Actions',
+      type: 'action',
+      width: 100,
+      sortable: false,
+      filterable: false,
+      actions: [
+        {
+          label: 'View',
+          icon: 'eye',
+          className: 'text-blue-600 hover:text-blue-800',
+          onClick: (row) => funNavigateToInternalTrainerDetail(row.id)
+        }
+      ]
+    }
+  ];
+  
+  try {
+    internalTrainersGridInstance = new TiramaiGrid('#internalTrainersGrid', {
+      data: trainers,
+      columns: columns,
+      theme: 'light',
+      sortable: true,
+      filterable: true,
+      pagination: {
+        enabled: true,
+        pageSize: 10,
+        pageSizeOptions: [10, 20, 50]
+      },
+      export: {
+        enabled: true,
+        filename: 'internal-trainers.csv'
+      }
+    });
+  } catch (error) {
+    console.error('Failed to initialize internal trainers grid:', error);
+  }
+}
+
+// Initialize External Trainers Grid  
+function funInitExternalTrainersGrid() {
+  if (!window.TiramaiGrid) {
+    console.error('TiramaiGrid is not available');
+    return;
+  }
+  
+  const trainers = getExternalTrainersData();
+  
+  funToggleEmptyState(trainers, 'externalTrainersGrid', 'externalTrainersEmptyState');
+  
+  if (trainers.length === 0) return;
+  
+  const columns = [
+    {
+      field: 'name',
+      header: 'Name',
+      sortable: true,
+      filterable: true,
+      isLink: true,
+      linkHref: (row) => `external_trainer_detail.html?id=${row.id}`,
+      className: 'text-blue-700 hover:text-blue-800 font-medium'
+    },
+    {
+      field: 'email',
+      header: 'Email',
+      filterable: true,
+      isLink: true,
+      linkHref: (row) => `mailto:${row.email}`,
+      linkTarget: '_blank'
+    },
+    {
+      field: 'skills',
+      header: 'Skills',
+      sortable: false,
+      filterable: false,
+      render: (value, row) => {
+        if (row.skillsCount <= 2) {
+          return value;
+        }
+        return `<span title="${value}">${row.skillsCount} skills</span>`;
+      }
+    },
+    {
+      field: 'upcomingSessions',
+      header: 'Upcoming Sessions',
+      type: 'number',
+      align: 'center',
+      sortable: true
+    },
+    {
+      field: 'totalSessions',
+      header: 'Total Sessions',
+      type: 'number',
+      align: 'center',
+      sortable: true
+    },
+    {
+      field: 'status',
+      header: 'Status',
+      type: 'text',
+      sortable: true,
+      filterable: true,
+      filterType: 'enum',
+      filterEnumValues: ['active', 'inactive'],
+      render: (value) => {
+        const colors = { 
+          active: 'text-green-600 bg-green-50', 
+          inactive: 'text-gray-600 bg-gray-50'
+        };
+        return `<span class="inline-flex px-2 py-1 text-xs font-medium rounded ${colors[value] || ''}">${value}</span>`;
+      }
+    },
+    {
+      field: 'actions',
+      header: 'Actions',
+      type: 'action',
+      width: 150,
+      sortable: false,
+      filterable: false,
+      actions: [
+        {
+          label: 'View',
+          icon: 'eye',
+          className: 'text-blue-600 hover:text-blue-800',
+          onClick: (row) => funNavigateToExternalTrainerDetail(row.id)
+        },
+        {
+          label: 'Edit',
+          icon: 'edit',
+          className: 'text-green-600 hover:text-green-800',
+          onClick: (row) => funNavigateToExternalTrainerEdit(row.id)
+        },
+        {
+          label: 'Delete',
+          icon: 'trash-2',
+          className: 'text-red-600 hover:text-red-800',
+          onClick: (row) => funOpenDeleteModal(row.id, row.name)
+        }
+      ]
+    }
+  ];
+  
+  try {
+    externalTrainersGridInstance = new TiramaiGrid('#externalTrainersGrid', {
+      data: trainers,
+      columns: columns,
+      theme: 'light',
+      sortable: true,
+      filterable: true,
+      pagination: {
+        enabled: true,
+        pageSize: 10,
+        pageSizeOptions: [10, 20, 50]
+      },
+      export: {
+        enabled: true,
+        filename: 'external-trainers.csv'
+      }
+    });
+  } catch (error) {
+    console.error('Failed to initialize external trainers grid:', error);
+  }
+}
+
+// Delete modal functions
+function funOpenDeleteModal(trainerId, trainerName) {
+  deleteTrainerId = trainerId;
+  
+  const modal = document.getElementById('deleteTrainerModal');
+  const nameElement = document.getElementById('deleteTrainerName');
+  const warningElement = document.getElementById('deleteTrainerWarning');
+  const sessionsCountElement = document.getElementById('upcomingSessionsCount');
+  
+  if (nameElement) nameElement.textContent = trainerName;
+  
+  const upcomingCount = getUpcomingSessionsCount(trainerId, 'external');
+  if (upcomingCount > 0) {
+    if (sessionsCountElement) sessionsCountElement.textContent = upcomingCount;
+    if (warningElement) warningElement.classList.remove('hidden');
+  } else {
+    if (warningElement) warningElement.classList.add('hidden');
+  }
+  
+  if (modal) modal.classList.remove('hidden');
+}
+
+function funCloseDeleteModal() {
+  const modal = document.getElementById('deleteTrainerModal');
+  if (modal) modal.classList.add('hidden');
+  deleteTrainerId = null;
+}
+
+function funConfirmDeleteTrainer() {
+  if (!deleteTrainerId) return;
+  
+  try {
+    const trainers = getDataSafely('externalTrainers') || [];
+    const updatedTrainers = trainers.map(trainer => {
+      if (trainer.id === deleteTrainerId) {
+        return { ...trainer, status: 'inactive' };
+      }
+      return trainer;
+    });
+    
+    localStorage.setItem('externalTrainers', JSON.stringify(updatedTrainers));
+    
+    // Refresh grid
+    if (externalTrainersGridInstance) {
+      funApplyExternalFilters();
+    }
+    
+    funCloseDeleteModal();
+    
+    // Show success message
+    alert('External trainer has been marked as inactive successfully.');
+    
+  } catch (error) {
+    console.error('Error deleting trainer:', error);
+    alert('An error occurred while deleting the trainer. Please try again.');
+  }
+}
+
+// Event listeners for filters
+function funBindFilterEvents() {
+  // Internal trainers filters
+  const departmentFilter = document.getElementById('departmentFilter');
+  const skillFilter = document.getElementById('skillFilter');
+  const searchFilter = document.getElementById('searchFilter');
+  
+  if (departmentFilter) departmentFilter.addEventListener('change', funApplyInternalFilters);
+  if (skillFilter) skillFilter.addEventListener('change', funApplyInternalFilters);
+  if (searchFilter) {
+    searchFilter.addEventListener('input', () => {
+      clearTimeout(searchFilter.timeout);
+      searchFilter.timeout = setTimeout(funApplyInternalFilters, 300);
+    });
+  }
+  
+  // External trainers filters
+  const externalSkillFilter = document.getElementById('externalSkillFilter');
+  const statusFilter = document.getElementById('statusFilter');
+  const externalSearchFilter = document.getElementById('externalSearchFilter');
+  
+  if (externalSkillFilter) externalSkillFilter.addEventListener('change', funApplyExternalFilters);
+  if (statusFilter) statusFilter.addEventListener('change', funApplyExternalFilters);
+  if (externalSearchFilter) {
+    externalSearchFilter.addEventListener('input', () => {
+      clearTimeout(externalSearchFilter.timeout);
+      externalSearchFilter.timeout = setTimeout(funApplyExternalFilters, 300);
+    });
+  }
+}
+
+// Initialize page
+document.addEventListener('DOMContentLoaded', function() {
+  try {
+    // Set active nav link
+    if (window.TemplateUtils?.setActiveNavLink) {
+      window.TemplateUtils.setActiveNavLink('trainers');
+    }
+    
+    funInitializeFilters();
+    funBindFilterEvents();
+    funSwitchTab('internal');
+    
+  } catch (error) {
+    console.error('Error initializing trainers page:', error);
+  }
+});
+</script></body></html>

@@ -1,0 +1,1682 @@
+<html lang="en"><head>
+    <meta charset="UTF-8">
+    <title>SkillBridge Admin Portal</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Always add this import for data grid implementation - Important -->
+    <script src="https://tiramai-grid-lib.tiram.app/tiramai-grid.umd.js"></script>
+    <style type="text/tailwindcss">
+      @theme {
+        /* Brand Colors from SkillBridge Design System */
+        --color-primary: #1E40AF; /* Primary blue for navigation, CTAs */
+        --color-secondary: #059669; /* Success/progress green */
+        --color-accent: #F59E0B; /* Training/notification amber */
+        --color-surface: #FFFFFF; /* Cards, modals, form containers */
+        --color-background: #F8FAFC; /* Main background */
+        --color-border: #E2E8F0; /* Dividers, borders */
+        --color-error: #DC2626; /* Error states */
+
+        /* Layout Constants */
+        --header-height: 4rem; /* 64px header */
+        --sidebar-width: 16rem; /* 256px sidebar */
+
+        /* Typography Scale */
+        --text-xs: 12px;
+        --text-sm: 14px;
+        --text-base: 14px;
+        --text-lg: 16px;
+        --text-xl: 18px;
+        --text-2xl: 20px;
+        --text-3xl: 24px;
+        --text-4xl: 30px;
+        --text-5xl: 36px;
+        --text-6xl: 48px;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+      }
+      ::-webkit-scrollbar-track {
+        background: #f1f1f1;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+        border-radius: 4px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: #94a3b8;
+      }
+
+      .app-header {
+        height: var(--header-height, 4rem);
+      }
+      .app-sidebar {
+        top: var(--header-height, 4rem);
+        width: var(--sidebar-width, 16rem);
+        height: calc(100vh - var(--header-height, 4rem));
+        overflow-y: auto;
+        overflow-x: hidden;
+      }
+      .app-main {
+        margin-top: var(--header-height, 4rem);
+        min-height: calc(100vh - var(--header-height, 4rem));
+      }
+      @media (min-width: 768px) {
+        .app-main {
+          margin-left: var(--sidebar-width, 16rem);
+        }
+      }
+
+      body.sidebar-open {
+        overflow: hidden;
+      }
+
+      @media (max-width: 767px) {
+        .app-sidebar {
+          left: calc(-1 * var(--sidebar-width, 16rem));
+          transition: left 0.3s ease-in-out;
+        }
+        .app-sidebar.open {
+          left: 0;
+        }
+      }
+
+      .nav-link.active {
+        background: #1E40AF;
+        color: white;
+      }
+      .nav-link.active:hover {
+        background: #1E40AF;
+        opacity: 0.9;
+      }
+
+      .popover {
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(-8px);
+        transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out,
+          visibility 0.2s ease-in-out;
+      }
+      .popover.visible {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+      }
+
+      .sidebar-backdrop {
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+      }
+      .sidebar-backdrop.active {
+        opacity: 1;
+        visibility: visible;
+      }
+
+      button,
+      a {
+        font-size: 14px;
+      }
+    </style>
+  <title>Employees</title></head>
+  <body class="bg-slate-50 text-gray-800 overflow-x-hidden">
+    <header class="app-header fixed top-0 left-0 right-0 bg-white border-b border-slate-200 z-40">
+      <div class="h-full max-w-[1920px] mx-auto px-4 md:px-6 flex justify-between items-center">
+        <div class="flex items-center gap-3">
+          <button id="mobileMenuToggle" class="flex items-center justify-center w-10 h-10 rounded text-gray-500 hover:bg-gray-100 hover:text-gray-900 transition-all duration-200 cursor-pointer border-0 bg-transparent md:hidden focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-700 focus-visible:outline-offset-2" aria-label="Toggle navigation menu" aria-expanded="false">
+            <i data-lucide="menu" class="w-6 h-6"></i>
+          </button>
+
+          <div class="flex items-center gap-3">
+            <div class="w-8 h-8">
+              <svg viewBox="0 0 400 400" width="32" height="32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <g>
+                  <path d="M80 230 Q200 80 320 230" stroke="#1E40AF" stroke-width="26" fill="none" stroke-linecap="round"></path>
+                  <rect x="95" y="230" width="24" height="80" rx="8" fill="#059669"></rect>
+                  <rect x="281" y="230" width="24" height="80" rx="8" fill="#059669"></rect>
+                  <rect x="189" y="196" width="22" height="114" rx="7" fill="#1E40AF"></rect>
+                  <circle cx="130" cy="180" r="15" fill="#1E40AF"></circle>
+                  <circle cx="270" cy="180" r="15" fill="#1E40AF"></circle>
+                  <circle cx="200" cy="106" r="17" fill="#059669"></circle>
+                  <rect x="192" y="126" width="16" height="36" rx="6" fill="#059669"></rect>
+                </g>
+              </svg>
+            </div>
+            <h1 class="text-lg md:text-xl font-bold text-gray-900">
+              SkillBridge
+            </h1>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-2 md:gap-3">
+          <button id="userProfileButton" class="flex items-center gap-3 px-3 py-2 rounded-lg border border-transparent hover:bg-gray-50 hover:border-gray-200 transition-all duration-200 cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-700 focus-visible:outline-offset-2" aria-label="User profile menu" aria-expanded="false" aria-haspopup="true">
+            <div id="userAvatar" class="w-8 h-8 bg-blue-700 text-white rounded-full flex items-center justify-center text-sm font-semibold shrink-0"></div>
+            <div class="hidden sm:flex flex-col items-start max-w-[150px]">
+              <div id="userName" class="text-sm font-medium text-gray-900 truncate w-full"></div>
+            </div>
+            <i data-lucide="chevron-down" class="w-4 h-4 text-gray-500 hidden sm:block"></i>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <div id="userProfilePopover" class="popover fixed top-[4.5rem] right-4 md:right-6 w-72 bg-white border border-gray-200 rounded-lg shadow-xl z-50" role="dialog" aria-labelledby="popoverUserName" data-portal="body">
+      <div class="p-4">
+        <div class="flex items-center gap-3 pb-3 mb-3 border-b border-gray-100">
+          <div id="popoverUserAvatar" class="w-8 h-8 bg-blue-700 text-white rounded-full flex items-center justify-center text-sm font-semibold shrink-0"></div>
+          <div class="flex-1 min-w-0">
+            <div id="popoverUserName" class="font-semibold text-gray-900 truncate"></div>
+            <div id="popoverUserEmail" class="text-xs text-gray-500 truncate"></div>
+          </div>
+        </div>
+
+        <div class="space-y-1">
+          <button id="signOutButton" class="w-full flex items-center gap-3 px-3 py-2 text-sm font-medium text-red-600 hover:bg-red-50 rounded transition-all duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-700 focus-visible:outline-offset-2">
+            <i data-lucide="log-out" class="w-4 h-4"></i>
+            Sign Out
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div id="sidebarBackdrop" class="sidebar-backdrop fixed inset-0 bg-black/50 z-20 md:hidden" style="top: var(--header-height, 4rem)"></div>
+
+    <aside id="sidebar" class="app-sidebar fixed left-0 bg-white border-r border-slate-200 overflow-y-auto z-30">
+      <nav class="p-4" role="navigation" aria-label="Main navigation">
+        <div class="py-6 border-b border-gray-100 first:pt-0 last:border-b-0">
+          <div class="px-4 pb-2 text-xs font-semibold uppercase tracking-wider text-gray-400">
+            Dashboard
+          </div>
+          <div class="space-y-1">
+            <a href="dashboard.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline active" data-page="dashboard">
+              <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
+              <span>Admin Dashboard</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="py-6 border-b border-gray-100 last:border-b-0">
+          <div class="px-4 pb-2 text-xs font-semibold uppercase tracking-wider text-gray-400">
+            Organization Setup
+          </div>
+          <div class="space-y-1">
+            <a href="departments_list.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline" data-page="departments">
+              <i data-lucide="building" class="w-5 h-5"></i>
+              <span>Departments</span>
+            </a>
+            <a href="assessment_cycles_list.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline" data-page="assessment_cycles">
+              <i data-lucide="calendar" class="w-5 h-5"></i>
+              <span>Assessment Cycles</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="py-6 border-b border-gray-100 last:border-b-0">
+          <div class="px-4 pb-2 text-xs font-semibold uppercase tracking-wider text-gray-400">
+            Competency Framework
+          </div>
+          <div class="space-y-1">
+            <a href="skill_categories_list.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline" data-page="skill_categories">
+              <i data-lucide="folder" class="w-5 h-5"></i>
+              <span>Skill Categories</span>
+            </a>
+            <a href="skill_criticalities_list.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline" data-page="skill_criticalities">
+              <i data-lucide="alert-triangle" class="w-5 h-5"></i>
+              <span>Criticality Levels</span>
+            </a>
+            <a href="skills_list.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline" data-page="skills">
+              <i data-lucide="star" class="w-5 h-5"></i>
+              <span>Skills</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="py-6 border-b border-gray-100 last:border-b-0">
+          <div class="px-4 pb-2 text-xs font-semibold uppercase tracking-wider text-gray-400">
+            People Management
+          </div>
+          <div class="space-y-1">
+            <a href="employees_list.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline" data-page="employees">
+              <i data-lucide="users" class="w-5 h-5"></i>
+              <span>Employees</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="py-6 border-b border-gray-100 last:border-b-0">
+          <div class="px-4 pb-2 text-xs font-semibold uppercase tracking-wider text-gray-400">
+            Training
+          </div>
+          <div class="space-y-1">
+            <a href="training_sessions_list.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline" data-page="training_sessions">
+              <i data-lucide="graduation-cap" class="w-5 h-5"></i>
+              <span>Training Sessions</span>
+            </a>
+            <a href="trainers_list.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline" data-page="trainers">
+              <i data-lucide="user-check" class="w-5 h-5"></i>
+              <span>Trainers</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="py-6 border-b border-gray-100 last:border-b-0">
+          <div class="px-4 pb-2 text-xs font-semibold uppercase tracking-wider text-gray-400">
+            Disputes
+          </div>
+          <div class="space-y-1">
+            <a href="disputes_list.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline" data-page="disputes">
+              <i data-lucide="message-circle" class="w-5 h-5"></i>
+              <span>Disputes</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="py-6 border-b border-gray-100 last:border-b-0">
+          <div class="px-4 pb-2 text-xs font-semibold uppercase tracking-wider text-gray-400">
+            Analytics
+          </div>
+          <div class="space-y-1">
+            <a href="analytics_skill_gap_heatmap.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline" data-page="skill_gap_heatmap">
+              <i data-lucide="map" class="w-5 h-5"></i>
+              <span>Skill Gap Heatmap</span>
+            </a>
+            <a href="analytics_tni_dashboard.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline" data-page="tni_dashboard">
+              <i data-lucide="target" class="w-5 h-5"></i>
+              <span>TNI Dashboard</span>
+            </a>
+            <a href="analytics_training_forecast.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline" data-page="training_forecast">
+              <i data-lucide="trending-up" class="w-5 h-5"></i>
+              <span>Training Demand Forecast</span>
+            </a>
+            <a href="analytics_assessment_completion.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline" data-page="assessment_completion">
+              <i data-lucide="check-circle" class="w-5 h-5"></i>
+              <span>Assessment Completion</span>
+            </a>
+            <a href="analytics_dispute_metrics.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline" data-page="dispute_metrics">
+              <i data-lucide="bar-chart-3" class="w-5 h-5"></i>
+              <span>Dispute Metrics</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="py-6">
+          <div class="px-4 pb-2 text-xs font-semibold uppercase tracking-wider text-gray-400">
+            Settings
+          </div>
+          <div class="space-y-1">
+            <a href="system_settings.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline" data-page="system_settings">
+              <i data-lucide="settings" class="w-5 h-5"></i>
+              <span>System Settings</span>
+            </a>
+          </div>
+        </div>
+      </nav>
+    </aside>
+
+    <main class="app-main max-w-7xl mx-auto p-4 md:p-6 lg:p-8" id="pageContent" role="main"><nav class="flex items-center space-x-2 text-sm text-gray-600 mb-6" aria-label="Breadcrumb">
+  <a href="dashboard.html" class="hover:text-gray-900">Home</a>
+  <i data-lucide="chevron-right" class="w-4 h-4"></i>
+  <span class="text-gray-900 font-medium">Employees</span>
+</nav>
+
+<!-- Page Header -->
+<div class="flex items-center justify-between mb-6">
+  <div>
+    <h1 class="text-2xl font-bold text-gray-900 mb-2">Employees</h1>
+    <p id="employeesCount" class="text-sm text-gray-600">Loading...</p>
+  </div>
+  <div class="flex items-center gap-3">
+    <button id="bulkImportBtn" class="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors">
+      <i data-lucide="upload" class="w-4 h-4 mr-2"></i>
+      Bulk Import
+    </button>
+    <button id="addEmployeeBtn" class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors">
+      <i data-lucide="plus" class="w-4 h-4 mr-2"></i>
+      Add Employee
+    </button>
+  </div>
+</div>
+
+<!-- Filters Bar -->
+<div class="bg-white rounded-lg border border-gray-200 p-4 mb-6">
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+    <!-- Department Filter -->
+    <div>
+      <label for="departmentFilter" class="block text-xs font-medium text-gray-700 mb-1">Department</label>
+      <select id="departmentFilter" class="w-full rounded border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+        <option value="">All Departments</option>
+      </select>
+    </div>
+    
+    <!-- Status Filter -->
+    <div>
+      <label for="statusFilter" class="block text-xs font-medium text-gray-700 mb-1">Status</label>
+      <select id="statusFilter" class="w-full rounded border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+        <option value="">All</option>
+        <option value="active" selected="">Active</option>
+        <option value="inactive">Inactive</option>
+      </select>
+    </div>
+    
+    <!-- System Role Filter -->
+    <div>
+      <label for="systemRoleFilter" class="block text-xs font-medium text-gray-700 mb-1">System Role</label>
+      <select id="systemRoleFilter" class="w-full rounded border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+        <option value="">All</option>
+        <option value="employee">Employee</option>
+        <option value="systemAdmin">System Admin</option>
+      </select>
+    </div>
+    
+    <!-- Team Lead Filter -->
+    <div>
+      <label for="teamLeadFilter" class="block text-xs font-medium text-gray-700 mb-1">Team Lead</label>
+      <select id="teamLeadFilter" class="w-full rounded border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+        <option value="">All Team Leads</option>
+      </select>
+    </div>
+    
+    <!-- Search -->
+    <div>
+      <label for="searchInput" class="block text-xs font-medium text-gray-700 mb-1">Search</label>
+      <input type="text" id="searchInput" placeholder="Name, email, employee ID..." class="w-full rounded border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+    </div>
+  </div>
+  
+  <div class="flex justify-end mt-4">
+    <button id="clearFiltersBtn" class="inline-flex items-center px-3 py-1 text-xs font-medium text-gray-600 hover:text-gray-900 transition-colors">
+      <i data-lucide="x" class="w-3 h-3 mr-1"></i>
+      Clear Filters
+    </button>
+  </div>
+</div>
+
+<!-- Data Grid Container -->
+<div id="employeesGrid" class="mt-6"></div>
+
+<!-- Empty State -->
+<div id="employeesEmptyState" class="hidden text-center py-12">
+  <i data-lucide="users" class="w-12 h-12 mx-auto text-gray-400 mb-4"></i>
+  <h3 class="text-lg font-medium text-gray-900 mb-2">No employees found</h3>
+  <p class="text-gray-500 mb-4">Get started by adding your first employee.</p>
+  <button onclick="funOpenAddEmployee()" class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-blue-700 rounded-lg hover:bg-blue-800 transition-colors">
+    <i data-lucide="plus" class="w-4 h-4 mr-2"></i>
+    Add Employee
+  </button>
+</div>
+
+<!-- Bulk Import Modal -->
+<div id="bulkImportModal" data-portal="body" class="fixed inset-0 z-50 hidden">
+  <div class="flex items-center justify-center min-h-screen p-4 bg-black/50">
+    <div class="bg-white rounded-xl shadow-xl w-[min(92vw,42rem)] max-h-[90vh] overflow-y-auto">
+      <div class="flex items-center justify-between p-6 border-b border-gray-200">
+        <h3 class="text-lg font-semibold text-gray-900">Bulk Import Employees</h3>
+        <button id="closeBulkImportModal" class="text-gray-400 hover:text-gray-600 transition-colors">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+      
+      <div class="p-6">
+        <div class="mb-4">
+          <p class="text-sm text-gray-600 mb-2">Upload a CSV file with employee data. The file should include the following columns:</p>
+          <div class="bg-gray-50 rounded p-3 text-xs font-mono text-gray-700 mb-3">
+            employeeId, firstName, lastName, email, jobTitle, departmentId, teamLeadId, systemRole
+          </div>
+          <button id="downloadTemplateBtn" class="inline-flex items-center text-sm text-blue-600 hover:text-blue-800 transition-colors">
+            <i data-lucide="download" class="w-4 h-4 mr-1"></i>
+            Download CSV Template
+          </button>
+        </div>
+        
+        <div class="mb-4">
+          <label for="csvFileInput" class="block text-sm font-medium text-gray-700 mb-2">Choose CSV File</label>
+          <input type="file" id="csvFileInput" accept=".csv" class="w-full rounded border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+        </div>
+        
+        <div id="csvPreview" class="hidden mb-4">
+          <h4 class="text-sm font-medium text-gray-700 mb-2">Preview (First 5 rows)</h4>
+          <div class="overflow-x-auto">
+            <table class="min-w-full text-xs border border-gray-200">
+              <thead id="csvPreviewHeader" class="bg-gray-50"></thead>
+              <tbody id="csvPreviewBody" class="divide-y divide-gray-200"></tbody>
+            </table>
+          </div>
+        </div>
+        
+        <div id="csvValidation" class="hidden mb-4">
+          <div id="csvValidationSuccess" class="hidden p-3 bg-green-50 border border-green-200 rounded text-sm text-green-700">
+            <i data-lucide="check-circle" class="w-4 h-4 inline mr-1"></i>
+            <span id="validRowsCount">0</span> valid records ready for import.
+          </div>
+          <div id="csvValidationErrors" class="hidden p-3 bg-red-50 border border-red-200 rounded text-sm text-red-700">
+            <i data-lucide="alert-circle" class="w-4 h-4 inline mr-1"></i>
+            <span id="errorRowsCount">0</span> records have validation errors:
+            <ul id="csvErrorList" class="mt-2 list-disc list-inside"></ul>
+          </div>
+        </div>
+      </div>
+      
+      <div class="flex items-center justify-end gap-3 p-6 border-t border-gray-200">
+        <button id="cancelBulkImport" class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors">
+          Cancel
+        </button>
+        <button id="importEmployeesBtn" disabled="" class="px-4 py-2 text-sm font-medium text-white bg-blue-700 rounded-lg hover:bg-blue-800 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors">
+          Import Employees
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div id="deleteEmployeeModal" data-portal="body" class="fixed inset-0 z-50 hidden">
+  <div class="flex items-center justify-center min-h-screen p-4 bg-black/50">
+    <div class="bg-white rounded-xl shadow-xl w-[min(92vw,32rem)] max-h-[90vh] overflow-y-auto">
+      <div class="flex items-center justify-between p-6 border-b border-gray-200">
+        <h3 class="text-lg font-semibold text-gray-900">Delete Employee</h3>
+        <button id="closeDeleteModal" class="text-gray-400 hover:text-gray-600 transition-colors">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+      
+      <div class="p-6">
+        <p class="text-gray-700 mb-4">
+          Are you sure you want to mark <strong id="deleteEmployeeName"></strong> as inactive?
+        </p>
+        
+        <div id="deleteWarnings" class="space-y-3 mb-4">
+          <div id="directReportsWarning" class="hidden p-3 bg-amber-50 border border-amber-200 rounded text-sm text-amber-700">
+            <i data-lucide="alert-triangle" class="w-4 h-4 inline mr-1"></i>
+            Warning: This employee has <span id="directReportsCount">0</span> direct reports who will need a new team lead.
+          </div>
+          <div id="pendingAssessmentsWarning" class="hidden p-3 bg-amber-50 border border-amber-200 rounded text-sm text-amber-700">
+            <i data-lucide="clock" class="w-4 h-4 inline mr-1"></i>
+            Warning: This employee has pending assessments.
+          </div>
+        </div>
+      </div>
+      
+      <div class="flex items-center justify-end gap-3 p-6 border-t border-gray-200">
+        <button id="cancelDelete" class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors">
+          Cancel
+        </button>
+        <button id="confirmDelete" class="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 transition-colors">
+          Delete
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+</main>
+
+    <script src="app.js"></script>
+    <script src="app_data.js"></script>
+    <script id="container-script">
+      (function () {
+        const TemplateUtils = (window.TemplateUtils =
+          window.TemplateUtils || {});
+
+        TemplateUtils.UserUtils =
+          TemplateUtils.UserUtils ||
+          (function createUserUtils() {
+            return {
+              getCurrentUser() {
+                try {
+                  let currentUserId = localStorage.getItem("currentUserId");
+                  if (!currentUserId) {
+                    localStorage.setItem("currentUserId", "usr_001");
+                    currentUserId = "usr_001";
+                  }
+
+                  const users = JSON.parse(localStorage.getItem("users") || "[]");
+                  return users.find(user => user.id === currentUserId) || null;
+                } catch (error) {
+                  console.error("Error retrieving user data:", error);
+                  return null;
+                }
+              },
+              signOut() {
+                try {
+                  localStorage.removeItem("currentUserId");
+                  window.location.reload();
+                } catch (error) {
+                  console.error("Error signing out:", error);
+                }
+              },
+              getUserDisplayName(user) {
+                if (!user) return "Guest";
+                return user.firstName && user.lastName
+                  ? `${user.firstName} ${user.lastName}`
+                  : user.firstName || user.lastName || "User";
+              },
+              getUserInitials(user) {
+                if (!user) return "?";
+                const first = user.firstName?.charAt(0) || "";
+                const last = user.lastName?.charAt(0) || "";
+                return (first + last).toUpperCase() || "U";
+              },
+            };
+          })();
+
+        if (TemplateUtils.__bootstrapped) {
+          if (typeof window.lucide?.createIcons === "function") {
+            window.lucide.createIcons();
+          }
+          return;
+        }
+
+        TemplateUtils.__bootstrapped = true;
+
+        const state = {
+          popoverVisible: false,
+          sidebarOpen: false,
+          resizeTimer: null,
+          debounceTimer: null,
+          isUpdatingIcons: false,
+          observer: null,
+          refs: {},
+        };
+
+        function ready(fn) {
+          if (document.readyState === "loading") {
+            document.addEventListener("DOMContentLoaded", fn, { once: true });
+          } else if (typeof queueMicrotask === "function") {
+            queueMicrotask(fn);
+          } else {
+            Promise.resolve().then(fn);
+          }
+        }
+
+        function safeLucide(callback) {
+          if (typeof window.lucide?.createIcons === "function") {
+            callback();
+          }
+        }
+
+        function cacheRefs() {
+          state.refs = {
+            userProfileButton: document.getElementById("userProfileButton"),
+            userProfilePopover: document.getElementById("userProfilePopover"),
+            userAvatar: document.getElementById("userAvatar"),
+            userName: document.getElementById("userName"),
+            popoverUserAvatar: document.getElementById("popoverUserAvatar"),
+            popoverUserName: document.getElementById("popoverUserName"),
+            popoverUserEmail: document.getElementById("popoverUserEmail"),
+            signOutButton: document.getElementById("signOutButton"),
+            mobileMenuToggle: document.getElementById("mobileMenuToggle"),
+            sidebar: document.getElementById("sidebar"),
+            sidebarBackdrop: document.getElementById("sidebarBackdrop"),
+            navLinks: document.querySelectorAll(".nav-link"),
+            pageContent: document.getElementById("pageContent"),
+          };
+        }
+
+        function initializeUserProfile() {
+          const { userAvatar, userName } = state.refs;
+          if (!userAvatar || !userName) return;
+
+          const currentUser = TemplateUtils.UserUtils.getCurrentUser();
+          if (currentUser) {
+            userAvatar.textContent =
+              TemplateUtils.UserUtils.getUserInitials(currentUser);
+            userName.textContent =
+              TemplateUtils.UserUtils.getUserDisplayName(currentUser);
+          } else {
+            userAvatar.textContent = "?";
+            userName.textContent = "Guest";
+          }
+        }
+
+        function populatePopover() {
+          const currentUser = TemplateUtils.UserUtils.getCurrentUser();
+          const { popoverUserAvatar, popoverUserName, popoverUserEmail } =
+            state.refs;
+          if (!popoverUserAvatar || !popoverUserName || !popoverUserEmail)
+            return;
+
+          if (currentUser) {
+            popoverUserAvatar.textContent =
+              TemplateUtils.UserUtils.getUserInitials(currentUser);
+            popoverUserName.textContent =
+              TemplateUtils.UserUtils.getUserDisplayName(currentUser);
+            popoverUserEmail.textContent = currentUser.email || "No email";
+          } else {
+            popoverUserAvatar.textContent = "?";
+            popoverUserName.textContent = "Guest";
+            popoverUserEmail.textContent = "Not logged in";
+          }
+        }
+
+        function toggleUserPopover(forceClose = false) {
+          const { userProfilePopover, userProfileButton } = state.refs;
+          if (!userProfilePopover || !userProfileButton) return;
+
+          const shouldOpen = forceClose ? false : !state.popoverVisible;
+          if (shouldOpen) {
+            populatePopover();
+            userProfilePopover.classList.add("visible");
+            userProfileButton.setAttribute("aria-expanded", "true");
+            state.popoverVisible = true;
+            const firstButton = userProfilePopover.querySelector("button");
+            if (firstButton) {
+              setTimeout(() => firstButton.focus(), 50);
+            }
+          } else {
+            userProfilePopover.classList.remove("visible");
+            userProfileButton.setAttribute("aria-expanded", "false");
+            state.popoverVisible = false;
+          }
+        }
+
+        function hideUserPopover() {
+          if (state.popoverVisible) {
+            toggleUserPopover(true);
+          }
+        }
+
+        function toggleMobileSidebar(forceClose = false) {
+          const { sidebar, sidebarBackdrop, mobileMenuToggle } = state.refs;
+          if (!sidebar || !sidebarBackdrop || !mobileMenuToggle) return;
+
+          const shouldOpen = forceClose ? false : !state.sidebarOpen;
+          state.sidebarOpen = shouldOpen;
+
+          sidebar.classList.toggle("open", shouldOpen);
+          sidebarBackdrop.classList.toggle("active", shouldOpen);
+          document.body.classList.toggle("sidebar-open", shouldOpen);
+          mobileMenuToggle.setAttribute(
+            "aria-expanded",
+            shouldOpen ? "true" : "false"
+          );
+
+          const icon = mobileMenuToggle.querySelector("[data-lucide]");
+          if (icon) {
+            icon.setAttribute("data-lucide", shouldOpen ? "x" : "menu");
+            safeLucide(() => window.lucide.createIcons());
+          }
+        }
+
+        function closeMobileSidebar() {
+          if (state.sidebarOpen) {
+            toggleMobileSidebar(true);
+          }
+        }
+
+        function setActiveNavLink(pageId) {
+          if (!pageId) return;
+          const { navLinks } = state.refs;
+          navLinks?.forEach((link) => {
+            if (link.dataset.page === pageId) {
+              link.classList.add("active");
+            } else {
+              link.classList.remove("active");
+            }
+          });
+        }
+
+        TemplateUtils.setActiveNavLink = setActiveNavLink;
+        TemplateUtils.closeMobileSidebar = closeMobileSidebar;
+
+        function handleDocumentClick(event) {
+          const { userProfilePopover, userProfileButton } = state.refs;
+          if (
+            state.popoverVisible &&
+            userProfilePopover &&
+            userProfileButton &&
+            !userProfilePopover.contains(event.target) &&
+            !userProfileButton.contains(event.target)
+          ) {
+            hideUserPopover();
+          }
+        }
+
+        function handleKeydown(event) {
+          if (event.key !== "Escape") return;
+          if (state.popoverVisible) {
+            hideUserPopover();
+            state.refs.userProfileButton?.focus();
+          }
+          if (state.sidebarOpen) {
+            closeMobileSidebar();
+            state.refs.mobileMenuToggle?.focus();
+          }
+        }
+
+        function handleResize() {
+          clearTimeout(state.resizeTimer);
+          state.resizeTimer = setTimeout(() => {
+            if (window.innerWidth >= 768) {
+              closeMobileSidebar();
+            }
+          }, 200);
+        }
+
+        function bindEvents() {
+          const {
+            userProfileButton,
+            mobileMenuToggle,
+            sidebarBackdrop,
+            signOutButton,
+            navLinks,
+          } = state.refs;
+
+          userProfileButton?.addEventListener("click", (event) => {
+            event.stopPropagation();
+            toggleUserPopover();
+          });
+
+          mobileMenuToggle?.addEventListener("click", (event) => {
+            event.stopPropagation();
+            toggleMobileSidebar();
+          });
+
+          sidebarBackdrop?.addEventListener("click", () =>
+            closeMobileSidebar()
+          );
+
+          signOutButton?.addEventListener("click", () => {
+            if (confirm("Are you sure you want to sign out?")) {
+              TemplateUtils.UserUtils.signOut();
+            }
+          });
+
+          navLinks?.forEach((link) => {
+            link.addEventListener("click", () => closeMobileSidebar());
+          });
+
+          document.addEventListener("click", handleDocumentClick);
+          document.addEventListener("keydown", handleKeydown);
+          window.addEventListener("resize", handleResize);
+
+          window.addEventListener("pagehide", cleanup);
+        }
+
+        function cleanup() {
+          if (state.resizeTimer) clearTimeout(state.resizeTimer);
+          if (state.debounceTimer) clearTimeout(state.debounceTimer);
+          if (state.observer) {
+            state.observer.disconnect();
+            state.observer = null;
+          }
+          document.removeEventListener("click", handleDocumentClick);
+          document.removeEventListener("keydown", handleKeydown);
+          window.removeEventListener("resize", handleResize);
+        }
+
+        function initializePortalTargets() {
+          document.querySelectorAll('[data-portal="body"]').forEach((node) => {
+            if (node.parentElement !== document.body) {
+              document.body.appendChild(node);
+            }
+          });
+        }
+
+        function observePageContent() {
+          const { pageContent } = state.refs;
+          if (!pageContent || typeof MutationObserver !== "function") return;
+
+          const observer = new MutationObserver((mutations) => {
+            if (state.isUpdatingIcons) return;
+
+            const isLucideUpdate = mutations.every((m) => {
+              if (m.type !== "childList") return false;
+              const nodes = [...m.addedNodes, ...m.removedNodes];
+              return nodes.every(
+                (n) =>
+                  n.nodeType !== Node.ELEMENT_NODE ||
+                  n.nodeName.toLowerCase() === "svg" ||
+                  n.classList?.contains("lucide")
+              );
+            });
+            if (isLucideUpdate) return;
+
+            if (state.debounceTimer) clearTimeout(state.debounceTimer);
+            state.debounceTimer = setTimeout(() => {
+              state.debounceTimer = null;
+              state.isUpdatingIcons = true;
+              safeLucide(() => {
+                window.lucide.createIcons();
+                requestAnimationFrame(() => {
+                  state.isUpdatingIcons = false;
+                });
+              });
+            }, 100);
+          });
+
+          observer.observe(pageContent, { childList: true, subtree: true });
+          state.observer = observer;
+        }
+
+        function bootstrap() {
+          cacheRefs();
+          initializePortalTargets();
+          initializeUserProfile();
+          bindEvents();
+          safeLucide(() => window.lucide.createIcons());
+          observePageContent();
+        }
+
+        ready(bootstrap);
+      })();
+    </script>
+  
+
+<script>
+let employeesGridInstance = null;
+let currentDeleteEmployeeId = null;
+let csvData = null;
+
+// Safe data retrieval function
+function getDataSafely(key) {
+  try {
+    const data = localStorage.getItem(key);
+    return data ? JSON.parse(data) : [];
+  } catch (error) {
+    console.error(`Error parsing ${key}:`, error);
+    return [];
+  }
+}
+
+// Initialize page
+function funInitEmployeesPage() {
+  funLoadFilterOptions();
+  funInitEmployeesGrid();
+  funBindEventHandlers();
+  funUpdateEmployeesCount();
+}
+
+// Load filter options
+function funLoadFilterOptions() {
+  const departments = getDataSafely('departments').filter(dept => dept.status === 'active');
+  const departmentFilter = document.getElementById('departmentFilter');
+  
+  if (departmentFilter) {
+    departments.forEach(dept => {
+      const option = document.createElement('option');
+      option.value = dept.id;
+      option.textContent = dept.name;
+      departmentFilter.appendChild(option);
+    });
+  }
+  
+  // Load team leads (employees who have direct reports)
+  const users = getDataSafely('users');
+  const teamLeads = users.filter(user => 
+    user.employeeStatus === 'active' && 
+    users.some(u => u.teamLeadId === user.id)
+  );
+  
+  const teamLeadFilter = document.getElementById('teamLeadFilter');
+  if (teamLeadFilter) {
+    teamLeads.forEach(lead => {
+      const option = document.createElement('option');
+      option.value = lead.id;
+      option.textContent = `${lead.firstName} ${lead.lastName}`;
+      teamLeadFilter.appendChild(option);
+    });
+  }
+}
+
+// Initialize employees grid
+function funInitEmployeesGrid() {
+  if (!window.TiramaiGrid) {
+    console.error('TiramaiGrid is not available');
+    return;
+  }
+  
+  const employees = funGetFilteredEmployees();
+  
+  // Handle empty state
+  const gridContainer = document.getElementById('employeesGrid');
+  const emptyState = document.getElementById('employeesEmptyState');
+  if (employees.length === 0) {
+    if (gridContainer) gridContainer.classList.add('hidden');
+    if (emptyState) emptyState.classList.remove('hidden');
+    return;
+  }
+  if (gridContainer) gridContainer.classList.remove('hidden');
+  if (emptyState) emptyState.classList.add('hidden');
+  
+  const columns = [
+    {
+      field: 'employeeId',
+      header: 'Employee ID',
+      sortable: true,
+      filterable: true,
+      width: 120
+    },
+    {
+      field: 'fullName',
+      header: 'Name',
+      sortable: true,
+      filterable: true,
+      isLink: true,
+      linkHref: (row) => `employee_detail.html?id=${row.id}`,
+      width: 200
+    },
+    {
+      field: 'email',
+      header: 'Email',
+      filterable: true,
+      width: 250
+    },
+    {
+      field: 'jobTitle',
+      header: 'Job Title',
+      filterable: true,
+      width: 180
+    },
+    {
+      field: 'departmentName',
+      header: 'Department',
+      filterable: true,
+      filterType: 'enum',
+      width: 150
+    },
+    {
+      field: 'teamLeadName',
+      header: 'Team Lead',
+      filterable: true,
+      width: 150
+    },
+    {
+      field: 'directReportsCount',
+      header: 'Direct Reports',
+      type: 'number',
+      align: 'center',
+      width: 120
+    },
+    {
+      field: 'systemRole',
+      header: 'System Role',
+      filterable: true,
+      filterType: 'enum',
+      filterEnumValues: ['employee', 'systemAdmin'],
+      render: (value) => {
+        const colors = {
+          systemAdmin: 'text-blue-700 bg-blue-50 border-blue-200',
+          employee: 'text-gray-600 bg-gray-50 border-gray-200'
+        };
+        const labels = {
+          systemAdmin: 'System Admin',
+          employee: 'Employee'
+        };
+        return `<span class="inline-flex px-2 py-1 text-xs font-medium rounded border ${colors[value] || colors.employee}">${labels[value] || value}</span>`;
+      },
+      width: 120
+    },
+    {
+      field: 'employeeStatus',
+      header: 'Status',
+      filterable: true,
+      filterType: 'enum',
+      filterEnumValues: ['active', 'inactive'],
+      render: (value) => {
+        const colors = {
+          active: 'text-green-700 bg-green-50 border-green-200',
+          inactive: 'text-red-700 bg-red-50 border-red-200'
+        };
+        const labels = {
+          active: 'Active',
+          inactive: 'Inactive'
+        };
+        return `<span class="inline-flex px-2 py-1 text-xs font-medium rounded border ${colors[value] || ''}">${labels[value] || value}</span>`;
+      },
+      width: 100
+    },
+    {
+      field: 'actions',
+      header: 'Actions',
+      type: 'action',
+      width: 120,
+      sortable: false,
+      filterable: false,
+      actions: [
+        {
+          label: 'View',
+          className: 'text-blue-600 hover:text-blue-800 mr-3',
+          onClick: (row) => {
+            window.location.href = `employee_detail.html?id=${row.id}`;
+          }
+        },
+        {
+          label: 'Edit',
+          className: 'text-gray-600 hover:text-gray-800 mr-3',
+          onClick: (row) => {
+            window.location.href = `employee_edit.html?id=${row.id}`;
+          }
+        },
+        {
+          label: 'Delete',
+          className: 'text-red-600 hover:text-red-800',
+          onClick: (row) => {
+            funOpenDeleteModal(row.id);
+          }
+        }
+      ]
+    }
+  ];
+  
+  try {
+    employeesGridInstance = new TiramaiGrid('#employeesGrid', {
+      data: employees,
+      columns: columns,
+      theme: 'light',
+      sortable: true,
+      filterable: true,
+      globalSearch: true,
+      pagination: {
+        enabled: true,
+        pageSize: 20,
+        pageSizeOptions: [10, 20, 50, 100],
+        showFirstLast: true,
+        showPrevNext: true,
+        showPageInfo: true
+      },
+      selection: {
+        enabled: false
+      },
+      export: {
+        enabled: true,
+        filename: 'employees.csv',
+        includeHeaders: true,
+        delimiter: ','
+      },
+      onRowClick: (row, rowIndex, event) => {
+        // Navigate to detail page (skip if clicking action buttons)
+        if (event.target.tagName !== 'BUTTON' && event.target.tagName !== 'A') {
+          window.location.href = `employee_detail.html?id=${row.id}`;
+        }
+      }
+    });
+  } catch (error) {
+    console.error('Failed to initialize employees grid:', error);
+  }
+}
+
+// Get filtered employees data
+function funGetFilteredEmployees() {
+  const users = getDataSafely('users');
+  const departments = getDataSafely('departments');
+  
+  // Apply default filter for active employees if status filter is set
+  const statusFilter = document.getElementById('statusFilter')?.value || 'active';
+  const departmentFilter = document.getElementById('departmentFilter')?.value || '';
+  const systemRoleFilter = document.getElementById('systemRoleFilter')?.value || '';
+  const teamLeadFilter = document.getElementById('teamLeadFilter')?.value || '';
+  const searchTerm = document.getElementById('searchInput')?.value?.toLowerCase() || '';
+  
+  return users
+    .filter(user => {
+      // Status filter
+      if (statusFilter && user.employeeStatus !== statusFilter) return false;
+      
+      // Department filter
+      if (departmentFilter && user.departmentId !== departmentFilter) return false;
+      
+      // System role filter
+      if (systemRoleFilter && user.systemRole !== systemRoleFilter) return false;
+      
+      // Team lead filter
+      if (teamLeadFilter && user.teamLeadId !== teamLeadFilter) return false;
+      
+      // Search filter
+      if (searchTerm) {
+        const searchableText = [
+          user.firstName,
+          user.lastName,
+          user.email,
+          user.employeeId
+        ].join(' ').toLowerCase();
+        if (!searchableText.includes(searchTerm)) return false;
+      }
+      
+      return true;
+    })
+    .map(user => {
+      const department = departments.find(dept => dept.id === user.departmentId);
+      const teamLead = users.find(u => u.id === user.teamLeadId);
+      const directReportsCount = users.filter(u => u.teamLeadId === user.id).length;
+      
+      return {
+        ...user,
+        fullName: `${user.firstName} ${user.lastName}`,
+        departmentName: department?.name || '-',
+        teamLeadName: teamLead ? `${teamLead.firstName} ${teamLead.lastName}` : '-',
+        directReportsCount: directReportsCount
+      };
+    });
+}
+
+// Refresh grid
+function funRefreshEmployeesGrid() {
+  if (!employeesGridInstance) {
+    funInitEmployeesGrid();
+    return;
+  }
+  
+  const employees = funGetFilteredEmployees();
+  
+  // Handle empty state
+  const gridContainer = document.getElementById('employeesGrid');
+  const emptyState = document.getElementById('employeesEmptyState');
+  
+  if (employees.length === 0) {
+    if (gridContainer) gridContainer.classList.add('hidden');
+    if (emptyState) emptyState.classList.remove('hidden');
+    if (employeesGridInstance) {
+      employeesGridInstance.destroy();
+      employeesGridInstance = null;
+    }
+  } else {
+    if (gridContainer) gridContainer.classList.remove('hidden');
+    if (emptyState) emptyState.classList.add('hidden');
+    employeesGridInstance.setData(employees);
+  }
+  
+  funUpdateEmployeesCount();
+}
+
+// Update employees count
+function funUpdateEmployeesCount() {
+  const employees = funGetFilteredEmployees();
+  const countElement = document.getElementById('employeesCount');
+  if (countElement) {
+    countElement.textContent = `${employees.length} employee${employees.length !== 1 ? 's' : ''}`;
+  }
+}
+
+// Open add employee page
+function funOpenAddEmployee() {
+  window.location.href = 'employee_create.html';
+}
+
+// Open delete modal
+function funOpenDeleteModal(employeeId) {
+  currentDeleteEmployeeId = employeeId;
+  const users = getDataSafely('users');
+  const user = users.find(u => u.id === employeeId);
+  
+  if (!user) {
+    alert('Employee not found');
+    return;
+  }
+  
+  // Update modal content
+  const nameElement = document.getElementById('deleteEmployeeName');
+  if (nameElement) {
+    nameElement.textContent = `${user.firstName} ${user.lastName}`;
+  }
+  
+  // Check for direct reports
+  const directReports = users.filter(u => u.teamLeadId === employeeId);
+  const directReportsWarning = document.getElementById('directReportsWarning');
+  const directReportsCount = document.getElementById('directReportsCount');
+  
+  if (directReports.length > 0) {
+    if (directReportsCount) directReportsCount.textContent = directReports.length;
+    if (directReportsWarning) directReportsWarning.classList.remove('hidden');
+  } else {
+    if (directReportsWarning) directReportsWarning.classList.add('hidden');
+  }
+  
+  // Check for pending assessments
+  const assessments = getDataSafely('assessments');
+  const cycles = getDataSafely('assessmentCycles');
+  const activeCycle = cycles.find(c => c.isActiveCycle);
+  const hasPendingAssessments = activeCycle && assessments.some(a => 
+    a.employeeId === employeeId && 
+    a.assessmentCycleId === activeCycle.id && 
+    !a.isLocked
+  );
+  
+  const pendingAssessmentsWarning = document.getElementById('pendingAssessmentsWarning');
+  if (hasPendingAssessments) {
+    if (pendingAssessmentsWarning) pendingAssessmentsWarning.classList.remove('hidden');
+  } else {
+    if (pendingAssessmentsWarning) pendingAssessmentsWarning.classList.add('hidden');
+  }
+  
+  // Show modal
+  const modal = document.getElementById('deleteEmployeeModal');
+  if (modal) modal.classList.remove('hidden');
+}
+
+// Close delete modal
+function funCloseDeleteModal() {
+  currentDeleteEmployeeId = null;
+  const modal = document.getElementById('deleteEmployeeModal');
+  if (modal) modal.classList.add('hidden');
+}
+
+// Confirm delete employee
+function funConfirmDeleteEmployee() {
+  if (!currentDeleteEmployeeId) return;
+  
+  try {
+    const users = getDataSafely('users');
+    const userIndex = users.findIndex(u => u.id === currentDeleteEmployeeId);
+    
+    if (userIndex === -1) {
+      alert('Employee not found');
+      return;
+    }
+    
+    // Update employee status to inactive
+    users[userIndex].employeeStatus = 'inactive';
+    users[userIndex].modifiedTimestamp = new Date().toISOString();
+    users[userIndex].modifiedBy = 'usr_001'; // Current user ID
+    
+    localStorage.setItem('users', JSON.stringify(users));
+    
+    funCloseDeleteModal();
+    funRefreshEmployeesGrid();
+    
+    alert('Employee has been marked as inactive successfully.');
+  } catch (error) {
+    console.error('Error deleting employee:', error);
+    alert('Failed to delete employee. Please try again.');
+  }
+}
+
+// Bind event handlers
+function funBindEventHandlers() {
+  // Add employee button
+  const addEmployeeBtn = document.getElementById('addEmployeeBtn');
+  if (addEmployeeBtn) {
+    addEmployeeBtn.addEventListener('click', funOpenAddEmployee);
+  }
+  
+  // Bulk import button
+  const bulkImportBtn = document.getElementById('bulkImportBtn');
+  if (bulkImportBtn) {
+    bulkImportBtn.addEventListener('click', () => {
+      const modal = document.getElementById('bulkImportModal');
+      if (modal) modal.classList.remove('hidden');
+    });
+  }
+  
+  // Close bulk import modal
+  const closeBulkImportModal = document.getElementById('closeBulkImportModal');
+  const cancelBulkImport = document.getElementById('cancelBulkImport');
+  [closeBulkImportModal, cancelBulkImport].forEach(btn => {
+    if (btn) {
+      btn.addEventListener('click', () => {
+        const modal = document.getElementById('bulkImportModal');
+        if (modal) modal.classList.add('hidden');
+        funResetBulkImportModal();
+      });
+    }
+  });
+  
+  // Delete modal handlers
+  const closeDeleteModal = document.getElementById('closeDeleteModal');
+  const cancelDelete = document.getElementById('cancelDelete');
+  [closeDeleteModal, cancelDelete].forEach(btn => {
+    if (btn) {
+      btn.addEventListener('click', funCloseDeleteModal);
+    }
+  });
+  
+  const confirmDelete = document.getElementById('confirmDelete');
+  if (confirmDelete) {
+    confirmDelete.addEventListener('click', funConfirmDeleteEmployee);
+  }
+  
+  // Filter handlers
+  const filterInputs = [
+    'departmentFilter',
+    'statusFilter', 
+    'systemRoleFilter',
+    'teamLeadFilter',
+    'searchInput'
+  ];
+  
+  filterInputs.forEach(id => {
+    const element = document.getElementById(id);
+    if (element) {
+      element.addEventListener('change', funRefreshEmployeesGrid);
+      element.addEventListener('input', funRefreshEmployeesGrid);
+    }
+  });
+  
+  // Clear filters button
+  const clearFiltersBtn = document.getElementById('clearFiltersBtn');
+  if (clearFiltersBtn) {
+    clearFiltersBtn.addEventListener('click', () => {
+      filterInputs.forEach(id => {
+        const element = document.getElementById(id);
+        if (element) {
+          if (id === 'statusFilter') {
+            element.value = 'active'; // Keep default status filter
+          } else {
+            element.value = '';
+          }
+        }
+      });
+      funRefreshEmployeesGrid();
+    });
+  }
+  
+  // CSV file input
+  const csvFileInput = document.getElementById('csvFileInput');
+  if (csvFileInput) {
+    csvFileInput.addEventListener('change', funHandleCSVFileSelection);
+  }
+  
+  // Download template button
+  const downloadTemplateBtn = document.getElementById('downloadTemplateBtn');
+  if (downloadTemplateBtn) {
+    downloadTemplateBtn.addEventListener('click', funDownloadCSVTemplate);
+  }
+  
+  // Import employees button
+  const importEmployeesBtn = document.getElementById('importEmployeesBtn');
+  if (importEmployeesBtn) {
+    importEmployeesBtn.addEventListener('click', funImportEmployees);
+  }
+}
+
+// Reset bulk import modal
+function funResetBulkImportModal() {
+  const csvFileInput = document.getElementById('csvFileInput');
+  const csvPreview = document.getElementById('csvPreview');
+  const csvValidation = document.getElementById('csvValidation');
+  const importBtn = document.getElementById('importEmployeesBtn');
+  
+  if (csvFileInput) csvFileInput.value = '';
+  if (csvPreview) csvPreview.classList.add('hidden');
+  if (csvValidation) csvValidation.classList.add('hidden');
+  if (importBtn) importBtn.disabled = true;
+  
+  csvData = null;
+}
+
+// Download CSV template
+function funDownloadCSVTemplate() {
+  const csvContent = 'employeeId,firstName,lastName,email,jobTitle,departmentId,teamLeadId,systemRole\nEMP999,John,Doe,john.doe@company.com,Software Engineer,dept_002,usr_003,employee';
+  
+  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.download = 'employee_import_template.csv';
+  link.click();
+}
+
+// Handle CSV file selection
+function funHandleCSVFileSelection(event) {
+  const file = event.target.files[0];
+  if (!file) {
+    funResetBulkImportModal();
+    return;
+  }
+  
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      const csvText = e.target.result;
+      const rows = csvText.split('\n').map(row => row.trim()).filter(row => row);
+      
+      if (rows.length < 2) {
+        alert('CSV file must contain at least a header row and one data row.');
+        funResetBulkImportModal();
+        return;
+      }
+      
+      const headers = rows[0].split(',').map(h => h.trim());
+      const requiredHeaders = ['employeeId', 'firstName', 'lastName', 'email', 'jobTitle', 'departmentId', 'systemRole'];
+      
+      const missingHeaders = requiredHeaders.filter(h => !headers.includes(h));
+      if (missingHeaders.length > 0) {
+        alert(`Missing required headers: ${missingHeaders.join(', ')}`);
+        funResetBulkImportModal();
+        return;
+      }
+      
+      csvData = {
+        headers: headers,
+        rows: rows.slice(1).map(row => {
+          const values = row.split(',').map(v => v.trim());
+          const record = {};
+          headers.forEach((header, index) => {
+            record[header] = values[index] || '';
+          });
+          return record;
+        })
+      };
+      
+      funShowCSVPreview();
+      funValidateCSVData();
+      
+    } catch (error) {
+      console.error('Error parsing CSV:', error);
+      alert('Error parsing CSV file. Please check the format and try again.');
+      funResetBulkImportModal();
+    }
+  };
+  
+  reader.readAsText(file);
+}
+
+// Show CSV preview
+function funShowCSVPreview() {
+  if (!csvData) return;
+  
+  const preview = document.getElementById('csvPreview');
+  const header = document.getElementById('csvPreviewHeader');
+  const body = document.getElementById('csvPreviewBody');
+  
+  if (!preview || !header || !body) return;
+  
+  // Clear existing content
+  header.innerHTML = '';
+  body.innerHTML = '';
+  
+  // Create header row
+  const headerRow = document.createElement('tr');
+  csvData.headers.forEach(headerText => {
+    const th = document.createElement('th');
+    th.textContent = headerText;
+    th.className = 'px-2 py-1 text-left font-medium text-gray-700';
+    headerRow.appendChild(th);
+  });
+  header.appendChild(headerRow);
+  
+  // Create data rows (first 5)
+  csvData.rows.slice(0, 5).forEach(rowData => {
+    const row = document.createElement('tr');
+    csvData.headers.forEach(headerText => {
+      const td = document.createElement('td');
+      td.textContent = rowData[headerText] || '';
+      td.className = 'px-2 py-1 text-gray-600';
+      row.appendChild(td);
+    });
+    body.appendChild(row);
+  });
+  
+  preview.classList.remove('hidden');
+}
+
+// Validate CSV data
+function funValidateCSVData() {
+  if (!csvData) return;
+  
+  const users = getDataSafely('users');
+  const departments = getDataSafely('departments');
+  const errors = [];
+  const validRows = [];
+  
+  csvData.rows.forEach((rowData, index) => {
+    const rowErrors = [];
+    const rowNum = index + 2; // +2 for header and 0-based index
+    
+    // Validate required fields
+    if (!rowData.employeeId) rowErrors.push(`Row ${rowNum}: Employee ID is required`);
+    if (!rowData.firstName) rowErrors.push(`Row ${rowNum}: First name is required`);
+    if (!rowData.lastName) rowErrors.push(`Row ${rowNum}: Last name is required`);
+    if (!rowData.email) rowErrors.push(`Row ${rowNum}: Email is required`);
+    if (!rowData.jobTitle) rowErrors.push(`Row ${rowNum}: Job title is required`);
+    if (!rowData.departmentId) rowErrors.push(`Row ${rowNum}: Department ID is required`);
+    if (!rowData.systemRole) rowErrors.push(`Row ${rowNum}: System role is required`);
+    
+    // Validate email format
+    if (rowData.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(rowData.email)) {
+      rowErrors.push(`Row ${rowNum}: Invalid email format`);
+    }
+    
+    // Validate unique employee ID
+    if (rowData.employeeId && users.some(u => u.employeeId === rowData.employeeId)) {
+      rowErrors.push(`Row ${rowNum}: Employee ID already exists`);
+    }
+    
+    // Validate department exists
+    if (rowData.departmentId && !departments.some(d => d.id === rowData.departmentId)) {
+      rowErrors.push(`Row ${rowNum}: Invalid department ID`);
+    }
+    
+    // Validate system role
+    if (rowData.systemRole && !['employee', 'systemAdmin'].includes(rowData.systemRole)) {
+      rowErrors.push(`Row ${rowNum}: System role must be 'employee' or 'systemAdmin'`);
+    }
+    
+    // Validate team lead (if provided)
+    if (rowData.teamLeadId && !users.some(u => u.id === rowData.teamLeadId)) {
+      rowErrors.push(`Row ${rowNum}: Invalid team lead ID`);
+    }
+    
+    if (rowErrors.length === 0) {
+      validRows.push(rowData);
+    } else {
+      errors.push(...rowErrors);
+    }
+  });
+  
+  funShowValidationResults(validRows.length, errors);
+}
+
+// Show validation results
+function funShowValidationResults(validCount, errors) {
+  const validation = document.getElementById('csvValidation');
+  const success = document.getElementById('csvValidationSuccess');
+  const errorsDiv = document.getElementById('csvValidationErrors');
+  const validRowsCount = document.getElementById('validRowsCount');
+  const errorRowsCount = document.getElementById('errorRowsCount');
+  const errorList = document.getElementById('csvErrorList');
+  const importBtn = document.getElementById('importEmployeesBtn');
+  
+  if (!validation) return;
+  
+  validation.classList.remove('hidden');
+  
+  // Show success message
+  if (validCount > 0 && success && validRowsCount) {
+    validRowsCount.textContent = validCount;
+    success.classList.remove('hidden');
+  } else if (success) {
+    success.classList.add('hidden');
+  }
+  
+  // Show errors
+  if (errors.length > 0 && errorsDiv && errorRowsCount && errorList) {
+    errorRowsCount.textContent = errors.length;
+    errorList.innerHTML = '';
+    errors.forEach(error => {
+      const li = document.createElement('li');
+      li.textContent = error;
+      errorList.appendChild(li);
+    });
+    errorsDiv.classList.remove('hidden');
+  } else if (errorsDiv) {
+    errorsDiv.classList.add('hidden');
+  }
+  
+  // Enable/disable import button
+  if (importBtn) {
+    importBtn.disabled = validCount === 0;
+  }
+}
+
+// Import employees
+function funImportEmployees() {
+  if (!csvData) return;
+  
+  try {
+    const users = getDataSafely('users');
+    const departments = getDataSafely('departments');
+    let importedCount = 0;
+    
+    csvData.rows.forEach(rowData => {
+      // Skip rows with validation errors
+      if (!rowData.employeeId || !rowData.firstName || !rowData.lastName || 
+          !rowData.email || !rowData.jobTitle || !rowData.departmentId || 
+          !rowData.systemRole) {
+        return;
+      }
+      
+      // Check if employee ID already exists
+      if (users.some(u => u.employeeId === rowData.employeeId)) {
+        return;
+      }
+      
+      // Check if department exists
+      if (!departments.some(d => d.id === rowData.departmentId)) {
+        return;
+      }
+      
+      const newUser = {
+        id: `usr_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+        uid: `auth_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+        employeeId: rowData.employeeId,
+        firstName: rowData.firstName,
+        lastName: rowData.lastName,
+        email: rowData.email,
+        jobTitle: rowData.jobTitle,
+        departmentId: rowData.departmentId,
+        teamLeadId: rowData.teamLeadId || null,
+        employeeStatus: 'active',
+        role: rowData.systemRole === 'systemAdmin' ? 'systemAdmin' : 'employee',
+        systemRole: rowData.systemRole,
+        createdTimestamp: new Date().toISOString(),
+        modifiedTimestamp: new Date().toISOString(),
+        createdBy: 'usr_001', // Current user ID
+        modifiedBy: 'usr_001'
+      };
+      
+      users.push(newUser);
+      importedCount++;
+    });
+    
+    localStorage.setItem('users', JSON.stringify(users));
+    
+    // Close modal and refresh grid
+    const modal = document.getElementById('bulkImportModal');
+    if (modal) modal.classList.add('hidden');
+    
+    funResetBulkImportModal();
+    funRefreshEmployeesGrid();
+    
+    alert(`Successfully imported ${importedCount} employee${importedCount !== 1 ? 's' : ''}.`);
+    
+  } catch (error) {
+    console.error('Error importing employees:', error);
+    alert('Failed to import employees. Please try again.');
+  }
+}
+
+// Initialize page on DOM ready
+document.addEventListener('DOMContentLoaded', () => {
+  // Set active navigation
+  if (window.TemplateUtils && window.TemplateUtils.setActiveNavLink) {
+    window.TemplateUtils.setActiveNavLink('employees');
+  }
+  
+  funInitEmployeesPage();
+});
+</script></body></html>

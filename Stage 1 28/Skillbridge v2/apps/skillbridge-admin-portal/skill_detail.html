@@ -1,0 +1,1183 @@
+<html lang="en"><head>
+    <meta charset="UTF-8">
+    <title>SkillBridge Admin Portal</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Always add this import for data grid implementation - Important -->
+    <script src="https://tiramai-grid-lib.tiram.app/tiramai-grid.umd.js"></script>
+    <style type="text/tailwindcss">
+      @theme {
+        /* Brand Colors from SkillBridge Design System */
+        --color-primary: #1E40AF; /* Primary blue for navigation, CTAs */
+        --color-secondary: #059669; /* Success/progress green */
+        --color-accent: #F59E0B; /* Training/notification amber */
+        --color-surface: #FFFFFF; /* Cards, modals, form containers */
+        --color-background: #F8FAFC; /* Main background */
+        --color-border: #E2E8F0; /* Dividers, borders */
+        --color-error: #DC2626; /* Error states */
+
+        /* Layout Constants */
+        --header-height: 4rem; /* 64px header */
+        --sidebar-width: 16rem; /* 256px sidebar */
+
+        /* Typography Scale */
+        --text-xs: 12px;
+        --text-sm: 14px;
+        --text-base: 14px;
+        --text-lg: 16px;
+        --text-xl: 18px;
+        --text-2xl: 20px;
+        --text-3xl: 24px;
+        --text-4xl: 30px;
+        --text-5xl: 36px;
+        --text-6xl: 48px;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+      }
+      ::-webkit-scrollbar-track {
+        background: #f1f1f1;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+        border-radius: 4px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: #94a3b8;
+      }
+
+      .app-header {
+        height: var(--header-height, 4rem);
+      }
+      .app-sidebar {
+        top: var(--header-height, 4rem);
+        width: var(--sidebar-width, 16rem);
+        height: calc(100vh - var(--header-height, 4rem));
+        overflow-y: auto;
+        overflow-x: hidden;
+      }
+      .app-main {
+        margin-top: var(--header-height, 4rem);
+        min-height: calc(100vh - var(--header-height, 4rem));
+      }
+      @media (min-width: 768px) {
+        .app-main {
+          margin-left: var(--sidebar-width, 16rem);
+        }
+      }
+
+      body.sidebar-open {
+        overflow: hidden;
+      }
+
+      @media (max-width: 767px) {
+        .app-sidebar {
+          left: calc(-1 * var(--sidebar-width, 16rem));
+          transition: left 0.3s ease-in-out;
+        }
+        .app-sidebar.open {
+          left: 0;
+        }
+      }
+
+      .nav-link.active {
+        background: #1E40AF;
+        color: white;
+      }
+      .nav-link.active:hover {
+        background: #1E40AF;
+        opacity: 0.9;
+      }
+
+      .popover {
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(-8px);
+        transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out,
+          visibility 0.2s ease-in-out;
+      }
+      .popover.visible {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+      }
+
+      .sidebar-backdrop {
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+      }
+      .sidebar-backdrop.active {
+        opacity: 1;
+        visibility: visible;
+      }
+
+      button,
+      a {
+        font-size: 14px;
+      }
+    </style>
+  <title>Skill Details</title></head>
+  <body class="bg-slate-50 text-gray-800 overflow-x-hidden">
+    <header class="app-header fixed top-0 left-0 right-0 bg-white border-b border-slate-200 z-40">
+      <div class="h-full max-w-[1920px] mx-auto px-4 md:px-6 flex justify-between items-center">
+        <div class="flex items-center gap-3">
+          <button id="mobileMenuToggle" class="flex items-center justify-center w-10 h-10 rounded text-gray-500 hover:bg-gray-100 hover:text-gray-900 transition-all duration-200 cursor-pointer border-0 bg-transparent md:hidden focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-700 focus-visible:outline-offset-2" aria-label="Toggle navigation menu" aria-expanded="false">
+            <i data-lucide="menu" class="w-6 h-6"></i>
+          </button>
+
+          <div class="flex items-center gap-3">
+            <div class="w-8 h-8">
+              <svg viewBox="0 0 400 400" width="32" height="32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <g>
+                  <path d="M80 230 Q200 80 320 230" stroke="#1E40AF" stroke-width="26" fill="none" stroke-linecap="round"></path>
+                  <rect x="95" y="230" width="24" height="80" rx="8" fill="#059669"></rect>
+                  <rect x="281" y="230" width="24" height="80" rx="8" fill="#059669"></rect>
+                  <rect x="189" y="196" width="22" height="114" rx="7" fill="#1E40AF"></rect>
+                  <circle cx="130" cy="180" r="15" fill="#1E40AF"></circle>
+                  <circle cx="270" cy="180" r="15" fill="#1E40AF"></circle>
+                  <circle cx="200" cy="106" r="17" fill="#059669"></circle>
+                  <rect x="192" y="126" width="16" height="36" rx="6" fill="#059669"></rect>
+                </g>
+              </svg>
+            </div>
+            <h1 class="text-lg md:text-xl font-bold text-gray-900">
+              SkillBridge
+            </h1>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-2 md:gap-3">
+          <button id="userProfileButton" class="flex items-center gap-3 px-3 py-2 rounded-lg border border-transparent hover:bg-gray-50 hover:border-gray-200 transition-all duration-200 cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-700 focus-visible:outline-offset-2" aria-label="User profile menu" aria-expanded="false" aria-haspopup="true">
+            <div id="userAvatar" class="w-8 h-8 bg-blue-700 text-white rounded-full flex items-center justify-center text-sm font-semibold shrink-0"></div>
+            <div class="hidden sm:flex flex-col items-start max-w-[150px]">
+              <div id="userName" class="text-sm font-medium text-gray-900 truncate w-full"></div>
+            </div>
+            <i data-lucide="chevron-down" class="w-4 h-4 text-gray-500 hidden sm:block"></i>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <div id="userProfilePopover" class="popover fixed top-[4.5rem] right-4 md:right-6 w-72 bg-white border border-gray-200 rounded-lg shadow-xl z-50" role="dialog" aria-labelledby="popoverUserName" data-portal="body">
+      <div class="p-4">
+        <div class="flex items-center gap-3 pb-3 mb-3 border-b border-gray-100">
+          <div id="popoverUserAvatar" class="w-8 h-8 bg-blue-700 text-white rounded-full flex items-center justify-center text-sm font-semibold shrink-0"></div>
+          <div class="flex-1 min-w-0">
+            <div id="popoverUserName" class="font-semibold text-gray-900 truncate"></div>
+            <div id="popoverUserEmail" class="text-xs text-gray-500 truncate"></div>
+          </div>
+        </div>
+
+        <div class="space-y-1">
+          <button id="signOutButton" class="w-full flex items-center gap-3 px-3 py-2 text-sm font-medium text-red-600 hover:bg-red-50 rounded transition-all duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-700 focus-visible:outline-offset-2">
+            <i data-lucide="log-out" class="w-4 h-4"></i>
+            Sign Out
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div id="sidebarBackdrop" class="sidebar-backdrop fixed inset-0 bg-black/50 z-20 md:hidden" style="top: var(--header-height, 4rem)"></div>
+
+    <aside id="sidebar" class="app-sidebar fixed left-0 bg-white border-r border-slate-200 overflow-y-auto z-30">
+      <nav class="p-4" role="navigation" aria-label="Main navigation">
+        <div class="py-6 border-b border-gray-100 first:pt-0 last:border-b-0">
+          <div class="px-4 pb-2 text-xs font-semibold uppercase tracking-wider text-gray-400">
+            Dashboard
+          </div>
+          <div class="space-y-1">
+            <a href="dashboard.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline active" data-page="dashboard">
+              <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
+              <span>Admin Dashboard</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="py-6 border-b border-gray-100 last:border-b-0">
+          <div class="px-4 pb-2 text-xs font-semibold uppercase tracking-wider text-gray-400">
+            Organization Setup
+          </div>
+          <div class="space-y-1">
+            <a href="departments_list.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline" data-page="departments">
+              <i data-lucide="building" class="w-5 h-5"></i>
+              <span>Departments</span>
+            </a>
+            <a href="assessment_cycles_list.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline" data-page="assessment_cycles">
+              <i data-lucide="calendar" class="w-5 h-5"></i>
+              <span>Assessment Cycles</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="py-6 border-b border-gray-100 last:border-b-0">
+          <div class="px-4 pb-2 text-xs font-semibold uppercase tracking-wider text-gray-400">
+            Competency Framework
+          </div>
+          <div class="space-y-1">
+            <a href="skill_categories_list.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline" data-page="skill_categories">
+              <i data-lucide="folder" class="w-5 h-5"></i>
+              <span>Skill Categories</span>
+            </a>
+            <a href="skill_criticalities_list.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline" data-page="skill_criticalities">
+              <i data-lucide="alert-triangle" class="w-5 h-5"></i>
+              <span>Criticality Levels</span>
+            </a>
+            <a href="skills_list.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline" data-page="skills">
+              <i data-lucide="star" class="w-5 h-5"></i>
+              <span>Skills</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="py-6 border-b border-gray-100 last:border-b-0">
+          <div class="px-4 pb-2 text-xs font-semibold uppercase tracking-wider text-gray-400">
+            People Management
+          </div>
+          <div class="space-y-1">
+            <a href="employees_list.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline" data-page="employees">
+              <i data-lucide="users" class="w-5 h-5"></i>
+              <span>Employees</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="py-6 border-b border-gray-100 last:border-b-0">
+          <div class="px-4 pb-2 text-xs font-semibold uppercase tracking-wider text-gray-400">
+            Training
+          </div>
+          <div class="space-y-1">
+            <a href="training_sessions_list.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline" data-page="training_sessions">
+              <i data-lucide="graduation-cap" class="w-5 h-5"></i>
+              <span>Training Sessions</span>
+            </a>
+            <a href="trainers_list.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline" data-page="trainers">
+              <i data-lucide="user-check" class="w-5 h-5"></i>
+              <span>Trainers</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="py-6 border-b border-gray-100 last:border-b-0">
+          <div class="px-4 pb-2 text-xs font-semibold uppercase tracking-wider text-gray-400">
+            Disputes
+          </div>
+          <div class="space-y-1">
+            <a href="disputes_list.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline" data-page="disputes">
+              <i data-lucide="message-circle" class="w-5 h-5"></i>
+              <span>Disputes</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="py-6 border-b border-gray-100 last:border-b-0">
+          <div class="px-4 pb-2 text-xs font-semibold uppercase tracking-wider text-gray-400">
+            Analytics
+          </div>
+          <div class="space-y-1">
+            <a href="analytics_skill_gap_heatmap.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline" data-page="skill_gap_heatmap">
+              <i data-lucide="map" class="w-5 h-5"></i>
+              <span>Skill Gap Heatmap</span>
+            </a>
+            <a href="analytics_tni_dashboard.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline" data-page="tni_dashboard">
+              <i data-lucide="target" class="w-5 h-5"></i>
+              <span>TNI Dashboard</span>
+            </a>
+            <a href="analytics_training_forecast.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline" data-page="training_forecast">
+              <i data-lucide="trending-up" class="w-5 h-5"></i>
+              <span>Training Demand Forecast</span>
+            </a>
+            <a href="analytics_assessment_completion.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline" data-page="assessment_completion">
+              <i data-lucide="check-circle" class="w-5 h-5"></i>
+              <span>Assessment Completion</span>
+            </a>
+            <a href="analytics_dispute_metrics.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline" data-page="dispute_metrics">
+              <i data-lucide="bar-chart-3" class="w-5 h-5"></i>
+              <span>Dispute Metrics</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="py-6">
+          <div class="px-4 pb-2 text-xs font-semibold uppercase tracking-wider text-gray-400">
+            Settings
+          </div>
+          <div class="space-y-1">
+            <a href="system_settings.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline" data-page="system_settings">
+              <i data-lucide="settings" class="w-5 h-5"></i>
+              <span>System Settings</span>
+            </a>
+          </div>
+        </div>
+      </nav>
+    </aside>
+
+    <main class="app-main max-w-7xl mx-auto p-4 md:p-6 lg:p-8" id="pageContent" role="main"><nav class="flex items-center space-x-2 text-sm text-gray-600 mb-6" aria-label="Breadcrumb">
+  <a href="dashboard.html" class="hover:text-gray-900">Home</a>
+  <i data-lucide="chevron-right" class="w-4 h-4"></i>
+  <a href="skills_list.html" class="hover:text-gray-900">Competency Framework</a>
+  <i data-lucide="chevron-right" class="w-4 h-4"></i>
+  <a href="skills_list.html" class="hover:text-gray-900">Skills</a>
+  <i data-lucide="chevron-right" class="w-4 h-4"></i>
+  <span id="skillBreadcrumbName" class="text-gray-900 font-medium">Skill Name</span>
+</nav>
+
+<!-- Back Button -->
+<button onclick="history.back()" class="inline-flex items-center text-gray-600 hover:text-gray-900 mb-4 transition-colors">
+  <i data-lucide="arrow-left" class="w-4 h-4 mr-2"></i>
+  Back
+</button>
+
+<!-- Header -->
+<div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+  <div class="flex items-center gap-3">
+    <h1 id="skillName" class="text-2xl font-bold text-gray-900">Skill Name</h1>
+    <span id="skillStatusBadge" class="inline-flex px-2 py-1 text-xs font-medium rounded">Status</span>
+  </div>
+  <div class="flex items-center gap-3">
+    <button onclick="funEditSkill()" class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-blue-700 rounded-lg hover:bg-blue-800 transition-colors">
+      <i data-lucide="edit" class="w-4 h-4 mr-2"></i>
+      Edit Skill
+    </button>
+    <button onclick="funOpenDeleteModal()" class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 transition-colors">
+      <i data-lucide="trash-2" class="w-4 h-4 mr-2"></i>
+      Delete
+    </button>
+  </div>
+</div>
+
+<!-- Main Content -->
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+  <!-- Left Column - Skill Information -->
+  <div class="bg-white rounded-lg border border-slate-200 p-6">
+    <h2 class="text-lg font-semibold text-gray-900 mb-4">Skill Information</h2>
+    <div class="space-y-4">
+      <div>
+        <dt class="text-sm font-medium text-gray-500">Name</dt>
+        <dd id="skillInfoName" class="mt-1 text-sm text-gray-900">-</dd>
+      </div>
+      <div>
+        <dt class="text-sm font-medium text-gray-500">Description</dt>
+        <dd id="skillInfoDescription" class="mt-1 text-sm text-gray-900">-</dd>
+      </div>
+      <div>
+        <dt class="text-sm font-medium text-gray-500">Category</dt>
+        <dd class="mt-1">
+          <button id="skillInfoCategory" onclick="funFilterByCategory()" class="text-sm text-blue-600 hover:text-blue-800 underline">-</button>
+        </dd>
+      </div>
+      <div>
+        <dt class="text-sm font-medium text-gray-500">Criticality</dt>
+        <dd class="mt-1">
+          <span id="skillInfoCriticality" class="inline-flex px-2 py-1 text-xs font-medium rounded">-</span>
+        </dd>
+      </div>
+      <div>
+        <dt class="text-sm font-medium text-gray-500">Status</dt>
+        <dd class="mt-1">
+          <span id="skillInfoStatus" class="inline-flex px-2 py-1 text-xs font-medium rounded">-</span>
+        </dd>
+      </div>
+      <div>
+        <dt class="text-sm font-medium text-gray-500">Created</dt>
+        <dd id="skillInfoCreated" class="mt-1 text-sm text-gray-900">-</dd>
+      </div>
+      <div>
+        <dt class="text-sm font-medium text-gray-500">Last Modified</dt>
+        <dd id="skillInfoModified" class="mt-1 text-sm text-gray-900">-</dd>
+      </div>
+    </div>
+  </div>
+
+  <!-- Right Column - Current Benchmark -->
+  <div class="bg-white rounded-lg border border-slate-200 p-6">
+    <h2 class="text-lg font-semibold text-gray-900 mb-4">Current Benchmark</h2>
+    <div class="flex items-center justify-center mb-6">
+      <div class="relative w-32 h-32">
+        <svg class="w-32 h-32 transform -rotate-90" viewBox="0 0 128 128">
+          <!-- Background circle -->
+          <circle cx="64" cy="64" r="56" fill="none" stroke="#e5e7eb" stroke-width="8"></circle>
+          <!-- Progress circle -->
+          <circle id="benchmarkCircle" cx="64" cy="64" r="56" fill="none" stroke="#1e40af" stroke-width="8" stroke-linecap="round" stroke-dasharray="351.86" stroke-dashoffset="351.86"></circle>
+        </svg>
+        <div class="absolute inset-0 flex items-center justify-center">
+          <div class="text-center">
+            <div id="benchmarkScore" class="text-2xl font-bold text-gray-900">-</div>
+            <div class="text-xs text-gray-500">out of 10</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="text-center space-y-2">
+      <p class="text-sm text-gray-600">
+        Effective since <span id="benchmarkEffectiveDate" class="font-medium">-</span>
+      </p>
+      <p class="text-xs text-gray-500">
+        This benchmark score represents the expected proficiency level for this skill across the organization.
+      </p>
+    </div>
+  </div>
+</div>
+
+<!-- Benchmark History -->
+<div class="bg-white rounded-lg border border-slate-200 p-6 mb-8">
+  <h2 class="text-lg font-semibold text-gray-900 mb-4">Benchmark Version History</h2>
+  <div id="benchmarkHistoryContainer">
+    <!-- Content will be populated by JavaScript -->
+  </div>
+</div>
+
+<!-- Related Statistics -->
+<div class="bg-white rounded-lg border border-slate-200 p-6">
+  <h2 class="text-lg font-semibold text-gray-900 mb-4">Related Statistics</h2>
+  <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+    <div class="text-center">
+      <div id="mappedEmployeesCount" class="text-2xl font-bold text-gray-900">-</div>
+      <div class="text-sm text-gray-500">Employees Mapped</div>
+    </div>
+    <div class="text-center">
+      <div id="assessmentsCount" class="text-2xl font-bold text-gray-900">-</div>
+      <div class="text-sm text-gray-500">Total Assessments</div>
+    </div>
+    <div class="text-center">
+      <div id="trainingNeedsCount" class="text-2xl font-bold text-gray-900">-</div>
+      <div class="text-sm text-gray-500">Training Needs</div>
+    </div>
+  </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div id="deleteSkillModal" data-portal="body" class="fixed inset-0 z-50 hidden">
+  <div class="flex items-center justify-center min-h-screen p-4 bg-black/50">
+    <div class="bg-white rounded-xl shadow-xl w-[min(92vw,28rem)] max-h-[90vh] overflow-y-auto">
+      <div class="p-6">
+        <div class="flex items-center gap-3 mb-4">
+          <div class="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center">
+            <i data-lucide="trash-2" class="w-5 h-5 text-red-600"></i>
+          </div>
+          <div>
+            <h3 class="text-lg font-semibold text-gray-900">Delete Skill</h3>
+            <p class="text-sm text-gray-500">This action cannot be undone</p>
+          </div>
+        </div>
+        
+        <div class="mb-6">
+          <p class="text-sm text-gray-700 mb-4">
+            Are you sure you want to delete "<span id="deleteSkillName" class="font-medium">-</span>"?
+          </p>
+          
+          <div id="deleteWarnings" class="space-y-2">
+            <!-- Warnings will be populated by JavaScript -->
+          </div>
+        </div>
+        
+        <div class="flex items-center justify-end gap-3">
+          <button onclick="funCloseDeleteModal()" class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors">
+            Cancel
+          </button>
+          <button onclick="funConfirmDelete()" class="px-4 py-2 text-sm font-medium text-white bg-red-600 hover:bg-red-700 rounded-lg transition-colors">
+            Delete Skill
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</main>
+
+    <script src="app.js"></script>
+    <script src="app_data.js"></script>
+    <script id="container-script">
+      (function () {
+        const TemplateUtils = (window.TemplateUtils =
+          window.TemplateUtils || {});
+
+        TemplateUtils.UserUtils =
+          TemplateUtils.UserUtils ||
+          (function createUserUtils() {
+            return {
+              getCurrentUser() {
+                try {
+                  let currentUserId = localStorage.getItem("currentUserId");
+                  if (!currentUserId) {
+                    localStorage.setItem("currentUserId", "usr_001");
+                    currentUserId = "usr_001";
+                  }
+
+                  const users = JSON.parse(localStorage.getItem("users") || "[]");
+                  return users.find(user => user.id === currentUserId) || null;
+                } catch (error) {
+                  console.error("Error retrieving user data:", error);
+                  return null;
+                }
+              },
+              signOut() {
+                try {
+                  localStorage.removeItem("currentUserId");
+                  window.location.reload();
+                } catch (error) {
+                  console.error("Error signing out:", error);
+                }
+              },
+              getUserDisplayName(user) {
+                if (!user) return "Guest";
+                return user.firstName && user.lastName
+                  ? `${user.firstName} ${user.lastName}`
+                  : user.firstName || user.lastName || "User";
+              },
+              getUserInitials(user) {
+                if (!user) return "?";
+                const first = user.firstName?.charAt(0) || "";
+                const last = user.lastName?.charAt(0) || "";
+                return (first + last).toUpperCase() || "U";
+              },
+            };
+          })();
+
+        if (TemplateUtils.__bootstrapped) {
+          if (typeof window.lucide?.createIcons === "function") {
+            window.lucide.createIcons();
+          }
+          return;
+        }
+
+        TemplateUtils.__bootstrapped = true;
+
+        const state = {
+          popoverVisible: false,
+          sidebarOpen: false,
+          resizeTimer: null,
+          debounceTimer: null,
+          isUpdatingIcons: false,
+          observer: null,
+          refs: {},
+        };
+
+        function ready(fn) {
+          if (document.readyState === "loading") {
+            document.addEventListener("DOMContentLoaded", fn, { once: true });
+          } else if (typeof queueMicrotask === "function") {
+            queueMicrotask(fn);
+          } else {
+            Promise.resolve().then(fn);
+          }
+        }
+
+        function safeLucide(callback) {
+          if (typeof window.lucide?.createIcons === "function") {
+            callback();
+          }
+        }
+
+        function cacheRefs() {
+          state.refs = {
+            userProfileButton: document.getElementById("userProfileButton"),
+            userProfilePopover: document.getElementById("userProfilePopover"),
+            userAvatar: document.getElementById("userAvatar"),
+            userName: document.getElementById("userName"),
+            popoverUserAvatar: document.getElementById("popoverUserAvatar"),
+            popoverUserName: document.getElementById("popoverUserName"),
+            popoverUserEmail: document.getElementById("popoverUserEmail"),
+            signOutButton: document.getElementById("signOutButton"),
+            mobileMenuToggle: document.getElementById("mobileMenuToggle"),
+            sidebar: document.getElementById("sidebar"),
+            sidebarBackdrop: document.getElementById("sidebarBackdrop"),
+            navLinks: document.querySelectorAll(".nav-link"),
+            pageContent: document.getElementById("pageContent"),
+          };
+        }
+
+        function initializeUserProfile() {
+          const { userAvatar, userName } = state.refs;
+          if (!userAvatar || !userName) return;
+
+          const currentUser = TemplateUtils.UserUtils.getCurrentUser();
+          if (currentUser) {
+            userAvatar.textContent =
+              TemplateUtils.UserUtils.getUserInitials(currentUser);
+            userName.textContent =
+              TemplateUtils.UserUtils.getUserDisplayName(currentUser);
+          } else {
+            userAvatar.textContent = "?";
+            userName.textContent = "Guest";
+          }
+        }
+
+        function populatePopover() {
+          const currentUser = TemplateUtils.UserUtils.getCurrentUser();
+          const { popoverUserAvatar, popoverUserName, popoverUserEmail } =
+            state.refs;
+          if (!popoverUserAvatar || !popoverUserName || !popoverUserEmail)
+            return;
+
+          if (currentUser) {
+            popoverUserAvatar.textContent =
+              TemplateUtils.UserUtils.getUserInitials(currentUser);
+            popoverUserName.textContent =
+              TemplateUtils.UserUtils.getUserDisplayName(currentUser);
+            popoverUserEmail.textContent = currentUser.email || "No email";
+          } else {
+            popoverUserAvatar.textContent = "?";
+            popoverUserName.textContent = "Guest";
+            popoverUserEmail.textContent = "Not logged in";
+          }
+        }
+
+        function toggleUserPopover(forceClose = false) {
+          const { userProfilePopover, userProfileButton } = state.refs;
+          if (!userProfilePopover || !userProfileButton) return;
+
+          const shouldOpen = forceClose ? false : !state.popoverVisible;
+          if (shouldOpen) {
+            populatePopover();
+            userProfilePopover.classList.add("visible");
+            userProfileButton.setAttribute("aria-expanded", "true");
+            state.popoverVisible = true;
+            const firstButton = userProfilePopover.querySelector("button");
+            if (firstButton) {
+              setTimeout(() => firstButton.focus(), 50);
+            }
+          } else {
+            userProfilePopover.classList.remove("visible");
+            userProfileButton.setAttribute("aria-expanded", "false");
+            state.popoverVisible = false;
+          }
+        }
+
+        function hideUserPopover() {
+          if (state.popoverVisible) {
+            toggleUserPopover(true);
+          }
+        }
+
+        function toggleMobileSidebar(forceClose = false) {
+          const { sidebar, sidebarBackdrop, mobileMenuToggle } = state.refs;
+          if (!sidebar || !sidebarBackdrop || !mobileMenuToggle) return;
+
+          const shouldOpen = forceClose ? false : !state.sidebarOpen;
+          state.sidebarOpen = shouldOpen;
+
+          sidebar.classList.toggle("open", shouldOpen);
+          sidebarBackdrop.classList.toggle("active", shouldOpen);
+          document.body.classList.toggle("sidebar-open", shouldOpen);
+          mobileMenuToggle.setAttribute(
+            "aria-expanded",
+            shouldOpen ? "true" : "false"
+          );
+
+          const icon = mobileMenuToggle.querySelector("[data-lucide]");
+          if (icon) {
+            icon.setAttribute("data-lucide", shouldOpen ? "x" : "menu");
+            safeLucide(() => window.lucide.createIcons());
+          }
+        }
+
+        function closeMobileSidebar() {
+          if (state.sidebarOpen) {
+            toggleMobileSidebar(true);
+          }
+        }
+
+        function setActiveNavLink(pageId) {
+          if (!pageId) return;
+          const { navLinks } = state.refs;
+          navLinks?.forEach((link) => {
+            if (link.dataset.page === pageId) {
+              link.classList.add("active");
+            } else {
+              link.classList.remove("active");
+            }
+          });
+        }
+
+        TemplateUtils.setActiveNavLink = setActiveNavLink;
+        TemplateUtils.closeMobileSidebar = closeMobileSidebar;
+
+        function handleDocumentClick(event) {
+          const { userProfilePopover, userProfileButton } = state.refs;
+          if (
+            state.popoverVisible &&
+            userProfilePopover &&
+            userProfileButton &&
+            !userProfilePopover.contains(event.target) &&
+            !userProfileButton.contains(event.target)
+          ) {
+            hideUserPopover();
+          }
+        }
+
+        function handleKeydown(event) {
+          if (event.key !== "Escape") return;
+          if (state.popoverVisible) {
+            hideUserPopover();
+            state.refs.userProfileButton?.focus();
+          }
+          if (state.sidebarOpen) {
+            closeMobileSidebar();
+            state.refs.mobileMenuToggle?.focus();
+          }
+        }
+
+        function handleResize() {
+          clearTimeout(state.resizeTimer);
+          state.resizeTimer = setTimeout(() => {
+            if (window.innerWidth >= 768) {
+              closeMobileSidebar();
+            }
+          }, 200);
+        }
+
+        function bindEvents() {
+          const {
+            userProfileButton,
+            mobileMenuToggle,
+            sidebarBackdrop,
+            signOutButton,
+            navLinks,
+          } = state.refs;
+
+          userProfileButton?.addEventListener("click", (event) => {
+            event.stopPropagation();
+            toggleUserPopover();
+          });
+
+          mobileMenuToggle?.addEventListener("click", (event) => {
+            event.stopPropagation();
+            toggleMobileSidebar();
+          });
+
+          sidebarBackdrop?.addEventListener("click", () =>
+            closeMobileSidebar()
+          );
+
+          signOutButton?.addEventListener("click", () => {
+            if (confirm("Are you sure you want to sign out?")) {
+              TemplateUtils.UserUtils.signOut();
+            }
+          });
+
+          navLinks?.forEach((link) => {
+            link.addEventListener("click", () => closeMobileSidebar());
+          });
+
+          document.addEventListener("click", handleDocumentClick);
+          document.addEventListener("keydown", handleKeydown);
+          window.addEventListener("resize", handleResize);
+
+          window.addEventListener("pagehide", cleanup);
+        }
+
+        function cleanup() {
+          if (state.resizeTimer) clearTimeout(state.resizeTimer);
+          if (state.debounceTimer) clearTimeout(state.debounceTimer);
+          if (state.observer) {
+            state.observer.disconnect();
+            state.observer = null;
+          }
+          document.removeEventListener("click", handleDocumentClick);
+          document.removeEventListener("keydown", handleKeydown);
+          window.removeEventListener("resize", handleResize);
+        }
+
+        function initializePortalTargets() {
+          document.querySelectorAll('[data-portal="body"]').forEach((node) => {
+            if (node.parentElement !== document.body) {
+              document.body.appendChild(node);
+            }
+          });
+        }
+
+        function observePageContent() {
+          const { pageContent } = state.refs;
+          if (!pageContent || typeof MutationObserver !== "function") return;
+
+          const observer = new MutationObserver((mutations) => {
+            if (state.isUpdatingIcons) return;
+
+            const isLucideUpdate = mutations.every((m) => {
+              if (m.type !== "childList") return false;
+              const nodes = [...m.addedNodes, ...m.removedNodes];
+              return nodes.every(
+                (n) =>
+                  n.nodeType !== Node.ELEMENT_NODE ||
+                  n.nodeName.toLowerCase() === "svg" ||
+                  n.classList?.contains("lucide")
+              );
+            });
+            if (isLucideUpdate) return;
+
+            if (state.debounceTimer) clearTimeout(state.debounceTimer);
+            state.debounceTimer = setTimeout(() => {
+              state.debounceTimer = null;
+              state.isUpdatingIcons = true;
+              safeLucide(() => {
+                window.lucide.createIcons();
+                requestAnimationFrame(() => {
+                  state.isUpdatingIcons = false;
+                });
+              });
+            }, 100);
+          });
+
+          observer.observe(pageContent, { childList: true, subtree: true });
+          state.observer = observer;
+        }
+
+        function bootstrap() {
+          cacheRefs();
+          initializePortalTargets();
+          initializeUserProfile();
+          bindEvents();
+          safeLucide(() => window.lucide.createIcons());
+          observePageContent();
+        }
+
+        ready(bootstrap);
+      })();
+    </script>
+  
+
+<script>
+  let currentSkill = null;
+  let currentSkillId = null;
+
+  // Safe data retrieval functions
+  function getDataSafely(key) {
+    try {
+      const data = localStorage.getItem(key);
+      return data ? JSON.parse(data) : [];
+    } catch (error) {
+      console.error(`Error parsing ${key}:`, error);
+      return [];
+    }
+  }
+
+  function funGetUrlParam(param) {
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get(param);
+  }
+
+  function funFormatDate(dateString) {
+    if (!dateString) return '-';
+    try {
+      const date = new Date(dateString);
+      return date.toLocaleDateString('en-US');  // mm/dd/yyyy format per branding
+    } catch (error) {
+      console.error('Error formatting date:', error);
+      return dateString;
+    }
+  }
+
+  function funGetUserName(userId) {
+    if (!userId) return 'Unknown';
+    const users = getDataSafely('users') || [];
+    const user = users.find(u => u.id === userId);
+    return user ? `${user.firstName} ${user.lastName}` : 'Unknown';
+  }
+
+  function funGetCriticalityInfo(criticalityId) {
+    const criticalities = getDataSafely('skillCriticalities') || [];
+    const criticality = criticalities.find(c => c.id === criticalityId);
+    return criticality ? {
+      name: criticality.criticalityName,
+      weight: criticality.weight
+    } : { name: 'Unknown', weight: 0 };
+  }
+
+  function funGetCategoryName(categoryId) {
+    const categories = getDataSafely('skillCategories') || [];
+    const category = categories.find(c => c.id === categoryId);
+    return category ? category.categoryName : 'Unknown';
+  }
+
+  function funGetStatusBadgeClasses(status) {
+    return status === 'active' 
+      ? 'text-green-600 bg-green-50 border border-green-200'
+      : 'text-gray-600 bg-gray-50 border border-gray-200';
+  }
+
+  function funGetCriticalityBadgeClasses(criticalityName) {
+    switch (criticalityName) {
+      case 'Mission Critical':
+        return 'text-red-600 bg-red-50 border border-red-200';
+      case 'High':
+        return 'text-amber-600 bg-amber-50 border border-amber-200';
+      case 'Medium':
+        return 'text-blue-600 bg-blue-50 border border-blue-200';
+      default:
+        return 'text-gray-600 bg-gray-50 border border-gray-200';
+    }
+  }
+
+  function funUpdateBenchmarkCircle(score) {
+    const circle = document.getElementById('benchmarkCircle');
+    if (!circle || !score) return;
+    
+    const radius = 56;
+    const circumference = 2 * Math.PI * radius;
+    const percentage = score / 10;
+    const offset = circumference - (percentage * circumference);
+    
+    circle.style.strokeDashoffset = offset;
+  }
+
+  function funRenderBenchmarkHistory(skillId) {
+    const container = document.getElementById('benchmarkHistoryContainer');
+    if (!container) return;
+
+    const benchmarks = getDataSafely('skillBenchmarks') || [];
+    const skillBenchmarks = benchmarks
+      .filter(b => b.skillId === skillId)
+      .sort((a, b) => new Date(b.effectiveStartDate) - new Date(a.effectiveStartDate));
+
+    if (skillBenchmarks.length === 0 || skillBenchmarks.length === 1) {
+      container.innerHTML = `
+        <div class="text-center py-8">
+          <i data-lucide="clock" class="w-8 h-8 mx-auto text-gray-400 mb-2"></i>
+          <p class="text-gray-500">No benchmark changes recorded</p>
+        </div>
+      `;
+      if (typeof window.lucide?.createIcons === 'function') {
+        window.lucide.createIcons();
+      }
+      return;
+    }
+
+    const tableHTML = `
+      <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+          <thead class="bg-gray-50">
+            <tr>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Benchmark Score</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Effective From</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Effective Until</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Changed By</th>
+            </tr>
+          </thead>
+          <tbody class="bg-white divide-y divide-gray-200">
+            ${skillBenchmarks.map(benchmark => `
+              <tr>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="flex items-center">
+                    <span class="text-sm font-medium text-gray-900">${benchmark.benchmarkScore}/10</span>
+                  </div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  ${funFormatDate(benchmark.effectiveStartDate)}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  ${benchmark.effectiveEndDate ? funFormatDate(benchmark.effectiveEndDate) : '<span class="text-green-600 font-medium">Current</span>'}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  ${funGetUserName(benchmark.createdBy)}
+                </td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      </div>
+    `;
+
+    container.innerHTML = tableHTML;
+  }
+
+  function funCalculateStatistics(skillId) {
+    const skillMappings = getDataSafely('skillMappings') || [];
+    const assessments = getDataSafely('assessments') || [];
+    const trainingNeeds = getDataSafely('trainingNeeds') || [];
+
+    const mappedEmployees = skillMappings.filter(mapping => 
+      mapping.skillId === skillId && mapping.status === 'active'
+    ).length;
+
+    const totalAssessments = assessments.filter(assessment => 
+      assessment.skillId === skillId && assessment.status === 'active'
+    ).length;
+
+    const currentTrainingNeeds = trainingNeeds.filter(need => 
+      need.skillId === skillId && need.tniStatus === 'trainingRequired'
+    ).length;
+
+    document.getElementById('mappedEmployeesCount').textContent = mappedEmployees;
+    document.getElementById('assessmentsCount').textContent = totalAssessments;
+    document.getElementById('trainingNeedsCount').textContent = currentTrainingNeeds;
+  }
+
+  function funLoadSkillDetails() {
+    currentSkillId = funGetUrlParam('id');
+    if (!currentSkillId) {
+      alert('No skill ID provided');
+      history.back();
+      return;
+    }
+
+    const skills = getDataSafely('skills') || [];
+    currentSkill = skills.find(skill => skill.id === currentSkillId);
+    
+    if (!currentSkill) {
+      alert('Skill not found');
+      history.back();
+      return;
+    }
+
+    // Get current benchmark
+    const benchmarks = getDataSafely('skillBenchmarks') || [];
+    const currentBenchmark = benchmarks.find(b => 
+      b.skillId === currentSkillId && b.effectiveEndDate === null
+    );
+
+    // Get category and criticality info
+    const categoryName = funGetCategoryName(currentSkill.categoryId);
+    const criticalityInfo = funGetCriticalityInfo(currentSkill.criticalityId);
+
+    // Update breadcrumb
+    document.getElementById('skillBreadcrumbName').textContent = currentSkill.name;
+
+    // Update header
+    document.getElementById('skillName').textContent = currentSkill.name;
+    const statusBadge = document.getElementById('skillStatusBadge');
+    statusBadge.textContent = currentSkill.status;
+    statusBadge.className = `inline-flex px-2 py-1 text-xs font-medium rounded ${funGetStatusBadgeClasses(currentSkill.status)}`;
+
+    // Update skill information
+    document.getElementById('skillInfoName').textContent = currentSkill.name;
+    document.getElementById('skillInfoDescription').textContent = 
+      currentSkill.description || 'No description provided';
+    document.getElementById('skillInfoCategory').textContent = categoryName;
+    
+    const criticalityBadge = document.getElementById('skillInfoCriticality');
+    criticalityBadge.textContent = criticalityInfo.name;
+    criticalityBadge.className = `inline-flex px-2 py-1 text-xs font-medium rounded ${funGetCriticalityBadgeClasses(criticalityInfo.name)}`;
+    
+    const statusInfoBadge = document.getElementById('skillInfoStatus');
+    statusInfoBadge.textContent = currentSkill.status;
+    statusInfoBadge.className = `inline-flex px-2 py-1 text-xs font-medium rounded ${funGetStatusBadgeClasses(currentSkill.status)}`;
+    
+    document.getElementById('skillInfoCreated').textContent = funFormatDate(currentSkill.createdTimestamp);
+    document.getElementById('skillInfoModified').textContent = funFormatDate(currentSkill.modifiedTimestamp);
+
+    // Update current benchmark
+    if (currentBenchmark) {
+      document.getElementById('benchmarkScore').textContent = currentBenchmark.benchmarkScore;
+      document.getElementById('benchmarkEffectiveDate').textContent = funFormatDate(currentBenchmark.effectiveStartDate);
+      funUpdateBenchmarkCircle(currentBenchmark.benchmarkScore);
+    } else {
+      document.getElementById('benchmarkScore').textContent = '-';
+      document.getElementById('benchmarkEffectiveDate').textContent = '-';
+    }
+
+    // Render benchmark history
+    funRenderBenchmarkHistory(currentSkillId);
+
+    // Calculate statistics
+    funCalculateStatistics(currentSkillId);
+  }
+
+  function funEditSkill() {
+    if (currentSkillId) {
+      window.location.href = `skill_edit.html?id=${currentSkillId}`;
+    }
+  }
+
+  function funFilterByCategory() {
+    if (currentSkill && currentSkill.categoryId) {
+      window.location.href = `skills_list.html?category=${currentSkill.categoryId}`;
+    }
+  }
+
+  function funOpenDeleteModal() {
+    if (!currentSkill) return;
+
+    const modal = document.getElementById('deleteSkillModal');
+    const skillNameSpan = document.getElementById('deleteSkillName');
+    const warningsContainer = document.getElementById('deleteWarnings');
+
+    skillNameSpan.textContent = currentSkill.name;
+
+    // Check for existing assessments and training needs
+    const assessments = getDataSafely('assessments') || [];
+    const trainingNeeds = getDataSafely('trainingNeeds') || [];
+    
+    const hasAssessments = assessments.some(a => a.skillId === currentSkillId && a.status === 'active');
+    const hasTrainingNeeds = trainingNeeds.some(tn => tn.skillId === currentSkillId);
+
+    let warnings = [];
+    if (hasAssessments) {
+      warnings.push('This skill has existing assessments that will be affected.');
+    }
+    if (hasTrainingNeeds) {
+      warnings.push('This skill has training need records that will be affected.');
+    }
+
+    if (warnings.length > 0) {
+      warningsContainer.innerHTML = `
+        <div class="p-3 bg-amber-50 border border-amber-200 rounded-lg">
+          <div class="flex items-start gap-2">
+            <i data-lucide="alert-triangle" class="w-4 h-4 text-amber-600 mt-0.5 flex-shrink-0"></i>
+            <div>
+              <h4 class="text-sm font-medium text-amber-800 mb-1">Warning</h4>
+              <ul class="text-xs text-amber-700 space-y-1">
+                ${warnings.map(warning => `<li>• ${warning}</li>`).join('')}
+              </ul>
+            </div>
+          </div>
+        </div>
+      `;
+    } else {
+      warningsContainer.innerHTML = '';
+    }
+
+    modal.classList.remove('hidden');
+    if (typeof window.lucide?.createIcons === 'function') {
+      window.lucide.createIcons();
+    }
+  }
+
+  function funCloseDeleteModal() {
+    const modal = document.getElementById('deleteSkillModal');
+    modal.classList.add('hidden');
+  }
+
+  function funConfirmDelete() {
+    if (!currentSkill) return;
+
+    try {
+      // Get all data
+      const skills = getDataSafely('skills') || [];
+      
+      // Update skill status to inactive (soft delete)
+      const updatedSkills = skills.map(skill => {
+        if (skill.id === currentSkillId) {
+          return {
+            ...skill,
+            status: 'inactive',
+            modifiedTimestamp: new Date().toISOString(),
+            modifiedBy: 'usr_001' // Current user
+          };
+        }
+        return skill;
+      });
+
+      localStorage.setItem('skills', JSON.stringify(updatedSkills));
+
+      // Close modal and redirect
+      funCloseDeleteModal();
+      alert('Skill has been deleted successfully.');
+      window.location.href = 'skills_list.html';
+    } catch (error) {
+      console.error('Error deleting skill:', error);
+      alert('Failed to delete skill. Please try again.');
+    }
+  }
+
+  // Initialize page
+  document.addEventListener('DOMContentLoaded', funLoadSkillDetails);
+</script></body></html>

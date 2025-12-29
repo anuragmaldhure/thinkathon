@@ -1,0 +1,1673 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SkillBridge Competency Management Platform</title>
+
+    <!-- Required: Main JS Script -->
+    <script type="module" src="scripts/main.js" data-tiramai="web-gen"></script>
+
+    <!-- Required: TailwindCSS -->
+    <script src="./lib/tailwindcss/tailwindcss.js" fetchpriority="high" data-tiramai="web-gen"></script>
+
+    <!-- Required: Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest" data-tiramai="web-gen"></script>
+
+    <!-- Required: Favicon -->
+    <link rel="icon" href="assets/imgs/logo.ico" type="image/x-icon" data-tiramai="web-gen"/>
+
+    <!-- ECharts Support (for charts/graphs) -->
+    <script defer src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js" data-tiramai="web-gen"></script>
+
+    <!-- Markdown Support (for content rendering) -->
+    <script defer src="https://cdn.jsdelivr.net/npm/marked/marked.min.js" data-tiramai="web-gen"></script>
+
+    <!-- Tailwind Configuration -->
+    <script data-tiramai="web-gen">
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#1e293b',
+                        secondary: '#475569',
+                        accent: '#2563eb',
+                        gold: '#CBA35C',
+                        success: '#16A34A',
+                        warning: '#D97706',
+                        error: '#DC2626',
+                        info: '#0EA5E9',
+                        neutral: {
+                            50: '#F8FAFC',
+                            100: '#F1F5F9',
+                            200: '#E2E8F0',
+                            400: '#94A3B8',
+                            700: '#334155',
+                            900: '#0F172A',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['IBM Plex Sans', '-apple-system', 'Segoe UI', 'Roboto', 'Helvetica Neue', 'Arial', 'sans-serif'],
+                        mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', 'Liberation Mono', 'Courier New', 'monospace']
+                    },
+                    boxShadow: {
+                        sm: '0 1px 2px rgba(15,23,42,0.06)',
+                        DEFAULT: '0 2px 8px rgba(15,23,42,0.08)',
+                        lg: '0 8px 24px rgba(15,23,42,0.12)',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-neutral-50 min-h-screen text-neutral-700 font-sans">
+    <!-- Top Navigation -->
+    <header class="fixed top-0 left-0 right-0 bg-white border-b border-neutral-200 flex items-center justify-between px-6 py-4 z-30 h-16">
+        <div class="flex items-center gap-4">
+            <button id="mobile-menu-btn" class="md:hidden p-2 hover:bg-neutral-100 rounded-md transition-colors duration-150">
+                <i data-lucide="menu" class="w-6 h-6 text-secondary"></i>
+            </button>
+            <div class="flex items-center gap-3">
+                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 400 400" fill="none" class="h-8 w-8">
+                    <rect x="100" y="100" width="200" height="200" rx="16" stroke="#1e293b" stroke-width="16" fill="none"/>
+                    <path d="M150 250V170c0-11 9-20 20-20h60c11 0 20 9 20 20v80" stroke="#2563eb" stroke-width="14" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                    <circle cx="200" cy="170" r="18" stroke="#1e293b" stroke-width="12" fill="none"/>
+                    <path d="M150 250h100m-60-30h20" stroke="#2563eb" stroke-width="12" stroke-linecap="round" fill="none"/>
+                    <path d="M170 220v0" stroke="#1e293b" stroke-width="12" stroke-linecap="round"/>
+                    <path d="M230 220v0" stroke="#1e293b" stroke-width="12" stroke-linecap="round"/>
+                </svg>
+                <span class="text-xl font-semibold text-primary">SkillBridge Competency Management Platform</span>
+            </div>
+        </div>
+        <div class="flex items-center gap-4">
+            <!-- User Profile Dropdown -->
+            <div class="relative">
+                <button id="user-profile-btn" class="flex items-center gap-3 p-2 hover:bg-neutral-100 rounded-md transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2">
+                    <div class="flex flex-col items-end">
+                        <span id="user-name" class="text-sm font-medium text-neutral-700">Loading...</span>
+                        <span id="user-role" class="text-xs text-neutral-400">System Admin</span>
+                    </div>
+                    <div class="w-8 h-8 bg-accent rounded-full flex items-center justify-center">
+                        <i data-lucide="user" class="w-4 h-4 text-white"></i>
+                    </div>
+                </button>
+                <!-- Dropdown Menu -->
+                <div id="user-dropdown" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg border border-neutral-200 z-40">
+                    <div class="py-2">
+                        <button id="sign-out-btn" class="w-full px-4 py-2 text-left text-sm text-neutral-700 hover:bg-neutral-50 flex items-center gap-2">
+                            <i data-lucide="log-out" class="w-4 h-4"></i>
+                            Sign Out
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="flex pt-16">
+        <!-- Side Navigation -->
+        <aside id="sidebar" class="w-64 bg-white border-r border-neutral-200 h-[calc(100vh-4rem)] sticky top-16 overflow-y-auto hidden md:block">
+            <nav class="p-4 space-y-1">
+                <!-- Analytics Hub -->
+                <a href="analytics_hub.html" data-page="analytics_hub" class="nav-item flex items-center gap-3 px-3 py-2 text-sm rounded-md hover:bg-neutral-100 transition-colors duration-150 text-neutral-700">
+                    <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
+                    <span>Analytics Hub</span>
+                </a>
+
+                <!-- Organization Management Section -->
+                <div class="pt-4">
+                    <h3 class="px-3 text-xs font-semibold text-secondary uppercase tracking-wide mb-2">Organization</h3>
+                    <a href="org_configuration.html" data-page="org_configuration" class="nav-item flex items-center gap-3 px-3 py-2 text-sm rounded-md hover:bg-neutral-100 transition-colors duration-150 text-neutral-700">
+                        <i data-lucide="building-2" class="w-5 h-5"></i>
+                        <span>Org Configuration</span>
+                    </a>
+                    <a href="org_settings_versioned.html" data-page="org_settings_versioned" class="nav-item flex items-center gap-3 px-3 py-2 text-sm rounded-md hover:bg-neutral-100 transition-colors duration-150 text-neutral-700">
+                        <i data-lucide="history" class="w-5 h-5"></i>
+                        <span>Org Settings</span>
+                    </a>
+                </div>
+
+                <!-- Core Management Section -->
+                <div class="pt-4">
+                    <h3 class="px-3 text-xs font-semibold text-secondary uppercase tracking-wide mb-2">Core Management</h3>
+                    <a href="skill_framework.html" data-page="skill_framework" class="nav-item flex items-center gap-3 px-3 py-2 text-sm rounded-md hover:bg-neutral-100 transition-colors duration-150 text-neutral-700">
+                        <i data-lucide="book-open" class="w-5 h-5"></i>
+                        <span>Skill Framework</span>
+                    </a>
+                    <a href="employees_hierarchy.html" data-page="employees_hierarchy" class="nav-item flex items-center gap-3 px-3 py-2 text-sm rounded-md hover:bg-neutral-100 transition-colors duration-150 text-neutral-700">
+                        <i data-lucide="users" class="w-5 h-5"></i>
+                        <span>Employees & Hierarchy</span>
+                    </a>
+                    <a href="training_management.html" data-page="training_management" class="nav-item flex items-center gap-3 px-3 py-2 text-sm rounded-md hover:bg-neutral-100 transition-colors duration-150 text-neutral-700">
+                        <i data-lucide="calendar" class="w-5 h-5"></i>
+                        <span>Training Management</span>
+                    </a>
+                </div>
+
+                <!-- Operations Section -->
+                <div class="pt-4">
+                    <h3 class="px-3 text-xs font-semibold text-secondary uppercase tracking-wide mb-2">Operations</h3>
+                    <a href="disputes_center.html" data-page="disputes_center" class="nav-item flex items-center gap-3 px-3 py-2 text-sm rounded-md hover:bg-neutral-100 transition-colors duration-150 text-neutral-700">
+                        <i data-lucide="gavel" class="w-5 h-5"></i>
+                        <span>Disputes Center</span>
+                    </a>
+                    <a href="assessment_viewer.html" data-page="assessment_viewer" class="nav-item flex items-center gap-3 px-3 py-2 text-sm rounded-md hover:bg-neutral-100 transition-colors duration-150 text-neutral-700">
+                        <i data-lucide="file-text" class="w-5 h-5"></i>
+                        <span>Assessment Viewer</span>
+                    </a>
+                    <a href="audit_log_viewer.html" data-page="audit_log_viewer" class="nav-item flex items-center gap-3 px-3 py-2 text-sm rounded-md hover:bg-neutral-100 transition-colors duration-150 text-neutral-700">
+                        <i data-lucide="file-search" class="w-5 h-5"></i>
+                        <span>Audit Log Viewer</span>
+                    </a>
+                </div>
+            </nav>
+
+            <!-- Footer -->
+            <div class="absolute bottom-6 w-full text-center text-xs text-neutral-400 bg-white px-4">
+                Made with ❤️ by TiramAi
+            </div>
+        </aside>
+
+        <!-- Mobile Navigation Overlay -->
+        <div id="mobile-nav-overlay" class="hidden fixed inset-0 z-40 md:hidden">
+            <div class="fixed inset-0 bg-neutral-900 bg-opacity-50" id="mobile-nav-backdrop"></div>
+            <aside class="fixed left-0 top-16 h-[calc(100vh-4rem)] w-64 bg-white border-r border-neutral-200 overflow-y-auto">
+                <nav class="p-4 space-y-1">
+                    <!-- Same navigation structure as desktop -->
+                    <a href="analytics_hub.html" data-page="analytics_hub" class="nav-item flex items-center gap-3 px-3 py-2 text-sm rounded-md hover:bg-neutral-100 transition-colors duration-150 text-neutral-700">
+                        <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
+                        <span>Analytics Hub</span>
+                    </a>
+                    
+                    <div class="pt-4">
+                        <h3 class="px-3 text-xs font-semibold text-secondary uppercase tracking-wide mb-2">Organization</h3>
+                        <a href="org_configuration.html" data-page="org_configuration" class="nav-item flex items-center gap-3 px-3 py-2 text-sm rounded-md hover:bg-neutral-100 transition-colors duration-150 text-neutral-700">
+                            <i data-lucide="building-2" class="w-5 h-5"></i>
+                            <span>Org Configuration</span>
+                        </a>
+                        <a href="org_settings_versioned.html" data-page="org_settings_versioned" class="nav-item flex items-center gap-3 px-3 py-2 text-sm rounded-md hover:bg-neutral-100 transition-colors duration-150 text-neutral-700">
+                            <i data-lucide="history" class="w-5 h-5"></i>
+                            <span>Org Settings</span>
+                        </a>
+                    </div>
+
+                    <div class="pt-4">
+                        <h3 class="px-3 text-xs font-semibold text-secondary uppercase tracking-wide mb-2">Core Management</h3>
+                        <a href="skill_framework.html" data-page="skill_framework" class="nav-item flex items-center gap-3 px-3 py-2 text-sm rounded-md hover:bg-neutral-100 transition-colors duration-150 text-neutral-700">
+                            <i data-lucide="book-open" class="w-5 h-5"></i>
+                            <span>Skill Framework</span>
+                        </a>
+                        <a href="employees_hierarchy.html" data-page="employees_hierarchy" class="nav-item flex items-center gap-3 px-3 py-2 text-sm rounded-md hover:bg-neutral-100 transition-colors duration-150 text-neutral-700">
+                            <i data-lucide="users" class="w-5 h-5"></i>
+                            <span>Employees & Hierarchy</span>
+                        </a>
+                        <a href="training_management.html" data-page="training_management" class="nav-item flex items-center gap-3 px-3 py-2 text-sm rounded-md hover:bg-neutral-100 transition-colors duration-150 text-neutral-700">
+                            <i data-lucide="calendar" class="w-5 h-5"></i>
+                            <span>Training Management</span>
+                        </a>
+                    </div>
+
+                    <div class="pt-4">
+                        <h3 class="px-3 text-xs font-semibold text-secondary uppercase tracking-wide mb-2">Operations</h3>
+                        <a href="disputes_center.html" data-page="disputes_center" class="nav-item flex items-center gap-3 px-3 py-2 text-sm rounded-md hover:bg-neutral-100 transition-colors duration-150 text-neutral-700">
+                            <i data-lucide="gavel" class="w-5 h-5"></i>
+                            <span>Disputes Center</span>
+                        </a>
+                        <a href="assessment_viewer.html" data-page="assessment_viewer" class="nav-item flex items-center gap-3 px-3 py-2 text-sm rounded-md hover:bg-neutral-100 transition-colors duration-150 text-neutral-700">
+                            <i data-lucide="file-text" class="w-5 h-5"></i>
+                            <span>Assessment Viewer</span>
+                        </a>
+                        <a href="audit_log_viewer.html" data-page="audit_log_viewer" class="nav-item flex items-center gap-3 px-3 py-2 text-sm rounded-md hover:bg-neutral-100 transition-colors duration-150 text-neutral-700">
+                            <i data-lucide="file-search" class="w-5 h-5"></i>
+                            <span>Audit Log Viewer</span>
+                        </a>
+                    </div>
+                </nav>
+            </aside>
+        </div>
+
+        <!-- Main Content -->
+        <main id="pageContent" class="flex-1 p-6 overflow-y-auto max-w-[1440px] mx-auto">
+            
+<!-- Main Skills Grid Container -->
+<div class="space-y-6">
+  <!-- Page Header -->
+  <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+    <div>
+      <h1 class="text-[clamp(1.5rem,2.5vw,2rem)] leading-10 font-bold text-primary">Skill Framework</h1>
+      <p class="text-sm text-secondary mt-1">Maintain accurate skill metadata and benchmark versioning to uphold analytics integrity</p>
+    </div>
+    <div class="flex flex-wrap gap-2">
+      <button id="btn-manage-categories" class="inline-flex items-center gap-2 bg-white text-primary border border-neutral-200 rounded-md px-4 py-2 hover:bg-neutral-50 focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2">
+        <i data-lucide="folder" class="w-4 h-4"></i>
+        Categories
+      </button>
+      <button id="btn-manage-criticalities" class="inline-flex items-center gap-2 bg-white text-primary border border-neutral-200 rounded-md px-4 py-2 hover:bg-neutral-50 focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2">
+        <i data-lucide="alert-triangle" class="w-4 h-4"></i>
+        Criticalities
+      </button>
+      <button id="btn-add-skill" class="inline-flex items-center gap-2 bg-accent text-white rounded-md px-4 py-2 hover:bg-[#1d4ed8] focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2">
+        <i data-lucide="plus" class="w-4 h-4"></i>
+        Add Skill
+      </button>
+    </div>
+  </div>
+
+  <!-- Filters Section -->
+  <div class="bg-white rounded-md shadow border border-neutral-200 p-4">
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div>
+        <label for="filter-search" class="block text-xs font-medium text-secondary mb-1">Search Skills</label>
+        <input type="text" id="filter-search" placeholder="Search by name..." class="w-full border border-neutral-200 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2">
+      </div>
+      <div>
+        <label for="filter-category" class="block text-xs font-medium text-secondary mb-1">Category</label>
+        <select id="filter-category" class="w-full border border-neutral-200 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2">
+          <option value="">All Categories</option>
+        </select>
+      </div>
+      <div>
+        <label for="filter-criticality" class="block text-xs font-medium text-secondary mb-1">Criticality</label>
+        <select id="filter-criticality" class="w-full border border-neutral-200 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2">
+          <option value="">All Criticalities</option>
+        </select>
+      </div>
+      <div>
+        <label for="filter-status" class="block text-xs font-medium text-secondary mb-1">Status</label>
+        <select id="filter-status" class="w-full border border-neutral-200 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2">
+          <option value="">All Statuses</option>
+          <option value="active">Active</option>
+          <option value="inactive">Inactive</option>
+        </select>
+      </div>
+    </div>
+    <div class="flex items-center justify-between mt-4">
+      <div class="text-sm text-secondary" id="results-count">Loading...</div>
+      <button id="btn-refresh" class="inline-flex items-center gap-1 text-sm text-secondary hover:text-primary" aria-label="Refresh">
+        <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+        Refresh
+      </button>
+    </div>
+  </div>
+
+  <!-- Skills Table -->
+  <div class="bg-white rounded-md shadow border border-neutral-200 overflow-hidden">
+    <!-- Loading Skeleton -->
+    <div id="table-skeleton" class="animate-pulse">
+      <div class="bg-neutral-50 px-4 py-3 border-b border-neutral-200">
+        <div class="flex space-x-4">
+          <div class="h-4 bg-neutral-200 rounded w-24"></div>
+          <div class="h-4 bg-neutral-200 rounded w-32"></div>
+          <div class="h-4 bg-neutral-200 rounded w-28"></div>
+          <div class="h-4 bg-neutral-200 rounded w-20"></div>
+          <div class="h-4 bg-neutral-200 rounded w-24"></div>
+        </div>
+      </div>
+      <div class="space-y-2 p-4">
+        <div class="grid grid-cols-6 gap-4">
+          <div class="h-4 bg-neutral-200 rounded"></div>
+          <div class="h-4 bg-neutral-200 rounded"></div>
+          <div class="h-4 bg-neutral-200 rounded"></div>
+          <div class="h-4 bg-neutral-200 rounded"></div>
+          <div class="h-4 bg-neutral-200 rounded"></div>
+          <div class="h-4 bg-neutral-200 rounded"></div>
+        </div>
+        <div class="grid grid-cols-6 gap-4">
+          <div class="h-4 bg-neutral-200 rounded"></div>
+          <div class="h-4 bg-neutral-200 rounded"></div>
+          <div class="h-4 bg-neutral-200 rounded"></div>
+          <div class="h-4 bg-neutral-200 rounded"></div>
+          <div class="h-4 bg-neutral-200 rounded"></div>
+          <div class="h-4 bg-neutral-200 rounded"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Actual Table -->
+    <div id="skills-table-container" class="hidden">
+      <table class="w-full">
+        <thead class="bg-neutral-50 sticky top-0">
+          <tr class="text-secondary text-xs">
+            <th class="text-left px-4 py-3 border-b border-neutral-200 cursor-pointer hover:bg-neutral-100" data-sort="name">
+              <div class="flex items-center gap-1">
+                Skill Name
+                <i data-lucide="chevron-up-down" class="w-3 h-3"></i>
+              </div>
+            </th>
+            <th class="text-left px-4 py-3 border-b border-neutral-200 cursor-pointer hover:bg-neutral-100" data-sort="category">
+              <div class="flex items-center gap-1">
+                Category
+                <i data-lucide="chevron-up-down" class="w-3 h-3"></i>
+              </div>
+            </th>
+            <th class="text-left px-4 py-3 border-b border-neutral-200 cursor-pointer hover:bg-neutral-100" data-sort="criticality">
+              <div class="flex items-center gap-1">
+                Criticality
+                <i data-lucide="chevron-up-down" class="w-3 h-3"></i>
+              </div>
+            </th>
+            <th class="text-center px-4 py-3 border-b border-neutral-200">Benchmark</th>
+            <th class="text-center px-4 py-3 border-b border-neutral-200">Status</th>
+            <th class="text-center px-4 py-3 border-b border-neutral-200">Updated</th>
+            <th class="text-center px-4 py-3 border-b border-neutral-200">Actions</th>
+          </tr>
+        </thead>
+        <tbody id="skills-tbody" class="text-sm">
+          <!-- Skills will be populated here -->
+        </tbody>
+      </table>
+    </div>
+
+    <!-- No Data State -->
+    <div id="no-data-state" class="hidden text-center py-12">
+      <i data-lucide="book-open" class="w-12 h-12 text-neutral-400 mx-auto mb-4"></i>
+      <h3 class="text-lg font-semibold text-primary mb-2">No Skills Found</h3>
+      <p class="text-secondary mb-4">Get started by adding your first skill to the framework.</p>
+      <button class="inline-flex items-center gap-2 bg-accent text-white rounded-md px-4 py-2 hover:bg-[#1d4ed8]" onclick="document.getElementById('btn-add-skill').click()">
+        <i data-lucide="plus" class="w-4 h-4"></i>
+        Add First Skill
+      </button>
+    </div>
+  </div>
+
+  <!-- Pagination -->
+  <div id="pagination-container" class="hidden flex items-center justify-between">
+    <div class="text-sm text-secondary">
+      Showing <span id="pagination-start">1</span> to <span id="pagination-end">10</span> of <span id="pagination-total">100</span> skills
+    </div>
+    <div class="flex items-center gap-2">
+      <button id="btn-prev-page" class="inline-flex items-center gap-2 bg-white text-primary border border-neutral-200 rounded-md px-3 py-2 hover:bg-neutral-50 focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2" disabled>
+        <i data-lucide="chevron-left" class="w-4 h-4"></i>
+        Previous
+      </button>
+      <span id="page-numbers" class="flex gap-1"></span>
+      <button id="btn-next-page" class="inline-flex items-center gap-2 bg-white text-primary border border-neutral-200 rounded-md px-3 py-2 hover:bg-neutral-50 focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2">
+        Next
+        <i data-lucide="chevron-right" class="w-4 h-4"></i>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Add/Edit Skill Modal -->
+<div id="modal-skill" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+  <div class="bg-white rounded-lg shadow-lg max-w-lg w-full max-h-[90vh] overflow-y-auto">
+    <div class="p-6">
+      <div class="flex items-center justify-between mb-4">
+        <h3 id="modal-skill-title" class="text-lg font-semibold text-primary">Add New Skill</h3>
+        <button id="btn-close-skill-modal" class="p-2 hover:bg-neutral-100 rounded-md">
+          <i data-lucide="x" class="w-5 h-5 text-secondary"></i>
+        </button>
+      </div>
+
+      <form id="form-skill" class="space-y-4">
+        <div>
+          <label for="skill-name" class="block text-xs font-medium text-secondary mb-1">Skill Name *</label>
+          <input type="text" id="skill-name" required class="w-full border border-neutral-200 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2">
+          <div id="skill-name-error" class="hidden text-xs text-error mt-1"></div>
+        </div>
+
+        <div>
+          <label for="skill-description" class="block text-xs font-medium text-secondary mb-1">Description</label>
+          <textarea id="skill-description" rows="3" class="w-full border border-neutral-200 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2"></textarea>
+        </div>
+
+        <div>
+          <label for="skill-category" class="block text-xs font-medium text-secondary mb-1">Category *</label>
+          <select id="skill-category" required class="w-full border border-neutral-200 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2">
+            <option value="">Select Category</option>
+          </select>
+        </div>
+
+        <div>
+          <label for="skill-criticality" class="block text-xs font-medium text-secondary mb-1">Criticality *</label>
+          <select id="skill-criticality" required class="w-full border border-neutral-200 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2">
+            <option value="">Select Criticality</option>
+          </select>
+        </div>
+
+        <div id="initial-benchmark-container">
+          <label for="initial-benchmark" class="block text-xs font-medium text-secondary mb-1">Initial Benchmark Score (1-10) *</label>
+          <input type="number" id="initial-benchmark" min="1" max="10" required class="w-full border border-neutral-200 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2">
+          <p class="text-xs text-neutral-400 mt-1">Set the initial benchmark for this skill</p>
+        </div>
+
+        <div>
+          <label for="skill-status" class="block text-xs font-medium text-secondary mb-1">Status</label>
+          <select id="skill-status" class="w-full border border-neutral-200 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2">
+            <option value="active">Active</option>
+            <option value="inactive">Inactive</option>
+          </select>
+        </div>
+
+        <div class="flex justify-end gap-2 pt-4">
+          <button type="button" id="btn-cancel-skill" class="inline-flex items-center gap-2 bg-white text-primary border border-neutral-200 rounded-md px-4 py-2 hover:bg-neutral-50">
+            Cancel
+          </button>
+          <button type="submit" class="inline-flex items-center gap-2 bg-accent text-white rounded-md px-4 py-2 hover:bg-[#1d4ed8]">
+            <span id="skill-submit-text">Create Skill</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Update Benchmark Modal -->
+<div id="modal-benchmark" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+  <div class="bg-white rounded-lg shadow-lg max-w-md w-full">
+    <div class="p-6">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="text-lg font-semibold text-primary">Update Benchmark</h3>
+        <button id="btn-close-benchmark-modal" class="p-2 hover:bg-neutral-100 rounded-md">
+          <i data-lucide="x" class="w-5 h-5 text-secondary"></i>
+        </button>
+      </div>
+
+      <div class="mb-4">
+        <div class="bg-neutral-50 rounded-md p-3 mb-4">
+          <h4 class="font-medium text-primary mb-1" id="benchmark-skill-name">Skill Name</h4>
+          <div class="text-sm text-secondary">
+            Current Score: <span id="current-benchmark-score" class="font-medium">5</span>
+          </div>
+        </div>
+
+        <form id="form-benchmark" class="space-y-4">
+          <div>
+            <label for="new-benchmark-score" class="block text-xs font-medium text-secondary mb-1">New Benchmark Score (1-10) *</label>
+            <input type="number" id="new-benchmark-score" min="1" max="10" required class="w-full border border-neutral-200 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2">
+            <p class="text-xs text-neutral-400 mt-1">This will create a new version and end the current one</p>
+          </div>
+
+          <div id="benchmark-preview" class="hidden bg-info/10 border border-info/20 rounded-md p-3">
+            <div class="text-sm">
+              <div class="font-medium text-primary mb-1">Preview Changes:</div>
+              <div class="text-secondary">
+                Score will change from <span id="preview-old-score">5</span> to <span id="preview-new-score">7</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="flex justify-end gap-2 pt-4">
+            <button type="button" id="btn-cancel-benchmark" class="inline-flex items-center gap-2 bg-white text-primary border border-neutral-200 rounded-md px-4 py-2 hover:bg-neutral-50">
+              Cancel
+            </button>
+            <button type="submit" class="inline-flex items-center gap-2 bg-accent text-white rounded-md px-4 py-2 hover:bg-[#1d4ed8]">
+              Update Benchmark
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Manage Categories Modal -->
+<div id="modal-categories" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+  <div class="bg-white rounded-lg shadow-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+    <div class="p-6">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="text-lg font-semibold text-primary">Manage Categories</h3>
+        <button id="btn-close-categories-modal" class="p-2 hover:bg-neutral-100 rounded-md">
+          <i data-lucide="x" class="w-5 h-5 text-secondary"></i>
+        </button>
+      </div>
+
+      <div class="mb-4">
+        <button id="btn-add-category" class="inline-flex items-center gap-2 bg-accent text-white rounded-md px-4 py-2 hover:bg-[#1d4ed8]">
+          <i data-lucide="plus" class="w-4 h-4"></i>
+          Add Category
+        </button>
+      </div>
+
+      <!-- Categories List -->
+      <div id="categories-list" class="space-y-2">
+        <!-- Categories will be populated here -->
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Manage Criticalities Modal -->
+<div id="modal-criticalities" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+  <div class="bg-white rounded-lg shadow-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+    <div class="p-6">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="text-lg font-semibold text-primary">Manage Criticalities</h3>
+        <button id="btn-close-criticalities-modal" class="p-2 hover:bg-neutral-100 rounded-md">
+          <i data-lucide="x" class="w-5 h-5 text-secondary"></i>
+        </button>
+      </div>
+
+      <div class="mb-4">
+        <button id="btn-add-criticality" class="inline-flex items-center gap-2 bg-accent text-white rounded-md px-4 py-2 hover:bg-[#1d4ed8]">
+          <i data-lucide="plus" class="w-4 h-4"></i>
+          Add Criticality
+        </button>
+      </div>
+
+      <!-- Criticalities List -->
+      <div id="criticalities-list" class="space-y-2">
+        <!-- Criticalities will be populated here -->
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Benchmark Timeline Drawer -->
+<div id="drawer-timeline" class="hidden fixed inset-y-0 right-0 z-50 w-full max-w-md bg-white border-l border-neutral-200 shadow-lg overflow-y-auto">
+  <div class="p-6">
+    <div class="flex items-center justify-between mb-4">
+      <h3 class="text-lg font-semibold text-primary">Benchmark Timeline</h3>
+      <button id="btn-close-timeline" class="p-2 hover:bg-neutral-100 rounded-md">
+        <i data-lucide="x" class="w-5 h-5 text-secondary"></i>
+      </button>
+    </div>
+
+    <div class="mb-4">
+      <h4 id="timeline-skill-name" class="font-medium text-primary">Skill Name</h4>
+      <p class="text-sm text-secondary">Historical benchmark changes</p>
+    </div>
+
+    <div id="timeline-content" class="space-y-3">
+      <!-- Timeline items will be populated here -->
+    </div>
+  </div>
+</div>
+
+<!-- Drawer Overlay -->
+<div id="drawer-overlay" class="hidden fixed inset-0 z-40 bg-black/50 backdrop-blur-sm"></div>
+
+        </main>
+    </div>
+
+    <!-- Required: JavaScript -->
+    <script type="module" data-tiramai="web-gen">
+        import { showToast, showLoader, hideLoader, env } from "./scripts/main.js";
+        import { auth, db, storage } from "./scripts/firebase.js";
+        import { onAuthStateChanged, getAuth, signOut } from 'https://www.gstatic.com/firebasejs/10.12.4/firebase-auth.js';
+        import { doc, getDoc } from 'https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js';
+
+        // Initialize Lucide icons
+        lucide.createIcons();
+
+        // Auth state management
+        let currentUser = null;
+
+        // Initialize auth state listener
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                currentUser = user;
+                await loadUserProfile(user);
+            } else {
+                // Redirect to auth page if not authenticated
+                window.location.href = 'auth.html';
+            }
+        });
+
+        // Load user profile data
+        async function loadUserProfile(user) {
+            try {
+                const userDoc = await getDoc(doc(db, 'users', user.uid));
+                
+                if (userDoc.exists()) {
+                    const userData = userDoc.data();
+                    const fullName = `${userData.firstName || ''} ${userData.lastName || ''}`.trim();
+                    document.getElementById('user-name').textContent = fullName || user.email;
+                } else {
+                    // Fallback to email if no user doc exists
+                    document.getElementById('user-name').textContent = user.email;
+                }
+            } catch (error) {
+                console.error('Error loading user profile:', error);
+                // Fallback to email on error
+                document.getElementById('user-name').textContent = user.email;
+            }
+        }
+
+        // User dropdown functionality
+        const userProfileBtn = document.getElementById('user-profile-btn');
+        const userDropdown = document.getElementById('user-dropdown');
+        const signOutBtn = document.getElementById('sign-out-btn');
+
+        userProfileBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            userDropdown.classList.toggle('hidden');
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', () => {
+            userDropdown.classList.add('hidden');
+        });
+
+        // Sign out functionality
+        signOutBtn.addEventListener('click', async () => {
+            try {
+                await signOut(auth);
+                window.location.href = 'auth.html';
+            } catch (error) {
+                console.error('Error signing out:', error);
+                showToast('Error signing out', 'error');
+            }
+        });
+
+        // Mobile navigation
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const mobileNavOverlay = document.getElementById('mobile-nav-overlay');
+        const mobileNavBackdrop = document.getElementById('mobile-nav-backdrop');
+
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileNavOverlay.classList.remove('hidden');
+        });
+
+        mobileNavBackdrop.addEventListener('click', () => {
+            mobileNavOverlay.classList.add('hidden');
+        });
+
+        // Close mobile nav on navigation
+        document.querySelectorAll('#mobile-nav-overlay .nav-item').forEach(link => {
+            link.addEventListener('click', () => {
+                mobileNavOverlay.classList.add('hidden');
+            });
+        });
+
+        // Active navigation state
+        function updateActiveNavState() {
+            const currentPath = window.location.pathname;
+            const pageName = currentPath.replace('/', '').replace('.html', '');
+            
+            // Remove active state from all nav items
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('bg-accent', 'text-white');
+                item.classList.add('text-neutral-700');
+            });
+
+            // Add active state to current page
+            document.querySelectorAll(`[data-page="${pageName}"]`).forEach(item => {
+                item.classList.add('bg-accent', 'text-white');
+                item.classList.remove('text-neutral-700');
+            });
+        }
+
+        // Update active state on load
+        updateActiveNavState();
+
+        // Update active state on navigation (for SPA behavior)
+        window.addEventListener('popstate', updateActiveNavState);
+    </script>
+
+    
+<script id="data-script" type="module" data-tiramai="web-gen">
+import {
+  collection, getDocs, setDoc, addDoc, doc, getDoc, updateDoc, deleteDoc, writeBatch,
+  query, where, orderBy, limit, startAfter, endBefore, onSnapshot, Timestamp,
+  getCountFromServer, enableIndexedDbPersistence
+} from "https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js";
+import { onAuthStateChanged, getAuth, signOut } from 'https://www.gstatic.com/firebasejs/10.12.4/firebase-auth.js';
+import { auth, getDb, storage } from "./scripts/firebase.js";
+import { showToast, showLoader, hideLoader, env } from "./scripts/main.js";
+
+const db = getDb();
+
+// Auth Guard
+onAuthStateChanged(auth, user => {
+  if (!user) location.href = "auth.html?redirect=" + encodeURIComponent(location.pathname);
+});
+
+// Global state
+let currentUser = null;
+let skills = [];
+let categories = [];
+let criticalities = [];
+let currentPage = 1;
+let pageSize = 25;
+let totalSkills = 0;
+let currentSort = { field: 'name', direction: 'asc' };
+let currentFilters = {
+  search: '',
+  category: '',
+  criticality: '',
+  status: ''
+};
+let currentEditingSkill = null;
+let currentBenchmarkSkill = null;
+
+// Initialize
+document.addEventListener('DOMContentLoaded', () => {
+  onAuthStateChanged(auth, async (user) => {
+    if (user) {
+      currentUser = user;
+      await funInitialLoad();
+      setupEventListeners();
+      lucide.createIcons();
+    }
+  });
+});
+
+// Initial data loading
+async function funInitialLoad(force = false) {
+  try {
+    showSkeletonLoading(true);
+    
+    // Load reference data
+    await Promise.all([
+      funLoadCategories(),
+      funLoadCriticalities()
+    ]);
+    
+    // Load skills with current filters
+    await funLoadSkills(force);
+    
+  } catch (error) {
+    console.error('Error loading initial data:', error);
+    showToast(error?.message || 'Failed to load data', 'error');
+  } finally {
+    showSkeletonLoading(false);
+  }
+}
+
+// Load categories
+async function funLoadCategories() {
+  try {
+    const q = query(
+      collection(db, 'skillCategories'),
+      where('status', '==', 'active'),
+      orderBy('name')
+    );
+    const snapshot = await getDocs(q);
+    
+    categories = snapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    }));
+    
+    // Populate category filters and selects
+    funPopulateCategorySelects();
+    
+  } catch (error) {
+    console.error('Error loading categories:', error);
+    showToast('Failed to load categories', 'error');
+  }
+}
+
+// Load criticalities
+async function funLoadCriticalities() {
+  try {
+    const q = query(
+      collection(db, 'skillCriticalities'),
+      where('status', '==', 'active'),
+      orderBy('weight')
+    );
+    const snapshot = await getDocs(q);
+    
+    criticalities = snapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    }));
+    
+    // Populate criticality filters and selects
+    funPopulateCriticalitySelects();
+    
+  } catch (error) {
+    console.error('Error loading criticalities:', error);
+    showToast('Failed to load criticalities', 'error');
+  }
+}
+
+// Load skills with pagination and filtering
+async function funLoadSkills(force = false) {
+  try {
+    let q = collection(db, 'skills');
+    const constraints = [];
+    
+    // Apply filters
+    if (currentFilters.status) {
+      constraints.push(where('status', '==', currentFilters.status));
+    }
+    
+    if (currentFilters.category) {
+      constraints.push(where('categoryId', '==', currentFilters.category));
+    }
+    
+    if (currentFilters.criticality) {
+      constraints.push(where('criticalityId', '==', currentFilters.criticality));
+    }
+    
+    // Add sorting
+    constraints.push(orderBy(currentSort.field, currentSort.direction));
+    constraints.push(limit(pageSize));
+    
+    if (constraints.length > 0) {
+      q = query(q, ...constraints);
+    }
+    
+    const snapshot = await getDocs(q);
+    
+    // Get skills data
+    let skillsData = snapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    }));
+    
+    // Client-side search filtering (since Firestore doesn't support text search)
+    if (currentFilters.search) {
+      const searchTerm = currentFilters.search.toLowerCase();
+      skillsData = skillsData.filter(skill => 
+        skill.name?.toLowerCase().includes(searchTerm) ||
+        skill.description?.toLowerCase().includes(searchTerm)
+      );
+    }
+    
+    // Load benchmark data for each skill
+    await funLoadSkillBenchmarks(skillsData);
+    
+    skills = skillsData;
+    totalSkills = skills.length;
+    
+    funRenderSkillsTable();
+    funUpdatePagination();
+    
+  } catch (error) {
+    console.error('Error loading skills:', error);
+    showToast('Failed to load skills', 'error');
+  }
+}
+
+// Load active benchmarks for skills
+async function funLoadSkillBenchmarks(skillsData) {
+  try {
+    const benchmarkPromises = skillsData.map(async (skill) => {
+      try {
+        const q = query(
+          collection(db, 'skillBenchmarkVersions'),
+          where('skillId', '==', skill.id),
+          where('effectiveEndDate', '==', null),
+          limit(1)
+        );
+        const snapshot = await getDocs(q);
+        
+        if (!snapshot.empty) {
+          const benchmarkData = snapshot.docs[0].data();
+          skill.activeBenchmarkScore = benchmarkData.score;
+        } else {
+          skill.activeBenchmarkScore = null;
+        }
+      } catch (err) {
+        console.error(`Error loading benchmark for skill ${skill.id}:`, err);
+        skill.activeBenchmarkScore = null;
+      }
+    });
+    
+    await Promise.all(benchmarkPromises);
+    
+  } catch (error) {
+    console.error('Error loading skill benchmarks:', error);
+  }
+}
+
+// Render skills table
+function funRenderSkillsTable() {
+  const tbody = document.getElementById('skills-tbody');
+  const tableContainer = document.getElementById('skills-table-container');
+  const noDataState = document.getElementById('no-data-state');
+  const resultsCount = document.getElementById('results-count');
+  
+  // Update results count
+  resultsCount.textContent = `${skills.length} skill${skills.length !== 1 ? 's' : ''} found`;
+  
+  if (skills.length === 0) {
+    tableContainer.classList.add('hidden');
+    noDataState.classList.remove('hidden');
+    return;
+  }
+  
+  noDataState.classList.add('hidden');
+  tableContainer.classList.remove('hidden');
+  
+  tbody.innerHTML = skills.map(skill => {
+    const category = categories.find(c => c.id === skill.categoryId);
+    const criticality = criticalities.find(c => c.id === skill.criticalityId);
+    
+    const statusBadge = skill.status === 'active' 
+      ? '<span class="inline-flex items-center gap-1 text-success bg-success/10 rounded-full px-2 py-0.5 text-xs"><span class="h-1.5 w-1.5 rounded-full bg-success"></span>Active</span>'
+      : '<span class="inline-flex items-center gap-1 text-neutral-400 bg-neutral-100 rounded-full px-2 py-0.5 text-xs"><span class="h-1.5 w-1.5 rounded-full bg-neutral-400"></span>Inactive</span>';
+    
+    const benchmarkScore = skill.activeBenchmarkScore !== null ? skill.activeBenchmarkScore : 'N/A';
+    const updatedDate = skill.updatedAt ? new Date(skill.updatedAt).toLocaleDateString('en-GB') : 'N/A';
+    
+    return `
+      <tr class="odd:bg-white even:bg-neutral-50 hover:bg-neutral-100 transition-colors">
+        <td class="px-4 py-3">
+          <div>
+            <div class="font-medium text-neutral-700">${skill.name || 'N/A'}</div>
+            ${skill.description ? `<div class="text-xs text-neutral-400 mt-0.5 truncate max-w-xs">${skill.description}</div>` : ''}
+          </div>
+        </td>
+        <td class="px-4 py-3 text-neutral-700">${category?.name || 'N/A'}</td>
+        <td class="px-4 py-3">
+          <span class="inline-flex items-center gap-1 text-warning bg-warning/10 rounded-full px-2 py-0.5 text-xs">
+            ${criticality?.name || 'N/A'}
+          </span>
+        </td>
+        <td class="px-4 py-3 text-center">
+          <span class="font-mono font-medium ${benchmarkScore !== 'N/A' ? 'text-accent' : 'text-neutral-400'}">${benchmarkScore}</span>
+        </td>
+        <td class="px-4 py-3 text-center">${statusBadge}</td>
+        <td class="px-4 py-3 text-center text-neutral-700">${updatedDate}</td>
+        <td class="px-4 py-3">
+          <div class="flex items-center justify-center gap-1">
+            <button onclick="funEditSkill('${skill.id}')" class="p-1 hover:bg-neutral-200 rounded text-secondary hover:text-accent" title="Edit Skill">
+              <i data-lucide="edit" class="w-4 h-4"></i>
+            </button>
+            <button onclick="funUpdateBenchmark('${skill.id}')" class="p-1 hover:bg-neutral-200 rounded text-secondary hover:text-accent" title="Update Benchmark">
+              <i data-lucide="trending-up" class="w-4 h-4"></i>
+            </button>
+            <button onclick="funShowBenchmarkTimeline('${skill.id}')" class="p-1 hover:bg-neutral-200 rounded text-secondary hover:text-accent" title="Benchmark History">
+              <i data-lucide="clock" class="w-4 h-4"></i>
+            </button>
+            <button onclick="funViewAuditTrail('${skill.id}')" class="p-1 hover:bg-neutral-200 rounded text-secondary hover:text-accent" title="Audit Trail">
+              <i data-lucide="file-search" class="w-4 h-4"></i>
+            </button>
+            ${skill.status === 'active' ? 
+              `<button onclick="funDeactivateSkill('${skill.id}')" class="p-1 hover:bg-neutral-200 rounded text-secondary hover:text-error" title="Deactivate">
+                <i data-lucide="trash-2" class="w-4 h-4"></i>
+              </button>` : 
+              `<button onclick="funActivateSkill('${skill.id}')" class="p-1 hover:bg-neutral-200 rounded text-secondary hover:text-success" title="Activate">
+                <i data-lucide="check" class="w-4 h-4"></i>
+              </button>`
+            }
+          </div>
+        </td>
+      </tr>
+    `;
+  }).join('');
+  
+  // Re-initialize Lucide icons for new content
+  lucide.createIcons();
+}
+
+// Populate category selects
+function funPopulateCategorySelects() {
+  const filterSelect = document.getElementById('filter-category');
+  const skillCategorySelect = document.getElementById('skill-category');
+  
+  // Clear existing options (except first)
+  filterSelect.innerHTML = '<option value="">All Categories</option>';
+  skillCategorySelect.innerHTML = '<option value="">Select Category</option>';
+  
+  categories.forEach(category => {
+    if (category && category.id && category.name) {
+      filterSelect.innerHTML += `<option value="${category.id}">${category.name}</option>`;
+      skillCategorySelect.innerHTML += `<option value="${category.id}">${category.name}</option>`;
+    }
+  });
+}
+
+// Populate criticality selects
+function funPopulateCriticalitySelects() {
+  const filterSelect = document.getElementById('filter-criticality');
+  const skillCriticalitySelect = document.getElementById('skill-criticality');
+  
+  // Clear existing options (except first)
+  filterSelect.innerHTML = '<option value="">All Criticalities</option>';
+  skillCriticalitySelect.innerHTML = '<option value="">Select Criticality</option>';
+  
+  criticalities.forEach(criticality => {
+    if (criticality && criticality.id && criticality.name) {
+      filterSelect.innerHTML += `<option value="${criticality.id}">${criticality.name}</option>`;
+      skillCriticalitySelect.innerHTML += `<option value="${criticality.id}">${criticality.name}</option>`;
+    }
+  });
+}
+
+// Setup event listeners
+function setupEventListeners() {
+  // Filter inputs
+  const searchInput = document.getElementById('filter-search');
+  const categoryFilter = document.getElementById('filter-category');
+  const criticalityFilter = document.getElementById('filter-criticality');
+  const statusFilter = document.getElementById('filter-status');
+  
+  // Debounced search
+  let searchTimeout;
+  searchInput.addEventListener('input', (e) => {
+    clearTimeout(searchTimeout);
+    searchTimeout = setTimeout(() => {
+      currentFilters.search = e.target.value.trim();
+      currentPage = 1;
+      funLoadSkills();
+    }, 300);
+  });
+  
+  categoryFilter.addEventListener('change', (e) => {
+    currentFilters.category = e.target.value;
+    currentPage = 1;
+    funLoadSkills();
+  });
+  
+  criticalityFilter.addEventListener('change', (e) => {
+    currentFilters.criticality = e.target.value;
+    currentPage = 1;
+    funLoadSkills();
+  });
+  
+  statusFilter.addEventListener('change', (e) => {
+    currentFilters.status = e.target.value;
+    currentPage = 1;
+    funLoadSkills();
+  });
+  
+  // Refresh button
+  document.getElementById('btn-refresh')?.addEventListener('click', () => {
+    funInitialLoad(true);
+  });
+  
+  // Add skill button
+  document.getElementById('btn-add-skill')?.addEventListener('click', () => {
+    funShowSkillModal();
+  });
+  
+  // Manage buttons
+  document.getElementById('btn-manage-categories')?.addEventListener('click', () => {
+    funShowCategoriesModal();
+  });
+  
+  document.getElementById('btn-manage-criticalities')?.addEventListener('click', () => {
+    funShowCriticalitiesModal();
+  });
+  
+  // Modal event listeners
+  setupModalEventListeners();
+  
+  // Table sorting
+  setupTableSorting();
+}
+
+// Setup table sorting
+function setupTableSorting() {
+  document.querySelectorAll('[data-sort]').forEach(header => {
+    header.addEventListener('click', () => {
+      const field = header.getAttribute('data-sort');
+      
+      if (currentSort.field === field) {
+        currentSort.direction = currentSort.direction === 'asc' ? 'desc' : 'asc';
+      } else {
+        currentSort.field = field;
+        currentSort.direction = 'asc';
+      }
+      
+      currentPage = 1;
+      funLoadSkills();
+    });
+  });
+}
+
+// Setup modal event listeners
+function setupModalEventListeners() {
+  // Skill modal
+  const skillModal = document.getElementById('modal-skill');
+  const skillForm = document.getElementById('form-skill');
+  
+  document.getElementById('btn-close-skill-modal')?.addEventListener('click', funCloseSkillModal);
+  document.getElementById('btn-cancel-skill')?.addEventListener('click', funCloseSkillModal);
+  
+  skillForm?.addEventListener('submit', funSubmitSkill);
+  
+  // Benchmark modal
+  const benchmarkModal = document.getElementById('modal-benchmark');
+  const benchmarkForm = document.getElementById('form-benchmark');
+  const newScoreInput = document.getElementById('new-benchmark-score');
+  
+  document.getElementById('btn-close-benchmark-modal')?.addEventListener('click', funCloseBenchmarkModal);
+  document.getElementById('btn-cancel-benchmark')?.addEventListener('click', funCloseBenchmarkModal);
+  
+  benchmarkForm?.addEventListener('submit', funSubmitBenchmark);
+  
+  // Show preview when score changes
+  newScoreInput?.addEventListener('input', (e) => {
+    const newScore = parseInt(e.target.value);
+    if (newScore && currentBenchmarkSkill) {
+      funShowBenchmarkPreview(currentBenchmarkSkill.activeBenchmarkScore, newScore);
+    }
+  });
+  
+  // Categories modal
+  document.getElementById('btn-close-categories-modal')?.addEventListener('click', funCloseCategoriesModal);
+  
+  // Criticalities modal
+  document.getElementById('btn-close-criticalities-modal')?.addEventListener('click', funCloseCriticalitiesModal);
+  
+  // Timeline drawer
+  document.getElementById('btn-close-timeline')?.addEventListener('click', funCloseTimelineDrawer);
+  document.getElementById('drawer-overlay')?.addEventListener('click', funCloseTimelineDrawer);
+  
+  // Close modals on ESC
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      funCloseSkillModal();
+      funCloseBenchmarkModal();
+      funCloseCategoriesModal();
+      funCloseCriticalitiesModal();
+      funCloseTimelineDrawer();
+    }
+  });
+}
+
+// Show skill modal
+function funShowSkillModal(skillId = null) {
+  currentEditingSkill = skillId ? skills.find(s => s.id === skillId) : null;
+  
+  const modal = document.getElementById('modal-skill');
+  const title = document.getElementById('modal-skill-title');
+  const submitText = document.getElementById('skill-submit-text');
+  const benchmarkContainer = document.getElementById('initial-benchmark-container');
+  
+  // Reset form
+  document.getElementById('form-skill').reset();
+  document.getElementById('skill-name-error').classList.add('hidden');
+  
+  if (currentEditingSkill) {
+    title.textContent = 'Edit Skill';
+    submitText.textContent = 'Update Skill';
+    benchmarkContainer.style.display = 'none';
+    
+    // Populate form
+    document.getElementById('skill-name').value = currentEditingSkill.name || '';
+    document.getElementById('skill-description').value = currentEditingSkill.description || '';
+    document.getElementById('skill-category').value = currentEditingSkill.categoryId || '';
+    document.getElementById('skill-criticality').value = currentEditingSkill.criticalityId || '';
+    document.getElementById('skill-status').value = currentEditingSkill.status || 'active';
+  } else {
+    title.textContent = 'Add New Skill';
+    submitText.textContent = 'Create Skill';
+    benchmarkContainer.style.display = 'block';
+    document.getElementById('skill-status').value = 'active';
+  }
+  
+  modal.classList.remove('hidden');
+  document.getElementById('skill-name').focus();
+}
+
+// Close skill modal
+function funCloseSkillModal() {
+  document.getElementById('modal-skill').classList.add('hidden');
+  currentEditingSkill = null;
+}
+
+// Submit skill form
+async function funSubmitSkill(e) {
+  e.preventDefault();
+  
+  const name = document.getElementById('skill-name').value.trim();
+  const description = document.getElementById('skill-description').value.trim();
+  const categoryId = document.getElementById('skill-category').value;
+  const criticalityId = document.getElementById('skill-criticality').value;
+  const status = document.getElementById('skill-status').value;
+  const initialBenchmark = document.getElementById('initial-benchmark').value;
+  
+  // Validation
+  if (!name || !categoryId || !criticalityId) {
+    showToast('Please fill in all required fields', 'error');
+    return;
+  }
+  
+  if (!currentEditingSkill && (!initialBenchmark || initialBenchmark < 1 || initialBenchmark > 10)) {
+    showToast('Initial benchmark score must be between 1 and 10', 'error');
+    return;
+  }
+  
+  try {
+    showLoader();
+    
+    const skillData = {
+      name,
+      description,
+      categoryId,
+      criticalityId,
+      status,
+      updatedBy: currentUser.uid,
+      updatedAt: new Date().toISOString()
+    };
+    
+    if (currentEditingSkill) {
+      // Update existing skill
+      await updateDoc(doc(db, 'skills', currentEditingSkill.id), skillData);
+      showToast('Skill updated successfully', 'success');
+    } else {
+      // Create new skill
+      skillData.createdBy = currentUser.uid;
+      skillData.createdAt = new Date().toISOString();
+      
+      const skillRef = await addDoc(collection(db, 'skills'), skillData);
+      
+      // Create initial benchmark version
+      const benchmarkData = {
+        skillId: skillRef.id,
+        score: parseInt(initialBenchmark),
+        effectiveStartDate: new Date().toISOString(),
+        effectiveEndDate: null,
+        createdBy: currentUser.uid,
+        createdAt: new Date().toISOString()
+      };
+      
+      await addDoc(collection(db, 'skillBenchmarkVersions'), benchmarkData);
+      
+      showToast('Skill created successfully', 'success');
+    }
+    
+    funCloseSkillModal();
+    await funLoadSkills(true);
+    
+  } catch (error) {
+    console.error('Error saving skill:', error);
+    showToast(error?.message || 'Failed to save skill', 'error');
+  } finally {
+    hideLoader();
+  }
+}
+
+// Edit skill
+function funEditSkill(skillId) {
+  funShowSkillModal(skillId);
+}
+
+// Update benchmark
+function funUpdateBenchmark(skillId) {
+  currentBenchmarkSkill = skills.find(s => s.id === skillId);
+  if (!currentBenchmarkSkill) {
+    showToast('Skill not found', 'error');
+    return;
+  }
+  
+  const modal = document.getElementById('modal-benchmark');
+  document.getElementById('benchmark-skill-name').textContent = currentBenchmarkSkill.name || 'N/A';
+  document.getElementById('current-benchmark-score').textContent = currentBenchmarkSkill.activeBenchmarkScore || 'N/A';
+  
+  // Reset form
+  document.getElementById('form-benchmark').reset();
+  document.getElementById('benchmark-preview').classList.add('hidden');
+  
+  modal.classList.remove('hidden');
+  document.getElementById('new-benchmark-score').focus();
+}
+
+// Show benchmark preview
+function funShowBenchmarkPreview(oldScore, newScore) {
+  const preview = document.getElementById('benchmark-preview');
+  document.getElementById('preview-old-score').textContent = oldScore || 'N/A';
+  document.getElementById('preview-new-score').textContent = newScore;
+  preview.classList.remove('hidden');
+}
+
+// Close benchmark modal
+function funCloseBenchmarkModal() {
+  document.getElementById('modal-benchmark').classList.add('hidden');
+  currentBenchmarkSkill = null;
+}
+
+// Submit benchmark update
+async function funSubmitBenchmark(e) {
+  e.preventDefault();
+  
+  const newScore = parseInt(document.getElementById('new-benchmark-score').value);
+  
+  if (!newScore || newScore < 1 || newScore > 10) {
+    showToast('New score must be between 1 and 10', 'error');
+    return;
+  }
+  
+  if (!currentBenchmarkSkill) {
+    showToast('No skill selected', 'error');
+    return;
+  }
+  
+  try {
+    showLoader();
+    
+    const now = new Date().toISOString();
+    
+    // Get current active benchmark
+    const q = query(
+      collection(db, 'skillBenchmarkVersions'),
+      where('skillId', '==', currentBenchmarkSkill.id),
+      where('effectiveEndDate', '==', null)
+    );
+    const snapshot = await getDocs(q);
+    
+    const batch = writeBatch(db);
+    
+    // End current version
+    if (!snapshot.empty) {
+      const currentBenchmark = snapshot.docs[0];
+      batch.update(currentBenchmark.ref, {
+        effectiveEndDate: now
+      });
+    }
+    
+    // Create new version
+    const newBenchmarkRef = doc(collection(db, 'skillBenchmarkVersions'));
+    batch.set(newBenchmarkRef, {
+      skillId: currentBenchmarkSkill.id,
+      score: newScore,
+      effectiveStartDate: now,
+      effectiveEndDate: null,
+      createdBy: currentUser.uid,
+      createdAt: now
+    });
+    
+    await batch.commit();
+    
+    showToast('Benchmark updated successfully', 'success');
+    funCloseBenchmarkModal();
+    await funLoadSkills(true);
+    
+  } catch (error) {
+    console.error('Error updating benchmark:', error);
+    showToast(error?.message || 'Failed to update benchmark', 'error');
+  } finally {
+    hideLoader();
+  }
+}
+
+// Show benchmark timeline
+async function funShowBenchmarkTimeline(skillId) {
+  const skill = skills.find(s => s.id === skillId);
+  if (!skill) {
+    showToast('Skill not found', 'error');
+    return;
+  }
+  
+  try {
+    showLoader();
+    
+    // Load all benchmark versions for this skill
+    const q = query(
+      collection(db, 'skillBenchmarkVersions'),
+      where('skillId', '==', skillId),
+      orderBy('effectiveStartDate', 'desc')
+    );
+    const snapshot = await getDocs(q);
+    
+    const versions = snapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    }));
+    
+    // Show drawer
+    document.getElementById('timeline-skill-name').textContent = skill.name || 'N/A';
+    
+    const content = document.getElementById('timeline-content');
+    if (versions.length === 0) {
+      content.innerHTML = '<div class="text-center text-neutral-400 py-8">No benchmark history found</div>';
+    } else {
+      content.innerHTML = versions.map((version, index) => {
+        const startDate = version.effectiveStartDate ? new Date(version.effectiveStartDate).toLocaleDateString('en-GB') : 'N/A';
+        const endDate = version.effectiveEndDate ? new Date(version.effectiveEndDate).toLocaleDateString('en-GB') : 'Current';
+        const isActive = !version.effectiveEndDate;
+        
+        return `
+          <div class="flex items-start gap-3 relative">
+            ${index < versions.length - 1 ? '<div class="absolute left-2 top-8 w-0.5 h-6 bg-neutral-200"></div>' : ''}
+            <div class="w-4 h-4 rounded-full ${isActive ? 'bg-accent' : 'bg-neutral-300'} flex-shrink-0 mt-0.5"></div>
+            <div class="flex-1">
+              <div class="bg-neutral-50 rounded-md p-3">
+                <div class="flex items-center justify-between mb-1">
+                  <span class="font-mono font-bold text-accent text-lg">${version.score}</span>
+                  ${isActive ? '<span class="inline-flex items-center gap-1 text-accent bg-accent/10 rounded-full px-2 py-0.5 text-xs">Current</span>' : ''}
+                </div>
+                <div class="text-sm text-secondary">
+                  <div>Start: ${startDate}</div>
+                  ${version.effectiveEndDate ? `<div>End: ${endDate}</div>` : ''}
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+    
+    document.getElementById('drawer-timeline').classList.remove('hidden');
+    document.getElementById('drawer-overlay').classList.remove('hidden');
+    
+  } catch (error) {
+    console.error('Error loading benchmark timeline:', error);
+    showToast('Failed to load benchmark timeline', 'error');
+  } finally {
+    hideLoader();
+  }
+}
+
+// Close timeline drawer
+function funCloseTimelineDrawer() {
+  document.getElementById('drawer-timeline').classList.add('hidden');
+  document.getElementById('drawer-overlay').classList.add('hidden');
+}
+
+// View audit trail
+function funViewAuditTrail(skillId) {
+  const params = new URLSearchParams({
+    entityType: 'skill',
+    entityId: skillId,
+    returnTo: 'skill_framework'
+  });
+  window.location.href = `audit_log_viewer.html?${params.toString()}`;
+}
+
+// Deactivate skill
+async function funDeactivateSkill(skillId) {
+  if (!confirm('Are you sure you want to deactivate this skill? This will make it inactive but preserve all data.')) {
+    return;
+  }
+  
+  try {
+    showLoader();
+    
+    await updateDoc(doc(db, 'skills', skillId), {
+      status: 'inactive',
+      updatedBy: currentUser.uid,
+      updatedAt: new Date().toISOString()
+    });
+    
+    showToast('Skill deactivated successfully', 'success');
+    await funLoadSkills(true);
+    
+  } catch (error) {
+    console.error('Error deactivating skill:', error);
+    showToast(error?.message || 'Failed to deactivate skill', 'error');
+  } finally {
+    hideLoader();
+  }
+}
+
+// Activate skill
+async function funActivateSkill(skillId) {
+  try {
+    showLoader();
+    
+    await updateDoc(doc(db, 'skills', skillId), {
+      status: 'active',
+      updatedBy: currentUser.uid,
+      updatedAt: new Date().toISOString()
+    });
+    
+    showToast('Skill activated successfully', 'success');
+    await funLoadSkills(true);
+    
+  } catch (error) {
+    console.error('Error activating skill:', error);
+    showToast(error?.message || 'Failed to activate skill', 'error');
+  } finally {
+    hideLoader();
+  }
+}
+
+// Show categories modal
+function funShowCategoriesModal() {
+  document.getElementById('modal-categories').classList.remove('hidden');
+  funLoadCategoriesList();
+}
+
+// Close categories modal
+function funCloseCategoriesModal() {
+  document.getElementById('modal-categories').classList.add('hidden');
+}
+
+// Load categories list
+async function funLoadCategoriesList() {
+  try {
+    const q = query(
+      collection(db, 'skillCategories'),
+      orderBy('name')
+    );
+    const snapshot = await getDocs(q);
+    
+    const allCategories = snapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    }));
+    
+    const list = document.getElementById('categories-list');
+    list.innerHTML = allCategories.map(category => {
+      const statusBadge = category.status === 'active' 
+        ? '<span class="inline-flex items-center gap-1 text-success bg-success/10 rounded-full px-2 py-0.5 text-xs">Active</span>'
+        : '<span class="inline-flex items-center gap-1 text-neutral-400 bg-neutral-100 rounded-full px-2 py-0.5 text-xs">Inactive</span>';
+      
+      return `
+        <div class="flex items-center justify-between p-3 border border-neutral-200 rounded-md">
+          <div class="flex-1">
+            <div class="font-medium text-neutral-700">${category.name || 'N/A'}</div>
+            ${category.description ? `<div class="text-sm text-neutral-400">${category.description}</div>` : ''}
+          </div>
+          <div class="flex items-center gap-2">
+            ${statusBadge}
+            <button onclick="funEditCategory('${category.id}')" class="p-1 hover:bg-neutral-200 rounded text-secondary hover:text-accent">
+              <i data-lucide="edit" class="w-4 h-4"></i>
+            </button>
+          </div>
+        </div>
+      `;
+    }).join('');
+    
+    lucide.createIcons();
+    
+  } catch (error) {
+    console.error('Error loading categories list:', error);
+    showToast('Failed to load categories', 'error');
+  }
+}
+
+// Show criticalities modal
+function funShowCriticalitiesModal() {
+  document.getElementById('modal-criticalities').classList.remove('hidden');
+  funLoadCriticalitiesList();
+}
+
+// Close criticalities modal
+function funCloseCriticalitiesModal() {
+  document.getElementById('modal-criticalities').classList.add('hidden');
+}
+
+// Load criticalities list
+async function funLoadCriticalitiesList() {
+  try {
+    const q = query(
+      collection(db, 'skillCriticalities'),
+      orderBy('weight')
+    );
+    const snapshot = await getDocs(q);
+    
+    const allCriticalities = snapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    }));
+    
+    const list = document.getElementById('criticalities-list');
+    list.innerHTML = allCriticalities.map(criticality => {
+      const statusBadge = criticality.status === 'active' 
+        ? '<span class="inline-flex items-center gap-1 text-success bg-success/10 rounded-full px-2 py-0.5 text-xs">Active</span>'
+        : '<span class="inline-flex items-center gap-1 text-neutral-400 bg-neutral-100 rounded-full px-2 py-0.5 text-xs">Inactive</span>';
+      
+      return `
+        <div class="flex items-center justify-between p-3 border border-neutral-200 rounded-md">
+          <div class="flex-1">
+            <div class="font-medium text-neutral-700">${criticality.name || 'N/A'}</div>
+            <div class="text-sm text-neutral-400">Weight: ${criticality.weight || 'N/A'}</div>
+            ${criticality.description ? `<div class="text-sm text-neutral-400">${criticality.description}</div>` : ''}
+          </div>
+          <div class="flex items-center gap-2">
+            ${statusBadge}
+            <button onclick="funEditCriticality('${criticality.id}')" class="p-1 hover:bg-neutral-200 rounded text-secondary hover:text-accent">
+              <i data-lucide="edit" class="w-4 h-4"></i>
+            </button>
+          </div>
+        </div>
+      `;
+    }).join('');
+    
+    lucide.createIcons();
+    
+  } catch (error) {
+    console.error('Error loading criticalities list:', error);
+    showToast('Failed to load criticalities', 'error');
+  }
+}
+
+// Placeholder functions for category/criticality management
+function funEditCategory(categoryId) {
+  showToast('Category editing will be implemented in the full system', 'info');
+}
+
+function funEditCriticality(criticalityId) {
+  showToast('Criticality editing will be implemented in the full system', 'info');
+}
+
+// Update pagination
+function funUpdatePagination() {
+  const container = document.getElementById('pagination-container');
+  const startElement = document.getElementById('pagination-start');
+  const endElement = document.getElementById('pagination-end');
+  const totalElement = document.getElementById('pagination-total');
+  
+  if (totalSkills === 0) {
+    container.classList.add('hidden');
+    return;
+  }
+  
+  container.classList.remove('hidden');
+  
+  const start = ((currentPage - 1) * pageSize) + 1;
+  const end = Math.min(currentPage * pageSize, totalSkills);
+  
+  startElement.textContent = start;
+  endElement.textContent = end;
+  totalElement.textContent = totalSkills;
+}
+
+// Show/hide skeleton loading
+function showSkeletonLoading(show) {
+  const skeleton = document.getElementById('table-skeleton');
+  const table = document.getElementById('skills-table-container');
+  const noData = document.getElementById('no-data-state');
+  
+  if (show) {
+    skeleton.classList.remove('hidden');
+    table.classList.add('hidden');
+    noData.classList.add('hidden');
+  } else {
+    skeleton.classList.add('hidden');
+  }
+}
+
+// Make functions globally available
+window.funEditSkill = funEditSkill;
+window.funUpdateBenchmark = funUpdateBenchmark;
+window.funShowBenchmarkTimeline = funShowBenchmarkTimeline;
+window.funViewAuditTrail = funViewAuditTrail;
+window.funDeactivateSkill = funDeactivateSkill;
+window.funActivateSkill = funActivateSkill;
+window.funEditCategory = funEditCategory;
+window.funEditCriticality = funEditCriticality;
+</script>
+
+</body>
+</html>

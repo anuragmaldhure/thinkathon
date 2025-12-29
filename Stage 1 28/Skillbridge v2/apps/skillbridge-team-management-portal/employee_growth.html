@@ -1,0 +1,1126 @@
+<html lang="en"><head>
+    <meta charset="UTF-8">
+    <title>SkillBridge - Team Lead Portal</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://tiramai-grid-lib.tiram.app/tiramai-grid.umd.js"></script>
+    <style type="text/tailwindcss">
+      @theme {
+        --color-primary: #1e40af;
+        --color-secondary: #059669;
+        --color-accent: #f59e0b;
+        --color-surface: #ffffff;
+        --color-background: #f8fafc;
+        --color-border: #e2e8f0;
+        --color-error: #dc2626;
+
+        --header-height: 4rem;
+        --sidebar-width: 16rem;
+
+        --text-sm: 12px;
+        --text-md: 14px;
+        --text-base: 14px;
+        --text-lg: 16px;
+        --text-xl: 18px;
+        --text-2xl: 20px;
+        --text-3xl: 24px;
+        --text-4xl: 30px;
+        --text-5xl: 36px;
+        --text-6xl: 48px;
+        --text-7xl: 60px;
+        --text-8xl: 72px;
+        --text-9xl: 96px;
+        --text-10xl: 128px;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+      }
+      ::-webkit-scrollbar-track {
+        background: #f1f1f1;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+        border-radius: 4px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: #94a3b8;
+      }
+
+      .app-header {
+        height: var(--header-height, 4rem);
+      }
+      .app-sidebar {
+        top: var(--header-height, 4rem);
+        width: var(--sidebar-width, 16rem);
+        height: calc(100vh - var(--header-height, 4rem));
+        overflow-y: auto;
+        overflow-x: hidden;
+      }
+      .app-main {
+        margin-top: var(--header-height, 4rem);
+        min-height: calc(100vh - var(--header-height, 4rem));
+      }
+      @media (min-width: 768px) {
+        .app-main {
+          margin-left: var(--sidebar-width, 16rem);
+        }
+      }
+
+      body.sidebar-open {
+        overflow: hidden;
+      }
+
+      @media (max-width: 767px) {
+        .app-sidebar {
+          left: calc(-1 * var(--sidebar-width, 16rem));
+          transition: left 0.3s ease-in-out;
+        }
+        .app-sidebar.open {
+          left: 0;
+        }
+      }
+
+      .nav-link.active {
+        background: var(--color-primary);
+        color: white;
+      }
+      .nav-link.active:hover {
+        background: var(--color-primary);
+        opacity: 0.9;
+      }
+
+      .popover {
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(-8px);
+        transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out,
+          visibility 0.2s ease-in-out;
+      }
+      .popover.visible {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+      }
+
+      .sidebar-backdrop {
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+      }
+      .sidebar-backdrop.active {
+        opacity: 1;
+        visibility: visible;
+      }
+      
+      button,
+      a {
+        font-size: 14px;
+      }
+    </style>
+  <title>Employee Growth Tracking - SkillBridge</title></head>
+  <body class="bg-slate-50 text-gray-800 overflow-x-hidden">
+    <header class="app-header fixed top-0 left-0 right-0 bg-white border-b border-slate-200 z-40">
+      <div class="h-full max-w-[1920px] mx-auto px-4 md:px-6 flex justify-between items-center">
+        <div class="flex items-center gap-3">
+          <button id="mobileMenuToggle" class="flex items-center justify-center w-10 h-10 rounded text-gray-500 hover:bg-gray-100 hover:text-gray-900 transition-all duration-200 cursor-pointer border-0 bg-transparent md:hidden focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-700 focus-visible:outline-offset-2" aria-label="Toggle navigation menu" aria-expanded="false">
+            <i data-lucide="menu" class="w-6 h-6"></i>
+          </button>
+
+          <div class="flex items-center gap-3">
+            <div class="w-8 h-8 rounded-lg flex items-center justify-center overflow-hidden">
+              <svg viewBox="0 0 400 400" width="32" height="32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <g>
+                  <path d="M80 230 Q200 80 320 230" stroke="#1E40AF" stroke-width="26" fill="none" stroke-linecap="round"></path>
+                  <rect x="95" y="230" width="24" height="80" rx="8" fill="#059669"></rect>
+                  <rect x="281" y="230" width="24" height="80" rx="8" fill="#059669"></rect>
+                  <rect x="189" y="196" width="22" height="114" rx="7" fill="#1E40AF"></rect>
+                  <circle cx="130" cy="180" r="15" fill="#1E40AF"></circle>
+                  <circle cx="270" cy="180" r="15" fill="#1E40AF"></circle>
+                  <circle cx="200" cy="106" r="17" fill="#059669"></circle>
+                  <rect x="192" y="126" width="16" height="36" rx="6" fill="#059669"></rect>
+                </g>
+              </svg>
+            </div>
+            <h1 class="text-lg md:text-xl font-bold text-gray-900">
+              SkillBridge
+            </h1>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-2 md:gap-3">
+          <button id="userProfileButton" class="flex items-center gap-3 px-3 py-2 rounded-lg border border-transparent hover:bg-gray-50 hover:border-gray-200 transition-all duration-200 cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-700 focus-visible:outline-offset-2" aria-label="User profile menu" aria-expanded="false" aria-haspopup="true">
+            <div id="userAvatar" class="w-8 h-8 bg-blue-700 text-white rounded-full flex items-center justify-center text-sm font-semibold shrink-0"></div>
+            <div class="hidden sm:flex flex-col items-start max-w-[150px]">
+              <div id="userName" class="text-sm font-medium text-gray-900 truncate w-full"></div>
+            </div>
+            <i data-lucide="chevron-down" class="w-4 h-4 text-gray-500 hidden sm:block"></i>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <div id="userProfilePopover" class="popover fixed top-[4.5rem] right-4 md:right-6 w-72 bg-white border border-gray-200 rounded-lg shadow-xl z-50" role="dialog" aria-labelledby="popoverUserName" data-portal="body">
+      <div class="p-4">
+        <div class="flex items-center gap-3 pb-3 mb-3 border-b border-gray-100">
+          <div id="popoverUserAvatar" class="w-8 h-8 bg-blue-700 text-white rounded-full flex items-center justify-center text-sm font-semibold shrink-0"></div>
+          <div class="flex-1 min-w-0">
+            <div id="popoverUserName" class="font-semibold text-gray-900 truncate"></div>
+            <div id="popoverUserEmail" class="text-xs text-gray-500 truncate"></div>
+          </div>
+        </div>
+
+        <div class="space-y-1">
+          <button id="signOutButton" class="w-full flex items-center gap-3 px-3 py-2 text-sm font-medium text-red-600 hover:bg-red-50 rounded transition-all duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-700 focus-visible:outline-offset-2">
+            <i data-lucide="log-out" class="w-4 h-4"></i>
+            Sign Out
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div id="sidebarBackdrop" class="sidebar-backdrop fixed inset-0 bg-black/50 z-20 md:hidden" style="top: var(--header-height, 4rem)"></div>
+
+    <aside id="sidebar" class="app-sidebar fixed left-0 bg-white border-r border-slate-200 overflow-y-auto z-30">
+      <nav class="p-4" role="navigation" aria-label="Main navigation">
+        <div class="py-6 border-b border-gray-100 first:pt-0 last:border-b-0">
+          <div class="px-4 pb-2 text-xs font-semibold uppercase tracking-wider text-gray-400">
+            Dashboard
+          </div>
+          <div class="space-y-1">
+            <a href="team_dashboard.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline active" data-page="team_dashboard">
+              <i data-lucide="home" class="w-5 h-5"></i>
+              <span>Team Dashboard</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="py-6 border-b border-gray-100 last:border-b-0">
+          <div class="px-4 pb-2 text-xs font-semibold uppercase tracking-wider text-gray-400">
+            Team Management
+          </div>
+          <div class="space-y-1">
+            <a href="my_team.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline" data-page="my_team">
+              <i data-lucide="users" class="w-5 h-5"></i>
+              <span>My Team</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="py-6 border-b border-gray-100 last:border-b-0">
+          <div class="px-4 pb-2 text-xs font-semibold uppercase tracking-wider text-gray-400">
+            Analytics
+          </div>
+          <div class="space-y-1">
+            <a href="team_skill_gaps.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline" data-page="team_skill_gaps">
+              <i data-lucide="target" class="w-5 h-5"></i>
+              <span>Skill Gaps</span>
+            </a>
+            <a href="skill_trend_analysis.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline" data-page="skill_trend_analysis">
+              <i data-lucide="trending-up" class="w-5 h-5"></i>
+              <span>Skill Trends</span>
+            </a>
+            <a href="training_impact.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline" data-page="training_impact">
+              <i data-lucide="graduation-cap" class="w-5 h-5"></i>
+              <span>Training Impact</span>
+            </a>
+          </div>
+        </div>
+      </nav>
+    </aside>
+
+    <main class="app-main max-w-7xl mx-auto p-4 md:p-6 lg:p-8" id="pageContent" role="main"><button onclick="history.back()" class="inline-flex items-center text-gray-600 hover:text-gray-900 mb-4 transition-colors">
+  <i data-lucide="arrow-left" class="w-4 h-4 mr-2"></i>
+  Back
+</button>
+
+<!-- Breadcrumb Navigation -->
+<nav class="flex items-center space-x-2 text-sm text-gray-600 mb-6" aria-label="Breadcrumb">
+  <a href="team_dashboard.html" class="hover:text-gray-900">Home</a>
+  <i data-lucide="chevron-right" class="w-4 h-4"></i>
+  <a href="my_team.html" class="hover:text-gray-900">My Team</a>
+  <i data-lucide="chevron-right" class="w-4 h-4"></i>
+  <span class="text-gray-900 font-medium">Growth Tracking</span>
+</nav>
+
+<!-- Page Header -->
+<div class="mb-8">
+  <h1 id="pageHeader" class="text-2xl font-bold text-gray-900 mb-2">Growth Tracking for Employee</h1>
+  <p id="pageSubtitle" class="text-gray-600">Track skill development progress across assessment cycles</p>
+</div>
+
+<!-- Overview Stats Section -->
+<div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+  <div class="bg-white rounded-lg border border-slate-200 p-6">
+    <div class="flex items-center">
+      <div class="p-2 rounded bg-blue-50">
+        <i data-lucide="target" class="w-6 h-6 text-blue-700"></i>
+      </div>
+      <div class="ml-4">
+        <p class="text-sm text-gray-600">Skills Tracked</p>
+        <p id="totalSkillsTracked" class="text-xl font-bold text-gray-900">0</p>
+      </div>
+    </div>
+  </div>
+  
+  <div class="bg-white rounded-lg border border-slate-200 p-6">
+    <div class="flex items-center">
+      <div class="p-2 rounded bg-green-50">
+        <i data-lucide="trending-up" class="w-6 h-6 text-green-600"></i>
+      </div>
+      <div class="ml-4">
+        <p class="text-sm text-gray-600">Avg. Improvement</p>
+        <p id="avgImprovement" class="text-xl font-bold text-gray-900">0%</p>
+      </div>
+    </div>
+  </div>
+  
+  <div class="bg-white rounded-lg border border-slate-200 p-6">
+    <div class="flex items-center">
+      <div class="p-2 rounded bg-green-50">
+        <i data-lucide="arrow-up" class="w-6 h-6 text-green-600"></i>
+      </div>
+      <div class="ml-4">
+        <p class="text-sm text-gray-600">Skills Improved</p>
+        <p id="skillsImproved" class="text-xl font-bold text-gray-900">0</p>
+      </div>
+    </div>
+  </div>
+  
+  <div class="bg-white rounded-lg border border-slate-200 p-6">
+    <div class="flex items-center">
+      <div class="p-2 rounded bg-red-50">
+        <i data-lucide="arrow-down" class="w-6 h-6 text-red-600"></i>
+      </div>
+      <div class="ml-4">
+        <p class="text-sm text-gray-600">Skills Declined</p>
+        <p id="skillsDeclined" class="text-xl font-bold text-gray-900">0</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Filter Section -->
+<div class="bg-white rounded-lg border border-slate-200 p-6 mb-6">
+  <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+    <div class="flex items-center gap-4">
+      <div>
+        <label for="skillFilter" class="block text-sm font-medium text-gray-700 mb-1">Filter by Skills</label>
+        <select id="skillFilter" multiple="" class="min-w-[200px] p-2 border border-slate-200 rounded text-sm">
+        </select>
+      </div>
+    </div>
+    <div class="flex items-center gap-2">
+      <label for="sortOrder" class="text-sm font-medium text-gray-700">Sort by:</label>
+      <select id="sortOrder" class="p-2 border border-slate-200 rounded text-sm">
+        <option value="mostImproved">Most Improved</option>
+        <option value="mostDeclined">Most Declined</option>
+        <option value="alphabetical">Alphabetical</option>
+      </select>
+    </div>
+  </div>
+</div>
+
+<!-- Growth Charts Container -->
+<div id="chartsContainer" class="space-y-6">
+  <!-- Charts will be dynamically generated here -->
+</div>
+
+<!-- Empty State -->
+<div id="emptyState" class="hidden text-center py-12">
+  <i data-lucide="trending-up" class="w-12 h-12 mx-auto text-gray-400 mb-4"></i>
+  <h3 class="text-lg font-medium text-gray-900 mb-2">No assessment history available</h3>
+  <p class="text-gray-500">Complete at least one assessment cycle to see growth trends.</p>
+</div>
+
+</main>
+
+    <script src="app.js"></script>
+    <script src="app_data.js"></script>
+    <script id="container-script">
+      (function () {
+        const TemplateUtils = (window.TemplateUtils =
+          window.TemplateUtils || {});
+
+        TemplateUtils.UserUtils =
+          TemplateUtils.UserUtils ||
+          (function createUserUtils() {
+            return {
+              getCurrentUser() {
+                try {
+                  let currentUserId = localStorage.getItem("currentUserId");
+                  if (!currentUserId) {
+                    localStorage.setItem("currentUserId", "user_001_alice_web");
+                    currentUserId = "user_001_alice_web";
+                  }
+
+                  const userData = localStorage.getItem(
+                    `users_${currentUserId}`
+                  );
+                  return userData ? JSON.parse(userData) : null;
+                } catch (error) {
+                  console.error("Error retrieving user data:", error);
+                  return null;
+                }
+              },
+              signOut() {
+                try {
+                  localStorage.removeItem("currentUserId");
+                  window.location.reload();
+                } catch (error) {
+                  console.error("Error signing out:", error);
+                }
+              },
+              getUserDisplayName(user) {
+                if (!user) return "Guest";
+                return user.firstName && user.lastName
+                  ? `${user.firstName} ${user.lastName}`
+                  : user.firstName || user.lastName || "User";
+              },
+              getUserInitials(user) {
+                if (!user) return "?";
+                const first = user.firstName?.charAt(0) || "";
+                const last = user.lastName?.charAt(0) || "";
+                return (first + last).toUpperCase() || "U";
+              },
+            };
+          })();
+
+        if (TemplateUtils.__bootstrapped) {
+          if (typeof window.lucide?.createIcons === "function") {
+            window.lucide.createIcons();
+          }
+          return;
+        }
+
+        TemplateUtils.__bootstrapped = true;
+
+        const state = {
+          popoverVisible: false,
+          sidebarOpen: false,
+          resizeTimer: null,
+          debounceTimer: null,
+          isUpdatingIcons: false,
+          observer: null,
+          refs: {},
+        };
+
+        function ready(fn) {
+          if (document.readyState === "loading") {
+            document.addEventListener("DOMContentLoaded", fn, { once: true });
+          } else if (typeof queueMicrotask === "function") {
+            queueMicrotask(fn);
+          } else {
+            Promise.resolve().then(fn);
+          }
+        }
+
+        function safeLucide(callback) {
+          if (typeof window.lucide?.createIcons === "function") {
+            callback();
+          }
+        }
+
+        function cacheRefs() {
+          state.refs = {
+            userProfileButton: document.getElementById("userProfileButton"),
+            userProfilePopover: document.getElementById("userProfilePopover"),
+            userAvatar: document.getElementById("userAvatar"),
+            userName: document.getElementById("userName"),
+            popoverUserAvatar: document.getElementById("popoverUserAvatar"),
+            popoverUserName: document.getElementById("popoverUserName"),
+            popoverUserEmail: document.getElementById("popoverUserEmail"),
+            signOutButton: document.getElementById("signOutButton"),
+            mobileMenuToggle: document.getElementById("mobileMenuToggle"),
+            sidebar: document.getElementById("sidebar"),
+            sidebarBackdrop: document.getElementById("sidebarBackdrop"),
+            navLinks: document.querySelectorAll(".nav-link"),
+            pageContent: document.getElementById("pageContent"),
+          };
+        }
+
+        function initializeUserProfile() {
+          const { userAvatar, userName } = state.refs;
+          if (!userAvatar || !userName) return;
+
+          const currentUser = TemplateUtils.UserUtils.getCurrentUser();
+          if (currentUser) {
+            userAvatar.textContent =
+              TemplateUtils.UserUtils.getUserInitials(currentUser);
+            userName.textContent =
+              TemplateUtils.UserUtils.getUserDisplayName(currentUser);
+          } else {
+            userAvatar.textContent = "?";
+            userName.textContent = "Guest";
+          }
+        }
+
+        function populatePopover() {
+          const currentUser = TemplateUtils.UserUtils.getCurrentUser();
+          const { popoverUserAvatar, popoverUserName, popoverUserEmail } =
+            state.refs;
+          if (!popoverUserAvatar || !popoverUserName || !popoverUserEmail)
+            return;
+
+          if (currentUser) {
+            popoverUserAvatar.textContent =
+              TemplateUtils.UserUtils.getUserInitials(currentUser);
+            popoverUserName.textContent =
+              TemplateUtils.UserUtils.getUserDisplayName(currentUser);
+            popoverUserEmail.textContent = currentUser.email || "No email";
+          } else {
+            popoverUserAvatar.textContent = "?";
+            popoverUserName.textContent = "Guest";
+            popoverUserEmail.textContent = "Not logged in";
+          }
+        }
+
+        function toggleUserPopover(forceClose = false) {
+          const { userProfilePopover, userProfileButton } = state.refs;
+          if (!userProfilePopover || !userProfileButton) return;
+
+          const shouldOpen = forceClose ? false : !state.popoverVisible;
+          if (shouldOpen) {
+            populatePopover();
+            userProfilePopover.classList.add("visible");
+            userProfileButton.setAttribute("aria-expanded", "true");
+            state.popoverVisible = true;
+            const firstButton = userProfilePopover.querySelector("button");
+            if (firstButton) {
+              setTimeout(() => firstButton.focus(), 50);
+            }
+          } else {
+            userProfilePopover.classList.remove("visible");
+            userProfileButton.setAttribute("aria-expanded", "false");
+            state.popoverVisible = false;
+          }
+        }
+
+        function hideUserPopover() {
+          if (state.popoverVisible) {
+            toggleUserPopover(true);
+          }
+        }
+
+        function toggleMobileSidebar(forceClose = false) {
+          const { sidebar, sidebarBackdrop, mobileMenuToggle } = state.refs;
+          if (!sidebar || !sidebarBackdrop || !mobileMenuToggle) return;
+
+          const shouldOpen = forceClose ? false : !state.sidebarOpen;
+          state.sidebarOpen = shouldOpen;
+
+          sidebar.classList.toggle("open", shouldOpen);
+          sidebarBackdrop.classList.toggle("active", shouldOpen);
+          document.body.classList.toggle("sidebar-open", shouldOpen);
+          mobileMenuToggle.setAttribute(
+            "aria-expanded",
+            shouldOpen ? "true" : "false"
+          );
+
+          const icon = mobileMenuToggle.querySelector("[data-lucide]");
+          if (icon) {
+            icon.setAttribute("data-lucide", shouldOpen ? "x" : "menu");
+            safeLucide(() => window.lucide.createIcons());
+          }
+        }
+
+        function closeMobileSidebar() {
+          if (state.sidebarOpen) {
+            toggleMobileSidebar(true);
+          }
+        }
+
+        function setActiveNavLink(pageId) {
+          if (!pageId) return;
+          const { navLinks } = state.refs;
+          navLinks?.forEach((link) => {
+            if (link.dataset.page === pageId) {
+              link.classList.add("active");
+            } else {
+              link.classList.remove("active");
+            }
+          });
+        }
+
+        TemplateUtils.setActiveNavLink = setActiveNavLink;
+        TemplateUtils.closeMobileSidebar = closeMobileSidebar;
+
+        function handleDocumentClick(event) {
+          const { userProfilePopover, userProfileButton } = state.refs;
+          if (
+            state.popoverVisible &&
+            userProfilePopover &&
+            userProfileButton &&
+            !userProfilePopover.contains(event.target) &&
+            !userProfileButton.contains(event.target)
+          ) {
+            hideUserPopover();
+          }
+        }
+
+        function handleKeydown(event) {
+          if (event.key !== "Escape") return;
+          if (state.popoverVisible) {
+            hideUserPopover();
+            state.refs.userProfileButton?.focus();
+          }
+          if (state.sidebarOpen) {
+            closeMobileSidebar();
+            state.refs.mobileMenuToggle?.focus();
+          }
+        }
+
+        function handleResize() {
+          clearTimeout(state.resizeTimer);
+          state.resizeTimer = setTimeout(() => {
+            if (window.innerWidth >= 768) {
+              closeMobileSidebar();
+            }
+          }, 200);
+        }
+
+        function bindEvents() {
+          const {
+            userProfileButton,
+            mobileMenuToggle,
+            sidebarBackdrop,
+            signOutButton,
+            navLinks,
+          } = state.refs;
+
+          userProfileButton?.addEventListener("click", (event) => {
+            event.stopPropagation();
+            toggleUserPopover();
+          });
+
+          mobileMenuToggle?.addEventListener("click", (event) => {
+            event.stopPropagation();
+            toggleMobileSidebar();
+          });
+
+          sidebarBackdrop?.addEventListener("click", () =>
+            closeMobileSidebar()
+          );
+
+          signOutButton?.addEventListener("click", () => {
+            if (confirm("Are you sure you want to sign out?")) {
+              TemplateUtils.UserUtils.signOut();
+            }
+          });
+
+          navLinks?.forEach((link) => {
+            link.addEventListener("click", () => closeMobileSidebar());
+          });
+
+          document.addEventListener("click", handleDocumentClick);
+          document.addEventListener("keydown", handleKeydown);
+          window.addEventListener("resize", handleResize);
+
+          window.addEventListener("pagehide", cleanup);
+        }
+
+        function cleanup() {
+          if (state.resizeTimer) clearTimeout(state.resizeTimer);
+          if (state.debounceTimer) clearTimeout(state.debounceTimer);
+          if (state.observer) {
+            state.observer.disconnect();
+            state.observer = null;
+          }
+          document.removeEventListener("click", handleDocumentClick);
+          document.removeEventListener("keydown", handleKeydown);
+          window.removeEventListener("resize", handleResize);
+        }
+
+        function initializePortalTargets() {
+          document.querySelectorAll('[data-portal="body"]').forEach((node) => {
+            if (node.parentElement !== document.body) {
+              document.body.appendChild(node);
+            }
+          });
+        }
+
+        function observePageContent() {
+          const { pageContent } = state.refs;
+          if (!pageContent || typeof MutationObserver !== "function") return;
+
+          const observer = new MutationObserver((mutations) => {
+            if (state.isUpdatingIcons) return;
+
+            const isLucideUpdate = mutations.every((m) => {
+              if (m.type !== "childList") return false;
+              const nodes = [...m.addedNodes, ...m.removedNodes];
+              return nodes.every(
+                (n) =>
+                  n.nodeType !== Node.ELEMENT_NODE ||
+                  n.nodeName.toLowerCase() === "svg" ||
+                  n.classList?.contains("lucide")
+              );
+            });
+            if (isLucideUpdate) return;
+
+            if (state.debounceTimer) clearTimeout(state.debounceTimer);
+            state.debounceTimer = setTimeout(() => {
+              state.debounceTimer = null;
+              state.isUpdatingIcons = true;
+              safeLucide(() => {
+                window.lucide.createIcons();
+                requestAnimationFrame(() => {
+                  state.isUpdatingIcons = false;
+                });
+              });
+            }, 100);
+          });
+
+          observer.observe(pageContent, { childList: true, subtree: true });
+          state.observer = observer;
+        }
+
+        function bootstrap() {
+          cacheRefs();
+          initializePortalTargets();
+          initializeUserProfile();
+          bindEvents();
+          safeLucide(() => window.lucide.createIcons());
+          observePageContent();
+        }
+
+        ready(bootstrap);
+      })();
+    </script>
+  
+
+<script>
+let employeeData = null;
+let assessmentData = [];
+let skillsData = [];
+let benchmarkData = [];
+let cycleData = [];
+let chartData = [];
+let selectedSkills = [];
+
+// Get employee ID from URL parameter
+function funGetUrlParam(param) {
+  const urlParams = new URLSearchParams(window.location.search);
+  return urlParams.get(param);
+}
+
+// Safe data retrieval from localStorage
+function getDataSafely(key) {
+  try {
+    const data = localStorage.getItem(key);
+    return data ? JSON.parse(data) : [];
+  } catch (error) {
+    console.error(`Error parsing ${key}:`, error);
+    return [];
+  }
+}
+
+// Format date for display
+function funFormatDate(dateString) {
+  const date = new Date(dateString);
+  return date.toLocaleDateString('en-US', { month: '2-digit', day: '2-digit', year: 'numeric' });
+}
+
+// Load page data
+function funLoadData() {
+  const employeeId = funGetUrlParam('id');
+  if (!employeeId) {
+    alert('No employee ID provided');
+    history.back();
+    return;
+  }
+
+  // Load all required data
+  const users = getDataSafely('users');
+  const assessments = getDataSafely('assessments');
+  const skills = getDataSafely('skills');
+  const benchmarks = getDataSafely('skillBenchmarks');
+  const cycles = getDataSafely('assessmentCycles');
+
+  // Find employee
+  employeeData = users.find(u => u.id === employeeId);
+  if (!employeeData) {
+    alert('Employee not found');
+    history.back();
+    return;
+  }
+
+  // Filter assessments for this employee
+  assessmentData = assessments.filter(a => a.employeeId === employeeId && a.status === 'active');
+  
+  skillsData = skills;
+  benchmarkData = benchmarks;
+  cycleData = cycles;
+
+  // Update page header
+  const pageHeader = document.getElementById('pageHeader');
+  const pageSubtitle = document.getElementById('pageSubtitle');
+  if (pageHeader && pageSubtitle) {
+    pageHeader.textContent = `Growth Tracking for ${employeeData.firstName} ${employeeData.lastName}`;
+    pageSubtitle.textContent = `Track skill development progress across assessment cycles - ${employeeData.jobTitle}`;
+  }
+
+  // Process chart data
+  funProcessChartData();
+  funPopulateSkillFilter();
+  funUpdateStats();
+  funRenderCharts();
+}
+
+// Process assessment data for charts
+function funProcessChartData() {
+  const skillAssessments = {};
+  
+  // Group assessments by skill
+  assessmentData.forEach(assessment => {
+    if (!skillAssessments[assessment.skillId]) {
+      skillAssessments[assessment.skillId] = [];
+    }
+    skillAssessments[assessment.skillId].push(assessment);
+  });
+
+  chartData = [];
+
+  // Process each skill that has assessments
+  Object.keys(skillAssessments).forEach(skillId => {
+    const skill = skillsData.find(s => s.id === skillId);
+    if (!skill) return;
+
+    const assessments = skillAssessments[skillId]
+      .sort((a, b) => new Date(a.assessmentTimestamp) - new Date(b.assessmentTimestamp));
+
+    if (assessments.length === 0) return;
+
+    const firstAssessment = assessments[0];
+    const latestAssessment = assessments[assessments.length - 1];
+    const scoreChange = latestAssessment.score - firstAssessment.score;
+    const improvementPercent = firstAssessment.score !== 0 ? 
+      ((scoreChange / firstAssessment.score) * 100) : 0;
+
+    const tniStatusChange = funGetTniStatusChange(firstAssessment, latestAssessment);
+
+    chartData.push({
+      skillId: skillId,
+      skillName: skill.name,
+      assessments: assessments,
+      firstScore: firstAssessment.score,
+      latestScore: latestAssessment.score,
+      scoreChange: scoreChange,
+      improvementPercent: improvementPercent,
+      assessmentCount: assessments.length,
+      tniStatusChange: tniStatusChange
+    });
+  });
+
+  // Sort by improvement by default
+  funSortChartData('mostImproved');
+}
+
+// Get TNI status change
+function funGetTniStatusChange(first, latest) {
+  const firstStatus = first.tniFlag ? 'Yes' : 'No';
+  const latestStatus = latest.tniFlag ? 'Yes' : 'No';
+  
+  if (firstStatus === latestStatus) {
+    return `Unchanged: ${latestStatus}`;
+  } else {
+    return `Was: ${firstStatus} → Now: ${latestStatus}`;
+  }
+}
+
+// Populate skill filter
+function funPopulateSkillFilter() {
+  const skillFilter = document.getElementById('skillFilter');
+  if (!skillFilter) return;
+
+  skillFilter.innerHTML = '';
+  
+  // Add skills that have chart data
+  chartData.forEach(chart => {
+    const option = document.createElement('option');
+    option.value = chart.skillId;
+    option.textContent = chart.skillName;
+    skillFilter.appendChild(option);
+  });
+
+  // Add event listener
+  skillFilter.addEventListener('change', funApplyFilters);
+}
+
+// Update statistics
+function funUpdateStats() {
+  const totalSkillsElement = document.getElementById('totalSkillsTracked');
+  const avgImprovementElement = document.getElementById('avgImprovement');
+  const skillsImprovedElement = document.getElementById('skillsImproved');
+  const skillsDeclinedElement = document.getElementById('skillsDeclined');
+
+  if (!totalSkillsElement || !avgImprovementElement || !skillsImprovedElement || !skillsDeclinedElement) return;
+
+  const totalSkills = chartData.length;
+  const skillsImproved = chartData.filter(c => c.scoreChange > 0).length;
+  const skillsDeclined = chartData.filter(c => c.scoreChange < 0).length;
+  
+  const avgImprovement = totalSkills > 0 ? 
+    (chartData.reduce((sum, c) => sum + c.improvementPercent, 0) / totalSkills) : 0;
+
+  totalSkillsElement.textContent = totalSkills;
+  avgImprovementElement.textContent = `${avgImprovement.toFixed(1)}%`;
+  skillsImprovedElement.textContent = skillsImproved;
+  skillsDeclinedElement.textContent = skillsDeclined;
+}
+
+// Sort chart data
+function funSortChartData(sortType) {
+  switch (sortType) {
+    case 'mostImproved':
+      chartData.sort((a, b) => b.improvementPercent - a.improvementPercent);
+      break;
+    case 'mostDeclined':
+      chartData.sort((a, b) => a.improvementPercent - b.improvementPercent);
+      break;
+    case 'alphabetical':
+      chartData.sort((a, b) => a.skillName.localeCompare(b.skillName));
+      break;
+  }
+}
+
+// Apply filters
+function funApplyFilters() {
+  const skillFilter = document.getElementById('skillFilter');
+  const sortOrder = document.getElementById('sortOrder');
+  
+  if (skillFilter) {
+    selectedSkills = Array.from(skillFilter.selectedOptions).map(option => option.value);
+  }
+  
+  if (sortOrder) {
+    funSortChartData(sortOrder.value);
+  }
+  
+  funRenderCharts();
+}
+
+// Render all charts
+function funRenderCharts() {
+  const container = document.getElementById('chartsContainer');
+  const emptyState = document.getElementById('emptyState');
+  
+  if (!container || !emptyState) return;
+
+  let filteredChartData = chartData;
+  
+  // Apply skill filter
+  if (selectedSkills.length > 0) {
+    filteredChartData = chartData.filter(c => selectedSkills.includes(c.skillId));
+  }
+
+  // Show/hide empty state
+  if (filteredChartData.length === 0) {
+    container.classList.add('hidden');
+    emptyState.classList.remove('hidden');
+    return;
+  } else {
+    container.classList.remove('hidden');
+    emptyState.classList.add('hidden');
+  }
+
+  // Clear container
+  container.innerHTML = '';
+
+  // Render each chart
+  filteredChartData.forEach(chart => {
+    const chartCard = funCreateChartCard(chart);
+    container.appendChild(chartCard);
+  });
+}
+
+// Create chart card
+function funCreateChartCard(chartData) {
+  const card = document.createElement('div');
+  card.className = 'bg-white rounded-lg border border-slate-200 p-6';
+  
+  const changeIcon = chartData.scoreChange > 0 ? 'arrow-up' : 
+                    chartData.scoreChange < 0 ? 'arrow-down' : 'minus';
+  const changeColor = chartData.scoreChange > 0 ? 'text-green-600' : 
+                      chartData.scoreChange < 0 ? 'text-red-600' : 'text-gray-600';
+
+  const chartHtml = chartData.assessments.length === 1 ? 
+    funCreateSinglePointChart(chartData) : 
+    funCreateLineChart(chartData);
+
+  card.innerHTML = `
+    <div class="flex items-center justify-between mb-4">
+      <h3 class="text-lg font-semibold text-gray-900">${chartData.skillName}</h3>
+      <span class="text-sm text-gray-500">(${chartData.assessmentCount} assessment${chartData.assessmentCount !== 1 ? 's' : ''})</span>
+    </div>
+    
+    <div class="mb-6">
+      ${chartHtml}
+    </div>
+    
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 pt-4 border-t border-gray-100">
+      <div>
+        <p class="text-xs text-gray-500 mb-1">Score Change</p>
+        <div class="flex items-center gap-1">
+          <i data-lucide="${changeIcon}" class="w-4 h-4 ${changeColor}"></i>
+          <span class="font-medium text-gray-900">${chartData.firstScore} → ${chartData.latestScore}</span>
+        </div>
+      </div>
+      <div>
+        <p class="text-xs text-gray-500 mb-1">Improvement</p>
+        <p class="font-medium ${changeColor}">${chartData.improvementPercent >= 0 ? '+' : ''}${chartData.improvementPercent.toFixed(1)}%</p>
+      </div>
+      <div>
+        <p class="text-xs text-gray-500 mb-1">TNI Status</p>
+        <p class="text-xs font-medium text-gray-700">${chartData.tniStatusChange}</p>
+      </div>
+      <div>
+        <p class="text-xs text-gray-500 mb-1">Assessments</p>
+        <p class="font-medium text-gray-900">${chartData.assessmentCount}</p>
+      </div>
+    </div>
+  `;
+  
+  return card;
+}
+
+// Create line chart (simplified SVG implementation)
+function funCreateLineChart(chartData) {
+  const assessments = chartData.assessments;
+  const width = 400;
+  const height = 200;
+  const margin = { top: 20, right: 20, bottom: 40, left: 40 };
+  const chartWidth = width - margin.left - margin.right;
+  const chartHeight = height - margin.top - margin.bottom;
+
+  // Calculate scales
+  const minScore = 0;
+  const maxScore = 10;
+  const scoreRange = maxScore - minScore;
+
+  // Create SVG points for employee scores
+  let employeePoints = '';
+  let benchmarkLines = '';
+  let dataPoints = '';
+
+  assessments.forEach((assessment, index) => {
+    const x = margin.left + (index * chartWidth) / Math.max(1, assessments.length - 1);
+    const y = margin.top + chartHeight - ((assessment.score - minScore) / scoreRange * chartHeight);
+    const benchmarkY = margin.top + chartHeight - ((assessment.benchmarkAtTimeOfAssessment - minScore) / scoreRange * chartHeight);
+
+    employeePoints += `${index === 0 ? 'M' : 'L'} ${x} ${y}`;
+    
+    // Add data point circle
+    dataPoints += `<circle cx="${x}" cy="${y}" r="4" fill="#1E40AF" stroke="white" stroke-width="2" class="cursor-pointer" title="Score: ${assessment.score}, Date: ${funFormatDate(assessment.assessmentTimestamp)}, Benchmark: ${assessment.benchmarkAtTimeOfAssessment}"/>`;
+    
+    // Add benchmark line segment
+    if (index < assessments.length - 1) {
+      const nextX = margin.left + ((index + 1) * chartWidth) / Math.max(1, assessments.length - 1);
+      benchmarkLines += `<line x1="${x}" y1="${benchmarkY}" x2="${nextX}" y2="${benchmarkY}" stroke="#059669" stroke-width="2" stroke-dasharray="5,5"/>`;
+    } else {
+      // Last point, draw to edge
+      const nextX = margin.left + chartWidth;
+      benchmarkLines += `<line x1="${x}" y1="${benchmarkY}" x2="${nextX}" y2="${benchmarkY}" stroke="#059669" stroke-width="2" stroke-dasharray="5,5"/>`;
+    }
+  });
+
+  // Y-axis ticks
+  let yAxisTicks = '';
+  for (let i = 0; i <= 10; i += 2) {
+    const y = margin.top + chartHeight - (i / 10 * chartHeight);
+    yAxisTicks += `<line x1="${margin.left - 5}" y1="${y}" x2="${margin.left}" y2="${y}" stroke="#6B7280"/>`;
+    yAxisTicks += `<text x="${margin.left - 10}" y="${y + 3}" text-anchor="end" class="text-xs fill-gray-600">${i}</text>`;
+  }
+
+  // X-axis labels (dates)
+  let xAxisLabels = '';
+  assessments.forEach((assessment, index) => {
+    const x = margin.left + (index * chartWidth) / Math.max(1, assessments.length - 1);
+    const y = height - margin.bottom + 15;
+    const date = funFormatDate(assessment.assessmentTimestamp);
+    xAxisLabels += `<text x="${x}" y="${y}" text-anchor="middle" class="text-xs fill-gray-600">${date}</text>`;
+  });
+
+  return `
+    <div class="w-full overflow-x-auto">
+      <svg width="${width}" height="${height}" class="min-w-[400px]">
+        <!-- Y-axis -->
+        <line x1="${margin.left}" y1="${margin.top}" x2="${margin.left}" y2="${height - margin.bottom}" stroke="#6B7280"/>
+        <!-- X-axis -->
+        <line x1="${margin.left}" y1="${height - margin.bottom}" x2="${width - margin.right}" y2="${height - margin.bottom}" stroke="#6B7280"/>
+        
+        <!-- Y-axis ticks and labels -->
+        ${yAxisTicks}
+        
+        <!-- Benchmark lines -->
+        ${benchmarkLines}
+        
+        <!-- Employee score line -->
+        <path d="${employeePoints}" fill="none" stroke="#1E40AF" stroke-width="3"/>
+        
+        <!-- Data points -->
+        ${dataPoints}
+        
+        <!-- X-axis labels -->
+        ${xAxisLabels}
+        
+        <!-- Y-axis label -->
+        <text x="15" y="${height/2}" text-anchor="middle" transform="rotate(-90 15 ${height/2})" class="text-sm fill-gray-700 font-medium">Score</text>
+        
+        <!-- Legend -->
+        <g transform="translate(${width - 150}, 20)">
+          <rect x="0" y="0" width="140" height="40" fill="white" stroke="#E5E7EB" rx="4"/>
+          <line x1="10" y1="15" x2="30" y2="15" stroke="#1E40AF" stroke-width="2"/>
+          <circle cx="20" cy="15" r="3" fill="#1E40AF"/>
+          <text x="35" y="18" class="text-xs fill-gray-700">Employee Score</text>
+          <line x1="10" y1="30" x2="30" y2="30" stroke="#059669" stroke-width="2" stroke-dasharray="3,3"/>
+          <text x="35" y="33" class="text-xs fill-gray-700">Benchmark</text>
+        </g>
+      </svg>
+    </div>
+  `;
+}
+
+// Create single point chart
+function funCreateSinglePointChart(chartData) {
+  const assessment = chartData.assessments[0];
+  const score = assessment.score;
+  const benchmark = assessment.benchmarkAtTimeOfAssessment;
+  const date = funFormatDate(assessment.assessmentTimestamp);
+
+  return `
+    <div class="flex items-center justify-center py-8 bg-gray-50 rounded-lg">
+      <div class="text-center">
+        <div class="relative inline-block">
+          <div class="w-20 h-20 rounded-full border-4 border-gray-200 flex items-center justify-center bg-white">
+            <span class="text-2xl font-bold text-blue-700">${score}</span>
+          </div>
+          <div class="absolute -top-2 -right-2 w-8 h-8 rounded-full bg-green-600 text-white text-xs font-bold flex items-center justify-center">
+            ${benchmark}
+          </div>
+        </div>
+        <p class="mt-3 text-sm text-gray-600">Score: ${score} | Benchmark: ${benchmark}</p>
+        <p class="text-xs text-gray-500">${date}</p>
+        <p class="mt-2 text-xs text-amber-600 bg-amber-50 px-3 py-1 rounded-full inline-block">Only 1 assessment available</p>
+      </div>
+    </div>
+  `;
+}
+
+// Event listeners
+document.addEventListener('DOMContentLoaded', function() {
+  funLoadData();
+  
+  // Sort order change
+  const sortOrder = document.getElementById('sortOrder');
+  if (sortOrder) {
+    sortOrder.addEventListener('change', funApplyFilters);
+  }
+});
+</script></body></html>

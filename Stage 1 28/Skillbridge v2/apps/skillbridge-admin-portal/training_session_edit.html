@@ -1,0 +1,1334 @@
+<html lang="en"><head>
+    <meta charset="UTF-8">
+    <title>SkillBridge Admin Portal</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Always add this import for data grid implementation - Important -->
+    <script src="https://tiramai-grid-lib.tiram.app/tiramai-grid.umd.js"></script>
+    <style type="text/tailwindcss">
+      @theme {
+        /* Brand Colors from SkillBridge Design System */
+        --color-primary: #1E40AF; /* Primary blue for navigation, CTAs */
+        --color-secondary: #059669; /* Success/progress green */
+        --color-accent: #F59E0B; /* Training/notification amber */
+        --color-surface: #FFFFFF; /* Cards, modals, form containers */
+        --color-background: #F8FAFC; /* Main background */
+        --color-border: #E2E8F0; /* Dividers, borders */
+        --color-error: #DC2626; /* Error states */
+
+        /* Layout Constants */
+        --header-height: 4rem; /* 64px header */
+        --sidebar-width: 16rem; /* 256px sidebar */
+
+        /* Typography Scale */
+        --text-xs: 12px;
+        --text-sm: 14px;
+        --text-base: 14px;
+        --text-lg: 16px;
+        --text-xl: 18px;
+        --text-2xl: 20px;
+        --text-3xl: 24px;
+        --text-4xl: 30px;
+        --text-5xl: 36px;
+        --text-6xl: 48px;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+      }
+      ::-webkit-scrollbar-track {
+        background: #f1f1f1;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+        border-radius: 4px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: #94a3b8;
+      }
+
+      .app-header {
+        height: var(--header-height, 4rem);
+      }
+      .app-sidebar {
+        top: var(--header-height, 4rem);
+        width: var(--sidebar-width, 16rem);
+        height: calc(100vh - var(--header-height, 4rem));
+        overflow-y: auto;
+        overflow-x: hidden;
+      }
+      .app-main {
+        margin-top: var(--header-height, 4rem);
+        min-height: calc(100vh - var(--header-height, 4rem));
+      }
+      @media (min-width: 768px) {
+        .app-main {
+          margin-left: var(--sidebar-width, 16rem);
+        }
+      }
+
+      body.sidebar-open {
+        overflow: hidden;
+      }
+
+      @media (max-width: 767px) {
+        .app-sidebar {
+          left: calc(-1 * var(--sidebar-width, 16rem));
+          transition: left 0.3s ease-in-out;
+        }
+        .app-sidebar.open {
+          left: 0;
+        }
+      }
+
+      .nav-link.active {
+        background: #1E40AF;
+        color: white;
+      }
+      .nav-link.active:hover {
+        background: #1E40AF;
+        opacity: 0.9;
+      }
+
+      .popover {
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(-8px);
+        transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out,
+          visibility 0.2s ease-in-out;
+      }
+      .popover.visible {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+      }
+
+      .sidebar-backdrop {
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+      }
+      .sidebar-backdrop.active {
+        opacity: 1;
+        visibility: visible;
+      }
+
+      button,
+      a {
+        font-size: 14px;
+      }
+    </style>
+  <title>Edit Training Session - SkillBridge Admin Portal</title></head>
+  <body class="bg-slate-50 text-gray-800 overflow-x-hidden">
+    <header class="app-header fixed top-0 left-0 right-0 bg-white border-b border-slate-200 z-40">
+      <div class="h-full max-w-[1920px] mx-auto px-4 md:px-6 flex justify-between items-center">
+        <div class="flex items-center gap-3">
+          <button id="mobileMenuToggle" class="flex items-center justify-center w-10 h-10 rounded text-gray-500 hover:bg-gray-100 hover:text-gray-900 transition-all duration-200 cursor-pointer border-0 bg-transparent md:hidden focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-700 focus-visible:outline-offset-2" aria-label="Toggle navigation menu" aria-expanded="false">
+            <i data-lucide="menu" class="w-6 h-6"></i>
+          </button>
+
+          <div class="flex items-center gap-3">
+            <div class="w-8 h-8">
+              <svg viewBox="0 0 400 400" width="32" height="32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <g>
+                  <path d="M80 230 Q200 80 320 230" stroke="#1E40AF" stroke-width="26" fill="none" stroke-linecap="round"></path>
+                  <rect x="95" y="230" width="24" height="80" rx="8" fill="#059669"></rect>
+                  <rect x="281" y="230" width="24" height="80" rx="8" fill="#059669"></rect>
+                  <rect x="189" y="196" width="22" height="114" rx="7" fill="#1E40AF"></rect>
+                  <circle cx="130" cy="180" r="15" fill="#1E40AF"></circle>
+                  <circle cx="270" cy="180" r="15" fill="#1E40AF"></circle>
+                  <circle cx="200" cy="106" r="17" fill="#059669"></circle>
+                  <rect x="192" y="126" width="16" height="36" rx="6" fill="#059669"></rect>
+                </g>
+              </svg>
+            </div>
+            <h1 class="text-lg md:text-xl font-bold text-gray-900">
+              SkillBridge
+            </h1>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-2 md:gap-3">
+          <button id="userProfileButton" class="flex items-center gap-3 px-3 py-2 rounded-lg border border-transparent hover:bg-gray-50 hover:border-gray-200 transition-all duration-200 cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-700 focus-visible:outline-offset-2" aria-label="User profile menu" aria-expanded="false" aria-haspopup="true">
+            <div id="userAvatar" class="w-8 h-8 bg-blue-700 text-white rounded-full flex items-center justify-center text-sm font-semibold shrink-0"></div>
+            <div class="hidden sm:flex flex-col items-start max-w-[150px]">
+              <div id="userName" class="text-sm font-medium text-gray-900 truncate w-full"></div>
+            </div>
+            <i data-lucide="chevron-down" class="w-4 h-4 text-gray-500 hidden sm:block"></i>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <div id="userProfilePopover" class="popover fixed top-[4.5rem] right-4 md:right-6 w-72 bg-white border border-gray-200 rounded-lg shadow-xl z-50" role="dialog" aria-labelledby="popoverUserName" data-portal="body">
+      <div class="p-4">
+        <div class="flex items-center gap-3 pb-3 mb-3 border-b border-gray-100">
+          <div id="popoverUserAvatar" class="w-8 h-8 bg-blue-700 text-white rounded-full flex items-center justify-center text-sm font-semibold shrink-0"></div>
+          <div class="flex-1 min-w-0">
+            <div id="popoverUserName" class="font-semibold text-gray-900 truncate"></div>
+            <div id="popoverUserEmail" class="text-xs text-gray-500 truncate"></div>
+          </div>
+        </div>
+
+        <div class="space-y-1">
+          <button id="signOutButton" class="w-full flex items-center gap-3 px-3 py-2 text-sm font-medium text-red-600 hover:bg-red-50 rounded transition-all duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-700 focus-visible:outline-offset-2">
+            <i data-lucide="log-out" class="w-4 h-4"></i>
+            Sign Out
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div id="sidebarBackdrop" class="sidebar-backdrop fixed inset-0 bg-black/50 z-20 md:hidden" style="top: var(--header-height, 4rem)"></div>
+
+    <aside id="sidebar" class="app-sidebar fixed left-0 bg-white border-r border-slate-200 overflow-y-auto z-30">
+      <nav class="p-4" role="navigation" aria-label="Main navigation">
+        <div class="py-6 border-b border-gray-100 first:pt-0 last:border-b-0">
+          <div class="px-4 pb-2 text-xs font-semibold uppercase tracking-wider text-gray-400">
+            Dashboard
+          </div>
+          <div class="space-y-1">
+            <a href="dashboard.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline active" data-page="dashboard">
+              <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
+              <span>Admin Dashboard</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="py-6 border-b border-gray-100 last:border-b-0">
+          <div class="px-4 pb-2 text-xs font-semibold uppercase tracking-wider text-gray-400">
+            Organization Setup
+          </div>
+          <div class="space-y-1">
+            <a href="departments_list.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline" data-page="departments">
+              <i data-lucide="building" class="w-5 h-5"></i>
+              <span>Departments</span>
+            </a>
+            <a href="assessment_cycles_list.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline" data-page="assessment_cycles">
+              <i data-lucide="calendar" class="w-5 h-5"></i>
+              <span>Assessment Cycles</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="py-6 border-b border-gray-100 last:border-b-0">
+          <div class="px-4 pb-2 text-xs font-semibold uppercase tracking-wider text-gray-400">
+            Competency Framework
+          </div>
+          <div class="space-y-1">
+            <a href="skill_categories_list.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline" data-page="skill_categories">
+              <i data-lucide="folder" class="w-5 h-5"></i>
+              <span>Skill Categories</span>
+            </a>
+            <a href="skill_criticalities_list.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline" data-page="skill_criticalities">
+              <i data-lucide="alert-triangle" class="w-5 h-5"></i>
+              <span>Criticality Levels</span>
+            </a>
+            <a href="skills_list.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline" data-page="skills">
+              <i data-lucide="star" class="w-5 h-5"></i>
+              <span>Skills</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="py-6 border-b border-gray-100 last:border-b-0">
+          <div class="px-4 pb-2 text-xs font-semibold uppercase tracking-wider text-gray-400">
+            People Management
+          </div>
+          <div class="space-y-1">
+            <a href="employees_list.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline" data-page="employees">
+              <i data-lucide="users" class="w-5 h-5"></i>
+              <span>Employees</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="py-6 border-b border-gray-100 last:border-b-0">
+          <div class="px-4 pb-2 text-xs font-semibold uppercase tracking-wider text-gray-400">
+            Training
+          </div>
+          <div class="space-y-1">
+            <a href="training_sessions_list.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline" data-page="training_sessions">
+              <i data-lucide="graduation-cap" class="w-5 h-5"></i>
+              <span>Training Sessions</span>
+            </a>
+            <a href="trainers_list.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline" data-page="trainers">
+              <i data-lucide="user-check" class="w-5 h-5"></i>
+              <span>Trainers</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="py-6 border-b border-gray-100 last:border-b-0">
+          <div class="px-4 pb-2 text-xs font-semibold uppercase tracking-wider text-gray-400">
+            Disputes
+          </div>
+          <div class="space-y-1">
+            <a href="disputes_list.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline" data-page="disputes">
+              <i data-lucide="message-circle" class="w-5 h-5"></i>
+              <span>Disputes</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="py-6 border-b border-gray-100 last:border-b-0">
+          <div class="px-4 pb-2 text-xs font-semibold uppercase tracking-wider text-gray-400">
+            Analytics
+          </div>
+          <div class="space-y-1">
+            <a href="analytics_skill_gap_heatmap.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline" data-page="skill_gap_heatmap">
+              <i data-lucide="map" class="w-5 h-5"></i>
+              <span>Skill Gap Heatmap</span>
+            </a>
+            <a href="analytics_tni_dashboard.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline" data-page="tni_dashboard">
+              <i data-lucide="target" class="w-5 h-5"></i>
+              <span>TNI Dashboard</span>
+            </a>
+            <a href="analytics_training_forecast.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline" data-page="training_forecast">
+              <i data-lucide="trending-up" class="w-5 h-5"></i>
+              <span>Training Demand Forecast</span>
+            </a>
+            <a href="analytics_assessment_completion.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline" data-page="assessment_completion">
+              <i data-lucide="check-circle" class="w-5 h-5"></i>
+              <span>Assessment Completion</span>
+            </a>
+            <a href="analytics_dispute_metrics.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline" data-page="dispute_metrics">
+              <i data-lucide="bar-chart-3" class="w-5 h-5"></i>
+              <span>Dispute Metrics</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="py-6">
+          <div class="px-4 pb-2 text-xs font-semibold uppercase tracking-wider text-gray-400">
+            Settings
+          </div>
+          <div class="space-y-1">
+            <a href="system_settings.html" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-700 rounded-lg transition-all duration-200 no-underline" data-page="system_settings">
+              <i data-lucide="settings" class="w-5 h-5"></i>
+              <span>System Settings</span>
+            </a>
+          </div>
+        </div>
+      </nav>
+    </aside>
+
+    <main class="app-main max-w-7xl mx-auto p-4 md:p-6 lg:p-8" id="pageContent" role="main"><nav class="flex items-center space-x-2 text-sm text-gray-600 mb-6" aria-label="Breadcrumb">
+  <a href="dashboard.html" class="hover:text-gray-900">Home</a>
+  <i data-lucide="chevron-right" class="w-4 h-4"></i>
+  <a href="training_sessions_list.html" class="hover:text-gray-900">Training Sessions</a>
+  <i data-lucide="chevron-right" class="w-4 h-4"></i>
+  <span id="sessionBreadcrumb" class="text-gray-900 font-medium">Loading...</span>
+  <i data-lucide="chevron-right" class="w-4 h-4"></i>
+  <span class="text-gray-900 font-medium">Edit</span>
+</nav>
+
+<!-- Back Button -->
+<button onclick="history.back()" class="inline-flex items-center text-gray-600 hover:text-gray-900 mb-4 transition-colors">
+  <i data-lucide="arrow-left" class="w-4 h-4 mr-2"></i>
+  Back
+</button>
+
+<!-- Page Title -->
+<h1 class="text-2xl font-bold text-gray-900 mb-6">Edit Training Session</h1>
+
+<!-- Warning Banner (hidden by default) -->
+<div id="warningBanner" class="hidden mb-6 p-4 bg-amber-50 border border-amber-200 rounded-lg">
+  <div class="flex items-start">
+    <i data-lucide="alert-triangle" class="w-5 h-5 text-amber-600 mt-0.5 mr-3 flex-shrink-0"></i>
+    <div>
+      <h3 class="text-sm font-medium text-amber-800 mb-1">Session Cannot Be Edited</h3>
+      <p id="warningMessage" class="text-sm text-amber-700"></p>
+    </div>
+  </div>
+</div>
+
+<!-- Edit Form -->
+<div class="bg-white rounded-lg shadow-sm border border-slate-200">
+  <div class="p-6">
+    <form id="editSessionForm">
+      <!-- Skill Field -->
+      <div class="mb-6">
+        <label for="skillSelect" class="block text-sm font-medium text-gray-900 mb-2">
+          Skill <span class="text-red-500">*</span>
+        </label>
+        <select id="skillSelect" name="skillId" required="" class="w-full px-3 py-2 border border-slate-200 rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+          <option value="">Select a skill...</option>
+        </select>
+        <div id="skillWarning" class="hidden mt-2 p-3 bg-amber-50 border border-amber-200 rounded text-sm">
+          <div class="flex items-start">
+            <i data-lucide="alert-triangle" class="w-4 h-4 text-amber-600 mt-0.5 mr-2 flex-shrink-0"></i>
+            <span class="text-amber-700">
+              Changing the skill may affect the relevance for currently assigned attendees.
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Trainer Selection -->
+      <div class="mb-6">
+        <label class="block text-sm font-medium text-gray-900 mb-3">
+          Trainer <span class="text-red-500">*</span>
+        </label>
+        
+        <!-- Trainer Type Tabs -->
+        <div class="flex mb-4 border-b border-slate-200">
+          <button type="button" id="internalTab" class="px-4 py-2 text-sm font-medium border-b-2 border-blue-600 text-blue-600">
+            Internal Trainers
+          </button>
+          <button type="button" id="externalTab" class="px-4 py-2 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700 ml-8">
+            External Trainers
+          </button>
+        </div>
+
+        <!-- Internal Trainers -->
+        <div id="internalTrainers" class="space-y-2">
+          <div class="text-sm text-gray-500 mb-3">Select an internal trainer:</div>
+        </div>
+
+        <!-- External Trainers -->
+        <div id="externalTrainers" class="hidden space-y-2">
+          <div class="text-sm text-gray-500 mb-3">Select an external trainer:</div>
+        </div>
+
+        <input type="hidden" id="selectedTrainerId" name="trainerId" required="">
+        <input type="hidden" id="selectedTrainerType" name="trainerType">
+      </div>
+
+      <!-- Date Fields -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+        <div>
+          <label for="scheduledDate" class="block text-sm font-medium text-gray-900 mb-2">
+            Scheduled Date <span class="text-red-500">*</span>
+          </label>
+          <input type="datetime-local" id="scheduledDate" name="scheduledDate" required="" class="w-full px-3 py-2 border border-slate-200 rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+        </div>
+        <div>
+          <label for="endDate" class="block text-sm font-medium text-gray-900 mb-2">
+            End Date <span class="text-red-500">*</span>
+          </label>
+          <input type="datetime-local" id="endDate" name="endDate" required="" class="w-full px-3 py-2 border border-slate-200 rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+        </div>
+      </div>
+
+      <!-- Mode -->
+      <div class="mb-6">
+        <label class="block text-sm font-medium text-gray-900 mb-3">
+          Mode <span class="text-red-500">*</span>
+        </label>
+        <div class="flex gap-6">
+          <label class="flex items-center">
+            <input type="radio" id="modeOnline" name="mode" value="online" required="" class="w-4 h-4 text-blue-600 border-slate-300 focus:ring-blue-500">
+            <span class="ml-2 text-sm text-gray-700">Online</span>
+          </label>
+          <label class="flex items-center">
+            <input type="radio" id="modeOffline" name="mode" value="offline" required="" class="w-4 h-4 text-blue-600 border-slate-300 focus:ring-blue-500">
+            <span class="ml-2 text-sm text-gray-700">Offline</span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Capacity -->
+      <div class="mb-6">
+        <label for="capacity" class="block text-sm font-medium text-gray-900 mb-2">
+          Capacity <span class="text-red-500">*</span>
+        </label>
+        <input type="number" id="capacity" name="capacity" min="1" max="100" required="" class="w-full md:w-48 px-3 py-2 border border-slate-200 rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+        <div class="mt-1 text-xs text-gray-500">Maximum number of attendees</div>
+      </div>
+
+      <!-- Note -->
+      <div class="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+        <div class="flex items-start">
+          <i data-lucide="info" class="w-4 h-4 text-blue-600 mt-0.5 mr-2 flex-shrink-0"></i>
+          <div class="text-sm text-blue-700">
+            <strong>Note:</strong> Attendees are managed separately via the training session detail page.
+          </div>
+        </div>
+      </div>
+
+      <!-- Form Actions -->
+      <div class="flex items-center gap-3 pt-6 border-t border-slate-200">
+        <button type="submit" class="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors">
+          <i data-lucide="save" class="w-4 h-4 mr-2"></i>
+          Save Changes
+        </button>
+        <button type="button" onclick="funCancel()" class="inline-flex items-center px-4 py-2 bg-white text-gray-700 text-sm font-medium rounded border border-slate-300 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors">
+          Cancel
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+</main>
+
+    <script src="app.js"></script>
+    <script src="app_data.js"></script>
+    <script id="container-script">
+      (function () {
+        const TemplateUtils = (window.TemplateUtils =
+          window.TemplateUtils || {});
+
+        TemplateUtils.UserUtils =
+          TemplateUtils.UserUtils ||
+          (function createUserUtils() {
+            return {
+              getCurrentUser() {
+                try {
+                  let currentUserId = localStorage.getItem("currentUserId");
+                  if (!currentUserId) {
+                    localStorage.setItem("currentUserId", "usr_001");
+                    currentUserId = "usr_001";
+                  }
+
+                  const users = JSON.parse(localStorage.getItem("users") || "[]");
+                  return users.find(user => user.id === currentUserId) || null;
+                } catch (error) {
+                  console.error("Error retrieving user data:", error);
+                  return null;
+                }
+              },
+              signOut() {
+                try {
+                  localStorage.removeItem("currentUserId");
+                  window.location.reload();
+                } catch (error) {
+                  console.error("Error signing out:", error);
+                }
+              },
+              getUserDisplayName(user) {
+                if (!user) return "Guest";
+                return user.firstName && user.lastName
+                  ? `${user.firstName} ${user.lastName}`
+                  : user.firstName || user.lastName || "User";
+              },
+              getUserInitials(user) {
+                if (!user) return "?";
+                const first = user.firstName?.charAt(0) || "";
+                const last = user.lastName?.charAt(0) || "";
+                return (first + last).toUpperCase() || "U";
+              },
+            };
+          })();
+
+        if (TemplateUtils.__bootstrapped) {
+          if (typeof window.lucide?.createIcons === "function") {
+            window.lucide.createIcons();
+          }
+          return;
+        }
+
+        TemplateUtils.__bootstrapped = true;
+
+        const state = {
+          popoverVisible: false,
+          sidebarOpen: false,
+          resizeTimer: null,
+          debounceTimer: null,
+          isUpdatingIcons: false,
+          observer: null,
+          refs: {},
+        };
+
+        function ready(fn) {
+          if (document.readyState === "loading") {
+            document.addEventListener("DOMContentLoaded", fn, { once: true });
+          } else if (typeof queueMicrotask === "function") {
+            queueMicrotask(fn);
+          } else {
+            Promise.resolve().then(fn);
+          }
+        }
+
+        function safeLucide(callback) {
+          if (typeof window.lucide?.createIcons === "function") {
+            callback();
+          }
+        }
+
+        function cacheRefs() {
+          state.refs = {
+            userProfileButton: document.getElementById("userProfileButton"),
+            userProfilePopover: document.getElementById("userProfilePopover"),
+            userAvatar: document.getElementById("userAvatar"),
+            userName: document.getElementById("userName"),
+            popoverUserAvatar: document.getElementById("popoverUserAvatar"),
+            popoverUserName: document.getElementById("popoverUserName"),
+            popoverUserEmail: document.getElementById("popoverUserEmail"),
+            signOutButton: document.getElementById("signOutButton"),
+            mobileMenuToggle: document.getElementById("mobileMenuToggle"),
+            sidebar: document.getElementById("sidebar"),
+            sidebarBackdrop: document.getElementById("sidebarBackdrop"),
+            navLinks: document.querySelectorAll(".nav-link"),
+            pageContent: document.getElementById("pageContent"),
+          };
+        }
+
+        function initializeUserProfile() {
+          const { userAvatar, userName } = state.refs;
+          if (!userAvatar || !userName) return;
+
+          const currentUser = TemplateUtils.UserUtils.getCurrentUser();
+          if (currentUser) {
+            userAvatar.textContent =
+              TemplateUtils.UserUtils.getUserInitials(currentUser);
+            userName.textContent =
+              TemplateUtils.UserUtils.getUserDisplayName(currentUser);
+          } else {
+            userAvatar.textContent = "?";
+            userName.textContent = "Guest";
+          }
+        }
+
+        function populatePopover() {
+          const currentUser = TemplateUtils.UserUtils.getCurrentUser();
+          const { popoverUserAvatar, popoverUserName, popoverUserEmail } =
+            state.refs;
+          if (!popoverUserAvatar || !popoverUserName || !popoverUserEmail)
+            return;
+
+          if (currentUser) {
+            popoverUserAvatar.textContent =
+              TemplateUtils.UserUtils.getUserInitials(currentUser);
+            popoverUserName.textContent =
+              TemplateUtils.UserUtils.getUserDisplayName(currentUser);
+            popoverUserEmail.textContent = currentUser.email || "No email";
+          } else {
+            popoverUserAvatar.textContent = "?";
+            popoverUserName.textContent = "Guest";
+            popoverUserEmail.textContent = "Not logged in";
+          }
+        }
+
+        function toggleUserPopover(forceClose = false) {
+          const { userProfilePopover, userProfileButton } = state.refs;
+          if (!userProfilePopover || !userProfileButton) return;
+
+          const shouldOpen = forceClose ? false : !state.popoverVisible;
+          if (shouldOpen) {
+            populatePopover();
+            userProfilePopover.classList.add("visible");
+            userProfileButton.setAttribute("aria-expanded", "true");
+            state.popoverVisible = true;
+            const firstButton = userProfilePopover.querySelector("button");
+            if (firstButton) {
+              setTimeout(() => firstButton.focus(), 50);
+            }
+          } else {
+            userProfilePopover.classList.remove("visible");
+            userProfileButton.setAttribute("aria-expanded", "false");
+            state.popoverVisible = false;
+          }
+        }
+
+        function hideUserPopover() {
+          if (state.popoverVisible) {
+            toggleUserPopover(true);
+          }
+        }
+
+        function toggleMobileSidebar(forceClose = false) {
+          const { sidebar, sidebarBackdrop, mobileMenuToggle } = state.refs;
+          if (!sidebar || !sidebarBackdrop || !mobileMenuToggle) return;
+
+          const shouldOpen = forceClose ? false : !state.sidebarOpen;
+          state.sidebarOpen = shouldOpen;
+
+          sidebar.classList.toggle("open", shouldOpen);
+          sidebarBackdrop.classList.toggle("active", shouldOpen);
+          document.body.classList.toggle("sidebar-open", shouldOpen);
+          mobileMenuToggle.setAttribute(
+            "aria-expanded",
+            shouldOpen ? "true" : "false"
+          );
+
+          const icon = mobileMenuToggle.querySelector("[data-lucide]");
+          if (icon) {
+            icon.setAttribute("data-lucide", shouldOpen ? "x" : "menu");
+            safeLucide(() => window.lucide.createIcons());
+          }
+        }
+
+        function closeMobileSidebar() {
+          if (state.sidebarOpen) {
+            toggleMobileSidebar(true);
+          }
+        }
+
+        function setActiveNavLink(pageId) {
+          if (!pageId) return;
+          const { navLinks } = state.refs;
+          navLinks?.forEach((link) => {
+            if (link.dataset.page === pageId) {
+              link.classList.add("active");
+            } else {
+              link.classList.remove("active");
+            }
+          });
+        }
+
+        TemplateUtils.setActiveNavLink = setActiveNavLink;
+        TemplateUtils.closeMobileSidebar = closeMobileSidebar;
+
+        function handleDocumentClick(event) {
+          const { userProfilePopover, userProfileButton } = state.refs;
+          if (
+            state.popoverVisible &&
+            userProfilePopover &&
+            userProfileButton &&
+            !userProfilePopover.contains(event.target) &&
+            !userProfileButton.contains(event.target)
+          ) {
+            hideUserPopover();
+          }
+        }
+
+        function handleKeydown(event) {
+          if (event.key !== "Escape") return;
+          if (state.popoverVisible) {
+            hideUserPopover();
+            state.refs.userProfileButton?.focus();
+          }
+          if (state.sidebarOpen) {
+            closeMobileSidebar();
+            state.refs.mobileMenuToggle?.focus();
+          }
+        }
+
+        function handleResize() {
+          clearTimeout(state.resizeTimer);
+          state.resizeTimer = setTimeout(() => {
+            if (window.innerWidth >= 768) {
+              closeMobileSidebar();
+            }
+          }, 200);
+        }
+
+        function bindEvents() {
+          const {
+            userProfileButton,
+            mobileMenuToggle,
+            sidebarBackdrop,
+            signOutButton,
+            navLinks,
+          } = state.refs;
+
+          userProfileButton?.addEventListener("click", (event) => {
+            event.stopPropagation();
+            toggleUserPopover();
+          });
+
+          mobileMenuToggle?.addEventListener("click", (event) => {
+            event.stopPropagation();
+            toggleMobileSidebar();
+          });
+
+          sidebarBackdrop?.addEventListener("click", () =>
+            closeMobileSidebar()
+          );
+
+          signOutButton?.addEventListener("click", () => {
+            if (confirm("Are you sure you want to sign out?")) {
+              TemplateUtils.UserUtils.signOut();
+            }
+          });
+
+          navLinks?.forEach((link) => {
+            link.addEventListener("click", () => closeMobileSidebar());
+          });
+
+          document.addEventListener("click", handleDocumentClick);
+          document.addEventListener("keydown", handleKeydown);
+          window.addEventListener("resize", handleResize);
+
+          window.addEventListener("pagehide", cleanup);
+        }
+
+        function cleanup() {
+          if (state.resizeTimer) clearTimeout(state.resizeTimer);
+          if (state.debounceTimer) clearTimeout(state.debounceTimer);
+          if (state.observer) {
+            state.observer.disconnect();
+            state.observer = null;
+          }
+          document.removeEventListener("click", handleDocumentClick);
+          document.removeEventListener("keydown", handleKeydown);
+          window.removeEventListener("resize", handleResize);
+        }
+
+        function initializePortalTargets() {
+          document.querySelectorAll('[data-portal="body"]').forEach((node) => {
+            if (node.parentElement !== document.body) {
+              document.body.appendChild(node);
+            }
+          });
+        }
+
+        function observePageContent() {
+          const { pageContent } = state.refs;
+          if (!pageContent || typeof MutationObserver !== "function") return;
+
+          const observer = new MutationObserver((mutations) => {
+            if (state.isUpdatingIcons) return;
+
+            const isLucideUpdate = mutations.every((m) => {
+              if (m.type !== "childList") return false;
+              const nodes = [...m.addedNodes, ...m.removedNodes];
+              return nodes.every(
+                (n) =>
+                  n.nodeType !== Node.ELEMENT_NODE ||
+                  n.nodeName.toLowerCase() === "svg" ||
+                  n.classList?.contains("lucide")
+              );
+            });
+            if (isLucideUpdate) return;
+
+            if (state.debounceTimer) clearTimeout(state.debounceTimer);
+            state.debounceTimer = setTimeout(() => {
+              state.debounceTimer = null;
+              state.isUpdatingIcons = true;
+              safeLucide(() => {
+                window.lucide.createIcons();
+                requestAnimationFrame(() => {
+                  state.isUpdatingIcons = false;
+                });
+              });
+            }, 100);
+          });
+
+          observer.observe(pageContent, { childList: true, subtree: true });
+          state.observer = observer;
+        }
+
+        function bootstrap() {
+          cacheRefs();
+          initializePortalTargets();
+          initializeUserProfile();
+          bindEvents();
+          safeLucide(() => window.lucide.createIcons());
+          observePageContent();
+        }
+
+        ready(bootstrap);
+      })();
+    </script>
+  
+
+<script>
+// Global variables
+let currentSession = null;
+let allSkills = [];
+let allUsers = [];
+let trainerEligibility = [];
+let externalTrainers = [];
+let originalSkillId = null;
+
+// Utility functions
+function getDataSafely(key) {
+  try {
+    const data = localStorage.getItem(key);
+    return data ? JSON.parse(data) : [];
+  } catch (error) {
+    console.error(`Error parsing ${key}:`, error);
+    return [];
+  }
+}
+
+function funGetUrlParam(param) {
+  const urlParams = new URLSearchParams(window.location.search);
+  return urlParams.get(param);
+}
+
+function showError(message) {
+  console.error(message);
+  alert(message || 'An error occurred. Please try again.');
+}
+
+// Date formatting functions
+function formatDateForInput(isoString) {
+  if (!isoString) return '';
+  const date = new Date(isoString);
+  return date.toISOString().slice(0, 16);
+}
+
+function formatDateToISO(dateTimeLocalString) {
+  if (!dateTimeLocalString) return null;
+  return new Date(dateTimeLocalString).toISOString();
+}
+
+// Load and validate session
+function funLoadSessionData() {
+  const sessionId = funGetUrlParam('id');
+  if (!sessionId) {
+    showError('No session ID provided');
+    history.back();
+    return false;
+  }
+
+  const sessions = getDataSafely('trainingSessions');
+  currentSession = sessions.find(s => s.id === sessionId);
+  
+  if (!currentSession) {
+    showError('Training session not found');
+    history.back();
+    return false;
+  }
+
+  return true;
+}
+
+// Check if session can be edited
+function funCheckEditability() {
+  if (!currentSession) return false;
+
+  if (currentSession.status !== 'scheduled') {
+    const warningBanner = document.getElementById('warningBanner');
+    const warningMessage = document.getElementById('warningMessage');
+    const form = document.getElementById('editSessionForm');
+    
+    warningBanner.classList.remove('hidden');
+    warningMessage.textContent = `Only scheduled sessions can be edited. This session is currently ${currentSession.status}.`;
+    
+    // Disable all form fields
+    const inputs = form.querySelectorAll('input, select, button[type="submit"]');
+    inputs.forEach(input => {
+      input.disabled = true;
+    });
+    
+    return false;
+  }
+  
+  return true;
+}
+
+// Load dropdown data
+function funLoadFormData() {
+  allSkills = getDataSafely('skills').filter(s => s.status === 'active');
+  allUsers = getDataSafely('users').filter(u => u.employeeStatus === 'active');
+  trainerEligibility = getDataSafely('trainerEligibility').filter(t => t.status === 'active');
+  externalTrainers = getDataSafely('externalTrainers').filter(t => t.status === 'active');
+}
+
+// Populate skills dropdown
+function funPopulateSkills() {
+  const skillSelect = document.getElementById('skillSelect');
+  if (!skillSelect) return;
+
+  skillSelect.innerHTML = '<option value="">Select a skill...</option>';
+  
+  allSkills.forEach(skill => {
+    const option = document.createElement('option');
+    option.value = skill.id;
+    option.textContent = skill.name;
+    skillSelect.appendChild(option);
+  });
+
+  // Set current skill
+  skillSelect.value = currentSession.skillId;
+  originalSkillId = currentSession.skillId;
+}
+
+// Handle skill change
+function funHandleSkillChange() {
+  const skillSelect = document.getElementById('skillSelect');
+  const skillWarning = document.getElementById('skillWarning');
+  
+  if (skillSelect.value && skillSelect.value !== originalSkillId) {
+    skillWarning.classList.remove('hidden');
+  } else {
+    skillWarning.classList.add('hidden');
+  }
+  
+  // Update trainer options based on selected skill
+  funUpdateTrainerOptions();
+}
+
+// Populate trainer options
+function funPopulateTrainers() {
+  funPopulateInternalTrainers();
+  funPopulateExternalTrainers();
+}
+
+// Populate internal trainers
+function funPopulateInternalTrainers() {
+  const container = document.getElementById('internalTrainers');
+  const eligibleTrainers = trainerEligibility.filter(t => t.skillId === currentSession.skillId);
+  
+  // Clear existing content except the description
+  const description = container.querySelector('.text-gray-500');
+  container.innerHTML = '';
+  container.appendChild(description);
+  
+  if (eligibleTrainers.length === 0) {
+    const noTrainers = document.createElement('div');
+    noTrainers.className = 'text-sm text-gray-400 italic';
+    noTrainers.textContent = 'No internal trainers available for this skill';
+    container.appendChild(noTrainers);
+    return;
+  }
+
+  eligibleTrainers.forEach(eligibility => {
+    const trainer = allUsers.find(u => u.id === eligibility.employeeId);
+    if (!trainer) return;
+
+    const trainerOption = document.createElement('label');
+    trainerOption.className = 'flex items-center p-3 border border-slate-200 rounded hover:bg-gray-50 cursor-pointer';
+    
+    trainerOption.innerHTML = `
+      <input type="radio" name="trainerSelection" value="${trainer.id}" 
+             class="w-4 h-4 text-blue-600 border-slate-300 focus:ring-blue-500 mr-3">
+      <div class="flex-1">
+        <div class="text-sm font-medium text-gray-900">${trainer.firstName} ${trainer.lastName}</div>
+        <div class="text-xs text-gray-500">${trainer.jobTitle} • ${trainer.email}</div>
+      </div>
+    `;
+    
+    container.appendChild(trainerOption);
+  });
+}
+
+// Populate external trainers
+function funPopulateExternalTrainers() {
+  const container = document.getElementById('externalTrainers');
+  const eligibleTrainers = externalTrainers.filter(t => 
+    t.skills.some(s => s.skillId === currentSession.skillId)
+  );
+  
+  // Clear existing content except the description
+  const description = container.querySelector('.text-gray-500');
+  container.innerHTML = '';
+  container.appendChild(description);
+  
+  if (eligibleTrainers.length === 0) {
+    const noTrainers = document.createElement('div');
+    noTrainers.className = 'text-sm text-gray-400 italic';
+    noTrainers.textContent = 'No external trainers available for this skill';
+    container.appendChild(noTrainers);
+    return;
+  }
+
+  eligibleTrainers.forEach(trainer => {
+    const trainerOption = document.createElement('label');
+    trainerOption.className = 'flex items-center p-3 border border-slate-200 rounded hover:bg-gray-50 cursor-pointer';
+    
+    trainerOption.innerHTML = `
+      <input type="radio" name="trainerSelection" value="${trainer.id}" 
+             class="w-4 h-4 text-blue-600 border-slate-300 focus:ring-blue-500 mr-3">
+      <div class="flex-1">
+        <div class="text-sm font-medium text-gray-900">${trainer.name}</div>
+        <div class="text-xs text-gray-500">${trainer.email} • ${trainer.contactInfo?.phone || 'No phone'}</div>
+      </div>
+    `;
+    
+    container.appendChild(trainerOption);
+  });
+}
+
+// Update trainer options based on skill
+function funUpdateTrainerOptions() {
+  const selectedSkillId = document.getElementById('skillSelect').value;
+  if (!selectedSkillId) return;
+  
+  // Update internal trainers
+  const internalContainer = document.getElementById('internalTrainers');
+  const internalEligible = trainerEligibility.filter(t => t.skillId === selectedSkillId);
+  
+  const description1 = internalContainer.querySelector('.text-gray-500');
+  internalContainer.innerHTML = '';
+  internalContainer.appendChild(description1);
+  
+  if (internalEligible.length === 0) {
+    const noTrainers = document.createElement('div');
+    noTrainers.className = 'text-sm text-gray-400 italic';
+    noTrainers.textContent = 'No internal trainers available for this skill';
+    internalContainer.appendChild(noTrainers);
+  } else {
+    internalEligible.forEach(eligibility => {
+      const trainer = allUsers.find(u => u.id === eligibility.employeeId);
+      if (!trainer) return;
+
+      const trainerOption = document.createElement('label');
+      trainerOption.className = 'flex items-center p-3 border border-slate-200 rounded hover:bg-gray-50 cursor-pointer';
+      
+      trainerOption.innerHTML = `
+        <input type="radio" name="trainerSelection" value="${trainer.id}" 
+               class="w-4 h-4 text-blue-600 border-slate-300 focus:ring-blue-500 mr-3">
+        <div class="flex-1">
+          <div class="text-sm font-medium text-gray-900">${trainer.firstName} ${trainer.lastName}</div>
+          <div class="text-xs text-gray-500">${trainer.jobTitle} • ${trainer.email}</div>
+        </div>
+      `;
+      
+      internalContainer.appendChild(trainerOption);
+    });
+  }
+  
+  // Update external trainers
+  const externalContainer = document.getElementById('externalTrainers');
+  const externalEligible = externalTrainers.filter(t => 
+    t.skills.some(s => s.skillId === selectedSkillId)
+  );
+  
+  const description2 = externalContainer.querySelector('.text-gray-500');
+  externalContainer.innerHTML = '';
+  externalContainer.appendChild(description2);
+  
+  if (externalEligible.length === 0) {
+    const noTrainers = document.createElement('div');
+    noTrainers.className = 'text-sm text-gray-400 italic';
+    noTrainers.textContent = 'No external trainers available for this skill';
+    externalContainer.appendChild(noTrainers);
+  } else {
+    externalEligible.forEach(trainer => {
+      const trainerOption = document.createElement('label');
+      trainerOption.className = 'flex items-center p-3 border border-slate-200 rounded hover:bg-gray-50 cursor-pointer';
+      
+      trainerOption.innerHTML = `
+        <input type="radio" name="trainerSelection" value="${trainer.id}" 
+               class="w-4 h-4 text-blue-600 border-slate-300 focus:ring-blue-500 mr-3">
+        <div class="flex-1">
+          <div class="text-sm font-medium text-gray-900">${trainer.name}</div>
+          <div class="text-xs text-gray-500">${trainer.email} • ${trainer.contactInfo?.phone || 'No phone'}</div>
+        </div>
+      `;
+      
+      externalContainer.appendChild(trainerOption);
+    });
+  }
+}
+
+// Set current trainer selection
+function funSetCurrentTrainer() {
+  const currentTrainerId = currentSession.trainerId;
+  const currentTrainerType = currentSession.trainerType;
+  
+  // Set active tab
+  if (currentTrainerType === 'external') {
+    funSwitchToExternalTab();
+  }
+  
+  // Find and select the current trainer
+  setTimeout(() => {
+    const trainerRadios = document.querySelectorAll('input[name="trainerSelection"]');
+    trainerRadios.forEach(radio => {
+      if (radio.value === currentTrainerId) {
+        radio.checked = true;
+        funUpdateSelectedTrainer();
+      }
+    });
+  }, 100);
+}
+
+// Populate form fields
+function funPopulateFormFields() {
+  const form = document.getElementById('editSessionForm');
+  if (!form || !currentSession) return;
+
+  // Set form field values
+  document.getElementById('scheduledDate').value = formatDateForInput(currentSession.scheduledDate);
+  document.getElementById('endDate').value = formatDateForInput(currentSession.endDate);
+  document.getElementById('capacity').value = currentSession.capacity;
+  
+  // Set mode
+  if (currentSession.mode === 'online') {
+    document.getElementById('modeOnline').checked = true;
+  } else {
+    document.getElementById('modeOffline').checked = true;
+  }
+  
+  // Update breadcrumb
+  const sessionBreadcrumb = document.getElementById('sessionBreadcrumb');
+  if (sessionBreadcrumb) {
+    sessionBreadcrumb.textContent = `Session ${currentSession.id}`;
+  }
+}
+
+// Handle tab switching
+function funSwitchToInternalTab() {
+  document.getElementById('internalTab').className = 'px-4 py-2 text-sm font-medium border-b-2 border-blue-600 text-blue-600';
+  document.getElementById('externalTab').className = 'px-4 py-2 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700 ml-8';
+  document.getElementById('internalTrainers').classList.remove('hidden');
+  document.getElementById('externalTrainers').classList.add('hidden');
+}
+
+function funSwitchToExternalTab() {
+  document.getElementById('externalTab').className = 'px-4 py-2 text-sm font-medium border-b-2 border-blue-600 text-blue-600';
+  document.getElementById('internalTab').className = 'px-4 py-2 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700';
+  document.getElementById('externalTrainers').classList.remove('hidden');
+  document.getElementById('internalTrainers').classList.add('hidden');
+}
+
+// Update selected trainer
+function funUpdateSelectedTrainer() {
+  const selectedRadio = document.querySelector('input[name="trainerSelection"]:checked');
+  if (!selectedRadio) {
+    document.getElementById('selectedTrainerId').value = '';
+    document.getElementById('selectedTrainerType').value = '';
+    return;
+  }
+
+  document.getElementById('selectedTrainerId').value = selectedRadio.value;
+  
+  // Determine trainer type based on which tab is active
+  const internalTab = document.getElementById('internalTab');
+  const isInternalActive = internalTab.classList.contains('border-blue-600');
+  document.getElementById('selectedTrainerType').value = isInternalActive ? 'internal' : 'external';
+}
+
+// Form validation
+function funValidateForm(formData) {
+  const errors = [];
+
+  if (!formData.skillId) {
+    errors.push('Please select a skill');
+  }
+
+  if (!formData.trainerId) {
+    errors.push('Please select a trainer');
+  }
+
+  if (!formData.scheduledDate) {
+    errors.push('Please enter a scheduled date');
+  }
+
+  if (!formData.endDate) {
+    errors.push('Please enter an end date');
+  }
+
+  if (formData.scheduledDate && formData.endDate) {
+    const startDate = new Date(formData.scheduledDate);
+    const endDate = new Date(formData.endDate);
+    
+    if (endDate <= startDate) {
+      errors.push('End date must be after scheduled date');
+    }
+  }
+
+  if (!formData.mode) {
+    errors.push('Please select a training mode');
+  }
+
+  if (!formData.capacity || formData.capacity < 1) {
+    errors.push('Please enter a valid capacity');
+  }
+
+  return errors;
+}
+
+// Handle form submission
+function funHandleSubmit(event) {
+  event.preventDefault();
+
+  const formData = new FormData(event.target);
+  const data = {
+    skillId: formData.get('skillId'),
+    trainerId: formData.get('trainerId'),
+    trainerType: formData.get('trainerType'),
+    scheduledDate: formatDateToISO(formData.get('scheduledDate')),
+    endDate: formatDateToISO(formData.get('endDate')),
+    mode: formData.get('mode'),
+    capacity: parseInt(formData.get('capacity'))
+  };
+
+  // Validate form
+  const errors = funValidateForm(data);
+  if (errors.length > 0) {
+    showError('Please fix the following errors:\n' + errors.join('\n'));
+    return;
+  }
+
+  try {
+    // Get sessions from localStorage
+    const sessions = getDataSafely('trainingSessions');
+    const sessionIndex = sessions.findIndex(s => s.id === currentSession.id);
+    
+    if (sessionIndex === -1) {
+      showError('Session not found');
+      return;
+    }
+
+    // Update session data
+    const updatedSession = {
+      ...sessions[sessionIndex],
+      ...data,
+      modifiedTimestamp: new Date().toISOString(),
+      modifiedBy: 'usr_001' // Current user
+    };
+
+    sessions[sessionIndex] = updatedSession;
+    localStorage.setItem('trainingSessions', JSON.stringify(sessions));
+
+    // Show success and redirect
+    alert('Training session updated successfully!');
+    window.location.href = `training_session_detail.html?id=${currentSession.id}`;
+
+  } catch (error) {
+    console.error('Error updating session:', error);
+    showError('Failed to update training session. Please try again.');
+  }
+}
+
+// Cancel function
+function funCancel() {
+  if (confirm('Are you sure you want to cancel? Any unsaved changes will be lost.')) {
+    window.location.href = `training_session_detail.html?id=${currentSession.id}`;
+  }
+}
+
+// Event listeners
+function funBindEventListeners() {
+  // Skill change
+  document.getElementById('skillSelect').addEventListener('change', funHandleSkillChange);
+  
+  // Tab switching
+  document.getElementById('internalTab').addEventListener('click', funSwitchToInternalTab);
+  document.getElementById('externalTab').addEventListener('click', funSwitchToExternalTab);
+  
+  // Trainer selection changes
+  document.addEventListener('change', function(event) {
+    if (event.target.name === 'trainerSelection') {
+      funUpdateSelectedTrainer();
+    }
+  });
+  
+  // Form submission
+  document.getElementById('editSessionForm').addEventListener('submit', funHandleSubmit);
+}
+
+// Initialize page
+function funInitializePage() {
+  // Load session data
+  if (!funLoadSessionData()) {
+    return;
+  }
+
+  // Load form data
+  funLoadFormData();
+  
+  // Check if session can be edited
+  if (!funCheckEditability()) {
+    return;
+  }
+
+  // Populate form
+  funPopulateSkills();
+  funPopulateTrainers();
+  funPopulateFormFields();
+  
+  // Set current trainer selection
+  funSetCurrentTrainer();
+  
+  // Bind event listeners
+  funBindEventListeners();
+}
+
+// Initialize on page load
+document.addEventListener('DOMContentLoaded', funInitializePage);
+</script></body></html>
