@@ -1,0 +1,1053 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SkillBridge</title>
+
+    <!-- Required: Main JS Script -->
+    <script type="module" src="scripts/main.js" data-tiramai="web-gen"></script>
+
+    <!-- Required: TailwindCSS -->
+    <script src="./lib/tailwindcss/tailwindcss.js" fetchpriority="high" data-tiramai="web-gen"></script>
+
+    <!-- Required: Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest" data-tiramai="web-gen"></script>
+
+    <!-- Required: Favicon -->
+    <link rel="icon" href="assets/imgs/logo.ico" type="image/x-icon" data-tiramai="web-gen"/>
+
+    <!-- ECharts Support (for charts/graphs) -->
+    <script defer src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js" data-tiramai="web-gen"></script>
+
+    <!-- Markdown Support (for content rendering) -->
+    <script defer src="https://cdn.jsdelivr.net/npm/marked/marked.min.js" data-tiramai="web-gen"></script>
+
+    <!-- Custom Tailwind Config -->
+    <script data-tiramai="web-gen">
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'brand-primary-600': '#1B2A44',
+                        'brand-primary-700': '#14233A',
+                        'brand-primary-800': '#0E1A2B',
+                        'accent-gold-50': '#FFF7E6',
+                        'accent-gold-500': '#C59D42',
+                        'accent-gold-600': '#A97D22',
+                        'success-600': '#16A34A',
+                        'warning-600': '#D97706',
+                        'danger-600': '#DC2626',
+                        'info-600': '#2563EB',
+                        'heat-green': '#16A34A',
+                        'heat-amber': '#F59E0B',
+                        'heat-red': '#DC2626',
+                        'neutral-50': '#F8FAFC',
+                        'neutral-200': '#E2E8F0',
+                        'neutral-500': '#64748B',
+                        'neutral-700': '#334155',
+                        'neutral-900': '#111827',
+                        'neutral-950': '#0B1220',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-neutral-50 min-h-screen text-neutral-900 text-sm leading-5">
+    <!-- Top Navigation -->
+    <header class="fixed top-0 left-0 right-0 bg-brand-primary-800 border-b border-neutral-200 flex items-center justify-between px-6 py-4 z-30 h-16">
+        <div class="flex items-center gap-4">
+            <svg width="32" height="32" viewBox="0 0 400 400" fill="none" xmlns="http://www.w3.org/2000/svg" class="h-8 w-8">
+                <rect x="84" y="116" width="56" height="168" rx="8" fill="#1E40AF"/>
+                <rect x="176" y="84" width="56" height="200" rx="8" fill="#059669"/>
+                <rect x="268" y="156" width="48" height="128" rx="8" fill="#1E40AF"/>
+                <rect x="114" y="180" width="172" height="20" rx="10" fill="#F59E0B"/>
+            </svg>
+            <span class="text-xl leading-7 font-semibold text-white">SkillBridge</span>
+        </div>
+        
+        <!-- Mobile Menu Button -->
+        <button id="mobile-menu-btn" class="md:hidden text-white hover:bg-brand-primary-700 p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2">
+            <i data-lucide="menu" class="w-5 h-5"></i>
+        </button>
+
+        <div class="hidden md:flex items-center gap-4">
+            <!-- User Profile Dropdown -->
+            <div class="relative">
+                <button id="user-profile-btn" class="flex items-center gap-2 text-white hover:bg-brand-primary-700 px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2">
+                    <div id="user-avatar" class="w-8 h-8 bg-accent-gold-500 rounded-full flex items-center justify-center text-brand-primary-800 font-semibold text-xs">
+                        JD
+                    </div>
+                    <span id="user-name" class="text-sm">John Doe</span>
+                    <i data-lucide="chevron-down" class="w-4 h-4"></i>
+                </button>
+                
+                <!-- Dropdown Menu -->
+                <div id="user-dropdown" class="hidden absolute right-0 mt-2 w-48 bg-white border border-neutral-200 rounded-md shadow-lg z-50">
+                    <div class="px-4 py-3 border-b border-neutral-200">
+                        <p class="text-sm font-medium text-neutral-900" id="dropdown-user-name">John Doe</p>
+                        <p class="text-xs text-neutral-500" id="dropdown-user-email">johndoe@example.com</p>
+                    </div>
+                    <div class="py-1">
+                        <button id="sign-out-btn" class="block w-full text-left px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50 focus:outline-none focus:bg-neutral-50">
+                            <i data-lucide="log-out" class="w-4 h-4 inline mr-2"></i>
+                            Sign Out
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="flex pt-16">
+        <!-- Side Navigation -->
+        <aside id="sidebar" class="fixed md:static inset-y-0 left-0 z-20 w-64 bg-white border-r border-neutral-200 transform -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out pt-16 md:pt-0 overflow-y-auto" style="height: calc(100vh - 4rem);">
+            <nav class="p-4 space-y-1">
+                <!-- Employee Dashboard -->
+                <a href="employee_dashboard.html" class="nav-link flex items-center gap-3 px-3 py-2 text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-700 rounded-md group" data-page="employee_dashboard">
+                    <i data-lucide="layout-dashboard" class="w-5 h-5 text-neutral-500 group-hover:text-brand-primary-700"></i>
+                    <span class="font-medium">Employee Dashboard</span>
+                </a>
+
+                <!-- My Skills with Children -->
+                <div class="space-y-1">
+                    <a href="my_skills.html" class="nav-link flex items-center gap-3 px-3 py-2 text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-700 rounded-md group" data-page="my_skills">
+                        <i data-lucide="list" class="w-5 h-5 text-neutral-500 group-hover:text-brand-primary-700"></i>
+                        <span class="font-medium">My Skills</span>
+                    </a>
+                </div>
+
+                <!-- My Training Sessions with Children -->
+                <div class="space-y-1">
+                    <a href="my_training_sessions.html" class="nav-link flex items-center gap-3 px-3 py-2 text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-700 rounded-md group" data-page="my_training_sessions">
+                        <i data-lucide="calendar" class="w-5 h-5 text-neutral-500 group-hover:text-brand-primary-700"></i>
+                        <span class="font-medium">My Training Sessions</span>
+                    </a>
+                </div>
+
+                <!-- My Disputes with Children -->
+                <div class="space-y-1">
+                    <button class="nav-group-btn flex items-center justify-between w-full px-3 py-2 text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-700 rounded-md group" data-group="disputes">
+                        <div class="flex items-center gap-3">
+                            <i data-lucide="flag" class="w-5 h-5 text-neutral-500 group-hover:text-brand-primary-700"></i>
+                            <span class="font-medium">My Disputes</span>
+                        </div>
+                        <i data-lucide="chevron-down" class="w-4 h-4 text-neutral-500 group-hover:text-brand-primary-700 transition-transform duration-200"></i>
+                    </button>
+                    <div class="nav-group-children ml-8 space-y-1 hidden" data-group-target="disputes">
+                        <a href="my_disputes.html" class="nav-link flex items-center gap-3 px-3 py-2 text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-700 rounded-md text-xs" data-page="my_disputes">
+                            <i data-lucide="flag" class="w-4 h-4"></i>
+                            <span>View Disputes</span>
+                        </a>
+                        <a href="raise_dispute.html" class="nav-link flex items-center gap-3 px-3 py-2 text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-700 rounded-md text-xs" data-page="raise_dispute">
+                            <i data-lucide="plus-circle" class="w-4 h-4"></i>
+                            <span>Raise Dispute</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- My Profile -->
+                <a href="my_profile.html" class="nav-link flex items-center gap-3 px-3 py-2 text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-700 rounded-md group" data-page="my_profile">
+                    <i data-lucide="user" class="w-5 h-5 text-neutral-500 group-hover:text-brand-primary-700"></i>
+                    <span class="font-medium">My Profile</span>
+                </a>
+            </nav>
+
+            <!-- Footer -->
+            <div class="absolute bottom-4 left-0 right-0 text-center text-xs text-neutral-500 bg-white px-4">
+                Made with ❤️ by TiramAi
+            </div>
+        </aside>
+
+        <!-- Mobile Overlay -->
+        <div id="mobile-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-10 hidden md:hidden"></div>
+
+        <!-- Main Content -->
+        <main id="pageContent" class="flex-1 p-6 overflow-y-auto min-h-screen">
+            
+<!-- Breadcrumb -->
+<div class="mb-6">
+  <nav class="flex" aria-label="Breadcrumb">
+    <ol class="flex items-center space-x-1 text-sm text-neutral-700">
+      <li>
+        <a href="employee_dashboard.html" class="hover:text-brand-primary-700 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2 rounded">
+          Dashboard
+        </a>
+      </li>
+      <li>
+        <span class="mx-2">/</span>
+        <a href="my_disputes.html" class="hover:text-brand-primary-700 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2 rounded">
+          My Disputes
+        </a>
+      </li>
+      <li>
+        <span class="mx-2">/</span>
+        <span class="font-medium text-neutral-950">Raise Dispute</span>
+      </li>
+    </ol>
+  </nav>
+</div>
+
+<!-- Page Header -->
+<div class="flex items-center justify-between mb-6">
+  <div class="flex items-center gap-4">
+    <button id="back-btn" class="inline-flex items-center gap-2 text-neutral-700 hover:text-brand-primary-700 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2 rounded-md p-2">
+      <i data-lucide="arrow-left" class="w-5 h-5"></i>
+      <span class="text-sm font-medium">Back</span>
+    </button>
+    <div>
+      <h1 class="text-2xl leading-8 font-bold text-neutral-950">Raise Dispute</h1>
+      <p class="text-sm leading-5 text-neutral-700">Dispute one or more current-cycle assessments with detailed reasoning</p>
+    </div>
+  </div>
+</div>
+
+<!-- Current Cycle Card -->
+<div class="mb-6 bg-white rounded-md border border-neutral-200 p-4 shadow-sm">
+  <h2 class="text-base leading-6 font-semibold text-neutral-950 mb-3">Current Assessment Cycle</h2>
+  <div id="current-cycle-info">
+    <!-- Cycle info will be loaded here -->
+    <div class="animate-pulse">
+      <div class="h-4 bg-neutral-200 rounded w-1/3 mb-2"></div>
+      <div class="h-3 bg-neutral-200 rounded w-1/2"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Form Container -->
+<div id="dispute-form-container" class="hidden">
+  <form id="dispute-form" class="space-y-6">
+    <!-- Skill Selection Section -->
+    <div class="bg-white rounded-md border border-neutral-200 p-4 shadow-sm">
+      <div class="mb-4">
+        <h3 class="text-base leading-6 font-semibold text-neutral-950 mb-2">Select Skills to Dispute</h3>
+        <p class="text-sm text-neutral-700">Choose the assessments you want to dispute. Skills with open disputes cannot be selected.</p>
+      </div>
+      
+      <!-- Skills Table -->
+      <div class="overflow-x-auto">
+        <div id="skills-loading" class="py-8">
+          <div class="animate-pulse space-y-3">
+            <div class="h-4 bg-neutral-200 rounded w-full"></div>
+            <div class="h-4 bg-neutral-200 rounded w-3/4"></div>
+            <div class="h-4 bg-neutral-200 rounded w-5/6"></div>
+          </div>
+        </div>
+        
+        <table id="skills-table" class="hidden w-full text-sm leading-5">
+          <thead class="bg-neutral-50 text-neutral-700">
+            <tr>
+              <th class="text-left font-semibold px-3 py-3 border-b border-neutral-200 w-12">
+                <input type="checkbox" id="select-all" class="rounded border-neutral-300 text-brand-primary-600 focus:ring-accent-gold-600">
+              </th>
+              <th class="text-left font-semibold px-3 py-3 border-b border-neutral-200">Skill</th>
+              <th class="text-left font-semibold px-3 py-3 border-b border-neutral-200">Your Score</th>
+              <th class="text-left font-semibold px-3 py-3 border-b border-neutral-200">Benchmark</th>
+              <th class="text-left font-semibold px-3 py-3 border-b border-neutral-200">Gap</th>
+              <th class="text-left font-semibold px-3 py-3 border-b border-neutral-200">Assessment Date</th>
+            </tr>
+          </thead>
+          <tbody id="skills-tbody" class="divide-y divide-neutral-200">
+            <!-- Skills will be populated here -->
+          </tbody>
+        </table>
+        
+        <div id="no-skills" class="hidden py-8 text-center text-neutral-500">
+          <p>No assessments available for dispute in the current cycle.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Per-Skill Reasons Section -->
+    <div id="per-skill-reasons" class="space-y-4">
+      <!-- Per-skill reason panels will be dynamically added here -->
+    </div>
+
+    <!-- Overall Dispute Reason -->
+    <div class="bg-white rounded-md border border-neutral-200 p-4 shadow-sm">
+      <label for="overall-reason" class="block text-sm font-medium text-neutral-900 mb-2">
+        Overall Dispute Reason <span class="text-danger-600">*</span>
+      </label>
+      <textarea
+        id="overall-reason"
+        name="overall-reason"
+        rows="4"
+        class="w-full border border-neutral-200 rounded-sm px-3 py-2 text-sm leading-5 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2 resize-none"
+        placeholder="Please provide a detailed explanation for disputing these assessments... (minimum 50 characters, maximum 2000 characters)"
+        minlength="50"
+        maxlength="2000"
+        required
+      ></textarea>
+      <div class="flex justify-between mt-2">
+        <p id="overall-reason-error" class="text-xs text-danger-600 hidden"></p>
+        <p class="text-xs text-neutral-500">
+          <span id="overall-reason-count">0</span>/2000 characters (minimum 50)
+        </p>
+      </div>
+    </div>
+
+    <!-- Form Actions -->
+    <div class="flex items-center justify-end gap-3 pt-4">
+      <button
+        type="button"
+        id="cancel-btn"
+        class="inline-flex items-center h-11 px-4 rounded-md border border-neutral-200 bg-white text-neutral-900 hover:bg-neutral-50 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2"
+      >
+        Cancel
+      </button>
+      <button
+        type="submit"
+        id="submit-btn"
+        class="inline-flex items-center h-11 px-4 rounded-md bg-brand-primary-600 hover:bg-brand-primary-700 text-white focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
+        disabled
+      >
+        <span id="submit-btn-text">Submit Dispute</span>
+        <i id="submit-btn-loader" class="hidden w-5 h-5 ml-2 animate-spin" data-lucide="loader-2"></i>
+      </button>
+    </div>
+  </form>
+</div>
+
+<!-- No Active Cycle Message -->
+<div id="no-cycle-message" class="hidden bg-white rounded-md border border-neutral-200 p-6 shadow-sm text-center">
+  <div class="max-w-sm mx-auto">
+    <i data-lucide="calendar-x" class="w-12 h-12 text-neutral-400 mx-auto mb-4"></i>
+    <h3 class="text-lg font-semibold text-neutral-950 mb-2">No Active Assessment Cycle</h3>
+    <p class="text-sm text-neutral-700 mb-4">There is currently no active assessment cycle. Disputes can only be raised during an active cycle.</p>
+    <a href="my_disputes.html" class="inline-flex items-center gap-2 px-4 py-2 bg-brand-primary-600 hover:bg-brand-primary-700 text-white rounded-md text-sm font-medium focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2">
+      <i data-lucide="arrow-left" class="w-4 h-4"></i>
+      Back to Disputes
+    </a>
+  </div>
+</div>
+
+        </main>
+    </div>
+
+    <!-- Required: JavaScript -->
+    <script type="module" data-tiramai="web-gen">
+        import { showToast, showLoader, hideLoader, env } from "./scripts/main.js";
+        import { auth, db, storage } from "./scripts/firebase.js";
+        import { onAuthStateChanged, getAuth, signOut } from 'https://www.gstatic.com/firebasejs/10.12.4/firebase-auth.js';
+        import { doc, getDoc } from 'https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js';
+
+        // Initialize Lucide icons
+        lucide.createIcons();
+
+        // Mobile menu functionality
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const sidebar = document.getElementById('sidebar');
+        const mobileOverlay = document.getElementById('mobile-overlay');
+
+        function toggleMobileMenu() {
+            sidebar.classList.toggle('-translate-x-full');
+            mobileOverlay.classList.toggle('hidden');
+        }
+
+        mobileMenuBtn?.addEventListener('click', toggleMobileMenu);
+        mobileOverlay?.addEventListener('click', toggleMobileMenu);
+
+        // Navigation group toggle functionality
+        document.querySelectorAll('.nav-group-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const groupName = btn.getAttribute('data-group');
+                const children = document.querySelector(`[data-group-target="${groupName}"]`);
+                const chevron = btn.querySelector('[data-lucide="chevron-down"]');
+                
+                children?.classList.toggle('hidden');
+                chevron?.classList.toggle('rotate-180');
+            });
+        });
+
+        // User profile dropdown
+        const userProfileBtn = document.getElementById('user-profile-btn');
+        const userDropdown = document.getElementById('user-dropdown');
+
+        userProfileBtn?.addEventListener('click', (e) => {
+            e.stopPropagation();
+            userDropdown?.classList.toggle('hidden');
+        });
+
+        document.addEventListener('click', (e) => {
+            if (!userProfileBtn?.contains(e.target)) {
+                userDropdown?.classList.add('hidden');
+            }
+        });
+
+        // Active navigation highlighting
+        function updateActiveNav() {
+            const currentPage = window.location.pathname.split('/').pop()?.replace('.html', '') || 'employee_dashboard';
+            
+            document.querySelectorAll('.nav-link').forEach(link => {
+                const page = link.getAttribute('data-page');
+                if (page === currentPage) {
+                    link.classList.add('bg-accent-gold-50', 'text-brand-primary-700', 'border-l-4', 'border-accent-gold-500');
+                    link.classList.remove('text-neutral-700', 'text-neutral-600');
+                } else {
+                    link.classList.remove('bg-accent-gold-50', 'text-brand-primary-700', 'border-l-4', 'border-accent-gold-500');
+                }
+            });
+        }
+
+        // Auth state management
+        let currentUser = null;
+
+        function updateUserProfile(user, userData = null) {
+            const userAvatar = document.getElementById('user-avatar');
+            const userName = document.getElementById('user-name');
+            const dropdownUserName = document.getElementById('dropdown-user-name');
+            const dropdownUserEmail = document.getElementById('dropdown-user-email');
+
+            if (userData) {
+                const displayName = `${userData.firstName || ''} ${userData.lastName || ''}`.trim() || 'User';
+                const initials = displayName.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
+                
+                userAvatar.textContent = initials;
+                userName.textContent = displayName;
+                dropdownUserName.textContent = displayName;
+                dropdownUserEmail.textContent = userData.email || user.email;
+            } else {
+                // Fallback to auth data
+                const displayName = user.displayName || user.email.split('@')[0];
+                const initials = displayName.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
+                
+                userAvatar.textContent = initials;
+                userName.textContent = displayName;
+                dropdownUserName.textContent = displayName;
+                dropdownUserEmail.textContent = user.email;
+            }
+        }
+
+        async function loadUserData(user) {
+            try {
+                const userDocRef = doc(db, 'users', user.uid);
+                const userDoc = await getDoc(userDocRef);
+                
+                if (userDoc.exists()) {
+                    return userDoc.data();
+                } else {
+                    // Fallback data
+                    return {
+                        firstName: 'John',
+                        lastName: 'Doe',
+                        email: user.email
+                    };
+                }
+            } catch (error) {
+                console.error('Error loading user data:', error);
+                return null;
+            }
+        }
+
+        // Sign out functionality
+        document.getElementById('sign-out-btn')?.addEventListener('click', async () => {
+            try {
+                showLoader();
+                await signOut(auth);
+                showToast('Signed out successfully', 'success');
+                window.location.href = 'auth.html';
+            } catch (error) {
+                console.error('Sign out error:', error);
+                showToast('Error signing out', 'error');
+            } finally {
+                hideLoader();
+            }
+        });
+
+        // Initialize auth state listener
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                currentUser = user;
+                const userData = await loadUserData(user);
+                updateUserProfile(user, userData);
+                updateActiveNav();
+            } else {
+                window.location.href = 'auth.html';
+            }
+        });
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', () => {
+            updateActiveNav();
+        });
+    </script>
+
+    
+<script id="data-script" type="module" data-tiramai="web-gen">
+// Firebase imports
+import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.12.4/firebase-auth.js';
+import {
+  collection, getDocs, query, where, orderBy, limit, addDoc, doc, getDoc, Timestamp
+} from 'https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js';
+import { auth, getDb } from "./scripts/firebase.js";
+import { showToast, showLoader, hideLoader } from "./scripts/main.js";
+
+const db = getDb();
+
+// State management
+let currentUser = null;
+let activeCycle = null;
+let assessments = [];
+let selectedSkills = new Set();
+let perSkillReasons = new Map();
+let existingDisputes = new Set();
+
+// Preselected skills from URL params
+let preselectedSkillIds = [];
+
+// DOM elements
+let form, submitBtn, submitBtnText, submitBtnLoader, overallReasonTextarea, overallReasonCount, overallReasonError;
+let skillsTable, skillsTbody, skillsLoading, noSkills, selectAllCheckbox;
+let perSkillReasonsContainer, currentCycleInfo, disputeFormContainer, noCycleMessage;
+
+// Utility functions
+const formatDate = (dateString) => {
+  if (!dateString) return 'N/A';
+  try {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', { 
+      year: 'numeric', 
+      month: 'short', 
+      day: 'numeric' 
+    });
+  } catch (error) {
+    return 'N/A';
+  }
+};
+
+const calculateGap = (benchmark, score) => {
+  if (typeof benchmark !== 'number' || typeof score !== 'number') return 0;
+  return Math.max(0, benchmark - score);
+};
+
+const getGapColor = (gap) => {
+  if (gap === 0) return 'text-success-600';
+  if (gap <= 2) return 'text-warning-600';
+  return 'text-danger-600';
+};
+
+// URL parameter parsing
+function parseUrlParams() {
+  const params = new URLSearchParams(window.location.search);
+  const skillIdsParam = params.get('preselected_skill_ids');
+  if (skillIdsParam) {
+    try {
+      preselectedSkillIds = JSON.parse(skillIdsParam);
+      if (!Array.isArray(preselectedSkillIds)) {
+        preselectedSkillIds = [];
+      }
+    } catch (error) {
+      console.warn('Error parsing preselected skill IDs:', error);
+      preselectedSkillIds = [];
+    }
+  }
+}
+
+// Data loading functions
+async function funLoadActiveCycle() {
+  try {
+    const cyclesRef = collection(db, 'assessmentCycles');
+    const q = query(cyclesRef, where('isActiveCycle', '==', true), limit(1));
+    const snapshot = await getDocs(q);
+    
+    if (!snapshot.empty) {
+      const cycleDoc = snapshot.docs[0];
+      activeCycle = { id: cycleDoc.id, ...cycleDoc.data() };
+      return activeCycle;
+    }
+    return null;
+  } catch (error) {
+    console.error('Error loading active cycle:', error);
+    showToast('Failed to load assessment cycle information', 'error');
+    return null;
+  }
+}
+
+async function funLoadExistingDisputes() {
+  if (!currentUser || !activeCycle) return;
+  
+  try {
+    const disputesRef = collection(db, 'disputes');
+    const q = query(
+      disputesRef,
+      where('employeeId', '==', currentUser.uid),
+      where('assessmentCycleId', '==', activeCycle.id),
+      where('status', '==', 'open')
+    );
+    
+    const snapshot = await getDocs(q);
+    existingDisputes.clear();
+    
+    snapshot.docs.forEach(doc => {
+      const disputeData = doc.data();
+      if (disputeData.disputedSkills && Array.isArray(disputeData.disputedSkills)) {
+        disputeData.disputedSkills.forEach(skill => {
+          if (skill.skillId) {
+            existingDisputes.add(skill.skillId);
+          }
+        });
+      }
+    });
+  } catch (error) {
+    console.error('Error loading existing disputes:', error);
+    showToast('Failed to load existing disputes', 'error');
+  }
+}
+
+async function funLoadAssessments() {
+  if (!currentUser || !activeCycle) return [];
+
+  try {
+    const assessmentsRef = collection(db, 'assessments');
+    const q = query(
+      assessmentsRef,
+      where('employeeId', '==', currentUser.uid),
+      where('assessmentCycleId', '==', activeCycle.id),
+      orderBy('assessmentTimestamp', 'desc')
+    );
+
+    const snapshot = await getDocs(q);
+    const assessmentData = [];
+
+    for (const docSnapshot of snapshot.docs) {
+      const assessment = { id: docSnapshot.id, ...docSnapshot.data() };
+      
+      // Load skill details
+      if (assessment.skillId) {
+        try {
+          const skillDoc = await getDoc(doc(db, 'skills', assessment.skillId));
+          if (skillDoc.exists()) {
+            assessment.skillName = skillDoc.data().name || 'Unknown Skill';
+          } else {
+            assessment.skillName = 'Unknown Skill';
+          }
+        } catch (error) {
+          assessment.skillName = 'Unknown Skill';
+        }
+      }
+
+      assessmentData.push(assessment);
+    }
+
+    return assessmentData;
+  } catch (error) {
+    console.error('Error loading assessments:', error);
+    showToast('Failed to load assessments', 'error');
+    return [];
+  }
+}
+
+// UI rendering functions
+function funRenderCurrentCycleInfo() {
+  if (!activeCycle) {
+    currentCycleInfo.innerHTML = `
+      <div class="text-center text-neutral-500 py-4">
+        <p class="text-sm">No active assessment cycle</p>
+      </div>
+    `;
+    return;
+  }
+
+  const startDate = formatDate(activeCycle.startDate);
+  const endDate = formatDate(activeCycle.endDate);
+
+  currentCycleInfo.innerHTML = `
+    <div class="flex items-center justify-between">
+      <div>
+        <h3 class="font-semibold text-neutral-950">${activeCycle.cycleName || 'Current Cycle'}</h3>
+        <p class="text-sm text-neutral-700">${startDate} - ${endDate}</p>
+      </div>
+      <span class="inline-flex items-center px-2 py-1 text-xs rounded-full bg-success-600 text-white">
+        Active
+      </span>
+    </div>
+  `;
+}
+
+function funRenderSkillsTable() {
+  if (!assessments.length) {
+    skillsLoading.classList.add('hidden');
+    skillsTable.classList.add('hidden');
+    noSkills.classList.remove('hidden');
+    return;
+  }
+
+  skillsTbody.innerHTML = '';
+
+  assessments.forEach(assessment => {
+    const gap = calculateGap(assessment.benchmarkAtTimeOfAssessment, assessment.score);
+    const gapColorClass = getGapColor(gap);
+    const isDisabled = existingDisputes.has(assessment.skillId);
+    const isPreselected = preselectedSkillIds.includes(assessment.skillId);
+
+    const row = document.createElement('tr');
+    row.className = 'hover:bg-neutral-50 focus-within:bg-neutral-50';
+    
+    row.innerHTML = `
+      <td class="px-3 py-3">
+        <input 
+          type="checkbox" 
+          class="skill-checkbox rounded border-neutral-300 text-brand-primary-600 focus:ring-accent-gold-600" 
+          value="${assessment.skillId}"
+          ${isDisabled ? 'disabled' : ''}
+          ${isPreselected ? 'checked' : ''}
+          data-skill-name="${assessment.skillName || 'Unknown'}"
+        >
+      </td>
+      <td class="px-3 py-3">
+        <span class="font-medium text-neutral-950">${assessment.skillName || 'Unknown'}</span>
+        ${isDisabled ? '<span class="ml-2 text-xs text-warning-600">(Open Dispute)</span>' : ''}
+      </td>
+      <td class="px-3 py-3">${assessment.score || 'N/A'}</td>
+      <td class="px-3 py-3">${assessment.benchmarkAtTimeOfAssessment || 'N/A'}</td>
+      <td class="px-3 py-3">
+        <span class="${gapColorClass} font-medium">
+          ${gap > 0 ? `-${gap}` : '0'}
+        </span>
+      </td>
+      <td class="px-3 py-3 text-neutral-700">${formatDate(assessment.assessmentTimestamp)}</td>
+    `;
+
+    skillsTbody.appendChild(row);
+
+    // Handle preselected skills
+    if (isPreselected && !isDisabled) {
+      selectedSkills.add(assessment.skillId);
+      funCreatePerSkillReasonPanel(assessment.skillId, assessment.skillName || 'Unknown');
+    }
+  });
+
+  skillsLoading.classList.add('hidden');
+  skillsTable.classList.remove('hidden');
+  noSkills.classList.add('hidden');
+
+  // Update select all checkbox state
+  funUpdateSelectAllCheckbox();
+  funValidateForm();
+}
+
+function funCreatePerSkillReasonPanel(skillId, skillName) {
+  const panel = document.createElement('div');
+  panel.className = 'bg-white rounded-md border border-neutral-200 p-4 shadow-sm';
+  panel.id = `reason-panel-${skillId}`;
+
+  panel.innerHTML = `
+    <div class="mb-3">
+      <label class="block text-sm font-medium text-neutral-900 mb-2">
+        Reason for disputing "${skillName}" <span class="text-danger-600">*</span>
+      </label>
+      <textarea
+        class="per-skill-reason w-full border border-neutral-200 rounded-sm px-3 py-2 text-sm leading-5 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2 resize-none"
+        rows="3"
+        placeholder="Please explain why you believe this assessment is incorrect... (minimum 20 characters)"
+        data-skill-id="${skillId}"
+        minlength="20"
+        required
+      ></textarea>
+      <div class="flex justify-between mt-2">
+        <p class="reason-error text-xs text-danger-600 hidden"></p>
+        <p class="text-xs text-neutral-500">
+          <span class="reason-count">0</span> characters (minimum 20)
+        </p>
+      </div>
+    </div>
+  `;
+
+  perSkillReasonsContainer.appendChild(panel);
+
+  // Add event listeners
+  const textarea = panel.querySelector('.per-skill-reason');
+  const errorElement = panel.querySelector('.reason-error');
+  const countElement = panel.querySelector('.reason-count');
+
+  textarea.addEventListener('input', () => {
+    const value = textarea.value.trim();
+    const length = value.length;
+    
+    countElement.textContent = length;
+    
+    if (length > 0 && length < 20) {
+      errorElement.textContent = 'Reason must be at least 20 characters long';
+      errorElement.classList.remove('hidden');
+    } else {
+      errorElement.classList.add('hidden');
+    }
+
+    perSkillReasons.set(skillId, value);
+    funValidateForm();
+  });
+}
+
+function funRemovePerSkillReasonPanel(skillId) {
+  const panel = document.getElementById(`reason-panel-${skillId}`);
+  if (panel) {
+    panel.remove();
+  }
+  perSkillReasons.delete(skillId);
+}
+
+function funUpdateSelectAllCheckbox() {
+  const checkboxes = document.querySelectorAll('.skill-checkbox:not([disabled])');
+  const checkedCheckboxes = document.querySelectorAll('.skill-checkbox:not([disabled]):checked');
+  
+  if (checkboxes.length === 0) {
+    selectAllCheckbox.indeterminate = false;
+    selectAllCheckbox.checked = false;
+    return;
+  }
+
+  if (checkedCheckboxes.length === 0) {
+    selectAllCheckbox.indeterminate = false;
+    selectAllCheckbox.checked = false;
+  } else if (checkedCheckboxes.length === checkboxes.length) {
+    selectAllCheckbox.indeterminate = false;
+    selectAllCheckbox.checked = true;
+  } else {
+    selectAllCheckbox.indeterminate = true;
+    selectAllCheckbox.checked = false;
+  }
+}
+
+// Validation functions
+function funValidateForm() {
+  const overallReason = overallReasonTextarea.value.trim();
+  const overallReasonValid = overallReason.length >= 50 && overallReason.length <= 2000;
+  
+  let allPerSkillReasonsValid = true;
+  for (const [skillId, reason] of perSkillReasons.entries()) {
+    if (selectedSkills.has(skillId) && reason.trim().length < 20) {
+      allPerSkillReasonsValid = false;
+      break;
+    }
+  }
+
+  const formValid = selectedSkills.size > 0 && overallReasonValid && allPerSkillReasonsValid;
+  submitBtn.disabled = !formValid;
+}
+
+// Event handlers
+function funHandleSkillSelection(event) {
+  const checkbox = event.target;
+  const skillId = checkbox.value;
+  const skillName = checkbox.dataset.skillName;
+
+  if (checkbox.checked) {
+    selectedSkills.add(skillId);
+    funCreatePerSkillReasonPanel(skillId, skillName);
+  } else {
+    selectedSkills.delete(skillId);
+    funRemovePerSkillReasonPanel(skillId);
+  }
+
+  funUpdateSelectAllCheckbox();
+  funValidateForm();
+}
+
+function funHandleSelectAll() {
+  const checkboxes = document.querySelectorAll('.skill-checkbox:not([disabled])');
+  const shouldCheck = !selectAllCheckbox.checked;
+
+  checkboxes.forEach(checkbox => {
+    const skillId = checkbox.value;
+    const skillName = checkbox.dataset.skillName;
+
+    checkbox.checked = shouldCheck;
+
+    if (shouldCheck) {
+      selectedSkills.add(skillId);
+      if (!document.getElementById(`reason-panel-${skillId}`)) {
+        funCreatePerSkillReasonPanel(skillId, skillName);
+      }
+    } else {
+      selectedSkills.delete(skillId);
+      funRemovePerSkillReasonPanel(skillId);
+    }
+  });
+
+  funUpdateSelectAllCheckbox();
+  funValidateForm();
+}
+
+function funHandleOverallReasonInput() {
+  const value = overallReasonTextarea.value;
+  const length = value.length;
+  
+  overallReasonCount.textContent = length;
+  
+  if (length > 0 && length < 50) {
+    overallReasonError.textContent = 'Overall reason must be at least 50 characters long';
+    overallReasonError.classList.remove('hidden');
+  } else if (length > 2000) {
+    overallReasonError.textContent = 'Overall reason cannot exceed 2000 characters';
+    overallReasonError.classList.remove('hidden');
+  } else {
+    overallReasonError.classList.add('hidden');
+  }
+
+  funValidateForm();
+}
+
+async function funHandleSubmit(event) {
+  event.preventDefault();
+
+  if (selectedSkills.size === 0) {
+    showToast('Please select at least one skill to dispute', 'error');
+    return;
+  }
+
+  try {
+    submitBtnText.textContent = 'Submitting...';
+    submitBtnLoader.classList.remove('hidden');
+    submitBtn.disabled = true;
+
+    // Prepare disputed skills array
+    const disputedSkills = [];
+    for (const skillId of selectedSkills) {
+      const assessment = assessments.find(a => a.skillId === skillId);
+      const reason = perSkillReasons.get(skillId)?.trim();
+      
+      if (!assessment || !reason || reason.length < 20) {
+        throw new Error(`Invalid reason for skill: ${skillId}`);
+      }
+
+      disputedSkills.push({
+        skillId,
+        originalScore: assessment.score,
+        reason
+      });
+    }
+
+    // Create dispute document
+    const disputeData = {
+      employeeId: currentUser.uid,
+      assessmentCycleId: activeCycle.id,
+      disputedSkills,
+      reason: overallReasonTextarea.value.trim(),
+      status: 'open',
+      submissionDate: new Date().toISOString(),
+      auditTrail: [
+        {
+          action: 'created',
+          timestamp: new Date().toISOString(),
+          performedBy: currentUser.uid,
+          details: `Dispute created for ${selectedSkills.size} skill${selectedSkills.size === 1 ? '' : 's'}`
+        }
+      ]
+    };
+
+    await addDoc(collection(db, 'disputes'), disputeData);
+
+    showToast('Dispute submitted successfully', 'success');
+    
+    // Navigate to My Disputes page
+    setTimeout(() => {
+      window.location.href = 'my_disputes.html';
+    }, 1000);
+
+  } catch (error) {
+    console.error('Error submitting dispute:', error);
+    showToast('Failed to submit dispute. Please try again.', 'error');
+    
+    submitBtnText.textContent = 'Submit Dispute';
+    submitBtnLoader.classList.add('hidden');
+    submitBtn.disabled = false;
+  }
+}
+
+// Navigation handlers
+function funHandleBack() {
+  window.location.href = 'my_disputes.html';
+}
+
+function funHandleCancel() {
+  window.location.href = 'my_disputes.html';
+}
+
+// Initialize function
+async function funInitialize() {
+  try {
+    parseUrlParams();
+
+    // Load active cycle first
+    activeCycle = await funLoadActiveCycle();
+    funRenderCurrentCycleInfo();
+
+    if (!activeCycle) {
+      disputeFormContainer.classList.add('hidden');
+      noCycleMessage.classList.remove('hidden');
+      return;
+    }
+
+    // Load existing disputes and assessments
+    await Promise.all([
+      funLoadExistingDisputes(),
+      funLoadAssessments().then(data => {
+        assessments = data;
+      })
+    ]);
+
+    // Show form and render table
+    disputeFormContainer.classList.remove('hidden');
+    noCycleMessage.classList.add('hidden');
+    funRenderSkillsTable();
+
+  } catch (error) {
+    console.error('Error initializing page:', error);
+    showToast('Failed to load page data', 'error');
+  }
+}
+
+// DOM ready and auth state initialization
+document.addEventListener('DOMContentLoaded', () => {
+  // Get DOM elements
+  form = document.getElementById('dispute-form');
+  submitBtn = document.getElementById('submit-btn');
+  submitBtnText = document.getElementById('submit-btn-text');
+  submitBtnLoader = document.getElementById('submit-btn-loader');
+  overallReasonTextarea = document.getElementById('overall-reason');
+  overallReasonCount = document.getElementById('overall-reason-count');
+  overallReasonError = document.getElementById('overall-reason-error');
+  skillsTable = document.getElementById('skills-table');
+  skillsTbody = document.getElementById('skills-tbody');
+  skillsLoading = document.getElementById('skills-loading');
+  noSkills = document.getElementById('no-skills');
+  selectAllCheckbox = document.getElementById('select-all');
+  perSkillReasonsContainer = document.getElementById('per-skill-reasons');
+  currentCycleInfo = document.getElementById('current-cycle-info');
+  disputeFormContainer = document.getElementById('dispute-form-container');
+  noCycleMessage = document.getElementById('no-cycle-message');
+
+  // Add event listeners
+  document.getElementById('back-btn')?.addEventListener('click', funHandleBack);
+  document.getElementById('cancel-btn')?.addEventListener('click', funHandleCancel);
+  form?.addEventListener('submit', funHandleSubmit);
+  selectAllCheckbox?.addEventListener('change', funHandleSelectAll);
+  overallReasonTextarea?.addEventListener('input', funHandleOverallReasonInput);
+
+  // Delegated event listener for skill checkboxes
+  skillsTbody?.addEventListener('change', (e) => {
+    if (e.target.classList.contains('skill-checkbox')) {
+      funHandleSkillSelection(e);
+    }
+  });
+
+  // Initialize Lucide icons
+  if (window.lucide) {
+    lucide.createIcons();
+  }
+});
+
+// Auth state management
+onAuthStateChanged(auth, async (user) => {
+  if (!user) {
+    window.location.href = "auth.html?redirect=" + encodeURIComponent(location.pathname + location.search);
+  } else {
+    currentUser = user;
+    await funInitialize();
+  }
+});
+</script>
+
+</body>
+</html>

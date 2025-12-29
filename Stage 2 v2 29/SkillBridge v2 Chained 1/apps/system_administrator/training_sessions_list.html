@@ -1,0 +1,1476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SkillBridge</title>
+
+    <!-- Required: Main JS Script -->
+    <script type="module" src="scripts/main.js" data-tiramai="web-gen"></script>
+
+    <!-- Required: TailwindCSS -->
+    <script src="./lib/tailwindcss/tailwindcss.js" fetchpriority="high" data-tiramai="web-gen"></script>
+
+    <!-- Required: Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest" data-tiramai="web-gen"></script>
+
+    <!-- Required: Favicon -->
+    <link rel="icon" href="assets/imgs/logo.ico" type="image/x-icon" data-tiramai="web-gen"/>
+
+    <!-- ECharts Support (for charts/graphs) -->
+    <script defer src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js" data-tiramai="web-gen"></script>
+
+    <!-- Markdown Support (for content rendering) -->
+    <script defer src="https://cdn.jsdelivr.net/npm/marked/marked.min.js" data-tiramai="web-gen"></script>
+
+    <!-- Tailwind Config Extension -->
+    <script data-tiramai="web-gen">
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            'primary-600': '#1B2A44',
+                            'primary-700': '#14233A',
+                            'primary-800': '#0E1A2B',
+                        },
+                        accent: {
+                            'gold-50': '#FFF7E6',
+                            'gold-500': '#C59D42',
+                            'gold-600': '#A97D22',
+                        },
+                        success: { '600': '#16A34A' },
+                        warning: { '600': '#D97706' },
+                        danger: { '600': '#DC2626' },
+                        info: { '600': '#2563EB' },
+                        heat: {
+                            green: '#16A34A',
+                            amber: '#F59E0B',
+                            red: '#DC2626'
+                        },
+                        neutral: {
+                            '50': '#F8FAFC',
+                            '200': '#E2E8F0',
+                            '500': '#64748B',
+                            '700': '#334155',
+                            '900': '#111827',
+                            '950': '#0B1220',
+                        }
+                    },
+                    fontSize: {
+                        'xs': ['12px', '16px'],
+                        'sm': ['14px', '20px'],
+                        'base': ['16px', '24px'],
+                        'xl': ['20px', '28px'],
+                        '2xl': ['24px', '32px'],
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-neutral-50 min-h-screen text-neutral-900">
+    <!-- Top Navigation -->
+    <header class="fixed top-0 left-0 right-0 bg-brand-primary-800 border-b border-neutral-200 flex items-center justify-between px-6 py-4 z-30 h-16">
+        <div class="flex items-center gap-4">
+            <!-- Mobile menu toggle -->
+            <button id="mobileMenuToggle" class="md:hidden text-white p-2" aria-label="Toggle menu">
+                <svg class="w-5 h-5" data-lucide="menu"></svg>
+            </button>
+            <!-- Logo -->
+            <div class="flex items-center gap-3">
+                <svg width="32" height="32" viewBox="0 0 400 400" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="84" y="116" width="56" height="168" rx="8" fill="#1E40AF"/>
+                    <rect x="176" y="84" width="56" height="200" rx="8" fill="#059669"/>
+                    <rect x="268" y="156" width="48" height="128" rx="8" fill="#1E40AF"/>
+                    <rect x="114" y="180" width="172" height="20" rx="10" fill="#F59E0B"/>
+                </svg>
+                <span class="text-xl font-semibold text-white">SkillBridge</span>
+            </div>
+        </div>
+        <div class="flex items-center gap-4">
+            <!-- User Profile Dropdown -->
+            <div class="relative" id="userProfileContainer">
+                <button id="userProfileToggle" class="flex items-center gap-2 text-white hover:text-accent-gold-500 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2 focus:ring-offset-brand-primary-800 rounded-md p-2">
+                    <div class="w-8 h-8 bg-accent-gold-500 rounded-full flex items-center justify-center">
+                        <span id="userInitials" class="text-sm font-semibold text-white">JD</span>
+                    </div>
+                    <svg class="w-4 h-4" data-lucide="chevron-down"></svg>
+                </button>
+                <!-- Dropdown Menu -->
+                <div id="userProfileDropdown" class="hidden absolute right-0 mt-2 w-64 bg-white rounded-md shadow-lg border border-neutral-200 py-2 z-50">
+                    <div class="px-4 py-3 border-b border-neutral-200">
+                        <p id="userDisplayName" class="text-sm font-semibold text-neutral-900">John Doe</p>
+                        <p id="userEmail" class="text-xs text-neutral-500">johndoe@example.com</p>
+                        <p class="text-xs text-accent-gold-600 font-medium">System Administrator</p>
+                    </div>
+                    <button id="signOutButton" class="w-full text-left px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50 flex items-center gap-2">
+                        <svg class="w-4 h-4" data-lucide="log-out"></svg>
+                        Sign Out
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="flex pt-16">
+        <!-- Side Navigation -->
+        <aside id="sidebar" class="fixed md:sticky top-16 left-0 w-64 bg-white border-r border-neutral-200 h-[calc(100vh-4rem)] overflow-y-auto z-20 transform -translate-x-full md:translate-x-0 transition-transform duration-200">
+            <nav class="p-4 space-y-1">
+                <!-- Admin Dashboard -->
+                <a href="dashboard.html" id="nav-dashboard" class="nav-item flex items-center gap-3 px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                    <svg class="w-5 h-5" data-lucide="layout-dashboard"></svg>
+                    <span>Admin Dashboard</span>
+                </a>
+
+                <!-- Employees with Children -->
+                <div class="nav-group">
+                    <button class="nav-group-toggle flex items-center justify-between w-full px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                        <div class="flex items-center gap-3">
+                            <svg class="w-5 h-5" data-lucide="users"></svg>
+                            <span>Employees</span>
+                        </div>
+                        <svg class="w-4 h-4 transform transition-transform" data-lucide="chevron-right"></svg>
+                    </button>
+                    <div class="nav-group-children hidden ml-8 space-y-1 mt-1">
+                        <a href="employees_list.html" class="nav-item block px-3 py-2 rounded-md text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-600">Employee Directory</a>
+                        <a href="employee_upsert.html?mode=create" class="nav-item block px-3 py-2 rounded-md text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-600">Add Employee</a>
+                    </div>
+                </div>
+
+                <!-- Departments -->
+                <a href="departments_list.html" id="nav-departments" class="nav-item flex items-center gap-3 px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                    <svg class="w-5 h-5" data-lucide="building"></svg>
+                    <span>Departments</span>
+                </a>
+
+                <!-- Skill Categories -->
+                <a href="skill_categories_list.html" id="nav-skill-categories" class="nav-item flex items-center gap-3 px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                    <svg class="w-5 h-5" data-lucide="layers"></svg>
+                    <span>Skill Categories</span>
+                </a>
+
+                <!-- Criticality Levels -->
+                <a href="skill_criticalities_list.html" id="nav-criticalities" class="nav-item flex items-center gap-3 px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                    <svg class="w-5 h-5" data-lucide="sliders"></svg>
+                    <span>Criticality Levels</span>
+                </a>
+
+                <!-- Skills with Children -->
+                <div class="nav-group">
+                    <button class="nav-group-toggle flex items-center justify-between w-full px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                        <div class="flex items-center gap-3">
+                            <svg class="w-5 h-5" data-lucide="book"></svg>
+                            <span>Skills</span>
+                        </div>
+                        <svg class="w-4 h-4 transform transition-transform" data-lucide="chevron-right"></svg>
+                    </button>
+                    <div class="nav-group-children hidden ml-8 space-y-1 mt-1">
+                        <a href="skills_list.html" class="nav-item block px-3 py-2 rounded-md text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-600">Skills Directory</a>
+                        <a href="skill_upsert.html?mode=create" class="nav-item block px-3 py-2 rounded-md text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-600">Add Skill</a>
+                    </div>
+                </div>
+
+                <!-- Assessment Cycles with Children -->
+                <div class="nav-group">
+                    <button class="nav-group-toggle flex items-center justify-between w-full px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                        <div class="flex items-center gap-3">
+                            <svg class="w-5 h-5" data-lucide="calendar"></svg>
+                            <span>Assessment Cycles</span>
+                        </div>
+                        <svg class="w-4 h-4 transform transition-transform" data-lucide="chevron-right"></svg>
+                    </button>
+                    <div class="nav-group-children hidden ml-8 space-y-1 mt-1">
+                        <a href="assessment_cycles_list.html" class="nav-item block px-3 py-2 rounded-md text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-600">Cycles Directory</a>
+                        <a href="assessment_cycle_upsert.html?mode=create" class="nav-item block px-3 py-2 rounded-md text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-600">Create Cycle</a>
+                    </div>
+                </div>
+
+                <!-- Trainer Pool with Children -->
+                <div class="nav-group">
+                    <button class="nav-group-toggle flex items-center justify-between w-full px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                        <div class="flex items-center gap-3">
+                            <svg class="w-5 h-5" data-lucide="users"></svg>
+                            <span>Trainer Pool</span>
+                        </div>
+                        <svg class="w-4 h-4 transform transition-transform" data-lucide="chevron-right"></svg>
+                    </button>
+                    <div class="nav-group-children hidden ml-8 space-y-1 mt-1">
+                        <a href="trainers_list.html" class="nav-item block px-3 py-2 rounded-md text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-600">Trainer Directory</a>
+                        <a href="external_trainer_upsert.html?mode=create" class="nav-item block px-3 py-2 rounded-md text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-600">Add External Trainer</a>
+                    </div>
+                </div>
+
+                <!-- Training Sessions with Children -->
+                <div class="nav-group">
+                    <button class="nav-group-toggle flex items-center justify-between w-full px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                        <div class="flex items-center gap-3">
+                            <svg class="w-5 h-5" data-lucide="calendar"></svg>
+                            <span>Training Sessions</span>
+                        </div>
+                        <svg class="w-4 h-4 transform transition-transform" data-lucide="chevron-right"></svg>
+                    </button>
+                    <div class="nav-group-children hidden ml-8 space-y-1 mt-1">
+                        <a href="training_sessions_list.html" class="nav-item block px-3 py-2 rounded-md text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-600">Sessions Calendar</a>
+                        <a href="training_session_upsert.html?mode=create" class="nav-item block px-3 py-2 rounded-md text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-600">Create Session</a>
+                    </div>
+                </div>
+
+                <!-- Disputes -->
+                <a href="disputes_list.html" id="nav-disputes" class="nav-item flex items-center gap-3 px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                    <svg class="w-5 h-5" data-lucide="alert-circle"></svg>
+                    <span>Disputes</span>
+                </a>
+
+                <!-- Analytics Section -->
+                <div class="border-t border-neutral-200 pt-4 mt-4">
+                    <h4 class="px-3 text-xs font-semibold text-neutral-500 uppercase tracking-wider mb-2">Analytics</h4>
+                    
+                    <a href="analytics_skill_gap_heatmap.html" class="nav-item flex items-center gap-3 px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                        <svg class="w-5 h-5" data-lucide="grid"></svg>
+                        <span>Skill Gap Heatmap</span>
+                    </a>
+
+                    <a href="analytics_tni_dashboard.html" class="nav-item flex items-center gap-3 px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                        <svg class="w-5 h-5" data-lucide="bar-chart-2"></svg>
+                        <span>TNI Dashboard</span>
+                    </a>
+
+                    <a href="analytics_training_forecast.html" class="nav-item flex items-center gap-3 px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                        <svg class="w-5 h-5" data-lucide="trending-up"></svg>
+                        <span>Training Forecast</span>
+                    </a>
+
+                    <a href="analytics_assessment_completion.html" class="nav-item flex items-center gap-3 px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                        <svg class="w-5 h-5" data-lucide="pie-chart"></svg>
+                        <span>Assessment Completion</span>
+                    </a>
+
+                    <a href="analytics_dispute_metrics.html" class="nav-item flex items-center gap-3 px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                        <svg class="w-5 h-5" data-lucide="bar-chart"></svg>
+                        <span>Dispute Analytics</span>
+                    </a>
+                </div>
+            </nav>
+            
+            <!-- Footer -->
+            <div class="absolute bottom-4 w-full text-center text-xs text-neutral-500 bg-white px-4">
+                Made with ❤️ by TiramAi
+            </div>
+        </aside>
+
+        <!-- Mobile Overlay -->
+        <div id="mobileOverlay" class="hidden fixed inset-0 bg-black bg-opacity-50 z-10 md:hidden"></div>
+
+        <!-- Main Content -->
+        <main id="pageContent" class="flex-1 p-6 overflow-y-auto">
+            
+<!-- Training Sessions List/Calendar Page -->
+<div class="container mx-auto max-w-[1280px]">
+  <div class="flex items-center justify-between mb-6">
+    <div>
+      <h1 class="text-2xl leading-8 font-bold text-neutral-950">Training Sessions</h1>
+      <p class="text-sm leading-5 text-neutral-700 mt-1">Plan and manage training delivery schedule</p>
+    </div>
+    <button id="btnCreateSession" class="inline-flex items-center gap-2 px-4 py-2 rounded-md bg-brand-primary-600 hover:bg-brand-primary-700 text-white focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2">
+      <svg class="w-5 h-5" data-lucide="plus"></svg>
+      Create Session
+    </button>
+  </div>
+
+  <!-- View Toggle & Filters -->
+  <div class="bg-white border border-neutral-200 rounded-md p-4 mb-6 shadow-sm">
+    <!-- View Toggle -->
+    <div class="flex items-center justify-between mb-4">
+      <div class="flex items-center gap-2">
+        <span class="text-sm font-medium text-neutral-700">View:</span>
+        <div class="flex bg-neutral-100 rounded-md p-1">
+          <button id="listViewToggle" class="px-3 py-1.5 rounded text-sm font-medium bg-white text-brand-primary-600 shadow-sm">
+            List
+          </button>
+          <button id="calendarViewToggle" class="px-3 py-1.5 rounded text-sm font-medium text-neutral-600 hover:text-neutral-700">
+            Calendar
+          </button>
+        </div>
+      </div>
+      <button id="btnRefresh" class="inline-flex items-center gap-2 text-sm text-neutral-500 hover:text-neutral-700" aria-label="Refresh">
+        <svg class="w-4 h-4" data-lucide="refresh-cw"></svg>
+        Refresh
+      </button>
+    </div>
+
+    <!-- Filters -->
+    <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
+      <div>
+        <label class="block text-sm font-medium text-neutral-900 mb-1">Skill</label>
+        <select id="filterSkill" class="w-full border border-neutral-200 rounded-sm px-3 py-2 bg-white text-sm leading-5 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2">
+          <option value="">All Skills</option>
+        </select>
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-neutral-900 mb-1">Status</label>
+        <select id="filterStatus" class="w-full border border-neutral-200 rounded-sm px-3 py-2 bg-white text-sm leading-5 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2">
+          <option value="scheduled">Scheduled</option>
+          <option value="">All Status</option>
+          <option value="completed">Completed</option>
+          <option value="cancelled">Cancelled</option>
+        </select>
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-neutral-900 mb-1">Mode</label>
+        <select id="filterMode" class="w-full border border-neutral-200 rounded-sm px-3 py-2 bg-white text-sm leading-5 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2">
+          <option value="">All Modes</option>
+          <option value="online">Online</option>
+          <option value="offline">Offline</option>
+        </select>
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-neutral-900 mb-1">Date From</label>
+        <input type="date" id="filterDateFrom" class="w-full border border-neutral-200 rounded-sm px-3 py-2 bg-white text-sm leading-5 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2">
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-neutral-900 mb-1">Date To</label>
+        <input type="date" id="filterDateTo" class="w-full border border-neutral-200 rounded-sm px-3 py-2 bg-white text-sm leading-5 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2">
+      </div>
+    </div>
+
+    <div class="mt-4">
+      <label class="block text-sm font-medium text-neutral-900 mb-1">Trainer</label>
+      <select id="filterTrainer" class="w-full md:w-1/3 border border-neutral-200 rounded-sm px-3 py-2 bg-white text-sm leading-5 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2">
+        <option value="">All Trainers</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- List View -->
+  <div id="listView" class="bg-white border border-neutral-200 rounded-md shadow-sm">
+    <!-- Search and Actions -->
+    <div class="flex items-center justify-between p-4 border-b border-neutral-200">
+      <div class="flex items-center gap-4">
+        <div class="relative">
+          <input type="text" id="searchInput" placeholder="Search sessions..." class="pl-10 pr-4 py-2 border border-neutral-200 rounded-sm text-sm w-64 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2">
+          <svg class="w-4 h-4 absolute left-3 top-2.5 text-neutral-500" data-lucide="search"></svg>
+        </div>
+        <span id="resultCount" class="text-sm text-neutral-500">Loading...</span>
+      </div>
+    </div>
+
+    <!-- Loading Skeleton -->
+    <div id="tableSkeleton" class="divide-y divide-neutral-200">
+      <div class="px-4 py-3 bg-neutral-50">
+        <div class="grid grid-cols-8 gap-4">
+          <div class="h-4 bg-neutral-200 rounded animate-pulse"></div>
+          <div class="h-4 bg-neutral-200 rounded animate-pulse"></div>
+          <div class="h-4 bg-neutral-200 rounded animate-pulse"></div>
+          <div class="h-4 bg-neutral-200 rounded animate-pulse"></div>
+          <div class="h-4 bg-neutral-200 rounded animate-pulse"></div>
+          <div class="h-4 bg-neutral-200 rounded animate-pulse"></div>
+          <div class="h-4 bg-neutral-200 rounded animate-pulse"></div>
+          <div class="h-4 bg-neutral-200 rounded animate-pulse"></div>
+        </div>
+      </div>
+      <div class="px-4 py-3" v-for="n in 5">
+        <div class="grid grid-cols-8 gap-4">
+          <div class="h-4 bg-neutral-200 rounded animate-pulse"></div>
+          <div class="h-4 bg-neutral-200 rounded animate-pulse"></div>
+          <div class="h-4 bg-neutral-200 rounded animate-pulse"></div>
+          <div class="h-4 bg-neutral-200 rounded animate-pulse"></div>
+          <div class="h-4 bg-neutral-200 rounded animate-pulse"></div>
+          <div class="h-4 bg-neutral-200 rounded animate-pulse"></div>
+          <div class="h-4 bg-neutral-200 rounded animate-pulse"></div>
+          <div class="h-4 bg-neutral-200 rounded animate-pulse"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Data Table -->
+    <div id="tableContainer" class="hidden">
+      <table class="w-full text-sm leading-5">
+        <thead class="bg-neutral-50 text-neutral-700">
+          <tr>
+            <th class="text-left font-semibold px-4 py-3 border-b border-neutral-200 cursor-pointer hover:bg-neutral-100" data-sort="id">
+              <div class="flex items-center gap-1">
+                Session ID
+                <svg class="w-3 h-3 text-neutral-400" data-lucide="chevrons-up-down"></svg>
+              </div>
+            </th>
+            <th class="text-left font-semibold px-4 py-3 border-b border-neutral-200 cursor-pointer hover:bg-neutral-100" data-sort="skill">
+              <div class="flex items-center gap-1">
+                Skill
+                <svg class="w-3 h-3 text-neutral-400" data-lucide="chevrons-up-down"></svg>
+              </div>
+            </th>
+            <th class="text-left font-semibold px-4 py-3 border-b border-neutral-200 cursor-pointer hover:bg-neutral-100" data-sort="trainer">
+              <div class="flex items-center gap-1">
+                Trainer
+                <svg class="w-3 h-3 text-neutral-400" data-lucide="chevrons-up-down"></svg>
+              </div>
+            </th>
+            <th class="text-left font-semibold px-4 py-3 border-b border-neutral-200 cursor-pointer hover:bg-neutral-100" data-sort="scheduledDate">
+              <div class="flex items-center gap-1">
+                Date/Time
+                <svg class="w-3 h-3 text-neutral-400" data-lucide="chevrons-up-down"></svg>
+              </div>
+            </th>
+            <th class="text-left font-semibold px-4 py-3 border-b border-neutral-200">Mode</th>
+            <th class="text-left font-semibold px-4 py-3 border-b border-neutral-200">Capacity</th>
+            <th class="text-left font-semibold px-4 py-3 border-b border-neutral-200">Status</th>
+            <th class="text-left font-semibold px-4 py-3 border-b border-neutral-200">Actions</th>
+          </tr>
+        </thead>
+        <tbody id="tableBody" class="divide-y divide-neutral-200">
+          <!-- Rows populated by JavaScript -->
+        </tbody>
+      </table>
+
+      <!-- Empty State -->
+      <div id="emptyState" class="hidden p-8 text-center">
+        <svg class="w-12 h-12 text-neutral-400 mx-auto mb-4" data-lucide="calendar-x"></svg>
+        <h3 class="text-base font-semibold text-neutral-900 mb-2">No training sessions found</h3>
+        <p class="text-sm text-neutral-500 mb-4">Try adjusting your filters or create a new training session.</p>
+        <button class="inline-flex items-center gap-2 px-4 py-2 rounded-md bg-brand-primary-600 hover:bg-brand-primary-700 text-white" onclick="document.getElementById('btnCreateSession').click()">
+          <svg class="w-4 h-4" data-lucide="plus"></svg>
+          Create Session
+        </button>
+      </div>
+    </div>
+
+    <!-- Pagination -->
+    <div id="paginationContainer" class="hidden flex items-center justify-between p-4 border-t border-neutral-200">
+      <div class="text-sm text-neutral-500">
+        Showing <span id="paginationInfo">0</span> sessions
+      </div>
+      <div class="flex items-center gap-2">
+        <button id="prevPage" class="px-3 py-1.5 border border-neutral-200 rounded-md text-sm hover:bg-neutral-50 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+          Previous
+        </button>
+        <div id="pageNumbers" class="flex items-center gap-1">
+          <!-- Page numbers populated by JavaScript -->
+        </div>
+        <button id="nextPage" class="px-3 py-1.5 border border-neutral-200 rounded-md text-sm hover:bg-neutral-50 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+          Next
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Calendar View -->
+  <div id="calendarView" class="hidden bg-white border border-neutral-200 rounded-md shadow-sm">
+    <!-- Calendar Header -->
+    <div class="flex items-center justify-between p-4 border-b border-neutral-200">
+      <div class="flex items-center gap-4">
+        <h2 id="calendarTitle" class="text-lg font-semibold text-neutral-900"></h2>
+        <div class="flex items-center gap-2">
+          <button id="prevMonth" class="p-2 hover:bg-neutral-50 rounded-md">
+            <svg class="w-4 h-4" data-lucide="chevron-left"></svg>
+          </button>
+          <button id="nextMonth" class="p-2 hover:bg-neutral-50 rounded-md">
+            <svg class="w-4 h-4" data-lucide="chevron-right"></svg>
+          </button>
+          <button id="todayBtn" class="px-3 py-1.5 text-sm border border-neutral-200 rounded-md hover:bg-neutral-50">
+            Today
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Calendar Grid -->
+    <div class="p-4">
+      <div class="grid grid-cols-7 gap-0 mb-4">
+        <div class="p-2 text-xs font-medium text-neutral-500 text-center">Sun</div>
+        <div class="p-2 text-xs font-medium text-neutral-500 text-center">Mon</div>
+        <div class="p-2 text-xs font-medium text-neutral-500 text-center">Tue</div>
+        <div class="p-2 text-xs font-medium text-neutral-500 text-center">Wed</div>
+        <div class="p-2 text-xs font-medium text-neutral-500 text-center">Thu</div>
+        <div class="p-2 text-xs font-medium text-neutral-500 text-center">Fri</div>
+        <div class="p-2 text-xs font-medium text-neutral-500 text-center">Sat</div>
+      </div>
+      <div id="calendarGrid" class="grid grid-cols-7 gap-0 border border-neutral-200">
+        <!-- Calendar cells populated by JavaScript -->
+      </div>
+    </div>
+
+    <!-- Loading Skeleton for Calendar -->
+    <div id="calendarSkeleton" class="p-4">
+      <div class="grid grid-cols-7 gap-0 border border-neutral-200">
+        <div class="h-24 bg-neutral-200 animate-pulse border-r border-b border-neutral-200" v-for="n in 35"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Cancel Session Modal -->
+<div id="cancelModal" class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+  <div class="bg-white rounded-lg shadow-lg max-w-md w-full p-6">
+    <div class="flex items-center gap-3 mb-4">
+      <div class="flex-shrink-0 w-8 h-8 bg-warning-600 rounded-full flex items-center justify-center">
+        <svg class="w-4 h-4 text-white" data-lucide="alert-triangle"></svg>
+      </div>
+      <h3 class="text-lg font-semibold text-neutral-900">Cancel Training Session</h3>
+    </div>
+    
+    <div class="mb-6">
+      <p class="text-sm text-neutral-700 mb-4">Are you sure you want to cancel this training session?</p>
+      
+      <div class="bg-neutral-50 p-3 rounded-md space-y-2">
+        <div class="flex justify-between text-sm">
+          <span class="font-medium">Skill:</span>
+          <span id="cancelModalSkill" class="text-neutral-700"></span>
+        </div>
+        <div class="flex justify-between text-sm">
+          <span class="font-medium">Date:</span>
+          <span id="cancelModalDate" class="text-neutral-700"></span>
+        </div>
+        <div class="flex justify-between text-sm">
+          <span class="font-medium">Assigned Employees:</span>
+          <span id="cancelModalAttendees" class="text-neutral-700"></span>
+        </div>
+      </div>
+      
+      <p class="text-xs text-warning-600 mt-3">
+        <svg class="w-3 h-3 inline mr-1" data-lucide="info"></svg>
+        This action cannot be undone. Assigned employees will be notified.
+      </p>
+    </div>
+    
+    <div class="flex items-center justify-end gap-3">
+      <button id="cancelModalCancel" class="px-4 py-2 border border-neutral-200 rounded-md text-sm hover:bg-neutral-50">
+        Keep Session
+      </button>
+      <button id="cancelModalConfirm" class="px-4 py-2 bg-danger-600 hover:bg-danger-700 text-white rounded-md text-sm">
+        Cancel Session
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Session Detail Modal -->
+<div id="detailModal" class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+  <div class="bg-white rounded-lg shadow-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+    <div class="sticky top-0 bg-white border-b border-neutral-200 px-6 py-4">
+      <div class="flex items-center justify-between">
+        <h3 class="text-lg font-semibold text-neutral-900">Training Session Details</h3>
+        <button id="closeDetailModal" class="p-2 hover:bg-neutral-50 rounded-md">
+          <svg class="w-4 h-4" data-lucide="x"></svg>
+        </button>
+      </div>
+    </div>
+    
+    <div class="p-6">
+      <div id="detailModalContent">
+        <!-- Content populated by JavaScript -->
+      </div>
+    </div>
+  </div>
+</div>
+
+        </main>
+    </div>
+
+    <!-- Required: JavaScript -->
+    <script type="module" data-tiramai="web-gen">
+        import { showToast, showLoader, hideLoader, env } from "./scripts/main.js";
+        import { auth, db, storage } from "./scripts/firebase.js";
+        import { onAuthStateChanged, getAuth, signOut } from 'https://www.gstatic.com/firebasejs/10.12.4/firebase-auth.js';
+        import { doc, getDoc } from 'https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js';
+
+        // Initialize Lucide icons
+        lucide.createIcons();
+
+        // Mobile menu toggle
+        const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+        const sidebar = document.getElementById('sidebar');
+        const mobileOverlay = document.getElementById('mobileOverlay');
+
+        mobileMenuToggle?.addEventListener('click', () => {
+            sidebar.classList.toggle('-translate-x-full');
+            mobileOverlay.classList.toggle('hidden');
+        });
+
+        mobileOverlay?.addEventListener('click', () => {
+            sidebar.classList.add('-translate-x-full');
+            mobileOverlay.classList.add('hidden');
+        });
+
+        // Navigation group toggles
+        document.querySelectorAll('.nav-group-toggle').forEach(toggle => {
+            toggle.addEventListener('click', (e) => {
+                e.preventDefault();
+                const children = toggle.nextElementSibling;
+                const icon = toggle.querySelector('svg:last-child');
+                
+                children.classList.toggle('hidden');
+                icon.classList.toggle('rotate-90');
+            });
+        });
+
+        // User profile dropdown
+        const userProfileToggle = document.getElementById('userProfileToggle');
+        const userProfileDropdown = document.getElementById('userProfileDropdown');
+
+        userProfileToggle?.addEventListener('click', () => {
+            userProfileDropdown.classList.toggle('hidden');
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!userProfileToggle?.contains(e.target) && !userProfileDropdown?.contains(e.target)) {
+                userProfileDropdown?.classList.add('hidden');
+            }
+        });
+
+        // Sign out functionality
+        document.getElementById('signOutButton')?.addEventListener('click', async () => {
+            try {
+                await signOut(auth);
+                window.location.href = 'auth.html';
+            } catch (error) {
+                console.error('Sign out error:', error);
+                showToast('Failed to sign out', 'error');
+            }
+        });
+
+        // Auth state management
+        onAuthStateChanged(auth, async (user) => {
+            if (!user) {
+                window.location.href = 'auth.html';
+                return;
+            }
+
+            // Load user profile data
+            try {
+                const userDoc = await getDoc(doc(db, 'users', user.uid));
+                const userData = userDoc.exists() ? userDoc.data() : null;
+
+                // Update UI with user data
+                const displayName = userData?.firstName && userData?.lastName 
+                    ? `${userData.firstName} ${userData.lastName}`
+                    : user.displayName || 'John Doe';
+                
+                const email = user.email || 'johndoe@example.com';
+                const initials = displayName.split(' ').map(n => n[0]).join('').toUpperCase();
+
+                document.getElementById('userDisplayName').textContent = displayName;
+                document.getElementById('userEmail').textContent = email;
+                document.getElementById('userInitials').textContent = initials;
+
+            } catch (error) {
+                console.error('Error loading user data:', error);
+                // Fallback to default values
+                document.getElementById('userDisplayName').textContent = 'John Doe';
+                document.getElementById('userEmail').textContent = user.email || 'johndoe@example.com';
+                document.getElementById('userInitials').textContent = 'JD';
+            }
+        });
+
+        // Set active navigation item based on current page
+        function setActiveNavItem() {
+            const currentPath = window.location.pathname;
+            const navItems = document.querySelectorAll('.nav-item');
+            
+            navItems.forEach(item => {
+                const href = item.getAttribute('href');
+                if (href && currentPath.includes(href.split('?')[0])) {
+                    item.classList.add('bg-accent-gold-50', 'text-brand-primary-600', 'border-l-2', 'border-brand-primary-600');
+                    item.classList.remove('text-neutral-700', 'text-neutral-600');
+                    
+                    // Expand parent group if needed
+                    const parentGroup = item.closest('.nav-group');
+                    if (parentGroup) {
+                        const children = parentGroup.querySelector('.nav-group-children');
+                        const icon = parentGroup.querySelector('.nav-group-toggle svg:last-child');
+                        children?.classList.remove('hidden');
+                        icon?.classList.add('rotate-90');
+                    }
+                }
+            });
+        }
+
+        // Initialize active nav state
+        setActiveNavItem();
+    </script>
+
+    
+<script id="data-script" type="module" data-tiramai="web-gen">
+import { onAuthStateChanged, getAuth } from 'https://www.gstatic.com/firebasejs/10.12.4/firebase-auth.js';
+import {
+  collection, getDocs, setDoc, doc, getDoc, updateDoc, query, where, orderBy, limit, startAfter, Timestamp
+} from 'https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js';
+import { auth, getDb } from "./scripts/firebase.js";
+import { showToast, showLoader, hideLoader } from "./scripts/main.js";
+
+const db = getDb();
+let currentAbort;
+let currentView = 'list';
+let currentSort = { field: 'scheduledDate', direction: 'asc' };
+let currentPage = 1;
+const itemsPerPage = 20;
+let allSessions = [];
+let filteredSessions = [];
+let allSkills = [];
+let allTrainers = [];
+let currentCalendarDate = new Date();
+
+// Initialize Lucide icons
+lucide.createIcons();
+
+// Auth check
+onAuthStateChanged(auth, user => {
+  if (!user) location.href = "auth.html?redirect=" + encodeURIComponent(location.pathname);
+  else funInitialLoad();
+});
+
+// Navigation handlers
+document.getElementById('btnCreateSession')?.addEventListener('click', () => {
+  location.href = 'training_session_upsert.html?mode=create';
+});
+
+// View toggle handlers
+document.getElementById('listViewToggle')?.addEventListener('click', () => funToggleView('list'));
+document.getElementById('calendarViewToggle')?.addEventListener('click', () => funToggleView('calendar'));
+
+// Filter handlers
+document.getElementById('filterSkill')?.addEventListener('change', () => funApplyFilters());
+document.getElementById('filterStatus')?.addEventListener('change', () => funApplyFilters());
+document.getElementById('filterMode')?.addEventListener('change', () => funApplyFilters());
+document.getElementById('filterDateFrom')?.addEventListener('change', () => funApplyFilters());
+document.getElementById('filterDateTo')?.addEventListener('change', () => funApplyFilters());
+document.getElementById('filterTrainer')?.addEventListener('change', () => funApplyFilters());
+
+// Search handler
+let searchTimeout;
+document.getElementById('searchInput')?.addEventListener('input', (e) => {
+  clearTimeout(searchTimeout);
+  searchTimeout = setTimeout(() => {
+    currentPage = 1;
+    funApplyFilters();
+  }, 300);
+});
+
+// Sort handlers
+document.querySelectorAll('[data-sort]').forEach(header => {
+  header.addEventListener('click', () => {
+    const field = header.dataset.sort;
+    if (currentSort.field === field) {
+      currentSort.direction = currentSort.direction === 'asc' ? 'desc' : 'asc';
+    } else {
+      currentSort.field = field;
+      currentSort.direction = 'asc';
+    }
+    funApplyFilters();
+  });
+});
+
+// Calendar navigation
+document.getElementById('prevMonth')?.addEventListener('click', () => {
+  currentCalendarDate.setMonth(currentCalendarDate.getMonth() - 1);
+  funRenderCalendar();
+});
+
+document.getElementById('nextMonth')?.addEventListener('click', () => {
+  currentCalendarDate.setMonth(currentCalendarDate.getMonth() + 1);
+  funRenderCalendar();
+});
+
+document.getElementById('todayBtn')?.addEventListener('click', () => {
+  currentCalendarDate = new Date();
+  funRenderCalendar();
+});
+
+// Refresh handler
+document.getElementById('btnRefresh')?.addEventListener('click', () => funInitialLoad(true));
+
+// Modal handlers
+document.getElementById('cancelModalCancel')?.addEventListener('click', () => funCloseCancelModal());
+document.getElementById('cancelModalConfirm')?.addEventListener('click', () => funConfirmCancel());
+document.getElementById('closeDetailModal')?.addEventListener('click', () => funCloseDetailModal());
+
+// Close modals on backdrop click
+document.getElementById('cancelModal')?.addEventListener('click', (e) => {
+  if (e.target.id === 'cancelModal') funCloseCancelModal();
+});
+document.getElementById('detailModal')?.addEventListener('click', (e) => {
+  if (e.target.id === 'detailModal') funCloseDetailModal();
+});
+
+// ESC key to close modals
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    funCloseCancelModal();
+    funCloseDetailModal();
+  }
+});
+
+// Abortable fetch function
+async function funFetchData(buildQuery) {
+  if (currentAbort) currentAbort.abort();
+  currentAbort = new AbortController();
+  const signal = currentAbort.signal;
+
+  try {
+    const q = buildQuery();
+    const snapshot = await getDocs(q);
+    if (signal.aborted) return [];
+    return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+  } catch (err) {
+    if (signal.aborted) return [];
+    console.error('Fetch error:', err);
+    showToast(err?.message || 'Failed to load data');
+    return [];
+  }
+}
+
+async function funInitialLoad(forceRefresh = false) {
+  if (!forceRefresh && allSessions.length > 0) return;
+  
+  funShowSkeleton();
+  
+  try {
+    // Load reference data
+    await Promise.all([
+      funLoadSkills(),
+      funLoadTrainers()
+    ]);
+    
+    // Load sessions
+    await funLoadSessions();
+    
+    funApplyFilters();
+    if (currentView === 'calendar') funRenderCalendar();
+    
+  } catch (error) {
+    console.error('Load error:', error);
+    showToast('Failed to load data');
+  }
+}
+
+async function funLoadSessions() {
+  allSessions = await funFetchData(() => 
+    query(
+      collection(db, 'trainingSessions'),
+      orderBy('scheduledDate', 'desc')
+    )
+  );
+}
+
+async function funLoadSkills() {
+  const skillsData = await funFetchData(() => 
+    query(
+      collection(db, 'skills'),
+      where('status', '==', 'active'),
+      orderBy('name')
+    )
+  );
+  
+  allSkills = skillsData;
+  
+  // Populate skill filter
+  const skillSelect = document.getElementById('filterSkill');
+  if (skillSelect) {
+    skillSelect.innerHTML = '<option value="">All Skills</option>';
+    skillsData.forEach(skill => {
+      const option = document.createElement('option');
+      option.value = skill.id;
+      option.textContent = skill.name || 'N/A';
+      skillSelect.appendChild(option);
+    });
+  }
+}
+
+async function funLoadTrainers() {
+  // Load internal trainers (users)
+  const internalTrainers = await funFetchData(() => 
+    query(
+      collection(db, 'users'),
+      where('employeeStatus', '==', 'active'),
+      orderBy('firstName')
+    )
+  );
+  
+  // Load external trainers
+  const externalTrainers = await funFetchData(() => 
+    query(
+      collection(db, 'externalTrainers'),
+      where('status', '==', 'active'),
+      orderBy('name')
+    )
+  );
+  
+  allTrainers = [
+    ...internalTrainers.map(t => ({ ...t, type: 'internal', displayName: `${t.firstName || ''} ${t.lastName || ''}`.trim() || 'N/A' })),
+    ...externalTrainers.map(t => ({ ...t, type: 'external', displayName: t.name || 'N/A' }))
+  ];
+  
+  // Populate trainer filter
+  const trainerSelect = document.getElementById('filterTrainer');
+  if (trainerSelect) {
+    trainerSelect.innerHTML = '<option value="">All Trainers</option>';
+    allTrainers.forEach(trainer => {
+      const option = document.createElement('option');
+      option.value = `${trainer.type}:${trainer.id}`;
+      option.textContent = trainer.displayName;
+      trainerSelect.appendChild(option);
+    });
+  }
+}
+
+function funApplyFilters() {
+  const searchTerm = document.getElementById('searchInput')?.value.toLowerCase() || '';
+  const skillFilter = document.getElementById('filterSkill')?.value || '';
+  const statusFilter = document.getElementById('filterStatus')?.value || '';
+  const modeFilter = document.getElementById('filterMode')?.value || '';
+  const dateFromFilter = document.getElementById('filterDateFrom')?.value || '';
+  const dateToFilter = document.getElementById('filterDateTo')?.value || '';
+  const trainerFilter = document.getElementById('filterTrainer')?.value || '';
+  
+  filteredSessions = allSessions.filter(session => {
+    // Search filter
+    if (searchTerm) {
+      const skill = allSkills.find(s => s.id === session.skillId);
+      const trainer = allTrainers.find(t => 
+        (session.trainerType === 'internal' || session.trainerType === 'external') && 
+        t.id === session.trainerId && t.type === session.trainerType
+      );
+      
+      const searchableText = [
+        session.id?.substring(0, 8) || '',
+        skill?.name || '',
+        trainer?.displayName || '',
+        session.status || ''
+      ].join(' ').toLowerCase();
+      
+      if (!searchableText.includes(searchTerm)) return false;
+    }
+    
+    // Other filters
+    if (skillFilter && session.skillId !== skillFilter) return false;
+    if (statusFilter && session.status !== statusFilter) return false;
+    if (modeFilter && session.mode !== modeFilter) return false;
+    if (trainerFilter) {
+      const [type, id] = trainerFilter.split(':');
+      if (session.trainerType !== type || session.trainerId !== id) return false;
+    }
+    
+    // Date range filter
+    if (dateFromFilter || dateToFilter) {
+      const sessionDate = new Date(session.scheduledDate);
+      if (dateFromFilter && sessionDate < new Date(dateFromFilter)) return false;
+      if (dateToFilter && sessionDate > new Date(dateToFilter + 'T23:59:59')) return false;
+    }
+    
+    return true;
+  });
+  
+  // Apply sorting
+  filteredSessions.sort((a, b) => {
+    let aVal = a[currentSort.field];
+    let bVal = b[currentSort.field];
+    
+    // Handle special sort cases
+    if (currentSort.field === 'skill') {
+      const aSkill = allSkills.find(s => s.id === a.skillId);
+      const bSkill = allSkills.find(s => s.id === b.skillId);
+      aVal = aSkill?.name || '';
+      bVal = bSkill?.name || '';
+    } else if (currentSort.field === 'trainer') {
+      const aTrainer = allTrainers.find(t => t.id === a.trainerId && t.type === a.trainerType);
+      const bTrainer = allTrainers.find(t => t.id === b.trainerId && t.type === b.trainerType);
+      aVal = aTrainer?.displayName || '';
+      bVal = bTrainer?.displayName || '';
+    } else if (currentSort.field === 'id') {
+      aVal = a.id || '';
+      bVal = b.id || '';
+    }
+    
+    // Handle dates
+    if (currentSort.field === 'scheduledDate') {
+      aVal = new Date(aVal || 0);
+      bVal = new Date(bVal || 0);
+    }
+    
+    if (currentSort.direction === 'asc') {
+      return aVal < bVal ? -1 : aVal > bVal ? 1 : 0;
+    } else {
+      return aVal > bVal ? -1 : aVal < bVal ? 1 : 0;
+    }
+  });
+  
+  if (currentView === 'list') {
+    funRenderTable();
+  } else {
+    funRenderCalendar();
+  }
+}
+
+function funRenderTable() {
+  funHideSkeleton();
+  
+  const tbody = document.getElementById('tableBody');
+  const resultCount = document.getElementById('resultCount');
+  const emptyState = document.getElementById('emptyState');
+  
+  if (!tbody) return;
+  
+  // Update result count
+  if (resultCount) {
+    resultCount.textContent = `${filteredSessions.length} sessions found`;
+  }
+  
+  // Show empty state if no results
+  if (filteredSessions.length === 0) {
+    tbody.innerHTML = '';
+    if (emptyState) emptyState.classList.remove('hidden');
+    document.getElementById('paginationContainer')?.classList.add('hidden');
+    return;
+  }
+  
+  if (emptyState) emptyState.classList.add('hidden');
+  
+  // Pagination
+  const totalPages = Math.ceil(filteredSessions.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const paginatedSessions = filteredSessions.slice(startIndex, endIndex);
+  
+  // Render rows
+  tbody.innerHTML = paginatedSessions.map(session => {
+    const skill = allSkills.find(s => s.id === session.skillId);
+    const trainer = allTrainers.find(t => t.id === session.trainerId && t.type === session.trainerType);
+    const assignedCount = Array.isArray(session.assignedEmployees) ? session.assignedEmployees.length : 0;
+    
+    const formattedDate = session.scheduledDate ? 
+      new Date(session.scheduledDate).toLocaleDateString('en-US', { 
+        month: 'short', day: 'numeric', year: 'numeric',
+        hour: '2-digit', minute: '2-digit'
+      }) : 'N/A';
+    
+    const statusBadge = funGetStatusBadge(session.status || 'scheduled');
+    const modeBadge = funGetModeBadge(session.mode || '');
+    
+    return `
+      <tr class="hover:bg-neutral-50 focus-within:bg-neutral-50 cursor-pointer" data-session-id="${session.id}">
+        <td class="px-4 py-3">
+          <span class="font-mono text-xs">${(session.id || '').substring(0, 8)}</span>
+        </td>
+        <td class="px-4 py-3">
+          <span class="text-brand-primary-600 hover:text-brand-primary-700 font-medium">${skill?.name || 'N/A'}</span>
+        </td>
+        <td class="px-4 py-3">
+          <div>
+            <span class="font-medium">${trainer?.displayName || 'N/A'}</span>
+            <span class="text-xs text-neutral-500 block">${session.trainerType || 'N/A'}</span>
+          </div>
+        </td>
+        <td class="px-4 py-3">
+          <span class="text-sm">${formattedDate}</span>
+        </td>
+        <td class="px-4 py-3">${modeBadge}</td>
+        <td class="px-4 py-3">
+          <span class="text-sm">${assignedCount}/${session.capacity || 'N/A'}</span>
+        </td>
+        <td class="px-4 py-3">${statusBadge}</td>
+        <td class="px-4 py-3">
+          <div class="flex items-center gap-2">
+            <button onclick="funViewSession('${session.id}')" class="text-brand-primary-600 hover:text-brand-primary-700 text-sm">
+              View
+            </button>
+            ${session.status === 'scheduled' ? `
+              <button onclick="funEditSession('${session.id}')" class="text-warning-600 hover:text-warning-700 text-sm">
+                Edit
+              </button>
+              <button onclick="funShowCancelModal('${session.id}')" class="text-danger-600 hover:text-danger-700 text-sm">
+                Cancel
+              </button>
+            ` : ''}
+          </div>
+        </td>
+      </tr>
+    `;
+  }).join('');
+  
+  // Add row click handlers
+  tbody.querySelectorAll('tr').forEach(row => {
+    row.addEventListener('click', (e) => {
+      if (!e.target.closest('button')) {
+        const sessionId = row.dataset.sessionId;
+        funViewSession(sessionId);
+      }
+    });
+  });
+  
+  // Update pagination
+  funRenderPagination(totalPages);
+}
+
+function funRenderCalendar() {
+  if (currentView !== 'calendar') return;
+  
+  const calendarGrid = document.getElementById('calendarGrid');
+  const calendarTitle = document.getElementById('calendarTitle');
+  const calendarSkeleton = document.getElementById('calendarSkeleton');
+  
+  if (!calendarGrid || !calendarTitle) return;
+  
+  // Hide skeleton, show calendar
+  if (calendarSkeleton) calendarSkeleton.classList.add('hidden');
+  calendarGrid.classList.remove('hidden');
+  
+  // Update title
+  calendarTitle.textContent = currentCalendarDate.toLocaleDateString('en-US', { 
+    month: 'long', year: 'numeric' 
+  });
+  
+  // Get calendar dates
+  const firstDay = new Date(currentCalendarDate.getFullYear(), currentCalendarDate.getMonth(), 1);
+  const lastDay = new Date(currentCalendarDate.getFullYear(), currentCalendarDate.getMonth() + 1, 0);
+  const startDate = new Date(firstDay);
+  startDate.setDate(startDate.getDate() - firstDay.getDay());
+  
+  const calendarDates = [];
+  const currentDate = new Date(startDate);
+  
+  for (let week = 0; week < 6; week++) {
+    for (let day = 0; day < 7; day++) {
+      calendarDates.push(new Date(currentDate));
+      currentDate.setDate(currentDate.getDate() + 1);
+    }
+  }
+  
+  // Filter sessions for current month view
+  const monthSessions = filteredSessions.filter(session => {
+    if (!session.scheduledDate) return false;
+    const sessionDate = new Date(session.scheduledDate);
+    return sessionDate >= startDate && sessionDate < new Date(currentDate);
+  });
+  
+  // Group sessions by date
+  const sessionsByDate = {};
+  monthSessions.forEach(session => {
+    const dateKey = new Date(session.scheduledDate).toDateString();
+    if (!sessionsByDate[dateKey]) sessionsByDate[dateKey] = [];
+    sessionsByDate[dateKey].push(session);
+  });
+  
+  // Render calendar cells
+  calendarGrid.innerHTML = calendarDates.map(date => {
+    const isCurrentMonth = date.getMonth() === currentCalendarDate.getMonth();
+    const isToday = date.toDateString() === new Date().toDateString();
+    const dateKey = date.toDateString();
+    const daySessions = sessionsByDate[dateKey] || [];
+    
+    return `
+      <div class="h-24 border-r border-b border-neutral-200 p-1 ${isCurrentMonth ? 'bg-white' : 'bg-neutral-50'} ${isToday ? 'bg-accent-gold-50' : ''} overflow-hidden">
+        <div class="text-xs font-medium ${isCurrentMonth ? 'text-neutral-900' : 'text-neutral-400'} ${isToday ? 'text-brand-primary-600' : ''} mb-1">
+          ${date.getDate()}
+        </div>
+        <div class="space-y-1">
+          ${daySessions.slice(0, 3).map(session => {
+            const skill = allSkills.find(s => s.id === session.skillId);
+            return `
+              <div onclick="funViewSession('${session.id}')" class="text-xs p-1 rounded cursor-pointer ${funGetSessionColor(session.status)} hover:opacity-80">
+                ${(skill?.name || 'N/A').substring(0, 20)}${(skill?.name || '').length > 20 ? '...' : ''}
+              </div>
+            `;
+          }).join('')}
+          ${daySessions.length > 3 ? `<div class="text-xs text-neutral-500">+${daySessions.length - 3} more</div>` : ''}
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function funGetSessionColor(status) {
+  switch (status) {
+    case 'scheduled': return 'bg-brand-primary-600 text-white';
+    case 'completed': return 'bg-success-600 text-white';
+    case 'cancelled': return 'bg-neutral-400 text-white';
+    default: return 'bg-neutral-200 text-neutral-800';
+  }
+}
+
+function funRenderPagination(totalPages) {
+  const paginationContainer = document.getElementById('paginationContainer');
+  const paginationInfo = document.getElementById('paginationInfo');
+  const pageNumbers = document.getElementById('pageNumbers');
+  const prevButton = document.getElementById('prevPage');
+  const nextButton = document.getElementById('nextPage');
+  
+  if (!paginationContainer || totalPages <= 1) {
+    paginationContainer?.classList.add('hidden');
+    return;
+  }
+  
+  paginationContainer.classList.remove('hidden');
+  
+  // Update info
+  const startIndex = (currentPage - 1) * itemsPerPage + 1;
+  const endIndex = Math.min(currentPage * itemsPerPage, filteredSessions.length);
+  if (paginationInfo) {
+    paginationInfo.textContent = `${startIndex}-${endIndex} of ${filteredSessions.length}`;
+  }
+  
+  // Update buttons
+  if (prevButton) {
+    prevButton.disabled = currentPage === 1;
+    prevButton.onclick = () => {
+      if (currentPage > 1) {
+        currentPage--;
+        funRenderTable();
+      }
+    };
+  }
+  
+  if (nextButton) {
+    nextButton.disabled = currentPage === totalPages;
+    nextButton.onclick = () => {
+      if (currentPage < totalPages) {
+        currentPage++;
+        funRenderTable();
+      }
+    };
+  }
+  
+  // Render page numbers
+  if (pageNumbers) {
+    const pages = [];
+    const maxVisible = 5;
+    let start = Math.max(1, currentPage - Math.floor(maxVisible / 2));
+    let end = Math.min(totalPages, start + maxVisible - 1);
+    
+    if (end - start + 1 < maxVisible) {
+      start = Math.max(1, end - maxVisible + 1);
+    }
+    
+    for (let i = start; i <= end; i++) {
+      pages.push(i);
+    }
+    
+    pageNumbers.innerHTML = pages.map(page => `
+      <button onclick="funGoToPage(${page})" class="px-3 py-1.5 text-sm border border-neutral-200 rounded-md hover:bg-neutral-50 ${page === currentPage ? 'bg-brand-primary-600 text-white border-brand-primary-600' : ''}">
+        ${page}
+      </button>
+    `).join('');
+  }
+}
+
+function funGoToPage(page) {
+  currentPage = page;
+  funRenderTable();
+}
+
+function funGetStatusBadge(status) {
+  switch (status) {
+    case 'scheduled':
+      return '<span class="inline-flex items-center px-2 py-1 text-xs rounded-full bg-brand-primary-600 text-white">Scheduled</span>';
+    case 'completed':
+      return '<span class="inline-flex items-center px-2 py-1 text-xs rounded-full bg-success-600 text-white">Completed</span>';
+    case 'cancelled':
+      return '<span class="inline-flex items-center px-2 py-1 text-xs rounded-full bg-neutral-400 text-white">Cancelled</span>';
+    default:
+      return '<span class="inline-flex items-center px-2 py-1 text-xs rounded-full bg-neutral-200 text-neutral-800">Unknown</span>';
+  }
+}
+
+function funGetModeBadge(mode) {
+  switch (mode) {
+    case 'online':
+      return '<span class="inline-flex items-center px-2 py-1 text-xs rounded-full bg-info-600 text-white">Online</span>';
+    case 'offline':
+      return '<span class="inline-flex items-center px-2 py-1 text-xs rounded-full bg-warning-600 text-white">Offline</span>';
+    default:
+      return '<span class="inline-flex items-center px-2 py-1 text-xs rounded-full bg-neutral-200 text-neutral-800">N/A</span>';
+  }
+}
+
+function funToggleView(view) {
+  currentView = view;
+  
+  const listView = document.getElementById('listView');
+  const calendarView = document.getElementById('calendarView');
+  const listToggle = document.getElementById('listViewToggle');
+  const calendarToggle = document.getElementById('calendarViewToggle');
+  
+  if (view === 'list') {
+    listView?.classList.remove('hidden');
+    calendarView?.classList.add('hidden');
+    listToggle?.classList.add('bg-white', 'text-brand-primary-600', 'shadow-sm');
+    listToggle?.classList.remove('text-neutral-600');
+    calendarToggle?.classList.remove('bg-white', 'text-brand-primary-600', 'shadow-sm');
+    calendarToggle?.classList.add('text-neutral-600');
+    funRenderTable();
+  } else {
+    listView?.classList.add('hidden');
+    calendarView?.classList.remove('hidden');
+    calendarToggle?.classList.add('bg-white', 'text-brand-primary-600', 'shadow-sm');
+    calendarToggle?.classList.remove('text-neutral-600');
+    listToggle?.classList.remove('bg-white', 'text-brand-primary-600', 'shadow-sm');
+    listToggle?.classList.add('text-neutral-600');
+    funRenderCalendar();
+  }
+}
+
+function funShowSkeleton() {
+  document.getElementById('tableSkeleton')?.classList.remove('hidden');
+  document.getElementById('tableContainer')?.classList.add('hidden');
+  document.getElementById('calendarSkeleton')?.classList.remove('hidden');
+  document.getElementById('calendarGrid')?.classList.add('hidden');
+}
+
+function funHideSkeleton() {
+  document.getElementById('tableSkeleton')?.classList.add('hidden');
+  document.getElementById('tableContainer')?.classList.remove('hidden');
+}
+
+// Modal functions
+let currentCancelSessionId = null;
+
+function funShowCancelModal(sessionId) {
+  const session = allSessions.find(s => s.id === sessionId);
+  if (!session) return;
+  
+  const skill = allSkills.find(s => s.id === session.skillId);
+  const assignedCount = Array.isArray(session.assignedEmployees) ? session.assignedEmployees.length : 0;
+  
+  document.getElementById('cancelModalSkill').textContent = skill?.name || 'N/A';
+  document.getElementById('cancelModalDate').textContent = session.scheduledDate ? 
+    new Date(session.scheduledDate).toLocaleDateString('en-US', { 
+      month: 'long', day: 'numeric', year: 'numeric',
+      hour: '2-digit', minute: '2-digit'
+    }) : 'N/A';
+  document.getElementById('cancelModalAttendees').textContent = assignedCount;
+  
+  currentCancelSessionId = sessionId;
+  document.getElementById('cancelModal')?.classList.remove('hidden');
+  
+  // Focus trap
+  document.getElementById('cancelModalConfirm')?.focus();
+}
+
+function funCloseCancelModal() {
+  document.getElementById('cancelModal')?.classList.add('hidden');
+  currentCancelSessionId = null;
+}
+
+async function funConfirmCancel() {
+  if (!currentCancelSessionId) return;
+  
+  showLoader();
+  try {
+    await updateDoc(doc(db, 'trainingSessions', currentCancelSessionId), {
+      status: 'cancelled',
+      modifiedTimestamp: new Date().toISOString()
+    });
+    
+    showToast('Training session cancelled successfully');
+    funCloseCancelModal();
+    funInitialLoad(true);
+    
+  } catch (error) {
+    console.error('Cancel error:', error);
+    showToast('Failed to cancel session');
+  } finally {
+    hideLoader();
+  }
+}
+
+function funViewSession(sessionId) {
+  location.href = `training_session_detail.html?sessionId=${sessionId}`;
+}
+
+function funEditSession(sessionId) {
+  location.href = `training_session_upsert.html?mode=edit&sessionId=${sessionId}`;
+}
+
+async function funShowDetailModal(sessionId) {
+  const session = allSessions.find(s => s.id === sessionId);
+  if (!session) return;
+  
+  const skill = allSkills.find(s => s.id === session.skillId);
+  const trainer = allTrainers.find(t => t.id === session.trainerId && t.type === session.trainerType);
+  const assignedCount = Array.isArray(session.assignedEmployees) ? session.assignedEmployees.length : 0;
+  
+  const content = `
+    <div class="space-y-6">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+          <h4 class="text-sm font-semibold text-neutral-900 mb-3">Session Details</h4>
+          <div class="space-y-3">
+            <div>
+              <span class="text-sm font-medium text-neutral-700">Session ID:</span>
+              <span class="ml-2 font-mono text-xs">${(session.id || '').substring(0, 8)}</span>
+            </div>
+            <div>
+              <span class="text-sm font-medium text-neutral-700">Skill:</span>
+              <span class="ml-2 text-sm">${skill?.name || 'N/A'}</span>
+            </div>
+            <div>
+              <span class="text-sm font-medium text-neutral-700">Trainer:</span>
+              <span class="ml-2 text-sm">${trainer?.displayName || 'N/A'} (${session.trainerType || 'N/A'})</span>
+            </div>
+            <div>
+              <span class="text-sm font-medium text-neutral-700">Mode:</span>
+              <span class="ml-2">${funGetModeBadge(session.mode)}</span>
+            </div>
+            <div>
+              <span class="text-sm font-medium text-neutral-700">Status:</span>
+              <span class="ml-2">${funGetStatusBadge(session.status)}</span>
+            </div>
+          </div>
+        </div>
+        <div>
+          <h4 class="text-sm font-semibold text-neutral-900 mb-3">Schedule & Capacity</h4>
+          <div class="space-y-3">
+            <div>
+              <span class="text-sm font-medium text-neutral-700">Start Date:</span>
+              <span class="ml-2 text-sm">${session.scheduledDate ? new Date(session.scheduledDate).toLocaleString() : 'N/A'}</span>
+            </div>
+            <div>
+              <span class="text-sm font-medium text-neutral-700">End Date:</span>
+              <span class="ml-2 text-sm">${session.endDate ? new Date(session.endDate).toLocaleString() : 'N/A'}</span>
+            </div>
+            <div>
+              <span class="text-sm font-medium text-neutral-700">Capacity:</span>
+              <span class="ml-2 text-sm">${session.capacity || 'N/A'}</span>
+            </div>
+            <div>
+              <span class="text-sm font-medium text-neutral-700">Assigned:</span>
+              <span class="ml-2 text-sm">${assignedCount} employees</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="border-t border-neutral-200 pt-6">
+        <div class="flex items-center justify-end gap-3">
+          ${session.status === 'scheduled' ? `
+            <button onclick="funEditSession('${session.id}')" class="px-4 py-2 border border-neutral-200 rounded-md text-sm hover:bg-neutral-50">
+              Edit Session
+            </button>
+            <button onclick="funCloseDetailModal(); funShowCancelModal('${session.id}')" class="px-4 py-2 bg-danger-600 hover:bg-danger-700 text-white rounded-md text-sm">
+              Cancel Session
+            </button>
+          ` : ''}
+        </div>
+      </div>
+    </div>
+  `;
+  
+  document.getElementById('detailModalContent').innerHTML = content;
+  document.getElementById('detailModal')?.classList.remove('hidden');
+}
+
+function funCloseDetailModal() {
+  document.getElementById('detailModal')?.classList.add('hidden');
+}
+
+// Make functions globally available
+window.funViewSession = funViewSession;
+window.funEditSession = funEditSession;
+window.funShowCancelModal = funShowCancelModal;
+window.funConfirmCancel = funConfirmCancel;
+window.funCloseDetailModal = funCloseDetailModal;
+window.funGoToPage = funGoToPage;
+</script>
+
+</body>
+</html>

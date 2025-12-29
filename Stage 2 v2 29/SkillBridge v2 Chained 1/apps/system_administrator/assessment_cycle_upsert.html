@@ -1,0 +1,1010 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SkillBridge</title>
+
+    <!-- Required: Main JS Script -->
+    <script type="module" src="scripts/main.js" data-tiramai="web-gen"></script>
+
+    <!-- Required: TailwindCSS -->
+    <script src="./lib/tailwindcss/tailwindcss.js" fetchpriority="high" data-tiramai="web-gen"></script>
+
+    <!-- Required: Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest" data-tiramai="web-gen"></script>
+
+    <!-- Required: Favicon -->
+    <link rel="icon" href="assets/imgs/logo.ico" type="image/x-icon" data-tiramai="web-gen"/>
+
+    <!-- ECharts Support (for charts/graphs) -->
+    <script defer src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js" data-tiramai="web-gen"></script>
+
+    <!-- Markdown Support (for content rendering) -->
+    <script defer src="https://cdn.jsdelivr.net/npm/marked/marked.min.js" data-tiramai="web-gen"></script>
+
+    <!-- Tailwind Config Extension -->
+    <script data-tiramai="web-gen">
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            'primary-600': '#1B2A44',
+                            'primary-700': '#14233A',
+                            'primary-800': '#0E1A2B',
+                        },
+                        accent: {
+                            'gold-50': '#FFF7E6',
+                            'gold-500': '#C59D42',
+                            'gold-600': '#A97D22',
+                        },
+                        success: { '600': '#16A34A' },
+                        warning: { '600': '#D97706' },
+                        danger: { '600': '#DC2626' },
+                        info: { '600': '#2563EB' },
+                        heat: {
+                            green: '#16A34A',
+                            amber: '#F59E0B',
+                            red: '#DC2626'
+                        },
+                        neutral: {
+                            '50': '#F8FAFC',
+                            '200': '#E2E8F0',
+                            '500': '#64748B',
+                            '700': '#334155',
+                            '900': '#111827',
+                            '950': '#0B1220',
+                        }
+                    },
+                    fontSize: {
+                        'xs': ['12px', '16px'],
+                        'sm': ['14px', '20px'],
+                        'base': ['16px', '24px'],
+                        'xl': ['20px', '28px'],
+                        '2xl': ['24px', '32px'],
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-neutral-50 min-h-screen text-neutral-900">
+    <!-- Top Navigation -->
+    <header class="fixed top-0 left-0 right-0 bg-brand-primary-800 border-b border-neutral-200 flex items-center justify-between px-6 py-4 z-30 h-16">
+        <div class="flex items-center gap-4">
+            <!-- Mobile menu toggle -->
+            <button id="mobileMenuToggle" class="md:hidden text-white p-2" aria-label="Toggle menu">
+                <svg class="w-5 h-5" data-lucide="menu"></svg>
+            </button>
+            <!-- Logo -->
+            <div class="flex items-center gap-3">
+                <svg width="32" height="32" viewBox="0 0 400 400" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="84" y="116" width="56" height="168" rx="8" fill="#1E40AF"/>
+                    <rect x="176" y="84" width="56" height="200" rx="8" fill="#059669"/>
+                    <rect x="268" y="156" width="48" height="128" rx="8" fill="#1E40AF"/>
+                    <rect x="114" y="180" width="172" height="20" rx="10" fill="#F59E0B"/>
+                </svg>
+                <span class="text-xl font-semibold text-white">SkillBridge</span>
+            </div>
+        </div>
+        <div class="flex items-center gap-4">
+            <!-- User Profile Dropdown -->
+            <div class="relative" id="userProfileContainer">
+                <button id="userProfileToggle" class="flex items-center gap-2 text-white hover:text-accent-gold-500 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2 focus:ring-offset-brand-primary-800 rounded-md p-2">
+                    <div class="w-8 h-8 bg-accent-gold-500 rounded-full flex items-center justify-center">
+                        <span id="userInitials" class="text-sm font-semibold text-white">JD</span>
+                    </div>
+                    <svg class="w-4 h-4" data-lucide="chevron-down"></svg>
+                </button>
+                <!-- Dropdown Menu -->
+                <div id="userProfileDropdown" class="hidden absolute right-0 mt-2 w-64 bg-white rounded-md shadow-lg border border-neutral-200 py-2 z-50">
+                    <div class="px-4 py-3 border-b border-neutral-200">
+                        <p id="userDisplayName" class="text-sm font-semibold text-neutral-900">John Doe</p>
+                        <p id="userEmail" class="text-xs text-neutral-500">johndoe@example.com</p>
+                        <p class="text-xs text-accent-gold-600 font-medium">System Administrator</p>
+                    </div>
+                    <button id="signOutButton" class="w-full text-left px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50 flex items-center gap-2">
+                        <svg class="w-4 h-4" data-lucide="log-out"></svg>
+                        Sign Out
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="flex pt-16">
+        <!-- Side Navigation -->
+        <aside id="sidebar" class="fixed md:sticky top-16 left-0 w-64 bg-white border-r border-neutral-200 h-[calc(100vh-4rem)] overflow-y-auto z-20 transform -translate-x-full md:translate-x-0 transition-transform duration-200">
+            <nav class="p-4 space-y-1">
+                <!-- Admin Dashboard -->
+                <a href="dashboard.html" id="nav-dashboard" class="nav-item flex items-center gap-3 px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                    <svg class="w-5 h-5" data-lucide="layout-dashboard"></svg>
+                    <span>Admin Dashboard</span>
+                </a>
+
+                <!-- Employees with Children -->
+                <div class="nav-group">
+                    <button class="nav-group-toggle flex items-center justify-between w-full px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                        <div class="flex items-center gap-3">
+                            <svg class="w-5 h-5" data-lucide="users"></svg>
+                            <span>Employees</span>
+                        </div>
+                        <svg class="w-4 h-4 transform transition-transform" data-lucide="chevron-right"></svg>
+                    </button>
+                    <div class="nav-group-children hidden ml-8 space-y-1 mt-1">
+                        <a href="employees_list.html" class="nav-item block px-3 py-2 rounded-md text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-600">Employee Directory</a>
+                        <a href="employee_upsert.html?mode=create" class="nav-item block px-3 py-2 rounded-md text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-600">Add Employee</a>
+                    </div>
+                </div>
+
+                <!-- Departments -->
+                <a href="departments_list.html" id="nav-departments" class="nav-item flex items-center gap-3 px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                    <svg class="w-5 h-5" data-lucide="building"></svg>
+                    <span>Departments</span>
+                </a>
+
+                <!-- Skill Categories -->
+                <a href="skill_categories_list.html" id="nav-skill-categories" class="nav-item flex items-center gap-3 px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                    <svg class="w-5 h-5" data-lucide="layers"></svg>
+                    <span>Skill Categories</span>
+                </a>
+
+                <!-- Criticality Levels -->
+                <a href="skill_criticalities_list.html" id="nav-criticalities" class="nav-item flex items-center gap-3 px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                    <svg class="w-5 h-5" data-lucide="sliders"></svg>
+                    <span>Criticality Levels</span>
+                </a>
+
+                <!-- Skills with Children -->
+                <div class="nav-group">
+                    <button class="nav-group-toggle flex items-center justify-between w-full px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                        <div class="flex items-center gap-3">
+                            <svg class="w-5 h-5" data-lucide="book"></svg>
+                            <span>Skills</span>
+                        </div>
+                        <svg class="w-4 h-4 transform transition-transform" data-lucide="chevron-right"></svg>
+                    </button>
+                    <div class="nav-group-children hidden ml-8 space-y-1 mt-1">
+                        <a href="skills_list.html" class="nav-item block px-3 py-2 rounded-md text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-600">Skills Directory</a>
+                        <a href="skill_upsert.html?mode=create" class="nav-item block px-3 py-2 rounded-md text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-600">Add Skill</a>
+                    </div>
+                </div>
+
+                <!-- Assessment Cycles with Children -->
+                <div class="nav-group">
+                    <button class="nav-group-toggle flex items-center justify-between w-full px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                        <div class="flex items-center gap-3">
+                            <svg class="w-5 h-5" data-lucide="calendar"></svg>
+                            <span>Assessment Cycles</span>
+                        </div>
+                        <svg class="w-4 h-4 transform transition-transform" data-lucide="chevron-right"></svg>
+                    </button>
+                    <div class="nav-group-children hidden ml-8 space-y-1 mt-1">
+                        <a href="assessment_cycles_list.html" class="nav-item block px-3 py-2 rounded-md text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-600">Cycles Directory</a>
+                        <a href="assessment_cycle_upsert.html?mode=create" class="nav-item block px-3 py-2 rounded-md text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-600">Create Cycle</a>
+                    </div>
+                </div>
+
+                <!-- Trainer Pool with Children -->
+                <div class="nav-group">
+                    <button class="nav-group-toggle flex items-center justify-between w-full px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                        <div class="flex items-center gap-3">
+                            <svg class="w-5 h-5" data-lucide="users"></svg>
+                            <span>Trainer Pool</span>
+                        </div>
+                        <svg class="w-4 h-4 transform transition-transform" data-lucide="chevron-right"></svg>
+                    </button>
+                    <div class="nav-group-children hidden ml-8 space-y-1 mt-1">
+                        <a href="trainers_list.html" class="nav-item block px-3 py-2 rounded-md text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-600">Trainer Directory</a>
+                        <a href="external_trainer_upsert.html?mode=create" class="nav-item block px-3 py-2 rounded-md text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-600">Add External Trainer</a>
+                    </div>
+                </div>
+
+                <!-- Training Sessions with Children -->
+                <div class="nav-group">
+                    <button class="nav-group-toggle flex items-center justify-between w-full px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                        <div class="flex items-center gap-3">
+                            <svg class="w-5 h-5" data-lucide="calendar"></svg>
+                            <span>Training Sessions</span>
+                        </div>
+                        <svg class="w-4 h-4 transform transition-transform" data-lucide="chevron-right"></svg>
+                    </button>
+                    <div class="nav-group-children hidden ml-8 space-y-1 mt-1">
+                        <a href="training_sessions_list.html" class="nav-item block px-3 py-2 rounded-md text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-600">Sessions Calendar</a>
+                        <a href="training_session_upsert.html?mode=create" class="nav-item block px-3 py-2 rounded-md text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-600">Create Session</a>
+                    </div>
+                </div>
+
+                <!-- Disputes -->
+                <a href="disputes_list.html" id="nav-disputes" class="nav-item flex items-center gap-3 px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                    <svg class="w-5 h-5" data-lucide="alert-circle"></svg>
+                    <span>Disputes</span>
+                </a>
+
+                <!-- Analytics Section -->
+                <div class="border-t border-neutral-200 pt-4 mt-4">
+                    <h4 class="px-3 text-xs font-semibold text-neutral-500 uppercase tracking-wider mb-2">Analytics</h4>
+                    
+                    <a href="analytics_skill_gap_heatmap.html" class="nav-item flex items-center gap-3 px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                        <svg class="w-5 h-5" data-lucide="grid"></svg>
+                        <span>Skill Gap Heatmap</span>
+                    </a>
+
+                    <a href="analytics_tni_dashboard.html" class="nav-item flex items-center gap-3 px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                        <svg class="w-5 h-5" data-lucide="bar-chart-2"></svg>
+                        <span>TNI Dashboard</span>
+                    </a>
+
+                    <a href="analytics_training_forecast.html" class="nav-item flex items-center gap-3 px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                        <svg class="w-5 h-5" data-lucide="trending-up"></svg>
+                        <span>Training Forecast</span>
+                    </a>
+
+                    <a href="analytics_assessment_completion.html" class="nav-item flex items-center gap-3 px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                        <svg class="w-5 h-5" data-lucide="pie-chart"></svg>
+                        <span>Assessment Completion</span>
+                    </a>
+
+                    <a href="analytics_dispute_metrics.html" class="nav-item flex items-center gap-3 px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                        <svg class="w-5 h-5" data-lucide="bar-chart"></svg>
+                        <span>Dispute Analytics</span>
+                    </a>
+                </div>
+            </nav>
+            
+            <!-- Footer -->
+            <div class="absolute bottom-4 w-full text-center text-xs text-neutral-500 bg-white px-4">
+                Made with ❤️ by TiramAi
+            </div>
+        </aside>
+
+        <!-- Mobile Overlay -->
+        <div id="mobileOverlay" class="hidden fixed inset-0 bg-black bg-opacity-50 z-10 md:hidden"></div>
+
+        <!-- Main Content -->
+        <main id="pageContent" class="flex-1 p-6 overflow-y-auto">
+            
+<!-- Assessment Cycle Upsert Form -->
+<div class="container mx-auto max-w-2xl">
+  <!-- Page Header -->
+  <div class="mb-6">
+    <div class="flex items-center gap-3 mb-2">
+      <button id="btn-back" class="inline-flex items-center text-sm text-neutral-500 hover:text-neutral-700 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2 rounded-md p-1">
+        <svg class="w-4 h-4 mr-1" data-lucide="arrow-left"></svg>
+        Back to Cycles
+      </button>
+    </div>
+    <h1 id="page-title" class="text-2xl leading-8 font-bold text-neutral-950">Create Assessment Cycle</h1>
+    <p class="text-sm leading-5 text-neutral-700 mt-1">Configure cycle parameters and timeline for assessments</p>
+  </div>
+
+  <!-- Form Card -->
+  <div class="bg-white border border-neutral-200 rounded-md p-6 shadow-sm">
+    <form id="cycle-form" class="space-y-6">
+      <!-- Cycle Name -->
+      <div>
+        <label for="cycleName" class="block text-sm font-medium text-neutral-900 mb-1">
+          Cycle Name <span class="text-danger-600">*</span>
+        </label>
+        <input
+          type="text"
+          id="cycleName"
+          name="cycleName"
+          required
+          maxlength="200"
+          class="w-full border border-neutral-200 rounded-sm px-3 py-2 bg-white text-sm leading-5 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2 disabled:bg-neutral-50 disabled:text-neutral-500"
+          placeholder="Enter cycle name"
+        >
+        <p id="cycleName-error" class="hidden mt-1 text-xs text-danger-600"></p>
+      </div>
+
+      <!-- Date Fields Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Start Date -->
+        <div>
+          <label for="startDate" class="block text-sm font-medium text-neutral-900 mb-1">
+            Start Date <span class="text-danger-600">*</span>
+          </label>
+          <input
+            type="date"
+            id="startDate"
+            name="startDate"
+            required
+            class="w-full border border-neutral-200 rounded-sm px-3 py-2 bg-white text-sm leading-5 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2 disabled:bg-neutral-50 disabled:text-neutral-500"
+          >
+          <p id="startDate-error" class="hidden mt-1 text-xs text-danger-600"></p>
+          <p class="mt-1 text-xs text-neutral-500">Must be today or future date</p>
+        </div>
+
+        <!-- End Date -->
+        <div>
+          <label for="endDate" class="block text-sm font-medium text-neutral-900 mb-1">
+            End Date <span class="text-danger-600">*</span>
+          </label>
+          <input
+            type="date"
+            id="endDate"
+            name="endDate"
+            required
+            class="w-full border border-neutral-200 rounded-sm px-3 py-2 bg-white text-sm leading-5 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2"
+          >
+          <p id="endDate-error" class="hidden mt-1 text-xs text-danger-600"></p>
+          <p class="mt-1 text-xs text-neutral-500">Must be after start date</p>
+        </div>
+      </div>
+
+      <!-- Configuration Fields Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <!-- Notification Window Days -->
+        <div>
+          <label for="notificationWindowDays" class="block text-sm font-medium text-neutral-900 mb-1">
+            Notification Window (Days)
+          </label>
+          <input
+            type="number"
+            id="notificationWindowDays"
+            name="notificationWindowDays"
+            min="1"
+            max="365"
+            value="7"
+            class="w-full border border-neutral-200 rounded-sm px-3 py-2 bg-white text-sm leading-5 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2"
+          >
+          <p id="notificationWindowDays-error" class="hidden mt-1 text-xs text-danger-600"></p>
+          <p class="mt-1 text-xs text-neutral-500">Days before cycle end for reminders</p>
+        </div>
+
+        <!-- Reassessment Delay Days -->
+        <div>
+          <label for="reassessmentDelayDays" class="block text-sm font-medium text-neutral-900 mb-1">
+            Reassessment Delay (Days)
+          </label>
+          <input
+            type="number"
+            id="reassessmentDelayDays"
+            name="reassessmentDelayDays"
+            min="1"
+            max="365"
+            value="14"
+            class="w-full border border-neutral-200 rounded-sm px-3 py-2 bg-white text-sm leading-5 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2"
+          >
+          <p id="reassessmentDelayDays-error" class="hidden mt-1 text-xs text-danger-600"></p>
+          <p class="mt-1 text-xs text-neutral-500">Days after training before reassessment</p>
+        </div>
+
+        <!-- Mandatory Comment Threshold -->
+        <div>
+          <label for="mandatoryCommentThreshold" class="block text-sm font-medium text-neutral-900 mb-1">
+            Comment Threshold
+          </label>
+          <input
+            type="number"
+            id="mandatoryCommentThreshold"
+            name="mandatoryCommentThreshold"
+            min="1"
+            max="10"
+            value="7"
+            class="w-full border border-neutral-200 rounded-sm px-3 py-2 bg-white text-sm leading-5 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2"
+          >
+          <p id="mandatoryCommentThreshold-error" class="hidden mt-1 text-xs text-danger-600"></p>
+          <p class="mt-1 text-xs text-neutral-500">Score below which comments are required (1-10)</p>
+        </div>
+      </div>
+
+      <!-- Set as Active Cycle -->
+      <div class="flex items-start gap-3">
+        <input
+          type="checkbox"
+          id="isActiveCycle"
+          name="isActiveCycle"
+          class="mt-1 h-4 w-4 rounded border-neutral-200 text-brand-primary-600 focus:ring-accent-gold-600 focus:ring-offset-2"
+        >
+        <div>
+          <label for="isActiveCycle" class="block text-sm font-medium text-neutral-900">
+            Set as Active Cycle
+          </label>
+          <p class="mt-1 text-xs text-neutral-500">When enabled, this will become the current active cycle and deactivate others</p>
+        </div>
+      </div>
+
+      <!-- Field Lock Notice (shown when editing started cycle) -->
+      <div id="field-lock-notice" class="hidden bg-warning-50 border border-warning-200 rounded-md p-4">
+        <div class="flex items-start gap-3">
+          <svg class="w-5 h-5 text-warning-600 mt-0.5 flex-shrink-0" data-lucide="lock"></svg>
+          <div>
+            <h4 class="text-sm font-medium text-warning-800">Cycle has started</h4>
+            <p class="text-sm text-warning-700 mt-1">Name, start date, and end date are locked because this cycle has already started. Only configuration settings can be modified.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Form Actions -->
+      <div class="flex items-center justify-end gap-3 pt-4 border-t border-neutral-200">
+        <button
+          type="button"
+          id="btn-cancel"
+          class="inline-flex items-center justify-center h-11 px-4 rounded-md border border-neutral-200 bg-white text-neutral-900 hover:bg-neutral-50 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2"
+        >
+          Cancel
+        </button>
+        <button
+          type="submit"
+          id="btn-save"
+          class="inline-flex items-center justify-center h-11 px-6 rounded-md bg-brand-primary-600 hover:bg-brand-primary-700 text-white focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          <span id="save-text">Create Cycle</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Loading Skeleton (shown during initial load) -->
+<div id="loading-skeleton" class="hidden container mx-auto max-w-2xl">
+  <div class="mb-6">
+    <div class="h-6 bg-neutral-200 rounded w-32 mb-2"></div>
+    <div class="h-8 bg-neutral-200 rounded w-64 mb-2"></div>
+    <div class="h-4 bg-neutral-200 rounded w-96"></div>
+  </div>
+  
+  <div class="bg-white border border-neutral-200 rounded-md p-6">
+    <div class="space-y-6">
+      <div>
+        <div class="h-4 bg-neutral-200 rounded w-24 mb-2"></div>
+        <div class="h-10 bg-neutral-200 rounded w-full"></div>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+          <div class="h-4 bg-neutral-200 rounded w-20 mb-2"></div>
+          <div class="h-10 bg-neutral-200 rounded w-full"></div>
+        </div>
+        <div>
+          <div class="h-4 bg-neutral-200 rounded w-20 mb-2"></div>
+          <div class="h-10 bg-neutral-200 rounded w-full"></div>
+        </div>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div>
+          <div class="h-4 bg-neutral-200 rounded w-32 mb-2"></div>
+          <div class="h-10 bg-neutral-200 rounded w-full"></div>
+        </div>
+        <div>
+          <div class="h-4 bg-neutral-200 rounded w-28 mb-2"></div>
+          <div class="h-10 bg-neutral-200 rounded w-full"></div>
+        </div>
+        <div>
+          <div class="h-4 bg-neutral-200 rounded w-24 mb-2"></div>
+          <div class="h-10 bg-neutral-200 rounded w-full"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+        </main>
+    </div>
+
+    <!-- Required: JavaScript -->
+    <script type="module" data-tiramai="web-gen">
+        import { showToast, showLoader, hideLoader, env } from "./scripts/main.js";
+        import { auth, db, storage } from "./scripts/firebase.js";
+        import { onAuthStateChanged, getAuth, signOut } from 'https://www.gstatic.com/firebasejs/10.12.4/firebase-auth.js';
+        import { doc, getDoc } from 'https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js';
+
+        // Initialize Lucide icons
+        lucide.createIcons();
+
+        // Mobile menu toggle
+        const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+        const sidebar = document.getElementById('sidebar');
+        const mobileOverlay = document.getElementById('mobileOverlay');
+
+        mobileMenuToggle?.addEventListener('click', () => {
+            sidebar.classList.toggle('-translate-x-full');
+            mobileOverlay.classList.toggle('hidden');
+        });
+
+        mobileOverlay?.addEventListener('click', () => {
+            sidebar.classList.add('-translate-x-full');
+            mobileOverlay.classList.add('hidden');
+        });
+
+        // Navigation group toggles
+        document.querySelectorAll('.nav-group-toggle').forEach(toggle => {
+            toggle.addEventListener('click', (e) => {
+                e.preventDefault();
+                const children = toggle.nextElementSibling;
+                const icon = toggle.querySelector('svg:last-child');
+                
+                children.classList.toggle('hidden');
+                icon.classList.toggle('rotate-90');
+            });
+        });
+
+        // User profile dropdown
+        const userProfileToggle = document.getElementById('userProfileToggle');
+        const userProfileDropdown = document.getElementById('userProfileDropdown');
+
+        userProfileToggle?.addEventListener('click', () => {
+            userProfileDropdown.classList.toggle('hidden');
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!userProfileToggle?.contains(e.target) && !userProfileDropdown?.contains(e.target)) {
+                userProfileDropdown?.classList.add('hidden');
+            }
+        });
+
+        // Sign out functionality
+        document.getElementById('signOutButton')?.addEventListener('click', async () => {
+            try {
+                await signOut(auth);
+                window.location.href = 'auth.html';
+            } catch (error) {
+                console.error('Sign out error:', error);
+                showToast('Failed to sign out', 'error');
+            }
+        });
+
+        // Auth state management
+        onAuthStateChanged(auth, async (user) => {
+            if (!user) {
+                window.location.href = 'auth.html';
+                return;
+            }
+
+            // Load user profile data
+            try {
+                const userDoc = await getDoc(doc(db, 'users', user.uid));
+                const userData = userDoc.exists() ? userDoc.data() : null;
+
+                // Update UI with user data
+                const displayName = userData?.firstName && userData?.lastName 
+                    ? `${userData.firstName} ${userData.lastName}`
+                    : user.displayName || 'John Doe';
+                
+                const email = user.email || 'johndoe@example.com';
+                const initials = displayName.split(' ').map(n => n[0]).join('').toUpperCase();
+
+                document.getElementById('userDisplayName').textContent = displayName;
+                document.getElementById('userEmail').textContent = email;
+                document.getElementById('userInitials').textContent = initials;
+
+            } catch (error) {
+                console.error('Error loading user data:', error);
+                // Fallback to default values
+                document.getElementById('userDisplayName').textContent = 'John Doe';
+                document.getElementById('userEmail').textContent = user.email || 'johndoe@example.com';
+                document.getElementById('userInitials').textContent = 'JD';
+            }
+        });
+
+        // Set active navigation item based on current page
+        function setActiveNavItem() {
+            const currentPath = window.location.pathname;
+            const navItems = document.querySelectorAll('.nav-item');
+            
+            navItems.forEach(item => {
+                const href = item.getAttribute('href');
+                if (href && currentPath.includes(href.split('?')[0])) {
+                    item.classList.add('bg-accent-gold-50', 'text-brand-primary-600', 'border-l-2', 'border-brand-primary-600');
+                    item.classList.remove('text-neutral-700', 'text-neutral-600');
+                    
+                    // Expand parent group if needed
+                    const parentGroup = item.closest('.nav-group');
+                    if (parentGroup) {
+                        const children = parentGroup.querySelector('.nav-group-children');
+                        const icon = parentGroup.querySelector('.nav-group-toggle svg:last-child');
+                        children?.classList.remove('hidden');
+                        icon?.classList.add('rotate-90');
+                    }
+                }
+            });
+        }
+
+        // Initialize active nav state
+        setActiveNavItem();
+    </script>
+
+    
+<script id="data-script" type="module" data-tiramai="web-gen">
+import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.12.4/firebase-auth.js';
+import { 
+  collection, 
+  getDocs, 
+  setDoc, 
+  addDoc, 
+  doc, 
+  getDoc, 
+  updateDoc, 
+  query, 
+  where, 
+  Timestamp 
+} from 'https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js';
+import { auth, getDb } from "./scripts/firebase.js";
+import { showToast, showLoader, hideLoader } from "./scripts/main.js";
+
+const db = getDb();
+
+// Get URL parameters
+const urlParams = new URLSearchParams(window.location.search);
+const mode = urlParams.get('mode') || 'create';
+const cycleId = urlParams.get('cycleId');
+
+let currentUser = null;
+let isSubmitting = false;
+
+// Initialize page
+onAuthStateChanged(auth, user => {
+  if (!user) {
+    location.href = "auth.html?redirect=" + encodeURIComponent(location.pathname + location.search);
+  } else {
+    currentUser = user;
+    funInitializePage();
+  }
+});
+
+// Initialize Lucide icons
+document.addEventListener('DOMContentLoaded', () => {
+  lucide.createIcons();
+});
+
+async function funInitializePage() {
+  try {
+    // Show loading skeleton
+    document.getElementById('loading-skeleton').classList.remove('hidden');
+    
+    // Set up page based on mode
+    if (mode === 'edit') {
+      if (!cycleId) {
+        showToast('Cycle ID is required for edit mode', 'error');
+        location.href = 'assessment_cycles_list.html';
+        return;
+      }
+      
+      document.getElementById('page-title').textContent = 'Edit Assessment Cycle';
+      document.getElementById('save-text').textContent = 'Save Changes';
+      
+      await funLoadCycleData(cycleId);
+    } else {
+      // Set minimum date to today for create mode
+      funSetMinimumDates();
+    }
+    
+    // Hide skeleton and show form
+    document.getElementById('loading-skeleton').classList.add('hidden');
+    
+  } catch (error) {
+    console.error('Error initializing page:', error);
+    showToast(error?.message || 'Failed to initialize page', 'error');
+    document.getElementById('loading-skeleton').classList.add('hidden');
+  }
+}
+
+function funSetMinimumDates() {
+  const today = new Date().toISOString().split('T')[0];
+  document.getElementById('startDate').setAttribute('min', today);
+}
+
+async function funLoadCycleData(cycleId) {
+  try {
+    const docRef = doc(db, 'assessmentCycles', cycleId);
+    const docSnap = await getDoc(docRef);
+    
+    if (!docSnap.exists()) {
+      throw new Error('Assessment cycle not found');
+    }
+    
+    const cycleData = docSnap.data();
+    
+    // Populate form fields
+    document.getElementById('cycleName').value = cycleData.cycleName || '';
+    document.getElementById('startDate').value = funFormatDateForInput(cycleData.startDate);
+    document.getElementById('endDate').value = funFormatDateForInput(cycleData.endDate);
+    document.getElementById('notificationWindowDays').value = cycleData.notificationWindowDays || 7;
+    document.getElementById('reassessmentDelayDays').value = cycleData.reassessmentDelayDays || 14;
+    document.getElementById('mandatoryCommentThreshold').value = cycleData.mandatoryCommentThreshold || 7;
+    document.getElementById('isActiveCycle').checked = cycleData.isActiveCycle || false;
+    
+    // Check if cycle has started and lock fields if necessary
+    const startDate = new Date(cycleData.startDate);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // Reset time for accurate comparison
+    
+    if (startDate <= today) {
+      // Cycle has started - lock name, start date, and end date
+      document.getElementById('cycleName').disabled = true;
+      document.getElementById('startDate').disabled = true;
+      document.getElementById('endDate').disabled = true;
+      document.getElementById('field-lock-notice').classList.remove('hidden');
+    } else {
+      // Set minimum date for start date (today or current value, whichever is later)
+      const minDate = startDate > today ? funFormatDateForInput(cycleData.startDate) : new Date().toISOString().split('T')[0];
+      document.getElementById('startDate').setAttribute('min', minDate);
+    }
+    
+  } catch (error) {
+    console.error('Error loading cycle data:', error);
+    throw error;
+  }
+}
+
+function funFormatDateForInput(isoString) {
+  if (!isoString) return '';
+  return new Date(isoString).toISOString().split('T')[0];
+}
+
+// Form validation
+function funValidateForm() {
+  let isValid = true;
+  
+  // Clear previous errors
+  document.querySelectorAll('[id$="-error"]').forEach(el => {
+    el.classList.add('hidden');
+    el.textContent = '';
+  });
+  
+  // Reset field styles
+  document.querySelectorAll('input').forEach(input => {
+    input.classList.remove('border-danger-600', 'focus:ring-danger-600');
+    input.classList.add('border-neutral-200', 'focus:ring-accent-gold-600');
+  });
+  
+  // Validate cycle name
+  const cycleName = document.getElementById('cycleName').value.trim();
+  if (!cycleName) {
+    funShowFieldError('cycleName', 'Cycle name is required');
+    isValid = false;
+  } else if (cycleName.length > 200) {
+    funShowFieldError('cycleName', 'Cycle name must be 200 characters or less');
+    isValid = false;
+  }
+  
+  // Validate start date
+  const startDate = document.getElementById('startDate').value;
+  if (!startDate) {
+    funShowFieldError('startDate', 'Start date is required');
+    isValid = false;
+  } else if (mode === 'create') {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const selectedStart = new Date(startDate);
+    
+    if (selectedStart < today) {
+      funShowFieldError('startDate', 'Start date must be today or in the future');
+      isValid = false;
+    }
+  }
+  
+  // Validate end date
+  const endDate = document.getElementById('endDate').value;
+  if (!endDate) {
+    funShowFieldError('endDate', 'End date is required');
+    isValid = false;
+  } else if (startDate && endDate) {
+    const startDateTime = new Date(startDate);
+    const endDateTime = new Date(endDate);
+    
+    if (endDateTime <= startDateTime) {
+      funShowFieldError('endDate', 'End date must be after start date');
+      isValid = false;
+    }
+  }
+  
+  // Validate notification window days
+  const notificationDays = parseInt(document.getElementById('notificationWindowDays').value);
+  if (isNaN(notificationDays) || notificationDays < 1 || notificationDays > 365) {
+    funShowFieldError('notificationWindowDays', 'Must be a number between 1 and 365');
+    isValid = false;
+  }
+  
+  // Validate reassessment delay days
+  const reassessmentDays = parseInt(document.getElementById('reassessmentDelayDays').value);
+  if (isNaN(reassessmentDays) || reassessmentDays < 1 || reassessmentDays > 365) {
+    funShowFieldError('reassessmentDelayDays', 'Must be a number between 1 and 365');
+    isValid = false;
+  }
+  
+  // Validate mandatory comment threshold
+  const threshold = parseInt(document.getElementById('mandatoryCommentThreshold').value);
+  if (isNaN(threshold) || threshold < 1 || threshold > 10) {
+    funShowFieldError('mandatoryCommentThreshold', 'Must be a number between 1 and 10');
+    isValid = false;
+  }
+  
+  return isValid;
+}
+
+function funShowFieldError(fieldId, message) {
+  const field = document.getElementById(fieldId);
+  const errorEl = document.getElementById(fieldId + '-error');
+  
+  field.classList.remove('border-neutral-200', 'focus:ring-accent-gold-600');
+  field.classList.add('border-danger-600', 'focus:ring-danger-600');
+  
+  errorEl.textContent = message;
+  errorEl.classList.remove('hidden');
+}
+
+// Form submission
+async function funSubmitForm(e) {
+  e.preventDefault();
+  
+  if (isSubmitting) return;
+  
+  if (!funValidateForm()) {
+    showToast('Please correct the errors above', 'error');
+    return;
+  }
+  
+  isSubmitting = true;
+  showLoader('Saving assessment cycle...');
+  
+  try {
+    const formData = {
+      cycleName: document.getElementById('cycleName').value.trim(),
+      startDate: new Date(document.getElementById('startDate').value).toISOString(),
+      endDate: new Date(document.getElementById('endDate').value).toISOString(),
+      notificationWindowDays: parseInt(document.getElementById('notificationWindowDays').value),
+      reassessmentDelayDays: parseInt(document.getElementById('reassessmentDelayDays').value),
+      mandatoryCommentThreshold: parseInt(document.getElementById('mandatoryCommentThreshold').value),
+      isActiveCycle: document.getElementById('isActiveCycle').checked,
+      modifiedTimestamp: new Date().toISOString()
+    };
+    
+    if (mode === 'create') {
+      formData.createdTimestamp = formData.modifiedTimestamp;
+      formData.status = 'active';
+    }
+    
+    // If setting as active cycle, deactivate all other active cycles first
+    if (formData.isActiveCycle) {
+      await funDeactivateOtherCycles(mode === 'edit' ? cycleId : null);
+    }
+    
+    if (mode === 'edit') {
+      const docRef = doc(db, 'assessmentCycles', cycleId);
+      await updateDoc(docRef, formData);
+      showToast('Assessment cycle updated successfully', 'success');
+    } else {
+      await addDoc(collection(db, 'assessmentCycles'), formData);
+      showToast('Assessment cycle created successfully', 'success');
+    }
+    
+    // Navigate back to list
+    setTimeout(() => {
+      location.href = 'assessment_cycles_list.html';
+    }, 1000);
+    
+  } catch (error) {
+    console.error('Error saving cycle:', error);
+    showToast(error?.message || 'Failed to save assessment cycle', 'error');
+  } finally {
+    hideLoader();
+    isSubmitting = false;
+  }
+}
+
+async function funDeactivateOtherCycles(excludeCycleId = null) {
+  try {
+    // Query for active cycles
+    const q = query(
+      collection(db, 'assessmentCycles'),
+      where('isActiveCycle', '==', true)
+    );
+    
+    const querySnapshot = await getDocs(q);
+    const updates = [];
+    
+    querySnapshot.forEach((doc) => {
+      // Skip the current cycle if editing
+      if (excludeCycleId && doc.id === excludeCycleId) return;
+      
+      updates.push(
+        updateDoc(doc.ref, {
+          isActiveCycle: false,
+          modifiedTimestamp: new Date().toISOString()
+        })
+      );
+    });
+    
+    if (updates.length > 0) {
+      await Promise.all(updates);
+    }
+    
+  } catch (error) {
+    console.error('Error deactivating other cycles:', error);
+    throw new Error('Failed to deactivate other active cycles');
+  }
+}
+
+// Event listeners
+document.getElementById('cycle-form').addEventListener('submit', funSubmitForm);
+
+document.getElementById('btn-cancel').addEventListener('click', () => {
+  location.href = 'assessment_cycles_list.html';
+});
+
+document.getElementById('btn-back').addEventListener('click', () => {
+  location.href = 'assessment_cycles_list.html';
+});
+
+// Real-time validation for date fields
+document.getElementById('startDate').addEventListener('change', () => {
+  const startDate = document.getElementById('startDate').value;
+  if (startDate) {
+    // Set end date minimum to start date
+    document.getElementById('endDate').setAttribute('min', startDate);
+  }
+});
+
+document.getElementById('endDate').addEventListener('change', () => {
+  const startDate = document.getElementById('startDate').value;
+  const endDate = document.getElementById('endDate').value;
+  
+  if (startDate && endDate) {
+    const startDateTime = new Date(startDate);
+    const endDateTime = new Date(endDate);
+    
+    if (endDateTime <= startDateTime) {
+      funShowFieldError('endDate', 'End date must be after start date');
+    } else {
+      // Clear error if valid
+      const errorEl = document.getElementById('endDate-error');
+      if (!errorEl.classList.contains('hidden')) {
+        errorEl.classList.add('hidden');
+        const field = document.getElementById('endDate');
+        field.classList.remove('border-danger-600', 'focus:ring-danger-600');
+        field.classList.add('border-neutral-200', 'focus:ring-accent-gold-600');
+      }
+    }
+  }
+});
+
+// Real-time validation for number fields
+document.getElementById('notificationWindowDays').addEventListener('input', (e) => {
+  const value = parseInt(e.target.value);
+  if (isNaN(value) || value < 1 || value > 365) {
+    funShowFieldError('notificationWindowDays', 'Must be a number between 1 and 365');
+  } else {
+    const errorEl = document.getElementById('notificationWindowDays-error');
+    if (!errorEl.classList.contains('hidden')) {
+      errorEl.classList.add('hidden');
+      e.target.classList.remove('border-danger-600', 'focus:ring-danger-600');
+      e.target.classList.add('border-neutral-200', 'focus:ring-accent-gold-600');
+    }
+  }
+});
+
+document.getElementById('reassessmentDelayDays').addEventListener('input', (e) => {
+  const value = parseInt(e.target.value);
+  if (isNaN(value) || value < 1 || value > 365) {
+    funShowFieldError('reassessmentDelayDays', 'Must be a number between 1 and 365');
+  } else {
+    const errorEl = document.getElementById('reassessmentDelayDays-error');
+    if (!errorEl.classList.contains('hidden')) {
+      errorEl.classList.add('hidden');
+      e.target.classList.remove('border-danger-600', 'focus:ring-danger-600');
+      e.target.classList.add('border-neutral-200', 'focus:ring-accent-gold-600');
+    }
+  }
+});
+
+document.getElementById('mandatoryCommentThreshold').addEventListener('input', (e) => {
+  const value = parseInt(e.target.value);
+  if (isNaN(value) || value < 1 || value > 10) {
+    funShowFieldError('mandatoryCommentThreshold', 'Must be a number between 1 and 10');
+  } else {
+    const errorEl = document.getElementById('mandatoryCommentThreshold-error');
+    if (!errorEl.classList.contains('hidden')) {
+      errorEl.classList.add('hidden');
+      e.target.classList.remove('border-danger-600', 'focus:ring-danger-600');
+      e.target.classList.add('border-neutral-200', 'focus:ring-accent-gold-600');
+    }
+  }
+});
+</script>
+
+</body>
+</html>

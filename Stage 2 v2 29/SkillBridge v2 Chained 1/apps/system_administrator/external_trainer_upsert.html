@@ -1,0 +1,995 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SkillBridge</title>
+
+    <!-- Required: Main JS Script -->
+    <script type="module" src="scripts/main.js" data-tiramai="web-gen"></script>
+
+    <!-- Required: TailwindCSS -->
+    <script src="./lib/tailwindcss/tailwindcss.js" fetchpriority="high" data-tiramai="web-gen"></script>
+
+    <!-- Required: Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest" data-tiramai="web-gen"></script>
+
+    <!-- Required: Favicon -->
+    <link rel="icon" href="assets/imgs/logo.ico" type="image/x-icon" data-tiramai="web-gen"/>
+
+    <!-- ECharts Support (for charts/graphs) -->
+    <script defer src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js" data-tiramai="web-gen"></script>
+
+    <!-- Markdown Support (for content rendering) -->
+    <script defer src="https://cdn.jsdelivr.net/npm/marked/marked.min.js" data-tiramai="web-gen"></script>
+
+    <!-- Tailwind Config Extension -->
+    <script data-tiramai="web-gen">
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            'primary-600': '#1B2A44',
+                            'primary-700': '#14233A',
+                            'primary-800': '#0E1A2B',
+                        },
+                        accent: {
+                            'gold-50': '#FFF7E6',
+                            'gold-500': '#C59D42',
+                            'gold-600': '#A97D22',
+                        },
+                        success: { '600': '#16A34A' },
+                        warning: { '600': '#D97706' },
+                        danger: { '600': '#DC2626' },
+                        info: { '600': '#2563EB' },
+                        heat: {
+                            green: '#16A34A',
+                            amber: '#F59E0B',
+                            red: '#DC2626'
+                        },
+                        neutral: {
+                            '50': '#F8FAFC',
+                            '200': '#E2E8F0',
+                            '500': '#64748B',
+                            '700': '#334155',
+                            '900': '#111827',
+                            '950': '#0B1220',
+                        }
+                    },
+                    fontSize: {
+                        'xs': ['12px', '16px'],
+                        'sm': ['14px', '20px'],
+                        'base': ['16px', '24px'],
+                        'xl': ['20px', '28px'],
+                        '2xl': ['24px', '32px'],
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-neutral-50 min-h-screen text-neutral-900">
+    <!-- Top Navigation -->
+    <header class="fixed top-0 left-0 right-0 bg-brand-primary-800 border-b border-neutral-200 flex items-center justify-between px-6 py-4 z-30 h-16">
+        <div class="flex items-center gap-4">
+            <!-- Mobile menu toggle -->
+            <button id="mobileMenuToggle" class="md:hidden text-white p-2" aria-label="Toggle menu">
+                <svg class="w-5 h-5" data-lucide="menu"></svg>
+            </button>
+            <!-- Logo -->
+            <div class="flex items-center gap-3">
+                <svg width="32" height="32" viewBox="0 0 400 400" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="84" y="116" width="56" height="168" rx="8" fill="#1E40AF"/>
+                    <rect x="176" y="84" width="56" height="200" rx="8" fill="#059669"/>
+                    <rect x="268" y="156" width="48" height="128" rx="8" fill="#1E40AF"/>
+                    <rect x="114" y="180" width="172" height="20" rx="10" fill="#F59E0B"/>
+                </svg>
+                <span class="text-xl font-semibold text-white">SkillBridge</span>
+            </div>
+        </div>
+        <div class="flex items-center gap-4">
+            <!-- User Profile Dropdown -->
+            <div class="relative" id="userProfileContainer">
+                <button id="userProfileToggle" class="flex items-center gap-2 text-white hover:text-accent-gold-500 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2 focus:ring-offset-brand-primary-800 rounded-md p-2">
+                    <div class="w-8 h-8 bg-accent-gold-500 rounded-full flex items-center justify-center">
+                        <span id="userInitials" class="text-sm font-semibold text-white">JD</span>
+                    </div>
+                    <svg class="w-4 h-4" data-lucide="chevron-down"></svg>
+                </button>
+                <!-- Dropdown Menu -->
+                <div id="userProfileDropdown" class="hidden absolute right-0 mt-2 w-64 bg-white rounded-md shadow-lg border border-neutral-200 py-2 z-50">
+                    <div class="px-4 py-3 border-b border-neutral-200">
+                        <p id="userDisplayName" class="text-sm font-semibold text-neutral-900">John Doe</p>
+                        <p id="userEmail" class="text-xs text-neutral-500">johndoe@example.com</p>
+                        <p class="text-xs text-accent-gold-600 font-medium">System Administrator</p>
+                    </div>
+                    <button id="signOutButton" class="w-full text-left px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50 flex items-center gap-2">
+                        <svg class="w-4 h-4" data-lucide="log-out"></svg>
+                        Sign Out
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="flex pt-16">
+        <!-- Side Navigation -->
+        <aside id="sidebar" class="fixed md:sticky top-16 left-0 w-64 bg-white border-r border-neutral-200 h-[calc(100vh-4rem)] overflow-y-auto z-20 transform -translate-x-full md:translate-x-0 transition-transform duration-200">
+            <nav class="p-4 space-y-1">
+                <!-- Admin Dashboard -->
+                <a href="dashboard.html" id="nav-dashboard" class="nav-item flex items-center gap-3 px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                    <svg class="w-5 h-5" data-lucide="layout-dashboard"></svg>
+                    <span>Admin Dashboard</span>
+                </a>
+
+                <!-- Employees with Children -->
+                <div class="nav-group">
+                    <button class="nav-group-toggle flex items-center justify-between w-full px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                        <div class="flex items-center gap-3">
+                            <svg class="w-5 h-5" data-lucide="users"></svg>
+                            <span>Employees</span>
+                        </div>
+                        <svg class="w-4 h-4 transform transition-transform" data-lucide="chevron-right"></svg>
+                    </button>
+                    <div class="nav-group-children hidden ml-8 space-y-1 mt-1">
+                        <a href="employees_list.html" class="nav-item block px-3 py-2 rounded-md text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-600">Employee Directory</a>
+                        <a href="employee_upsert.html?mode=create" class="nav-item block px-3 py-2 rounded-md text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-600">Add Employee</a>
+                    </div>
+                </div>
+
+                <!-- Departments -->
+                <a href="departments_list.html" id="nav-departments" class="nav-item flex items-center gap-3 px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                    <svg class="w-5 h-5" data-lucide="building"></svg>
+                    <span>Departments</span>
+                </a>
+
+                <!-- Skill Categories -->
+                <a href="skill_categories_list.html" id="nav-skill-categories" class="nav-item flex items-center gap-3 px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                    <svg class="w-5 h-5" data-lucide="layers"></svg>
+                    <span>Skill Categories</span>
+                </a>
+
+                <!-- Criticality Levels -->
+                <a href="skill_criticalities_list.html" id="nav-criticalities" class="nav-item flex items-center gap-3 px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                    <svg class="w-5 h-5" data-lucide="sliders"></svg>
+                    <span>Criticality Levels</span>
+                </a>
+
+                <!-- Skills with Children -->
+                <div class="nav-group">
+                    <button class="nav-group-toggle flex items-center justify-between w-full px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                        <div class="flex items-center gap-3">
+                            <svg class="w-5 h-5" data-lucide="book"></svg>
+                            <span>Skills</span>
+                        </div>
+                        <svg class="w-4 h-4 transform transition-transform" data-lucide="chevron-right"></svg>
+                    </button>
+                    <div class="nav-group-children hidden ml-8 space-y-1 mt-1">
+                        <a href="skills_list.html" class="nav-item block px-3 py-2 rounded-md text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-600">Skills Directory</a>
+                        <a href="skill_upsert.html?mode=create" class="nav-item block px-3 py-2 rounded-md text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-600">Add Skill</a>
+                    </div>
+                </div>
+
+                <!-- Assessment Cycles with Children -->
+                <div class="nav-group">
+                    <button class="nav-group-toggle flex items-center justify-between w-full px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                        <div class="flex items-center gap-3">
+                            <svg class="w-5 h-5" data-lucide="calendar"></svg>
+                            <span>Assessment Cycles</span>
+                        </div>
+                        <svg class="w-4 h-4 transform transition-transform" data-lucide="chevron-right"></svg>
+                    </button>
+                    <div class="nav-group-children hidden ml-8 space-y-1 mt-1">
+                        <a href="assessment_cycles_list.html" class="nav-item block px-3 py-2 rounded-md text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-600">Cycles Directory</a>
+                        <a href="assessment_cycle_upsert.html?mode=create" class="nav-item block px-3 py-2 rounded-md text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-600">Create Cycle</a>
+                    </div>
+                </div>
+
+                <!-- Trainer Pool with Children -->
+                <div class="nav-group">
+                    <button class="nav-group-toggle flex items-center justify-between w-full px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                        <div class="flex items-center gap-3">
+                            <svg class="w-5 h-5" data-lucide="users"></svg>
+                            <span>Trainer Pool</span>
+                        </div>
+                        <svg class="w-4 h-4 transform transition-transform" data-lucide="chevron-right"></svg>
+                    </button>
+                    <div class="nav-group-children hidden ml-8 space-y-1 mt-1">
+                        <a href="trainers_list.html" class="nav-item block px-3 py-2 rounded-md text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-600">Trainer Directory</a>
+                        <a href="external_trainer_upsert.html?mode=create" class="nav-item block px-3 py-2 rounded-md text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-600">Add External Trainer</a>
+                    </div>
+                </div>
+
+                <!-- Training Sessions with Children -->
+                <div class="nav-group">
+                    <button class="nav-group-toggle flex items-center justify-between w-full px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                        <div class="flex items-center gap-3">
+                            <svg class="w-5 h-5" data-lucide="calendar"></svg>
+                            <span>Training Sessions</span>
+                        </div>
+                        <svg class="w-4 h-4 transform transition-transform" data-lucide="chevron-right"></svg>
+                    </button>
+                    <div class="nav-group-children hidden ml-8 space-y-1 mt-1">
+                        <a href="training_sessions_list.html" class="nav-item block px-3 py-2 rounded-md text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-600">Sessions Calendar</a>
+                        <a href="training_session_upsert.html?mode=create" class="nav-item block px-3 py-2 rounded-md text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-600">Create Session</a>
+                    </div>
+                </div>
+
+                <!-- Disputes -->
+                <a href="disputes_list.html" id="nav-disputes" class="nav-item flex items-center gap-3 px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                    <svg class="w-5 h-5" data-lucide="alert-circle"></svg>
+                    <span>Disputes</span>
+                </a>
+
+                <!-- Analytics Section -->
+                <div class="border-t border-neutral-200 pt-4 mt-4">
+                    <h4 class="px-3 text-xs font-semibold text-neutral-500 uppercase tracking-wider mb-2">Analytics</h4>
+                    
+                    <a href="analytics_skill_gap_heatmap.html" class="nav-item flex items-center gap-3 px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                        <svg class="w-5 h-5" data-lucide="grid"></svg>
+                        <span>Skill Gap Heatmap</span>
+                    </a>
+
+                    <a href="analytics_tni_dashboard.html" class="nav-item flex items-center gap-3 px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                        <svg class="w-5 h-5" data-lucide="bar-chart-2"></svg>
+                        <span>TNI Dashboard</span>
+                    </a>
+
+                    <a href="analytics_training_forecast.html" class="nav-item flex items-center gap-3 px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                        <svg class="w-5 h-5" data-lucide="trending-up"></svg>
+                        <span>Training Forecast</span>
+                    </a>
+
+                    <a href="analytics_assessment_completion.html" class="nav-item flex items-center gap-3 px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                        <svg class="w-5 h-5" data-lucide="pie-chart"></svg>
+                        <span>Assessment Completion</span>
+                    </a>
+
+                    <a href="analytics_dispute_metrics.html" class="nav-item flex items-center gap-3 px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                        <svg class="w-5 h-5" data-lucide="bar-chart"></svg>
+                        <span>Dispute Analytics</span>
+                    </a>
+                </div>
+            </nav>
+            
+            <!-- Footer -->
+            <div class="absolute bottom-4 w-full text-center text-xs text-neutral-500 bg-white px-4">
+                Made with ❤️ by TiramAi
+            </div>
+        </aside>
+
+        <!-- Mobile Overlay -->
+        <div id="mobileOverlay" class="hidden fixed inset-0 bg-black bg-opacity-50 z-10 md:hidden"></div>
+
+        <!-- Main Content -->
+        <main id="pageContent" class="flex-1 p-6 overflow-y-auto">
+            
+<!-- External Trainer Upsert Form -->
+<div class="max-w-4xl mx-auto">
+  <!-- Page Header -->
+  <header class="mb-8">
+    <h1 class="text-2xl leading-8 font-bold text-neutral-950 mb-2" id="pageTitle">Create External Trainer</h1>
+    <p class="text-sm leading-5 text-neutral-700">Add external trainers to expand your training capacity and skill coverage.</p>
+  </header>
+
+  <!-- Main Form Card -->
+  <div class="bg-white border border-neutral-200 rounded-md p-6 shadow-sm">
+    <form id="trainerForm" class="space-y-6">
+      
+      <!-- Basic Information Section -->
+      <section>
+        <h2 class="text-base leading-6 font-semibold text-neutral-950 mb-4">Basic Information</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          
+          <!-- Name Field -->
+          <div>
+            <label for="name" class="block text-sm font-medium text-neutral-900 mb-1">
+              Full Name <span class="text-danger-600">*</span>
+            </label>
+            <input 
+              type="text" 
+              id="name" 
+              name="name" 
+              required
+              maxlength="200"
+              class="w-full border border-neutral-200 rounded-sm px-3 py-2 bg-white text-sm leading-5 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2"
+              placeholder="Enter trainer's full name"
+            />
+            <p class="mt-1 text-xs text-danger-600 hidden" id="nameError">Please enter a valid name (max 200 characters)</p>
+          </div>
+
+          <!-- Email Field -->
+          <div>
+            <label for="email" class="block text-sm font-medium text-neutral-900 mb-1">
+              Email Address <span class="text-danger-600">*</span>
+            </label>
+            <input 
+              type="email" 
+              id="email" 
+              name="email" 
+              required
+              class="w-full border border-neutral-200 rounded-sm px-3 py-2 bg-white text-sm leading-5 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2"
+              placeholder="trainer@company.com"
+            />
+            <p class="mt-1 text-xs text-danger-600 hidden" id="emailError">Please enter a valid email address</p>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- Contact Information Section -->
+      <section>
+        <h2 class="text-base leading-6 font-semibold text-neutral-950 mb-4">Contact Information</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          
+          <!-- Phone Field -->
+          <div>
+            <label for="phone" class="block text-sm font-medium text-neutral-900 mb-1">Phone Number</label>
+            <input 
+              type="tel" 
+              id="phone" 
+              name="phone"
+              class="w-full border border-neutral-200 rounded-sm px-3 py-2 bg-white text-sm leading-5 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2"
+              placeholder="+1 (555) 123-4567"
+            />
+            <p class="mt-1 text-xs text-neutral-500">Optional contact number</p>
+          </div>
+
+          <!-- Address Field -->
+          <div>
+            <label for="address" class="block text-sm font-medium text-neutral-900 mb-1">Address</label>
+            <textarea 
+              id="address" 
+              name="address"
+              rows="3"
+              class="w-full border border-neutral-200 rounded-sm px-3 py-2 bg-white text-sm leading-5 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2 resize-none"
+              placeholder="Street address, city, state, zip code"
+            ></textarea>
+            <p class="mt-1 text-xs text-neutral-500">Optional address information</p>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- Skills Section -->
+      <section>
+        <h2 class="text-base leading-6 font-semibold text-neutral-950 mb-4">
+          Skills & Competencies <span class="text-danger-600">*</span>
+        </h2>
+        
+        <!-- Skills Loading Skeleton -->
+        <div id="skillsLoadingSkeleton" class="space-y-3">
+          <div class="animate-pulse">
+            <div class="h-4 bg-neutral-200 rounded w-32 mb-2"></div>
+            <div class="space-y-2">
+              <div class="h-10 bg-neutral-200 rounded"></div>
+              <div class="h-10 bg-neutral-200 rounded w-3/4"></div>
+              <div class="h-10 bg-neutral-200 rounded w-1/2"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Skills Selection Container -->
+        <div id="skillsContainer" class="hidden">
+          <div class="mb-4">
+            <label for="skillsSearch" class="block text-sm font-medium text-neutral-900 mb-1">Search Skills</label>
+            <input 
+              type="text" 
+              id="skillsSearch" 
+              placeholder="Search skills by name..."
+              class="w-full border border-neutral-200 rounded-sm px-3 py-2 bg-white text-sm leading-5 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2"
+            />
+          </div>
+
+          <!-- Selected Skills Display -->
+          <div class="mb-4">
+            <p class="text-sm font-medium text-neutral-900 mb-2">Selected Skills</p>
+            <div id="selectedSkills" class="min-h-[40px] p-3 border border-neutral-200 rounded-sm bg-neutral-50">
+              <p class="text-sm text-neutral-500" id="noSkillsText">No skills selected. Please select at least one skill.</p>
+            </div>
+            <p class="mt-1 text-xs text-danger-600 hidden" id="skillsError">Please select at least one skill</p>
+          </div>
+
+          <!-- Available Skills List -->
+          <div class="max-h-64 overflow-y-auto border border-neutral-200 rounded-sm">
+            <div id="skillsList" class="divide-y divide-neutral-200">
+              <!-- Skills will be populated here -->
+            </div>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- Status Section (Edit Mode Only) -->
+      <section id="statusSection" class="hidden">
+        <h2 class="text-base leading-6 font-semibold text-neutral-950 mb-4">Status</h2>
+        <div>
+          <label for="status" class="block text-sm font-medium text-neutral-900 mb-1">Trainer Status</label>
+          <select 
+            id="status" 
+            name="status"
+            class="w-full border border-neutral-200 rounded-sm px-3 py-2 bg-white text-sm leading-5 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2"
+          >
+            <option value="active">Active</option>
+            <option value="inactive">Inactive</option>
+          </select>
+          <p class="mt-1 text-xs text-neutral-500">Active trainers can be assigned to training sessions</p>
+        </div>
+      </section>
+
+      <!-- Form Actions -->
+      <div class="flex flex-col sm:flex-row gap-3 sm:gap-4 pt-6 border-t border-neutral-200">
+        <button 
+          type="button" 
+          id="cancelBtn"
+          class="inline-flex items-center justify-center h-11 px-4 rounded-md border border-neutral-200 bg-white text-neutral-900 hover:bg-neutral-50 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2"
+        >
+          <svg class="w-5 h-5 mr-2" data-lucide="x"></svg>
+          Cancel
+        </button>
+        
+        <button 
+          type="submit" 
+          id="saveBtn"
+          disabled
+          class="inline-flex items-center justify-center h-11 px-4 rounded-md bg-brand-primary-600 hover:bg-brand-primary-700 text-white focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          <svg class="w-5 h-5 mr-2" data-lucide="save"></svg>
+          <span id="saveBtnText">Create Trainer</span>
+        </button>
+      </div>
+
+    </form>
+  </div>
+
+  <!-- Success Modal -->
+  <div id="successModal" class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-lg p-6 max-w-md w-full shadow-lg">
+      <div class="text-center">
+        <div class="w-12 h-12 bg-success-600 rounded-full flex items-center justify-center mx-auto mb-4">
+          <svg class="w-6 h-6 text-white" data-lucide="check"></svg>
+        </div>
+        <h3 class="text-xl leading-7 font-semibold text-neutral-950 mb-2" id="successTitle">Trainer Created</h3>
+        <p class="text-sm text-neutral-700 mb-6" id="successMessage">The external trainer has been successfully created and is ready for scheduling.</p>
+        <button 
+          id="successOkBtn"
+          class="inline-flex items-center justify-center h-11 px-6 rounded-md bg-brand-primary-600 hover:bg-brand-primary-700 text-white focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2"
+        >
+          View Trainer Details
+        </button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+        </main>
+    </div>
+
+    <!-- Required: JavaScript -->
+    <script type="module" data-tiramai="web-gen">
+        import { showToast, showLoader, hideLoader, env } from "./scripts/main.js";
+        import { auth, db, storage } from "./scripts/firebase.js";
+        import { onAuthStateChanged, getAuth, signOut } from 'https://www.gstatic.com/firebasejs/10.12.4/firebase-auth.js';
+        import { doc, getDoc } from 'https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js';
+
+        // Initialize Lucide icons
+        lucide.createIcons();
+
+        // Mobile menu toggle
+        const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+        const sidebar = document.getElementById('sidebar');
+        const mobileOverlay = document.getElementById('mobileOverlay');
+
+        mobileMenuToggle?.addEventListener('click', () => {
+            sidebar.classList.toggle('-translate-x-full');
+            mobileOverlay.classList.toggle('hidden');
+        });
+
+        mobileOverlay?.addEventListener('click', () => {
+            sidebar.classList.add('-translate-x-full');
+            mobileOverlay.classList.add('hidden');
+        });
+
+        // Navigation group toggles
+        document.querySelectorAll('.nav-group-toggle').forEach(toggle => {
+            toggle.addEventListener('click', (e) => {
+                e.preventDefault();
+                const children = toggle.nextElementSibling;
+                const icon = toggle.querySelector('svg:last-child');
+                
+                children.classList.toggle('hidden');
+                icon.classList.toggle('rotate-90');
+            });
+        });
+
+        // User profile dropdown
+        const userProfileToggle = document.getElementById('userProfileToggle');
+        const userProfileDropdown = document.getElementById('userProfileDropdown');
+
+        userProfileToggle?.addEventListener('click', () => {
+            userProfileDropdown.classList.toggle('hidden');
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!userProfileToggle?.contains(e.target) && !userProfileDropdown?.contains(e.target)) {
+                userProfileDropdown?.classList.add('hidden');
+            }
+        });
+
+        // Sign out functionality
+        document.getElementById('signOutButton')?.addEventListener('click', async () => {
+            try {
+                await signOut(auth);
+                window.location.href = 'auth.html';
+            } catch (error) {
+                console.error('Sign out error:', error);
+                showToast('Failed to sign out', 'error');
+            }
+        });
+
+        // Auth state management
+        onAuthStateChanged(auth, async (user) => {
+            if (!user) {
+                window.location.href = 'auth.html';
+                return;
+            }
+
+            // Load user profile data
+            try {
+                const userDoc = await getDoc(doc(db, 'users', user.uid));
+                const userData = userDoc.exists() ? userDoc.data() : null;
+
+                // Update UI with user data
+                const displayName = userData?.firstName && userData?.lastName 
+                    ? `${userData.firstName} ${userData.lastName}`
+                    : user.displayName || 'John Doe';
+                
+                const email = user.email || 'johndoe@example.com';
+                const initials = displayName.split(' ').map(n => n[0]).join('').toUpperCase();
+
+                document.getElementById('userDisplayName').textContent = displayName;
+                document.getElementById('userEmail').textContent = email;
+                document.getElementById('userInitials').textContent = initials;
+
+            } catch (error) {
+                console.error('Error loading user data:', error);
+                // Fallback to default values
+                document.getElementById('userDisplayName').textContent = 'John Doe';
+                document.getElementById('userEmail').textContent = user.email || 'johndoe@example.com';
+                document.getElementById('userInitials').textContent = 'JD';
+            }
+        });
+
+        // Set active navigation item based on current page
+        function setActiveNavItem() {
+            const currentPath = window.location.pathname;
+            const navItems = document.querySelectorAll('.nav-item');
+            
+            navItems.forEach(item => {
+                const href = item.getAttribute('href');
+                if (href && currentPath.includes(href.split('?')[0])) {
+                    item.classList.add('bg-accent-gold-50', 'text-brand-primary-600', 'border-l-2', 'border-brand-primary-600');
+                    item.classList.remove('text-neutral-700', 'text-neutral-600');
+                    
+                    // Expand parent group if needed
+                    const parentGroup = item.closest('.nav-group');
+                    if (parentGroup) {
+                        const children = parentGroup.querySelector('.nav-group-children');
+                        const icon = parentGroup.querySelector('.nav-group-toggle svg:last-child');
+                        children?.classList.remove('hidden');
+                        icon?.classList.add('rotate-90');
+                    }
+                }
+            });
+        }
+
+        // Initialize active nav state
+        setActiveNavItem();
+    </script>
+
+    
+<script id="data-script" type="module" data-tiramai="web-gen">
+import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.12.4/firebase-auth.js';
+import { 
+  collection, getDocs, setDoc, addDoc, doc, getDoc, updateDoc, 
+  query, where, orderBy, Timestamp 
+} from 'https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js';
+import { auth, getDb } from "./scripts/firebase.js";
+import { showToast, showLoader, hideLoader, env } from "./scripts/main.js";
+
+const db = getDb();
+
+// Page state
+let currentMode = 'create';
+let currentTrainerId = null;
+let availableSkills = [];
+let selectedSkills = new Set();
+
+// Get URL parameters
+function getUrlParams() {
+  const params = new URLSearchParams(window.location.search);
+  return {
+    mode: params.get('mode') || 'create',
+    trainerId: params.get('trainerId')
+  };
+}
+
+// Initialize page
+async function funInitializePage() {
+  try {
+    const params = getUrlParams();
+    currentMode = params.mode;
+    currentTrainerId = params.trainerId;
+
+    // Update page title and form elements based on mode
+    if (currentMode === 'edit') {
+      document.getElementById('pageTitle').textContent = 'Edit External Trainer';
+      document.getElementById('saveBtnText').textContent = 'Update Trainer';
+      document.getElementById('statusSection').classList.remove('hidden');
+      
+      if (!currentTrainerId) {
+        showToast('Trainer ID is required for edit mode');
+        return;
+      }
+    }
+
+    // Load skills first
+    await funLoadSkills();
+    
+    // If edit mode, load trainer data
+    if (currentMode === 'edit') {
+      await funLoadTrainerData();
+    }
+
+    // Setup form validation and handlers
+    funSetupFormHandlers();
+    funSetupSkillsHandlers();
+    
+  } catch (error) {
+    console.error('Error initializing page:', error);
+    showToast('Failed to load page data');
+  }
+}
+
+// Load available skills
+async function funLoadSkills() {
+  try {
+    const skillsQuery = query(
+      collection(db, 'skills'),
+      where('status', '==', 'active'),
+      orderBy('name')
+    );
+    
+    const snapshot = await getDocs(skillsQuery);
+    availableSkills = snapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    }));
+
+    funRenderSkillsList();
+    
+    // Hide skeleton and show skills container
+    document.getElementById('skillsLoadingSkeleton').classList.add('hidden');
+    document.getElementById('skillsContainer').classList.remove('hidden');
+    
+  } catch (error) {
+    console.error('Error loading skills:', error);
+    showToast('Failed to load skills list');
+    document.getElementById('skillsLoadingSkeleton').classList.add('hidden');
+  }
+}
+
+// Load trainer data for edit mode
+async function funLoadTrainerData() {
+  try {
+    showLoader();
+    
+    const trainerDoc = await getDoc(doc(db, 'externalTrainers', currentTrainerId));
+    
+    if (!trainerDoc.exists()) {
+      showToast('Trainer not found');
+      hideLoader();
+      return;
+    }
+
+    const trainerData = trainerDoc.data();
+    
+    // Populate form fields
+    document.getElementById('name').value = trainerData.name || '';
+    document.getElementById('email').value = trainerData.email || '';
+    document.getElementById('phone').value = trainerData.contactInfo?.phone || '';
+    document.getElementById('address').value = trainerData.contactInfo?.address || '';
+    document.getElementById('status').value = trainerData.status || 'active';
+
+    // Set selected skills
+    if (trainerData.skills && Array.isArray(trainerData.skills)) {
+      trainerData.skills.forEach(skillObj => {
+        if (skillObj?.skillId) {
+          selectedSkills.add(skillObj.skillId);
+        }
+      });
+      funUpdateSelectedSkillsDisplay();
+      funUpdateSkillsList();
+    }
+
+    hideLoader();
+    
+  } catch (error) {
+    console.error('Error loading trainer data:', error);
+    showToast('Failed to load trainer information');
+    hideLoader();
+  }
+}
+
+// Render skills list
+function funRenderSkillsList(filteredSkills = null) {
+  const skillsToShow = filteredSkills || availableSkills;
+  const skillsList = document.getElementById('skillsList');
+  
+  if (skillsToShow.length === 0) {
+    skillsList.innerHTML = `
+      <div class="p-4 text-center text-sm text-neutral-500">
+        ${filteredSkills ? 'No skills found matching your search' : 'No active skills available'}
+      </div>
+    `;
+    return;
+  }
+
+  skillsList.innerHTML = skillsToShow.map(skill => `
+    <div class="flex items-center justify-between p-3 hover:bg-neutral-50">
+      <div class="flex-1 min-w-0">
+        <p class="text-sm font-medium text-neutral-900 truncate">${skill.name || 'N/A'}</p>
+        <p class="text-xs text-neutral-500 mt-1 line-clamp-2">${skill.description || 'No description available'}</p>
+      </div>
+      <button 
+        type="button"
+        data-skill-id="${skill.id}"
+        class="skill-toggle-btn ml-3 px-3 py-1 rounded-sm text-xs font-medium ${
+          selectedSkills.has(skill.id) 
+            ? 'bg-brand-primary-600 text-white' 
+            : 'bg-neutral-200 text-neutral-700 hover:bg-neutral-300'
+        }"
+      >
+        ${selectedSkills.has(skill.id) ? 'Remove' : 'Add'}
+      </button>
+    </div>
+  `).join('');
+}
+
+// Update selected skills display
+function funUpdateSelectedSkillsDisplay() {
+  const selectedSkillsContainer = document.getElementById('selectedSkills');
+  const noSkillsText = document.getElementById('noSkillsText');
+  
+  if (selectedSkills.size === 0) {
+    noSkillsText.classList.remove('hidden');
+    selectedSkillsContainer.querySelectorAll('.skill-badge').forEach(badge => badge.remove());
+  } else {
+    noSkillsText.classList.add('hidden');
+    
+    // Clear existing badges
+    selectedSkillsContainer.querySelectorAll('.skill-badge').forEach(badge => badge.remove());
+    
+    // Add new badges
+    selectedSkills.forEach(skillId => {
+      const skill = availableSkills.find(s => s.id === skillId);
+      if (skill) {
+        const badge = document.createElement('span');
+        badge.className = 'skill-badge inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs bg-accent-gold-50 text-neutral-900 border border-accent-gold-500 mr-2 mb-2';
+        badge.innerHTML = `
+          ${skill.name || 'N/A'}
+          <button type="button" class="hover:text-danger-600" data-remove-skill="${skillId}">
+            <svg class="w-3 h-3" data-lucide="x"></svg>
+          </button>
+        `;
+        selectedSkillsContainer.appendChild(badge);
+      }
+    });
+    
+    // Re-initialize Lucide icons for new badges
+    if (window.lucide) {
+      window.lucide.createIcons();
+    }
+  }
+  
+  funValidateForm();
+}
+
+// Update skills list checkboxes
+function funUpdateSkillsList() {
+  document.querySelectorAll('.skill-toggle-btn').forEach(btn => {
+    const skillId = btn.getAttribute('data-skill-id');
+    const isSelected = selectedSkills.has(skillId);
+    
+    btn.textContent = isSelected ? 'Remove' : 'Add';
+    btn.className = `skill-toggle-btn ml-3 px-3 py-1 rounded-sm text-xs font-medium ${
+      isSelected 
+        ? 'bg-brand-primary-600 text-white' 
+        : 'bg-neutral-200 text-neutral-700 hover:bg-neutral-300'
+    }`;
+  });
+}
+
+// Setup skills handlers
+function funSetupSkillsHandlers() {
+  // Skills search
+  const skillsSearch = document.getElementById('skillsSearch');
+  let searchTimeout;
+  
+  skillsSearch.addEventListener('input', (e) => {
+    clearTimeout(searchTimeout);
+    searchTimeout = setTimeout(() => {
+      const searchTerm = e.target.value.toLowerCase().trim();
+      
+      if (searchTerm === '') {
+        funRenderSkillsList();
+      } else {
+        const filtered = availableSkills.filter(skill => 
+          (skill.name || '').toLowerCase().includes(searchTerm) ||
+          (skill.description || '').toLowerCase().includes(searchTerm)
+        );
+        funRenderSkillsList(filtered);
+      }
+    }, 300);
+  });
+
+  // Skills list click handler
+  document.getElementById('skillsList').addEventListener('click', (e) => {
+    if (e.target.classList.contains('skill-toggle-btn')) {
+      const skillId = e.target.getAttribute('data-skill-id');
+      
+      if (selectedSkills.has(skillId)) {
+        selectedSkills.delete(skillId);
+      } else {
+        selectedSkills.add(skillId);
+      }
+      
+      funUpdateSelectedSkillsDisplay();
+      funUpdateSkillsList();
+    }
+  });
+
+  // Selected skills remove handler
+  document.getElementById('selectedSkills').addEventListener('click', (e) => {
+    if (e.target.closest('[data-remove-skill]')) {
+      const skillId = e.target.closest('[data-remove-skill]').getAttribute('data-remove-skill');
+      selectedSkills.delete(skillId);
+      funUpdateSelectedSkillsDisplay();
+      funUpdateSkillsList();
+    }
+  });
+}
+
+// Setup form handlers
+function funSetupFormHandlers() {
+  const form = document.getElementById('trainerForm');
+  const nameInput = document.getElementById('name');
+  const emailInput = document.getElementById('email');
+  
+  // Real-time validation
+  nameInput.addEventListener('input', funValidateForm);
+  emailInput.addEventListener('input', funValidateForm);
+  
+  // Form submission
+  form.addEventListener('submit', funHandleSubmit);
+  
+  // Cancel button
+  document.getElementById('cancelBtn').addEventListener('click', funHandleCancel);
+  
+  // Success modal OK button
+  document.getElementById('successOkBtn').addEventListener('click', funHandleSuccessOk);
+}
+
+// Validate form
+function funValidateForm() {
+  const name = document.getElementById('name').value.trim();
+  const email = document.getElementById('email').value.trim();
+  const saveBtn = document.getElementById('saveBtn');
+  
+  let isValid = true;
+  
+  // Name validation
+  if (name.length === 0 || name.length > 200) {
+    document.getElementById('nameError').classList.remove('hidden');
+    isValid = false;
+  } else {
+    document.getElementById('nameError').classList.add('hidden');
+  }
+  
+  // Email validation
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(email)) {
+    document.getElementById('emailError').classList.remove('hidden');
+    isValid = false;
+  } else {
+    document.getElementById('emailError').classList.add('hidden');
+  }
+  
+  // Skills validation
+  if (selectedSkills.size === 0) {
+    document.getElementById('skillsError').classList.remove('hidden');
+    isValid = false;
+  } else {
+    document.getElementById('skillsError').classList.add('hidden');
+  }
+  
+  saveBtn.disabled = !isValid;
+}
+
+// Handle form submission
+async function funHandleSubmit(e) {
+  e.preventDefault();
+  
+  if (selectedSkills.size === 0) {
+    showToast('Please select at least one skill');
+    return;
+  }
+  
+  try {
+    showLoader();
+    
+    const formData = {
+      name: document.getElementById('name').value.trim(),
+      email: document.getElementById('email').value.trim(),
+      contactInfo: {
+        phone: document.getElementById('phone').value.trim() || null,
+        address: document.getElementById('address').value.trim() || null
+      },
+      skills: Array.from(selectedSkills).map(skillId => ({ skillId })),
+      status: currentMode === 'edit' ? document.getElementById('status').value : 'active',
+      modifiedTimestamp: new Date().toISOString()
+    };
+
+    if (currentMode === 'create') {
+      formData.createdTimestamp = new Date().toISOString();
+      const docRef = await addDoc(collection(db, 'externalTrainers'), formData);
+      currentTrainerId = docRef.id;
+    } else {
+      await updateDoc(doc(db, 'externalTrainers', currentTrainerId), formData);
+    }
+    
+    hideLoader();
+    
+    // Show success modal
+    document.getElementById('successTitle').textContent = currentMode === 'create' ? 'Trainer Created' : 'Trainer Updated';
+    document.getElementById('successMessage').textContent = `The external trainer has been successfully ${currentMode === 'create' ? 'created' : 'updated'}.`;
+    document.getElementById('successModal').classList.remove('hidden');
+    
+  } catch (error) {
+    console.error('Error saving trainer:', error);
+    showToast(`Failed to ${currentMode === 'create' ? 'create' : 'update'} trainer`);
+    hideLoader();
+  }
+}
+
+// Handle cancel
+function funHandleCancel() {
+  window.location.href = 'trainers_list.html';
+}
+
+// Handle success modal OK
+function funHandleSuccessOk() {
+  window.location.href = `/trainer_detail.html?trainerType=external&trainerId=${currentTrainerId}`;
+}
+
+// Auth state management
+onAuthStateChanged(auth, (user) => {
+  if (!user) {
+    window.location.href = "auth.html?redirect=" + encodeURIComponent(window.location.pathname + window.location.search);
+    return;
+  }
+  
+  funInitializePage();
+});
+
+// Initialize Lucide icons
+if (window.lucide) {
+  window.lucide.createIcons();
+}
+</script>
+
+</body>
+</html>

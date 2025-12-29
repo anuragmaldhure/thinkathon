@@ -1,0 +1,1673 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SkillBridge</title>
+
+    <!-- Required: Main JS Script -->
+    <script type="module" src="scripts/main.js" data-tiramai="web-gen"></script>
+
+    <!-- Required: TailwindCSS -->
+    <script src="./lib/tailwindcss/tailwindcss.js" fetchpriority="high" data-tiramai="web-gen"></script>
+
+    <!-- Required: Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest" data-tiramai="web-gen"></script>
+
+    <!-- Required: Favicon -->
+    <link rel="icon" href="assets/imgs/logo.ico" type="image/x-icon" data-tiramai="web-gen"/>
+
+    <!-- ECharts Support (for charts/graphs) -->
+    <script defer src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js" data-tiramai="web-gen"></script>
+
+    <!-- Markdown Support (for content rendering) -->
+    <script defer src="https://cdn.jsdelivr.net/npm/marked/marked.min.js" data-tiramai="web-gen"></script>
+
+    <!-- Tailwind Config Extension -->
+    <script data-tiramai="web-gen">
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            'primary-600': '#1B2A44',
+                            'primary-700': '#14233A',
+                            'primary-800': '#0E1A2B',
+                        },
+                        accent: {
+                            'gold-50': '#FFF7E6',
+                            'gold-500': '#C59D42',
+                            'gold-600': '#A97D22',
+                        },
+                        success: { '600': '#16A34A' },
+                        warning: { '600': '#D97706' },
+                        danger: { '600': '#DC2626' },
+                        info: { '600': '#2563EB' },
+                        heat: {
+                            green: '#16A34A',
+                            amber: '#F59E0B',
+                            red: '#DC2626'
+                        },
+                        neutral: {
+                            '50': '#F8FAFC',
+                            '200': '#E2E8F0',
+                            '500': '#64748B',
+                            '700': '#334155',
+                            '900': '#111827',
+                            '950': '#0B1220',
+                        }
+                    },
+                    fontSize: {
+                        'xs': ['12px', '16px'],
+                        'sm': ['14px', '20px'],
+                        'base': ['16px', '24px'],
+                        'xl': ['20px', '28px'],
+                        '2xl': ['24px', '32px'],
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-neutral-50 min-h-screen text-neutral-900">
+    <!-- Top Navigation -->
+    <header class="fixed top-0 left-0 right-0 bg-brand-primary-800 border-b border-neutral-200 flex items-center justify-between px-6 py-4 z-30 h-16">
+        <div class="flex items-center gap-4">
+            <!-- Mobile menu toggle -->
+            <button id="mobileMenuToggle" class="md:hidden text-white p-2" aria-label="Toggle menu">
+                <svg class="w-5 h-5" data-lucide="menu"></svg>
+            </button>
+            <!-- Logo -->
+            <div class="flex items-center gap-3">
+                <svg width="32" height="32" viewBox="0 0 400 400" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="84" y="116" width="56" height="168" rx="8" fill="#1E40AF"/>
+                    <rect x="176" y="84" width="56" height="200" rx="8" fill="#059669"/>
+                    <rect x="268" y="156" width="48" height="128" rx="8" fill="#1E40AF"/>
+                    <rect x="114" y="180" width="172" height="20" rx="10" fill="#F59E0B"/>
+                </svg>
+                <span class="text-xl font-semibold text-white">SkillBridge</span>
+            </div>
+        </div>
+        <div class="flex items-center gap-4">
+            <!-- User Profile Dropdown -->
+            <div class="relative" id="userProfileContainer">
+                <button id="userProfileToggle" class="flex items-center gap-2 text-white hover:text-accent-gold-500 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2 focus:ring-offset-brand-primary-800 rounded-md p-2">
+                    <div class="w-8 h-8 bg-accent-gold-500 rounded-full flex items-center justify-center">
+                        <span id="userInitials" class="text-sm font-semibold text-white">JD</span>
+                    </div>
+                    <svg class="w-4 h-4" data-lucide="chevron-down"></svg>
+                </button>
+                <!-- Dropdown Menu -->
+                <div id="userProfileDropdown" class="hidden absolute right-0 mt-2 w-64 bg-white rounded-md shadow-lg border border-neutral-200 py-2 z-50">
+                    <div class="px-4 py-3 border-b border-neutral-200">
+                        <p id="userDisplayName" class="text-sm font-semibold text-neutral-900">John Doe</p>
+                        <p id="userEmail" class="text-xs text-neutral-500">johndoe@example.com</p>
+                        <p class="text-xs text-accent-gold-600 font-medium">System Administrator</p>
+                    </div>
+                    <button id="signOutButton" class="w-full text-left px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50 flex items-center gap-2">
+                        <svg class="w-4 h-4" data-lucide="log-out"></svg>
+                        Sign Out
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="flex pt-16">
+        <!-- Side Navigation -->
+        <aside id="sidebar" class="fixed md:sticky top-16 left-0 w-64 bg-white border-r border-neutral-200 h-[calc(100vh-4rem)] overflow-y-auto z-20 transform -translate-x-full md:translate-x-0 transition-transform duration-200">
+            <nav class="p-4 space-y-1">
+                <!-- Admin Dashboard -->
+                <a href="dashboard.html" id="nav-dashboard" class="nav-item flex items-center gap-3 px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                    <svg class="w-5 h-5" data-lucide="layout-dashboard"></svg>
+                    <span>Admin Dashboard</span>
+                </a>
+
+                <!-- Employees with Children -->
+                <div class="nav-group">
+                    <button class="nav-group-toggle flex items-center justify-between w-full px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                        <div class="flex items-center gap-3">
+                            <svg class="w-5 h-5" data-lucide="users"></svg>
+                            <span>Employees</span>
+                        </div>
+                        <svg class="w-4 h-4 transform transition-transform" data-lucide="chevron-right"></svg>
+                    </button>
+                    <div class="nav-group-children hidden ml-8 space-y-1 mt-1">
+                        <a href="employees_list.html" class="nav-item block px-3 py-2 rounded-md text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-600">Employee Directory</a>
+                        <a href="employee_upsert.html?mode=create" class="nav-item block px-3 py-2 rounded-md text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-600">Add Employee</a>
+                    </div>
+                </div>
+
+                <!-- Departments -->
+                <a href="departments_list.html" id="nav-departments" class="nav-item flex items-center gap-3 px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                    <svg class="w-5 h-5" data-lucide="building"></svg>
+                    <span>Departments</span>
+                </a>
+
+                <!-- Skill Categories -->
+                <a href="skill_categories_list.html" id="nav-skill-categories" class="nav-item flex items-center gap-3 px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                    <svg class="w-5 h-5" data-lucide="layers"></svg>
+                    <span>Skill Categories</span>
+                </a>
+
+                <!-- Criticality Levels -->
+                <a href="skill_criticalities_list.html" id="nav-criticalities" class="nav-item flex items-center gap-3 px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                    <svg class="w-5 h-5" data-lucide="sliders"></svg>
+                    <span>Criticality Levels</span>
+                </a>
+
+                <!-- Skills with Children -->
+                <div class="nav-group">
+                    <button class="nav-group-toggle flex items-center justify-between w-full px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                        <div class="flex items-center gap-3">
+                            <svg class="w-5 h-5" data-lucide="book"></svg>
+                            <span>Skills</span>
+                        </div>
+                        <svg class="w-4 h-4 transform transition-transform" data-lucide="chevron-right"></svg>
+                    </button>
+                    <div class="nav-group-children hidden ml-8 space-y-1 mt-1">
+                        <a href="skills_list.html" class="nav-item block px-3 py-2 rounded-md text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-600">Skills Directory</a>
+                        <a href="skill_upsert.html?mode=create" class="nav-item block px-3 py-2 rounded-md text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-600">Add Skill</a>
+                    </div>
+                </div>
+
+                <!-- Assessment Cycles with Children -->
+                <div class="nav-group">
+                    <button class="nav-group-toggle flex items-center justify-between w-full px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                        <div class="flex items-center gap-3">
+                            <svg class="w-5 h-5" data-lucide="calendar"></svg>
+                            <span>Assessment Cycles</span>
+                        </div>
+                        <svg class="w-4 h-4 transform transition-transform" data-lucide="chevron-right"></svg>
+                    </button>
+                    <div class="nav-group-children hidden ml-8 space-y-1 mt-1">
+                        <a href="assessment_cycles_list.html" class="nav-item block px-3 py-2 rounded-md text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-600">Cycles Directory</a>
+                        <a href="assessment_cycle_upsert.html?mode=create" class="nav-item block px-3 py-2 rounded-md text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-600">Create Cycle</a>
+                    </div>
+                </div>
+
+                <!-- Trainer Pool with Children -->
+                <div class="nav-group">
+                    <button class="nav-group-toggle flex items-center justify-between w-full px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                        <div class="flex items-center gap-3">
+                            <svg class="w-5 h-5" data-lucide="users"></svg>
+                            <span>Trainer Pool</span>
+                        </div>
+                        <svg class="w-4 h-4 transform transition-transform" data-lucide="chevron-right"></svg>
+                    </button>
+                    <div class="nav-group-children hidden ml-8 space-y-1 mt-1">
+                        <a href="trainers_list.html" class="nav-item block px-3 py-2 rounded-md text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-600">Trainer Directory</a>
+                        <a href="external_trainer_upsert.html?mode=create" class="nav-item block px-3 py-2 rounded-md text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-600">Add External Trainer</a>
+                    </div>
+                </div>
+
+                <!-- Training Sessions with Children -->
+                <div class="nav-group">
+                    <button class="nav-group-toggle flex items-center justify-between w-full px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                        <div class="flex items-center gap-3">
+                            <svg class="w-5 h-5" data-lucide="calendar"></svg>
+                            <span>Training Sessions</span>
+                        </div>
+                        <svg class="w-4 h-4 transform transition-transform" data-lucide="chevron-right"></svg>
+                    </button>
+                    <div class="nav-group-children hidden ml-8 space-y-1 mt-1">
+                        <a href="training_sessions_list.html" class="nav-item block px-3 py-2 rounded-md text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-600">Sessions Calendar</a>
+                        <a href="training_session_upsert.html?mode=create" class="nav-item block px-3 py-2 rounded-md text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-600">Create Session</a>
+                    </div>
+                </div>
+
+                <!-- Disputes -->
+                <a href="disputes_list.html" id="nav-disputes" class="nav-item flex items-center gap-3 px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                    <svg class="w-5 h-5" data-lucide="alert-circle"></svg>
+                    <span>Disputes</span>
+                </a>
+
+                <!-- Analytics Section -->
+                <div class="border-t border-neutral-200 pt-4 mt-4">
+                    <h4 class="px-3 text-xs font-semibold text-neutral-500 uppercase tracking-wider mb-2">Analytics</h4>
+                    
+                    <a href="analytics_skill_gap_heatmap.html" class="nav-item flex items-center gap-3 px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                        <svg class="w-5 h-5" data-lucide="grid"></svg>
+                        <span>Skill Gap Heatmap</span>
+                    </a>
+
+                    <a href="analytics_tni_dashboard.html" class="nav-item flex items-center gap-3 px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                        <svg class="w-5 h-5" data-lucide="bar-chart-2"></svg>
+                        <span>TNI Dashboard</span>
+                    </a>
+
+                    <a href="analytics_training_forecast.html" class="nav-item flex items-center gap-3 px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                        <svg class="w-5 h-5" data-lucide="trending-up"></svg>
+                        <span>Training Forecast</span>
+                    </a>
+
+                    <a href="analytics_assessment_completion.html" class="nav-item flex items-center gap-3 px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                        <svg class="w-5 h-5" data-lucide="pie-chart"></svg>
+                        <span>Assessment Completion</span>
+                    </a>
+
+                    <a href="analytics_dispute_metrics.html" class="nav-item flex items-center gap-3 px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                        <svg class="w-5 h-5" data-lucide="bar-chart"></svg>
+                        <span>Dispute Analytics</span>
+                    </a>
+                </div>
+            </nav>
+            
+            <!-- Footer -->
+            <div class="absolute bottom-4 w-full text-center text-xs text-neutral-500 bg-white px-4">
+                Made with ❤️ by TiramAi
+            </div>
+        </aside>
+
+        <!-- Mobile Overlay -->
+        <div id="mobileOverlay" class="hidden fixed inset-0 bg-black bg-opacity-50 z-10 md:hidden"></div>
+
+        <!-- Main Content -->
+        <main id="pageContent" class="flex-1 p-6 overflow-y-auto">
+            
+<!-- Page Header -->
+<div class="mb-6">
+  <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+    <div>
+      <h1 class="text-2xl leading-8 font-bold text-neutral-950 mb-1">Trainer Pool</h1>
+      <p class="text-sm leading-5 text-neutral-700">Combined view of internal and external trainers, eligibilities, and session history</p>
+    </div>
+    <button 
+      id="btn-add-external-trainer" 
+      class="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-md bg-brand-primary-600 hover:bg-brand-primary-700 text-white text-sm font-medium focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
+    >
+      <svg class="w-4 h-4" data-lucide="plus"></svg>
+      Add External Trainer
+    </button>
+  </div>
+</div>
+
+<!-- Tab Navigation -->
+<div class="bg-white rounded-md border border-neutral-200 shadow-sm mb-6">
+  <div class="border-b border-neutral-200">
+    <nav class="flex space-x-8 px-6" role="tablist">
+      <button 
+        id="tab-internal" 
+        class="tab-button border-b-2 border-transparent py-4 px-1 text-sm font-medium text-neutral-500 hover:text-neutral-700 hover:border-neutral-300 focus:outline-none focus:text-neutral-700 focus:border-neutral-300"
+        role="tab"
+        aria-selected="true"
+        aria-controls="panel-internal"
+      >
+        Internal Trainers
+      </button>
+      <button 
+        id="tab-external" 
+        class="tab-button border-b-2 border-transparent py-4 px-1 text-sm font-medium text-neutral-500 hover:text-neutral-700 hover:border-neutral-300 focus:outline-none focus:text-neutral-700 focus:border-neutral-300"
+        role="tab"
+        aria-selected="false"
+        aria-controls="panel-external"
+      >
+        External Trainers
+      </button>
+    </nav>
+  </div>
+
+  <!-- Internal Trainers Tab Panel -->
+  <div id="panel-internal" class="tab-panel p-6" role="tabpanel" aria-labelledby="tab-internal">
+    <!-- Filters -->
+    <div class="mb-6 bg-neutral-50 rounded-md p-4 border border-neutral-200">
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <!-- Department Filter -->
+        <div>
+          <label for="filter-internal-department" class="block text-sm font-medium text-neutral-900 mb-1">Department</label>
+          <select id="filter-internal-department" class="w-full border border-neutral-200 rounded-sm px-3 py-2 bg-white text-sm leading-5 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2">
+            <option value="">All Departments</option>
+          </select>
+        </div>
+
+        <!-- Skill Filter -->
+        <div>
+          <label for="filter-internal-skill" class="block text-sm font-medium text-neutral-900 mb-1">Skill</label>
+          <select id="filter-internal-skill" class="w-full border border-neutral-200 rounded-sm px-3 py-2 bg-white text-sm leading-5 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2">
+            <option value="">All Skills</option>
+          </select>
+        </div>
+
+        <!-- Search -->
+        <div class="md:col-span-2">
+          <label for="search-internal" class="block text-sm font-medium text-neutral-900 mb-1">Search by Name</label>
+          <div class="relative">
+            <input 
+              type="text" 
+              id="search-internal" 
+              placeholder="Search trainer names..."
+              class="w-full border border-neutral-200 rounded-sm px-3 py-2 pr-10 text-sm leading-5 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2"
+            >
+            <svg class="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-neutral-500" data-lucide="search"></svg>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Internal Trainers Table -->
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm leading-5">
+        <thead class="bg-neutral-50 text-neutral-700">
+          <tr>
+            <th class="text-left font-semibold px-3 py-3 border-b border-neutral-200">Employee Name</th>
+            <th class="text-left font-semibold px-3 py-3 border-b border-neutral-200">Job Title</th>
+            <th class="text-left font-semibold px-3 py-3 border-b border-neutral-200">Department</th>
+            <th class="text-left font-semibold px-3 py-3 border-b border-neutral-200">Eligible Skills</th>
+            <th class="text-left font-semibold px-3 py-3 border-b border-neutral-200">Upcoming Sessions</th>
+            <th class="text-left font-semibold px-3 py-3 border-b border-neutral-200">Total Sessions</th>
+          </tr>
+        </thead>
+        <tbody id="internal-trainers-tbody" class="divide-y divide-neutral-200">
+          <!-- Skeleton rows for loading -->
+          <tr class="skeleton-row hover:bg-neutral-50">
+            <td class="px-3 py-3">
+              <div class="h-4 bg-neutral-200 rounded animate-pulse w-32"></div>
+            </td>
+            <td class="px-3 py-3">
+              <div class="h-4 bg-neutral-200 rounded animate-pulse w-24"></div>
+            </td>
+            <td class="px-3 py-3">
+              <div class="h-4 bg-neutral-200 rounded animate-pulse w-20"></div>
+            </td>
+            <td class="px-3 py-3">
+              <div class="h-4 bg-neutral-200 rounded animate-pulse w-16"></div>
+            </td>
+            <td class="px-3 py-3">
+              <div class="h-4 bg-neutral-200 rounded animate-pulse w-12"></div>
+            </td>
+            <td class="px-3 py-3">
+              <div class="h-4 bg-neutral-200 rounded animate-pulse w-12"></div>
+            </td>
+          </tr>
+          <tr class="skeleton-row hover:bg-neutral-50">
+            <td class="px-3 py-3">
+              <div class="h-4 bg-neutral-200 rounded animate-pulse w-28"></div>
+            </td>
+            <td class="px-3 py-3">
+              <div class="h-4 bg-neutral-200 rounded animate-pulse w-20"></div>
+            </td>
+            <td class="px-3 py-3">
+              <div class="h-4 bg-neutral-200 rounded animate-pulse w-24"></div>
+            </td>
+            <td class="px-3 py-3">
+              <div class="h-4 bg-neutral-200 rounded animate-pulse w-16"></div>
+            </td>
+            <td class="px-3 py-3">
+              <div class="h-4 bg-neutral-200 rounded animate-pulse w-12"></div>
+            </td>
+            <td class="px-3 py-3">
+              <div class="h-4 bg-neutral-200 rounded animate-pulse w-12"></div>
+            </td>
+          </tr>
+          <tr class="skeleton-row hover:bg-neutral-50">
+            <td class="px-3 py-3">
+              <div class="h-4 bg-neutral-200 rounded animate-pulse w-36"></div>
+            </td>
+            <td class="px-3 py-3">
+              <div class="h-4 bg-neutral-200 rounded animate-pulse w-28"></div>
+            </td>
+            <td class="px-3 py-3">
+              <div class="h-4 bg-neutral-200 rounded animate-pulse w-20"></div>
+            </td>
+            <td class="px-3 py-3">
+              <div class="h-4 bg-neutral-200 rounded animate-pulse w-16"></div>
+            </td>
+            <td class="px-3 py-3">
+              <div class="h-4 bg-neutral-200 rounded animate-pulse w-12"></div>
+            </td>
+            <td class="px-3 py-3">
+              <div class="h-4 bg-neutral-200 rounded animate-pulse w-12"></div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Internal Trainers Pagination -->
+    <div id="internal-pagination" class="mt-6 flex items-center justify-between">
+      <p class="text-sm text-neutral-700">
+        Showing <span id="internal-start">1</span> to <span id="internal-end">10</span> of <span id="internal-total">0</span> trainers
+      </p>
+      <div class="flex items-center gap-2">
+        <button 
+          id="internal-prev-btn" 
+          class="inline-flex items-center px-3 py-2 border border-neutral-200 rounded-md text-sm font-medium text-neutral-700 bg-white hover:bg-neutral-50 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
+          disabled
+        >
+          <svg class="w-4 h-4 mr-1" data-lucide="chevron-left"></svg>
+          Previous
+        </button>
+        <button 
+          id="internal-next-btn" 
+          class="inline-flex items-center px-3 py-2 border border-neutral-200 rounded-md text-sm font-medium text-neutral-700 bg-white hover:bg-neutral-50 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
+          disabled
+        >
+          Next
+          <svg class="w-4 h-4 ml-1" data-lucide="chevron-right"></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- External Trainers Tab Panel -->
+  <div id="panel-external" class="tab-panel p-6 hidden" role="tabpanel" aria-labelledby="tab-external">
+    <!-- Filters -->
+    <div class="mb-6 bg-neutral-50 rounded-md p-4 border border-neutral-200">
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <!-- Skill Filter -->
+        <div>
+          <label for="filter-external-skill" class="block text-sm font-medium text-neutral-900 mb-1">Skill</label>
+          <select id="filter-external-skill" class="w-full border border-neutral-200 rounded-sm px-3 py-2 bg-white text-sm leading-5 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2">
+            <option value="">All Skills</option>
+          </select>
+        </div>
+
+        <!-- Status Filter -->
+        <div>
+          <label for="filter-external-status" class="block text-sm font-medium text-neutral-900 mb-1">Status</label>
+          <select id="filter-external-status" class="w-full border border-neutral-200 rounded-sm px-3 py-2 bg-white text-sm leading-5 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2">
+            <option value="">All Status</option>
+            <option value="active">Active</option>
+            <option value="inactive">Inactive</option>
+          </select>
+        </div>
+
+        <!-- Search -->
+        <div class="md:col-span-2">
+          <label for="search-external" class="block text-sm font-medium text-neutral-900 mb-1">Search by Name</label>
+          <div class="relative">
+            <input 
+              type="text" 
+              id="search-external" 
+              placeholder="Search trainer names..."
+              class="w-full border border-neutral-200 rounded-sm px-3 py-2 pr-10 text-sm leading-5 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2"
+            >
+            <svg class="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-neutral-500" data-lucide="search"></svg>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- External Trainers Table -->
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm leading-5">
+        <thead class="bg-neutral-50 text-neutral-700">
+          <tr>
+            <th class="text-left font-semibold px-3 py-3 border-b border-neutral-200">Name</th>
+            <th class="text-left font-semibold px-3 py-3 border-b border-neutral-200">Email</th>
+            <th class="text-left font-semibold px-3 py-3 border-b border-neutral-200">Skills</th>
+            <th class="text-left font-semibold px-3 py-3 border-b border-neutral-200">Upcoming Sessions</th>
+            <th class="text-left font-semibold px-3 py-3 border-b border-neutral-200">Total Sessions</th>
+            <th class="text-left font-semibold px-3 py-3 border-b border-neutral-200">Status</th>
+            <th class="text-left font-semibold px-3 py-3 border-b border-neutral-200">Actions</th>
+          </tr>
+        </thead>
+        <tbody id="external-trainers-tbody" class="divide-y divide-neutral-200">
+          <!-- Skeleton rows for loading -->
+          <tr class="skeleton-row hover:bg-neutral-50">
+            <td class="px-3 py-3">
+              <div class="h-4 bg-neutral-200 rounded animate-pulse w-32"></div>
+            </td>
+            <td class="px-3 py-3">
+              <div class="h-4 bg-neutral-200 rounded animate-pulse w-40"></div>
+            </td>
+            <td class="px-3 py-3">
+              <div class="h-4 bg-neutral-200 rounded animate-pulse w-16"></div>
+            </td>
+            <td class="px-3 py-3">
+              <div class="h-4 bg-neutral-200 rounded animate-pulse w-12"></div>
+            </td>
+            <td class="px-3 py-3">
+              <div class="h-4 bg-neutral-200 rounded animate-pulse w-12"></div>
+            </td>
+            <td class="px-3 py-3">
+              <div class="h-4 bg-neutral-200 rounded animate-pulse w-16"></div>
+            </td>
+            <td class="px-3 py-3">
+              <div class="h-4 bg-neutral-200 rounded animate-pulse w-20"></div>
+            </td>
+          </tr>
+          <tr class="skeleton-row hover:bg-neutral-50">
+            <td class="px-3 py-3">
+              <div class="h-4 bg-neutral-200 rounded animate-pulse w-28"></div>
+            </td>
+            <td class="px-3 py-3">
+              <div class="h-4 bg-neutral-200 rounded animate-pulse w-36"></div>
+            </td>
+            <td class="px-3 py-3">
+              <div class="h-4 bg-neutral-200 rounded animate-pulse w-16"></div>
+            </td>
+            <td class="px-3 py-3">
+              <div class="h-4 bg-neutral-200 rounded animate-pulse w-12"></div>
+            </td>
+            <td class="px-3 py-3">
+              <div class="h-4 bg-neutral-200 rounded animate-pulse w-12"></div>
+            </td>
+            <td class="px-3 py-3">
+              <div class="h-4 bg-neutral-200 rounded animate-pulse w-16"></div>
+            </td>
+            <td class="px-3 py-3">
+              <div class="h-4 bg-neutral-200 rounded animate-pulse w-20"></div>
+            </td>
+          </tr>
+          <tr class="skeleton-row hover:bg-neutral-50">
+            <td class="px-3 py-3">
+              <div class="h-4 bg-neutral-200 rounded animate-pulse w-36"></div>
+            </td>
+            <td class="px-3 py-3">
+              <div class="h-4 bg-neutral-200 rounded animate-pulse w-44"></div>
+            </td>
+            <td class="px-3 py-3">
+              <div class="h-4 bg-neutral-200 rounded animate-pulse w-16"></div>
+            </td>
+            <td class="px-3 py-3">
+              <div class="h-4 bg-neutral-200 rounded animate-pulse w-12"></div>
+            </td>
+            <td class="px-3 py-3">
+              <div class="h-4 bg-neutral-200 rounded animate-pulse w-12"></div>
+            </td>
+            <td class="px-3 py-3">
+              <div class="h-4 bg-neutral-200 rounded animate-pulse w-16"></div>
+            </td>
+            <td class="px-3 py-3">
+              <div class="h-4 bg-neutral-200 rounded animate-pulse w-20"></div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- External Trainers Pagination -->
+    <div id="external-pagination" class="mt-6 flex items-center justify-between">
+      <p class="text-sm text-neutral-700">
+        Showing <span id="external-start">1</span> to <span id="external-end">10</span> of <span id="external-total">0</span> trainers
+      </p>
+      <div class="flex items-center gap-2">
+        <button 
+          id="external-prev-btn" 
+          class="inline-flex items-center px-3 py-2 border border-neutral-200 rounded-md text-sm font-medium text-neutral-700 bg-white hover:bg-neutral-50 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
+          disabled
+        >
+          <svg class="w-4 h-4 mr-1" data-lucide="chevron-left"></svg>
+          Previous
+        </button>
+        <button 
+          id="external-next-btn" 
+          class="inline-flex items-center px-3 py-2 border border-neutral-200 rounded-md text-sm font-medium text-neutral-700 bg-white hover:bg-neutral-50 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
+          disabled
+        >
+          Next
+          <svg class="w-4 h-4 ml-1" data-lucide="chevron-right"></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Refresh Button -->
+<div class="flex justify-end mb-4">
+  <button 
+    id="btn-refresh" 
+    class="inline-flex items-center gap-2 px-3 py-2 text-sm text-neutral-500 hover:text-neutral-700 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2 rounded-md"
+    aria-label="Refresh data"
+  >
+    <svg class="w-4 h-4" data-lucide="refresh-cw"></svg>
+    Refresh
+  </button>
+</div>
+
+<!-- Skills Tooltip (Hidden by default) -->
+<div id="skills-tooltip" class="hidden absolute bg-neutral-900 text-white text-xs rounded-md px-3 py-2 max-w-xs z-50 shadow-lg">
+  <div id="skills-tooltip-content"></div>
+  <div class="absolute bottom-full left-1/2 transform -translate-x-1/2 border-4 border-transparent border-b-neutral-900"></div>
+</div>
+
+<!-- Deactivate Modal -->
+<div id="deactivate-modal" class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+  <div class="bg-white rounded-lg shadow-lg max-w-md w-full">
+    <div class="p-6">
+      <div class="flex items-center gap-3 mb-4">
+        <div class="w-10 h-10 bg-danger-600 rounded-full flex items-center justify-center">
+          <svg class="w-5 h-5 text-white" data-lucide="alert-triangle"></svg>
+        </div>
+        <div>
+          <h3 class="text-base font-semibold text-neutral-900">Deactivate External Trainer</h3>
+          <p class="text-sm text-neutral-700">This action will set the trainer status to inactive.</p>
+        </div>
+      </div>
+      
+      <div class="mb-4 p-4 bg-neutral-50 rounded-md border border-neutral-200">
+        <p class="text-sm text-neutral-900 mb-2">
+          <strong>Trainer:</strong> <span id="deactivate-trainer-name">N/A</span>
+        </p>
+        <p id="upcoming-sessions-warning" class="text-sm text-danger-600 hidden">
+          <svg class="w-4 h-4 inline mr-1" data-lucide="alert-circle"></svg>
+          This trainer has <span id="upcoming-sessions-count">0</span> upcoming sessions that will be affected.
+        </p>
+      </div>
+      
+      <div class="flex justify-end gap-3">
+        <button 
+          id="cancel-deactivate" 
+          class="px-4 py-2 text-sm font-medium text-neutral-700 bg-white border border-neutral-200 rounded-md hover:bg-neutral-50 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2"
+        >
+          Cancel
+        </button>
+        <button 
+          id="confirm-deactivate" 
+          class="px-4 py-2 text-sm font-medium text-white bg-danger-600 border border-transparent rounded-md hover:bg-danger-700 focus:outline-none focus:ring-2 focus:ring-danger-500 focus:ring-offset-2"
+        >
+          Deactivate Trainer
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+        </main>
+    </div>
+
+    <!-- Required: JavaScript -->
+    <script type="module" data-tiramai="web-gen">
+        import { showToast, showLoader, hideLoader, env } from "./scripts/main.js";
+        import { auth, db, storage } from "./scripts/firebase.js";
+        import { onAuthStateChanged, getAuth, signOut } from 'https://www.gstatic.com/firebasejs/10.12.4/firebase-auth.js';
+        import { doc, getDoc } from 'https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js';
+
+        // Initialize Lucide icons
+        lucide.createIcons();
+
+        // Mobile menu toggle
+        const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+        const sidebar = document.getElementById('sidebar');
+        const mobileOverlay = document.getElementById('mobileOverlay');
+
+        mobileMenuToggle?.addEventListener('click', () => {
+            sidebar.classList.toggle('-translate-x-full');
+            mobileOverlay.classList.toggle('hidden');
+        });
+
+        mobileOverlay?.addEventListener('click', () => {
+            sidebar.classList.add('-translate-x-full');
+            mobileOverlay.classList.add('hidden');
+        });
+
+        // Navigation group toggles
+        document.querySelectorAll('.nav-group-toggle').forEach(toggle => {
+            toggle.addEventListener('click', (e) => {
+                e.preventDefault();
+                const children = toggle.nextElementSibling;
+                const icon = toggle.querySelector('svg:last-child');
+                
+                children.classList.toggle('hidden');
+                icon.classList.toggle('rotate-90');
+            });
+        });
+
+        // User profile dropdown
+        const userProfileToggle = document.getElementById('userProfileToggle');
+        const userProfileDropdown = document.getElementById('userProfileDropdown');
+
+        userProfileToggle?.addEventListener('click', () => {
+            userProfileDropdown.classList.toggle('hidden');
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!userProfileToggle?.contains(e.target) && !userProfileDropdown?.contains(e.target)) {
+                userProfileDropdown?.classList.add('hidden');
+            }
+        });
+
+        // Sign out functionality
+        document.getElementById('signOutButton')?.addEventListener('click', async () => {
+            try {
+                await signOut(auth);
+                window.location.href = 'auth.html';
+            } catch (error) {
+                console.error('Sign out error:', error);
+                showToast('Failed to sign out', 'error');
+            }
+        });
+
+        // Auth state management
+        onAuthStateChanged(auth, async (user) => {
+            if (!user) {
+                window.location.href = 'auth.html';
+                return;
+            }
+
+            // Load user profile data
+            try {
+                const userDoc = await getDoc(doc(db, 'users', user.uid));
+                const userData = userDoc.exists() ? userDoc.data() : null;
+
+                // Update UI with user data
+                const displayName = userData?.firstName && userData?.lastName 
+                    ? `${userData.firstName} ${userData.lastName}`
+                    : user.displayName || 'John Doe';
+                
+                const email = user.email || 'johndoe@example.com';
+                const initials = displayName.split(' ').map(n => n[0]).join('').toUpperCase();
+
+                document.getElementById('userDisplayName').textContent = displayName;
+                document.getElementById('userEmail').textContent = email;
+                document.getElementById('userInitials').textContent = initials;
+
+            } catch (error) {
+                console.error('Error loading user data:', error);
+                // Fallback to default values
+                document.getElementById('userDisplayName').textContent = 'John Doe';
+                document.getElementById('userEmail').textContent = user.email || 'johndoe@example.com';
+                document.getElementById('userInitials').textContent = 'JD';
+            }
+        });
+
+        // Set active navigation item based on current page
+        function setActiveNavItem() {
+            const currentPath = window.location.pathname;
+            const navItems = document.querySelectorAll('.nav-item');
+            
+            navItems.forEach(item => {
+                const href = item.getAttribute('href');
+                if (href && currentPath.includes(href.split('?')[0])) {
+                    item.classList.add('bg-accent-gold-50', 'text-brand-primary-600', 'border-l-2', 'border-brand-primary-600');
+                    item.classList.remove('text-neutral-700', 'text-neutral-600');
+                    
+                    // Expand parent group if needed
+                    const parentGroup = item.closest('.nav-group');
+                    if (parentGroup) {
+                        const children = parentGroup.querySelector('.nav-group-children');
+                        const icon = parentGroup.querySelector('.nav-group-toggle svg:last-child');
+                        children?.classList.remove('hidden');
+                        icon?.classList.add('rotate-90');
+                    }
+                }
+            });
+        }
+
+        // Initialize active nav state
+        setActiveNavItem();
+    </script>
+
+    
+<script id="data-script" type="module" data-tiramai="web-gen">
+import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.12.4/firebase-auth.js';
+import {
+  collection, getDocs, query, where, orderBy, limit, startAfter, 
+  getCountFromServer, doc, updateDoc
+} from 'https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js';
+import { auth, getDb } from "./scripts/firebase.js";
+import { showToast } from "./scripts/main.js";
+
+const db = getDb();
+
+// State management
+let state = {
+  currentTab: 'internal',
+  internal: {
+    data: [],
+    filters: { department: '', skill: '', search: '' },
+    pagination: { page: 0, limit: 10, total: 0, cursor: null, hasNext: false }
+  },
+  external: {
+    data: [],
+    filters: { skill: '', status: '', search: '' },
+    pagination: { page: 0, limit: 10, total: 0, cursor: null, hasNext: false }
+  },
+  departments: [],
+  skills: [],
+  selectedTrainerForDeactivate: null
+};
+
+let currentAbortController = null;
+
+// Initialize page
+onAuthStateChanged(auth, (user) => {
+  if (!user) {
+    location.href = "auth.html?redirect=" + encodeURIComponent(location.pathname);
+    return;
+  }
+  funInitializePage();
+});
+
+// Initialize page components
+async function funInitializePage() {
+  try {
+    // Load reference data first
+    await Promise.all([
+      funLoadDepartments(),
+      funLoadSkills()
+    ]);
+    
+    // Initialize UI
+    funInitializeTabs();
+    funInitializeFilters();
+    funInitializeEventListeners();
+    
+    // Load initial data
+    await funLoadInternalTrainers(true);
+    
+    // Update icons
+    lucide.createIcons();
+  } catch (error) {
+    console.error('Error initializing page:', error);
+    showToast('Failed to initialize page', 'error');
+  }
+}
+
+// Load departments for filter dropdown
+async function funLoadDepartments() {
+  try {
+    const q = query(
+      collection(db, 'departments'),
+      where('status', '==', 'active'),
+      orderBy('name')
+    );
+    const snapshot = await getDocs(q);
+    state.departments = snapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    }));
+    
+    funPopulateDepartmentFilter();
+  } catch (error) {
+    console.error('Error loading departments:', error);
+  }
+}
+
+// Load skills for filter dropdown
+async function funLoadSkills() {
+  try {
+    const q = query(
+      collection(db, 'skills'),
+      where('status', '==', 'active'),
+      orderBy('name')
+    );
+    const snapshot = await getDocs(q);
+    state.skills = snapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    }));
+    
+    funPopulateSkillFilters();
+  } catch (error) {
+    console.error('Error loading skills:', error);
+  }
+}
+
+// Populate department filter dropdown
+function funPopulateDepartmentFilter() {
+  const select = document.getElementById('filter-internal-department');
+  if (!select) return;
+  
+  // Clear existing options except first
+  select.innerHTML = '<option value="">All Departments</option>';
+  
+  state.departments.forEach(dept => {
+    const option = document.createElement('option');
+    option.value = dept.id;
+    option.textContent = dept.name || 'N/A';
+    select.appendChild(option);
+  });
+}
+
+// Populate skill filter dropdowns
+function funPopulateSkillFilters() {
+  const internalSelect = document.getElementById('filter-internal-skill');
+  const externalSelect = document.getElementById('filter-external-skill');
+  
+  [internalSelect, externalSelect].forEach(select => {
+    if (!select) return;
+    
+    select.innerHTML = '<option value="">All Skills</option>';
+    
+    state.skills.forEach(skill => {
+      const option = document.createElement('option');
+      option.value = skill.id;
+      option.textContent = skill.name || 'N/A';
+      select.appendChild(option);
+    });
+  });
+}
+
+// Initialize tabs
+function funInitializeTabs() {
+  const tabButtons = document.querySelectorAll('.tab-button');
+  const tabPanels = document.querySelectorAll('.tab-panel');
+  
+  tabButtons.forEach(button => {
+    button.addEventListener('click', () => {
+      const tabId = button.id.replace('tab-', '');
+      funSwitchTab(tabId);
+    });
+  });
+  
+  // Set initial active tab
+  funSwitchTab('internal');
+}
+
+// Switch between tabs
+async function funSwitchTab(tabId) {
+  const tabButtons = document.querySelectorAll('.tab-button');
+  const tabPanels = document.querySelectorAll('.tab-panel');
+  
+  // Update button states
+  tabButtons.forEach(button => {
+    const isActive = button.id === `tab-${tabId}`;
+    button.setAttribute('aria-selected', isActive.toString());
+    button.classList.toggle('border-brand-primary-600', isActive);
+    button.classList.toggle('text-brand-primary-600', isActive);
+    button.classList.toggle('text-neutral-500', !isActive);
+  });
+  
+  // Update panel visibility
+  tabPanels.forEach(panel => {
+    const isActive = panel.id === `panel-${tabId}`;
+    panel.classList.toggle('hidden', !isActive);
+  });
+  
+  state.currentTab = tabId;
+  
+  // Load data for the active tab if not already loaded
+  if (tabId === 'internal' && state.internal.data.length === 0) {
+    await funLoadInternalTrainers(true);
+  } else if (tabId === 'external' && state.external.data.length === 0) {
+    await funLoadExternalTrainers(true);
+  }
+}
+
+// Initialize filter event listeners
+function funInitializeFilters() {
+  // Internal filters
+  document.getElementById('filter-internal-department')?.addEventListener('change', funDebounceInternalFilter);
+  document.getElementById('filter-internal-skill')?.addEventListener('change', funDebounceInternalFilter);
+  document.getElementById('search-internal')?.addEventListener('input', funDebounceInternalFilter);
+  
+  // External filters  
+  document.getElementById('filter-external-skill')?.addEventListener('change', funDebounceExternalFilter);
+  document.getElementById('filter-external-status')?.addEventListener('change', funDebounceExternalFilter);
+  document.getElementById('search-external')?.addEventListener('input', funDebounceExternalFilter);
+}
+
+// Debounced filter functions
+const funDebounceInternalFilter = funDebounce(() => {
+  state.internal.filters.department = document.getElementById('filter-internal-department')?.value || '';
+  state.internal.filters.skill = document.getElementById('filter-internal-skill')?.value || '';
+  state.internal.filters.search = document.getElementById('search-internal')?.value || '';
+  state.internal.pagination.page = 0;
+  state.internal.pagination.cursor = null;
+  funLoadInternalTrainers(true);
+}, 300);
+
+const funDebounceExternalFilter = funDebounce(() => {
+  state.external.filters.skill = document.getElementById('filter-external-skill')?.value || '';
+  state.external.filters.status = document.getElementById('filter-external-status')?.value || '';
+  state.external.filters.search = document.getElementById('search-external')?.value || '';
+  state.external.pagination.page = 0;
+  state.external.pagination.cursor = null;
+  funLoadExternalTrainers(true);
+}, 300);
+
+// Debounce utility
+function funDebounce(func, wait) {
+  let timeout;
+  return function executedFunction(...args) {
+    const later = () => {
+      clearTimeout(timeout);
+      func(...args);
+    };
+    clearTimeout(timeout);
+    timeout = setTimeout(later, wait);
+  };
+}
+
+// Initialize other event listeners
+function funInitializeEventListeners() {
+  // Add external trainer button
+  document.getElementById('btn-add-external-trainer')?.addEventListener('click', () => {
+    location.href = 'external_trainer_upsert.html?mode=create';
+  });
+  
+  // Refresh button
+  document.getElementById('btn-refresh')?.addEventListener('click', () => {
+    if (state.currentTab === 'internal') {
+      funLoadInternalTrainers(true);
+    } else {
+      funLoadExternalTrainers(true);
+    }
+  });
+  
+  // Pagination buttons
+  document.getElementById('internal-prev-btn')?.addEventListener('click', () => funPaginateInternal('prev'));
+  document.getElementById('internal-next-btn')?.addEventListener('click', () => funPaginateInternal('next'));
+  document.getElementById('external-prev-btn')?.addEventListener('click', () => funPaginateExternal('prev'));
+  document.getElementById('external-next-btn')?.addEventListener('click', () => funPaginateExternal('next'));
+  
+  // Modal close events
+  document.getElementById('cancel-deactivate')?.addEventListener('click', funCloseDeactivateModal);
+  document.getElementById('confirm-deactivate')?.addEventListener('click', funConfirmDeactivation);
+  
+  // Close modal on backdrop click
+  document.getElementById('deactivate-modal')?.addEventListener('click', (e) => {
+    if (e.target.id === 'deactivate-modal') {
+      funCloseDeactivateModal();
+    }
+  });
+  
+  // Close modal on Escape key
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && !document.getElementById('deactivate-modal')?.classList.contains('hidden')) {
+      funCloseDeactivateModal();
+    }
+  });
+}
+
+// Load internal trainers
+async function funLoadInternalTrainers(resetCursor = false) {
+  try {
+    if (currentAbortController) {
+      currentAbortController.abort();
+    }
+    currentAbortController = new AbortController();
+    
+    if (resetCursor) {
+      state.internal.pagination.cursor = null;
+      state.internal.pagination.page = 0;
+    }
+    
+    // Show skeleton
+    if (resetCursor) {
+      funShowInternalSkeleton();
+    }
+    
+    // Build query with filters
+    const constraints = [
+      where('employeeStatus', '==', 'active')
+    ];
+    
+    if (state.internal.filters.department) {
+      constraints.push(where('departmentId', '==', state.internal.filters.department));
+    }
+    
+    constraints.push(orderBy('firstName'));
+    constraints.push(limit(state.internal.pagination.limit));
+    
+    if (state.internal.pagination.cursor) {
+      constraints.push(startAfter(state.internal.pagination.cursor));
+    }
+    
+    // Get trainer eligibilities with users
+    const eligibilityQuery = query(
+      collection(db, 'trainerEligibility'),
+      where('status', '==', 'active'),
+      ...constraints
+    );
+    
+    // Execute query
+    const eligibilitySnapshot = await getDocs(eligibilityQuery);
+    
+    if (currentAbortController.signal.aborted) return;
+    
+    // Get unique employee IDs
+    const employeeIds = [...new Set(eligibilitySnapshot.docs.map(doc => doc.data().employeeId))];
+    
+    if (employeeIds.length === 0) {
+      state.internal.data = [];
+      funRenderInternalTrainers();
+      funUpdateInternalPagination();
+      return;
+    }
+    
+    // Load users data
+    const usersPromises = employeeIds.map(employeeId => 
+      getDocs(query(collection(db, 'users'), where('id', '==', employeeId)))
+    );
+    
+    const usersSnapshots = await Promise.all(usersPromises);
+    const users = {};
+    usersSnapshots.forEach(snapshot => {
+      snapshot.docs.forEach(doc => {
+        users[doc.data().id] = doc.data();
+      });
+    });
+    
+    if (currentAbortController.signal.aborted) return;
+    
+    // Load departments
+    const departmentIds = [...new Set(Object.values(users).map(user => user.departmentId).filter(Boolean))];
+    const departmentPromises = departmentIds.map(deptId => 
+      getDocs(query(collection(db, 'departments'), where('id', '==', deptId)))
+    );
+    
+    const departmentSnapshots = await Promise.all(departmentPromises);
+    const departments = {};
+    departmentSnapshots.forEach(snapshot => {
+      snapshot.docs.forEach(doc => {
+        departments[doc.data().id] = doc.data();
+      });
+    });
+    
+    if (currentAbortController.signal.aborted) return;
+    
+    // Group eligibilities by employee
+    const trainerData = {};
+    eligibilitySnapshot.docs.forEach(doc => {
+      const data = doc.data();
+      const employeeId = data.employeeId;
+      
+      if (!trainerData[employeeId]) {
+        trainerData[employeeId] = {
+          employeeId,
+          user: users[employeeId],
+          department: departments[users[employeeId]?.departmentId],
+          eligibleSkills: [],
+          upcomingSessions: 0,
+          totalSessions: 0
+        };
+      }
+      
+      trainerData[employeeId].eligibleSkills.push(data.skillId);
+    });
+    
+    // Apply search filter client-side (since Firestore has limited query capabilities)
+    let filteredTrainers = Object.values(trainerData);
+    
+    if (state.internal.filters.search) {
+      const searchTerm = state.internal.filters.search.toLowerCase();
+      filteredTrainers = filteredTrainers.filter(trainer => {
+        const fullName = `${trainer.user?.firstName || ''} ${trainer.user?.lastName || ''}`.toLowerCase();
+        return fullName.includes(searchTerm);
+      });
+    }
+    
+    if (state.internal.filters.skill) {
+      filteredTrainers = filteredTrainers.filter(trainer => 
+        trainer.eligibleSkills.includes(state.internal.filters.skill)
+      );
+    }
+    
+    // Load session counts
+    await funLoadSessionCounts(filteredTrainers, 'internal');
+    
+    if (currentAbortController.signal.aborted) return;
+    
+    state.internal.data = filteredTrainers;
+    state.internal.pagination.hasNext = eligibilitySnapshot.docs.length === state.internal.pagination.limit;
+    state.internal.pagination.cursor = eligibilitySnapshot.docs[eligibilitySnapshot.docs.length - 1] || null;
+    
+    funRenderInternalTrainers();
+    funUpdateInternalPagination();
+    
+  } catch (error) {
+    if (!currentAbortController?.signal.aborted) {
+      console.error('Error loading internal trainers:', error);
+      showToast('Failed to load internal trainers', 'error');
+    }
+  }
+}
+
+// Load external trainers
+async function funLoadExternalTrainers(resetCursor = false) {
+  try {
+    if (currentAbortController) {
+      currentAbortController.abort();
+    }
+    currentAbortController = new AbortController();
+    
+    if (resetCursor) {
+      state.external.pagination.cursor = null;
+      state.external.pagination.page = 0;
+    }
+    
+    // Show skeleton
+    if (resetCursor) {
+      funShowExternalSkeleton();
+    }
+    
+    // Build query constraints
+    const constraints = [];
+    
+    if (state.external.filters.status) {
+      constraints.push(where('status', '==', state.external.filters.status));
+    }
+    
+    constraints.push(orderBy('name'));
+    constraints.push(limit(state.external.pagination.limit));
+    
+    if (state.external.pagination.cursor) {
+      constraints.push(startAfter(state.external.pagination.cursor));
+    }
+    
+    const q = query(collection(db, 'externalTrainers'), ...constraints);
+    const snapshot = await getDocs(q);
+    
+    if (currentAbortController.signal.aborted) return;
+    
+    let trainers = snapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data(),
+      upcomingSessions: 0,
+      totalSessions: 0
+    }));
+    
+    // Apply search filter
+    if (state.external.filters.search) {
+      const searchTerm = state.external.filters.search.toLowerCase();
+      trainers = trainers.filter(trainer => 
+        trainer.name?.toLowerCase().includes(searchTerm)
+      );
+    }
+    
+    // Apply skill filter
+    if (state.external.filters.skill) {
+      trainers = trainers.filter(trainer => 
+        trainer.skills?.some(skill => skill.skillId === state.external.filters.skill)
+      );
+    }
+    
+    // Load session counts
+    await funLoadSessionCounts(trainers, 'external');
+    
+    if (currentAbortController.signal.aborted) return;
+    
+    state.external.data = trainers;
+    state.external.pagination.hasNext = snapshot.docs.length === state.external.pagination.limit;
+    state.external.pagination.cursor = snapshot.docs[snapshot.docs.length - 1] || null;
+    
+    funRenderExternalTrainers();
+    funUpdateExternalPagination();
+    
+  } catch (error) {
+    if (!currentAbortController?.signal.aborted) {
+      console.error('Error loading external trainers:', error);
+      showToast('Failed to load external trainers', 'error');
+    }
+  }
+}
+
+// Load session counts for trainers
+async function funLoadSessionCounts(trainers, trainerType) {
+  try {
+    const today = new Date().toISOString();
+    
+    const sessionCountPromises = trainers.map(async (trainer) => {
+      const trainerId = trainerType === 'internal' ? trainer.employeeId : trainer.id;
+      
+      // Count upcoming sessions
+      const upcomingQuery = query(
+        collection(db, 'trainingSessions'),
+        where('trainerId', '==', trainerId),
+        where('trainerType', '==', trainerType),
+        where('status', '==', 'scheduled'),
+        where('scheduledDate', '>=', today)
+      );
+      
+      // Count total sessions
+      const totalQuery = query(
+        collection(db, 'trainingSessions'),
+        where('trainerId', '==', trainerId),
+        where('trainerType', '==', trainerType)
+      );
+      
+      const [upcomingCount, totalCount] = await Promise.all([
+        getCountFromServer(upcomingQuery),
+        getCountFromServer(totalQuery)
+      ]);
+      
+      trainer.upcomingSessions = upcomingCount.data().count;
+      trainer.totalSessions = totalCount.data().count;
+    });
+    
+    await Promise.all(sessionCountPromises);
+  } catch (error) {
+    console.error('Error loading session counts:', error);
+  }
+}
+
+// Show skeleton for internal trainers
+function funShowInternalSkeleton() {
+  const tbody = document.getElementById('internal-trainers-tbody');
+  if (!tbody) return;
+  
+  tbody.innerHTML = Array.from({length: 3}, () => `
+    <tr class="skeleton-row hover:bg-neutral-50">
+      <td class="px-3 py-3"><div class="h-4 bg-neutral-200 rounded animate-pulse w-32"></div></td>
+      <td class="px-3 py-3"><div class="h-4 bg-neutral-200 rounded animate-pulse w-24"></div></td>
+      <td class="px-3 py-3"><div class="h-4 bg-neutral-200 rounded animate-pulse w-20"></div></td>
+      <td class="px-3 py-3"><div class="h-4 bg-neutral-200 rounded animate-pulse w-16"></div></td>
+      <td class="px-3 py-3"><div class="h-4 bg-neutral-200 rounded animate-pulse w-12"></div></td>
+      <td class="px-3 py-3"><div class="h-4 bg-neutral-200 rounded animate-pulse w-12"></div></td>
+    </tr>
+  `).join('');
+}
+
+// Show skeleton for external trainers  
+function funShowExternalSkeleton() {
+  const tbody = document.getElementById('external-trainers-tbody');
+  if (!tbody) return;
+  
+  tbody.innerHTML = Array.from({length: 3}, () => `
+    <tr class="skeleton-row hover:bg-neutral-50">
+      <td class="px-3 py-3"><div class="h-4 bg-neutral-200 rounded animate-pulse w-32"></div></td>
+      <td class="px-3 py-3"><div class="h-4 bg-neutral-200 rounded animate-pulse w-40"></div></td>
+      <td class="px-3 py-3"><div class="h-4 bg-neutral-200 rounded animate-pulse w-16"></div></td>
+      <td class="px-3 py-3"><div class="h-4 bg-neutral-200 rounded animate-pulse w-12"></div></td>
+      <td class="px-3 py-3"><div class="h-4 bg-neutral-200 rounded animate-pulse w-12"></div></td>
+      <td class="px-3 py-3"><div class="h-4 bg-neutral-200 rounded animate-pulse w-16"></div></td>
+      <td class="px-3 py-3"><div class="h-4 bg-neutral-200 rounded animate-pulse w-20"></div></td>
+    </tr>
+  `).join('');
+}
+
+// Render internal trainers table
+function funRenderInternalTrainers() {
+  const tbody = document.getElementById('internal-trainers-tbody');
+  if (!tbody) return;
+  
+  if (state.internal.data.length === 0) {
+    tbody.innerHTML = `
+      <tr>
+        <td colspan="6" class="px-3 py-8 text-center text-neutral-500">
+          <svg class="w-12 h-12 mx-auto mb-4 text-neutral-300" data-lucide="users"></svg>
+          <p class="text-sm">No internal trainers found</p>
+          <p class="text-xs text-neutral-400 mt-1">Try adjusting your filters</p>
+        </td>
+      </tr>
+    `;
+    lucide.createIcons();
+    return;
+  }
+  
+  tbody.innerHTML = state.internal.data.map(trainer => {
+    const user = trainer.user || {};
+    const department = trainer.department || {};
+    const fullName = `${user.firstName || ''} ${user.lastName || ''}`.trim() || 'N/A';
+    const skillsCount = trainer.eligibleSkills?.length || 0;
+    
+    return `
+      <tr class="hover:bg-neutral-50 focus-within:bg-neutral-50">
+        <td class="px-3 py-3">
+          <a href="trainer_detail.html?trainerType=internal&trainerId=${encodeURIComponent(trainer.employeeId || '')}" 
+             class="text-brand-primary-600 hover:text-brand-primary-700 font-medium focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2 rounded">
+            ${fullName}
+          </a>
+        </td>
+        <td class="px-3 py-3 text-neutral-900">${user.jobTitle || 'N/A'}</td>
+        <td class="px-3 py-3 text-neutral-900">${department.name || 'N/A'}</td>
+        <td class="px-3 py-3">
+          <button 
+            class="skills-count-btn text-brand-primary-600 hover:text-brand-primary-700 font-medium focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2 rounded"
+            data-skills="${trainer.eligibleSkills?.map(skillId => {
+              const skill = state.skills.find(s => s.id === skillId);
+              return skill?.name || 'Unknown';
+            }).join(', ') || 'No skills'}"
+          >
+            ${skillsCount}
+          </button>
+        </td>
+        <td class="px-3 py-3 text-neutral-900">${trainer.upcomingSessions || 0}</td>
+        <td class="px-3 py-3 text-neutral-900">${trainer.totalSessions || 0}</td>
+      </tr>
+    `;
+  }).join('');
+  
+  // Add tooltip listeners
+  funAddSkillsTooltipListeners();
+  lucide.createIcons();
+}
+
+// Render external trainers table
+function funRenderExternalTrainers() {
+  const tbody = document.getElementById('external-trainers-tbody');
+  if (!tbody) return;
+  
+  if (state.external.data.length === 0) {
+    tbody.innerHTML = `
+      <tr>
+        <td colspan="7" class="px-3 py-8 text-center text-neutral-500">
+          <svg class="w-12 h-12 mx-auto mb-4 text-neutral-300" data-lucide="user-plus"></svg>
+          <p class="text-sm">No external trainers found</p>
+          <p class="text-xs text-neutral-400 mt-1">Try adjusting your filters or add a new trainer</p>
+        </td>
+      </tr>
+    `;
+    lucide.createIcons();
+    return;
+  }
+  
+  tbody.innerHTML = state.external.data.map(trainer => {
+    const skillsCount = trainer.skills?.length || 0;
+    const statusClass = trainer.status === 'active' ? 'bg-success-600' : 'bg-neutral-500';
+    const statusText = trainer.status === 'active' ? 'Active' : 'Inactive';
+    
+    return `
+      <tr class="hover:bg-neutral-50 focus-within:bg-neutral-50">
+        <td class="px-3 py-3">
+          <a href="trainer_detail.html?trainerType=external&trainerId=${encodeURIComponent(trainer.id || '')}" 
+             class="text-brand-primary-600 hover:text-brand-primary-700 font-medium focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2 rounded">
+            ${trainer.name || 'N/A'}
+          </a>
+        </td>
+        <td class="px-3 py-3 text-neutral-900">${trainer.email || 'N/A'}</td>
+        <td class="px-3 py-3">
+          <button 
+            class="skills-count-btn text-brand-primary-600 hover:text-brand-primary-700 font-medium focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2 rounded"
+            data-skills="${trainer.skills?.map(skill => {
+              const skillData = state.skills.find(s => s.id === skill.skillId);
+              return skillData?.name || 'Unknown';
+            }).join(', ') || 'No skills'}"
+          >
+            ${skillsCount}
+          </button>
+        </td>
+        <td class="px-3 py-3 text-neutral-900">${trainer.upcomingSessions || 0}</td>
+        <td class="px-3 py-3 text-neutral-900">${trainer.totalSessions || 0}</td>
+        <td class="px-3 py-3">
+          <span class="inline-flex items-center px-2 py-1 text-xs font-medium text-white rounded-full ${statusClass}">
+            ${statusText}
+          </span>
+        </td>
+        <td class="px-3 py-3">
+          <div class="flex items-center gap-2">
+            <button 
+              class="edit-trainer-btn inline-flex items-center p-1 rounded-md text-neutral-500 hover:text-brand-primary-600 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2"
+              data-trainer-id="${trainer.id}"
+              title="Edit trainer"
+            >
+              <svg class="w-4 h-4" data-lucide="edit"></svg>
+            </button>
+            ${trainer.status === 'active' ? `
+              <button 
+                class="deactivate-trainer-btn inline-flex items-center p-1 rounded-md text-neutral-500 hover:text-danger-600 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2"
+                data-trainer-id="${trainer.id}"
+                data-trainer-name="${trainer.name || 'N/A'}"
+                data-upcoming-sessions="${trainer.upcomingSessions || 0}"
+                title="Deactivate trainer"
+              >
+                <svg class="w-4 h-4" data-lucide="user-x"></svg>
+              </button>
+            ` : ''}
+          </div>
+        </td>
+      </tr>
+    `;
+  }).join('');
+  
+  // Add event listeners
+  funAddExternalTrainerEventListeners();
+  funAddSkillsTooltipListeners();
+  lucide.createIcons();
+}
+
+// Add event listeners for external trainer actions
+function funAddExternalTrainerEventListeners() {
+  // Edit buttons
+  document.querySelectorAll('.edit-trainer-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      const trainerId = e.currentTarget.dataset.trainerId;
+      if (trainerId) {
+        location.href = `external_trainer_upsert.html?mode=edit&trainerId=${encodeURIComponent(trainerId)}`;
+      }
+    });
+  });
+  
+  // Deactivate buttons
+  document.querySelectorAll('.deactivate-trainer-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      const trainerId = e.currentTarget.dataset.trainerId;
+      const trainerName = e.currentTarget.dataset.trainerName;
+      const upcomingSessions = parseInt(e.currentTarget.dataset.upcomingSessions) || 0;
+      
+      funShowDeactivateModal(trainerId, trainerName, upcomingSessions);
+    });
+  });
+}
+
+// Add skills tooltip listeners
+function funAddSkillsTooltipListeners() {
+  const tooltip = document.getElementById('skills-tooltip');
+  const tooltipContent = document.getElementById('skills-tooltip-content');
+  
+  document.querySelectorAll('.skills-count-btn').forEach(btn => {
+    btn.addEventListener('mouseenter', (e) => {
+      const skills = e.target.dataset.skills;
+      if (skills && tooltip && tooltipContent) {
+        tooltipContent.textContent = skills;
+        
+        const rect = e.target.getBoundingClientRect();
+        tooltip.style.left = `${rect.left + rect.width/2}px`;
+        tooltip.style.top = `${rect.top - 10}px`;
+        tooltip.classList.remove('hidden');
+      }
+    });
+    
+    btn.addEventListener('mouseleave', () => {
+      if (tooltip) {
+        tooltip.classList.add('hidden');
+      }
+    });
+  });
+}
+
+// Update pagination for internal trainers
+function funUpdateInternalPagination() {
+  const start = state.internal.pagination.page * state.internal.pagination.limit + 1;
+  const end = Math.min(start + state.internal.data.length - 1, start + state.internal.pagination.limit - 1);
+  const total = state.internal.data.length; // This is the current page size, not total count
+  
+  document.getElementById('internal-start').textContent = state.internal.data.length ? start : 0;
+  document.getElementById('internal-end').textContent = state.internal.data.length ? end : 0;
+  document.getElementById('internal-total').textContent = `${total}+`;
+  
+  const prevBtn = document.getElementById('internal-prev-btn');
+  const nextBtn = document.getElementById('internal-next-btn');
+  
+  if (prevBtn) prevBtn.disabled = state.internal.pagination.page === 0;
+  if (nextBtn) nextBtn.disabled = !state.internal.pagination.hasNext;
+}
+
+// Update pagination for external trainers
+function funUpdateExternalPagination() {
+  const start = state.external.pagination.page * state.external.pagination.limit + 1;
+  const end = Math.min(start + state.external.data.length - 1, start + state.external.pagination.limit - 1);
+  const total = state.external.data.length; // This is the current page size, not total count
+  
+  document.getElementById('external-start').textContent = state.external.data.length ? start : 0;
+  document.getElementById('external-end').textContent = state.external.data.length ? end : 0;
+  document.getElementById('external-total').textContent = `${total}+`;
+  
+  const prevBtn = document.getElementById('external-prev-btn');
+  const nextBtn = document.getElementById('external-next-btn');
+  
+  if (prevBtn) prevBtn.disabled = state.external.pagination.page === 0;
+  if (nextBtn) nextBtn.disabled = !state.external.pagination.hasNext;
+}
+
+// Pagination functions
+function funPaginateInternal(direction) {
+  if (direction === 'next' && state.internal.pagination.hasNext) {
+    state.internal.pagination.page++;
+    funLoadInternalTrainers(false);
+  } else if (direction === 'prev' && state.internal.pagination.page > 0) {
+    state.internal.pagination.page--;
+    // For previous page, we need to reset and reload from beginning
+    funLoadInternalTrainers(true);
+  }
+}
+
+function funPaginateExternal(direction) {
+  if (direction === 'next' && state.external.pagination.hasNext) {
+    state.external.pagination.page++;
+    funLoadExternalTrainers(false);
+  } else if (direction === 'prev' && state.external.pagination.page > 0) {
+    state.external.pagination.page--;
+    // For previous page, we need to reset and reload from beginning  
+    funLoadExternalTrainers(true);
+  }
+}
+
+// Show deactivate modal
+function funShowDeactivateModal(trainerId, trainerName, upcomingSessions) {
+  state.selectedTrainerForDeactivate = trainerId;
+  
+  document.getElementById('deactivate-trainer-name').textContent = trainerName || 'N/A';
+  document.getElementById('upcoming-sessions-count').textContent = upcomingSessions;
+  
+  const warningEl = document.getElementById('upcoming-sessions-warning');
+  if (upcomingSessions > 0) {
+    warningEl.classList.remove('hidden');
+  } else {
+    warningEl.classList.add('hidden');
+  }
+  
+  document.getElementById('deactivate-modal').classList.remove('hidden');
+  
+  // Focus on cancel button for accessibility
+  setTimeout(() => {
+    document.getElementById('cancel-deactivate')?.focus();
+  }, 100);
+}
+
+// Close deactivate modal
+function funCloseDeactivateModal() {
+  document.getElementById('deactivate-modal').classList.add('hidden');
+  state.selectedTrainerForDeactivate = null;
+}
+
+// Confirm deactivation
+async function funConfirmDeactivation() {
+  if (!state.selectedTrainerForDeactivate) return;
+  
+  try {
+    const confirmBtn = document.getElementById('confirm-deactivate');
+    confirmBtn.disabled = true;
+    confirmBtn.textContent = 'Deactivating...';
+    
+    await updateDoc(doc(db, 'externalTrainers', state.selectedTrainerForDeactivate), {
+      status: 'inactive',
+      modifiedTimestamp: new Date().toISOString()
+    });
+    
+    showToast('Trainer deactivated successfully', 'success');
+    funCloseDeactivateModal();
+    
+    // Reload external trainers
+    await funLoadExternalTrainers(true);
+    
+  } catch (error) {
+    console.error('Error deactivating trainer:', error);
+    showToast('Failed to deactivate trainer', 'error');
+  } finally {
+    const confirmBtn = document.getElementById('confirm-deactivate');
+    confirmBtn.disabled = false;
+    confirmBtn.textContent = 'Deactivate Trainer';
+  }
+}
+
+// Initialize icons
+lucide.createIcons();
+</script>
+
+</body>
+</html>

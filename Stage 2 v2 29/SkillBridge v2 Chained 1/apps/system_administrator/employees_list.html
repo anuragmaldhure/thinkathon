@@ -1,0 +1,1647 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SkillBridge</title>
+
+    <!-- Required: Main JS Script -->
+    <script type="module" src="scripts/main.js" data-tiramai="web-gen"></script>
+
+    <!-- Required: TailwindCSS -->
+    <script src="./lib/tailwindcss/tailwindcss.js" fetchpriority="high" data-tiramai="web-gen"></script>
+
+    <!-- Required: Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest" data-tiramai="web-gen"></script>
+
+    <!-- Required: Favicon -->
+    <link rel="icon" href="assets/imgs/logo.ico" type="image/x-icon" data-tiramai="web-gen"/>
+
+    <!-- ECharts Support (for charts/graphs) -->
+    <script defer src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js" data-tiramai="web-gen"></script>
+
+    <!-- Markdown Support (for content rendering) -->
+    <script defer src="https://cdn.jsdelivr.net/npm/marked/marked.min.js" data-tiramai="web-gen"></script>
+
+    <!-- Tailwind Config Extension -->
+    <script data-tiramai="web-gen">
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            'primary-600': '#1B2A44',
+                            'primary-700': '#14233A',
+                            'primary-800': '#0E1A2B',
+                        },
+                        accent: {
+                            'gold-50': '#FFF7E6',
+                            'gold-500': '#C59D42',
+                            'gold-600': '#A97D22',
+                        },
+                        success: { '600': '#16A34A' },
+                        warning: { '600': '#D97706' },
+                        danger: { '600': '#DC2626' },
+                        info: { '600': '#2563EB' },
+                        heat: {
+                            green: '#16A34A',
+                            amber: '#F59E0B',
+                            red: '#DC2626'
+                        },
+                        neutral: {
+                            '50': '#F8FAFC',
+                            '200': '#E2E8F0',
+                            '500': '#64748B',
+                            '700': '#334155',
+                            '900': '#111827',
+                            '950': '#0B1220',
+                        }
+                    },
+                    fontSize: {
+                        'xs': ['12px', '16px'],
+                        'sm': ['14px', '20px'],
+                        'base': ['16px', '24px'],
+                        'xl': ['20px', '28px'],
+                        '2xl': ['24px', '32px'],
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-neutral-50 min-h-screen text-neutral-900">
+    <!-- Top Navigation -->
+    <header class="fixed top-0 left-0 right-0 bg-brand-primary-800 border-b border-neutral-200 flex items-center justify-between px-6 py-4 z-30 h-16">
+        <div class="flex items-center gap-4">
+            <!-- Mobile menu toggle -->
+            <button id="mobileMenuToggle" class="md:hidden text-white p-2" aria-label="Toggle menu">
+                <svg class="w-5 h-5" data-lucide="menu"></svg>
+            </button>
+            <!-- Logo -->
+            <div class="flex items-center gap-3">
+                <svg width="32" height="32" viewBox="0 0 400 400" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="84" y="116" width="56" height="168" rx="8" fill="#1E40AF"/>
+                    <rect x="176" y="84" width="56" height="200" rx="8" fill="#059669"/>
+                    <rect x="268" y="156" width="48" height="128" rx="8" fill="#1E40AF"/>
+                    <rect x="114" y="180" width="172" height="20" rx="10" fill="#F59E0B"/>
+                </svg>
+                <span class="text-xl font-semibold text-white">SkillBridge</span>
+            </div>
+        </div>
+        <div class="flex items-center gap-4">
+            <!-- User Profile Dropdown -->
+            <div class="relative" id="userProfileContainer">
+                <button id="userProfileToggle" class="flex items-center gap-2 text-white hover:text-accent-gold-500 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2 focus:ring-offset-brand-primary-800 rounded-md p-2">
+                    <div class="w-8 h-8 bg-accent-gold-500 rounded-full flex items-center justify-center">
+                        <span id="userInitials" class="text-sm font-semibold text-white">JD</span>
+                    </div>
+                    <svg class="w-4 h-4" data-lucide="chevron-down"></svg>
+                </button>
+                <!-- Dropdown Menu -->
+                <div id="userProfileDropdown" class="hidden absolute right-0 mt-2 w-64 bg-white rounded-md shadow-lg border border-neutral-200 py-2 z-50">
+                    <div class="px-4 py-3 border-b border-neutral-200">
+                        <p id="userDisplayName" class="text-sm font-semibold text-neutral-900">John Doe</p>
+                        <p id="userEmail" class="text-xs text-neutral-500">johndoe@example.com</p>
+                        <p class="text-xs text-accent-gold-600 font-medium">System Administrator</p>
+                    </div>
+                    <button id="signOutButton" class="w-full text-left px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50 flex items-center gap-2">
+                        <svg class="w-4 h-4" data-lucide="log-out"></svg>
+                        Sign Out
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="flex pt-16">
+        <!-- Side Navigation -->
+        <aside id="sidebar" class="fixed md:sticky top-16 left-0 w-64 bg-white border-r border-neutral-200 h-[calc(100vh-4rem)] overflow-y-auto z-20 transform -translate-x-full md:translate-x-0 transition-transform duration-200">
+            <nav class="p-4 space-y-1">
+                <!-- Admin Dashboard -->
+                <a href="dashboard.html" id="nav-dashboard" class="nav-item flex items-center gap-3 px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                    <svg class="w-5 h-5" data-lucide="layout-dashboard"></svg>
+                    <span>Admin Dashboard</span>
+                </a>
+
+                <!-- Employees with Children -->
+                <div class="nav-group">
+                    <button class="nav-group-toggle flex items-center justify-between w-full px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                        <div class="flex items-center gap-3">
+                            <svg class="w-5 h-5" data-lucide="users"></svg>
+                            <span>Employees</span>
+                        </div>
+                        <svg class="w-4 h-4 transform transition-transform" data-lucide="chevron-right"></svg>
+                    </button>
+                    <div class="nav-group-children hidden ml-8 space-y-1 mt-1">
+                        <a href="employees_list.html" class="nav-item block px-3 py-2 rounded-md text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-600">Employee Directory</a>
+                        <a href="employee_upsert.html?mode=create" class="nav-item block px-3 py-2 rounded-md text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-600">Add Employee</a>
+                    </div>
+                </div>
+
+                <!-- Departments -->
+                <a href="departments_list.html" id="nav-departments" class="nav-item flex items-center gap-3 px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                    <svg class="w-5 h-5" data-lucide="building"></svg>
+                    <span>Departments</span>
+                </a>
+
+                <!-- Skill Categories -->
+                <a href="skill_categories_list.html" id="nav-skill-categories" class="nav-item flex items-center gap-3 px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                    <svg class="w-5 h-5" data-lucide="layers"></svg>
+                    <span>Skill Categories</span>
+                </a>
+
+                <!-- Criticality Levels -->
+                <a href="skill_criticalities_list.html" id="nav-criticalities" class="nav-item flex items-center gap-3 px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                    <svg class="w-5 h-5" data-lucide="sliders"></svg>
+                    <span>Criticality Levels</span>
+                </a>
+
+                <!-- Skills with Children -->
+                <div class="nav-group">
+                    <button class="nav-group-toggle flex items-center justify-between w-full px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                        <div class="flex items-center gap-3">
+                            <svg class="w-5 h-5" data-lucide="book"></svg>
+                            <span>Skills</span>
+                        </div>
+                        <svg class="w-4 h-4 transform transition-transform" data-lucide="chevron-right"></svg>
+                    </button>
+                    <div class="nav-group-children hidden ml-8 space-y-1 mt-1">
+                        <a href="skills_list.html" class="nav-item block px-3 py-2 rounded-md text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-600">Skills Directory</a>
+                        <a href="skill_upsert.html?mode=create" class="nav-item block px-3 py-2 rounded-md text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-600">Add Skill</a>
+                    </div>
+                </div>
+
+                <!-- Assessment Cycles with Children -->
+                <div class="nav-group">
+                    <button class="nav-group-toggle flex items-center justify-between w-full px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                        <div class="flex items-center gap-3">
+                            <svg class="w-5 h-5" data-lucide="calendar"></svg>
+                            <span>Assessment Cycles</span>
+                        </div>
+                        <svg class="w-4 h-4 transform transition-transform" data-lucide="chevron-right"></svg>
+                    </button>
+                    <div class="nav-group-children hidden ml-8 space-y-1 mt-1">
+                        <a href="assessment_cycles_list.html" class="nav-item block px-3 py-2 rounded-md text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-600">Cycles Directory</a>
+                        <a href="assessment_cycle_upsert.html?mode=create" class="nav-item block px-3 py-2 rounded-md text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-600">Create Cycle</a>
+                    </div>
+                </div>
+
+                <!-- Trainer Pool with Children -->
+                <div class="nav-group">
+                    <button class="nav-group-toggle flex items-center justify-between w-full px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                        <div class="flex items-center gap-3">
+                            <svg class="w-5 h-5" data-lucide="users"></svg>
+                            <span>Trainer Pool</span>
+                        </div>
+                        <svg class="w-4 h-4 transform transition-transform" data-lucide="chevron-right"></svg>
+                    </button>
+                    <div class="nav-group-children hidden ml-8 space-y-1 mt-1">
+                        <a href="trainers_list.html" class="nav-item block px-3 py-2 rounded-md text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-600">Trainer Directory</a>
+                        <a href="external_trainer_upsert.html?mode=create" class="nav-item block px-3 py-2 rounded-md text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-600">Add External Trainer</a>
+                    </div>
+                </div>
+
+                <!-- Training Sessions with Children -->
+                <div class="nav-group">
+                    <button class="nav-group-toggle flex items-center justify-between w-full px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                        <div class="flex items-center gap-3">
+                            <svg class="w-5 h-5" data-lucide="calendar"></svg>
+                            <span>Training Sessions</span>
+                        </div>
+                        <svg class="w-4 h-4 transform transition-transform" data-lucide="chevron-right"></svg>
+                    </button>
+                    <div class="nav-group-children hidden ml-8 space-y-1 mt-1">
+                        <a href="training_sessions_list.html" class="nav-item block px-3 py-2 rounded-md text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-600">Sessions Calendar</a>
+                        <a href="training_session_upsert.html?mode=create" class="nav-item block px-3 py-2 rounded-md text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-600">Create Session</a>
+                    </div>
+                </div>
+
+                <!-- Disputes -->
+                <a href="disputes_list.html" id="nav-disputes" class="nav-item flex items-center gap-3 px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                    <svg class="w-5 h-5" data-lucide="alert-circle"></svg>
+                    <span>Disputes</span>
+                </a>
+
+                <!-- Analytics Section -->
+                <div class="border-t border-neutral-200 pt-4 mt-4">
+                    <h4 class="px-3 text-xs font-semibold text-neutral-500 uppercase tracking-wider mb-2">Analytics</h4>
+                    
+                    <a href="analytics_skill_gap_heatmap.html" class="nav-item flex items-center gap-3 px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                        <svg class="w-5 h-5" data-lucide="grid"></svg>
+                        <span>Skill Gap Heatmap</span>
+                    </a>
+
+                    <a href="analytics_tni_dashboard.html" class="nav-item flex items-center gap-3 px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                        <svg class="w-5 h-5" data-lucide="bar-chart-2"></svg>
+                        <span>TNI Dashboard</span>
+                    </a>
+
+                    <a href="analytics_training_forecast.html" class="nav-item flex items-center gap-3 px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                        <svg class="w-5 h-5" data-lucide="trending-up"></svg>
+                        <span>Training Forecast</span>
+                    </a>
+
+                    <a href="analytics_assessment_completion.html" class="nav-item flex items-center gap-3 px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                        <svg class="w-5 h-5" data-lucide="pie-chart"></svg>
+                        <span>Assessment Completion</span>
+                    </a>
+
+                    <a href="analytics_dispute_metrics.html" class="nav-item flex items-center gap-3 px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                        <svg class="w-5 h-5" data-lucide="bar-chart"></svg>
+                        <span>Dispute Analytics</span>
+                    </a>
+                </div>
+            </nav>
+            
+            <!-- Footer -->
+            <div class="absolute bottom-4 w-full text-center text-xs text-neutral-500 bg-white px-4">
+                Made with ❤️ by TiramAi
+            </div>
+        </aside>
+
+        <!-- Mobile Overlay -->
+        <div id="mobileOverlay" class="hidden fixed inset-0 bg-black bg-opacity-50 z-10 md:hidden"></div>
+
+        <!-- Main Content -->
+        <main id="pageContent" class="flex-1 p-6 overflow-y-auto">
+            
+<div class="space-y-6">
+    <!-- Header Section -->
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+            <h1 class="text-2xl leading-8 font-bold text-neutral-950">Employees</h1>
+            <p class="text-sm leading-5 text-neutral-700 mt-1">Manage employee directory, roles, and hierarchy</p>
+        </div>
+        <div class="flex items-center gap-3">
+            <button id="btn-bulk-import" class="inline-flex items-center gap-2 h-11 px-4 rounded-md border border-neutral-200 bg-white text-neutral-900 hover:bg-neutral-50 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2">
+                <svg class="w-5 h-5" data-lucide="upload"></svg>
+                Bulk Import
+            </button>
+            <button id="btn-add-employee" class="inline-flex items-center gap-2 h-11 px-4 rounded-md bg-brand-primary-600 hover:bg-brand-primary-700 text-white focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2">
+                <svg class="w-5 h-5" data-lucide="plus"></svg>
+                Add Employee
+            </button>
+        </div>
+    </div>
+
+    <!-- Filters Section -->
+    <div class="bg-white border border-neutral-200 rounded-md p-4 shadow-sm">
+        <div class="flex items-center gap-3 mb-4">
+            <svg class="w-5 h-5 text-neutral-500" data-lucide="filter"></svg>
+            <h2 class="text-base leading-6 font-semibold text-neutral-950">Filters</h2>
+            <button id="btn-refresh" class="inline-flex items-center gap-1 text-sm text-neutral-500 hover:text-neutral-700 ml-auto" aria-label="Refresh data">
+                <svg class="w-4 h-4" data-lucide="refresh-cw"></svg>
+                Refresh
+            </button>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+            <!-- Search -->
+            <div class="lg:col-span-2">
+                <label class="block text-sm font-medium text-neutral-900 mb-1">Search</label>
+                <input id="search-input" type="text" placeholder="Name, email, or employee ID..." 
+                    class="w-full border border-neutral-200 rounded-sm px-3 py-2 text-sm leading-5 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2">
+            </div>
+            <!-- Department -->
+            <div>
+                <label class="block text-sm font-medium text-neutral-900 mb-1">Department</label>
+                <select id="department-filter" 
+                    class="w-full border border-neutral-200 rounded-sm px-3 py-2 bg-white text-sm leading-5 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2">
+                    <option value="">All Departments</option>
+                </select>
+            </div>
+            <!-- Status -->
+            <div>
+                <label class="block text-sm font-medium text-neutral-900 mb-1">Status</label>
+                <select id="status-filter" 
+                    class="w-full border border-neutral-200 rounded-sm px-3 py-2 bg-white text-sm leading-5 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2">
+                    <option value="active">Active</option>
+                    <option value="inactive">Inactive</option>
+                    <option value="">All</option>
+                </select>
+            </div>
+            <!-- System Role -->
+            <div>
+                <label class="block text-sm font-medium text-neutral-900 mb-1">System Role</label>
+                <select id="role-filter" 
+                    class="w-full border border-neutral-200 rounded-sm px-3 py-2 bg-white text-sm leading-5 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2">
+                    <option value="">All Roles</option>
+                    <option value="employee">Employee</option>
+                    <option value="systemAdmin">System Admin</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <!-- Results Section -->
+    <div class="bg-white border border-neutral-200 rounded-md shadow-sm overflow-hidden">
+        <!-- Results Header -->
+        <div class="px-4 py-3 border-b border-neutral-200 bg-neutral-50">
+            <div class="flex items-center justify-between">
+                <p class="text-sm leading-5 text-neutral-700">
+                    <span id="results-count">Loading...</span> employees found
+                </p>
+                <div class="flex items-center gap-2">
+                    <label for="page-size-select" class="text-sm text-neutral-700">Show:</label>
+                    <select id="page-size-select" class="border border-neutral-200 rounded-sm px-2 py-1 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2">
+                        <option value="25">25</option>
+                        <option value="50">50</option>
+                        <option value="100">100</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- Table Container with Skeleton -->
+        <div class="overflow-x-auto">
+            <!-- Loading Skeleton -->
+            <div id="table-skeleton" class="hidden">
+                <div class="animate-pulse">
+                    <div class="bg-neutral-50 px-4 py-3 border-b border-neutral-200">
+                        <div class="grid grid-cols-9 gap-4">
+                            <div class="h-4 bg-neutral-200 rounded"></div>
+                            <div class="h-4 bg-neutral-200 rounded"></div>
+                            <div class="h-4 bg-neutral-200 rounded"></div>
+                            <div class="h-4 bg-neutral-200 rounded"></div>
+                            <div class="h-4 bg-neutral-200 rounded"></div>
+                            <div class="h-4 bg-neutral-200 rounded"></div>
+                            <div class="h-4 bg-neutral-200 rounded"></div>
+                            <div class="h-4 bg-neutral-200 rounded"></div>
+                            <div class="h-4 bg-neutral-200 rounded"></div>
+                        </div>
+                    </div>
+                    <!-- Skeleton Rows -->
+                    <div class="divide-y divide-neutral-200">
+                        <!-- Repeat skeleton rows -->
+                        <div class="px-4 py-3">
+                            <div class="grid grid-cols-9 gap-4 items-center">
+                                <div class="h-4 bg-neutral-200 rounded"></div>
+                                <div class="h-4 bg-neutral-200 rounded"></div>
+                                <div class="h-4 bg-neutral-200 rounded"></div>
+                                <div class="h-4 bg-neutral-200 rounded"></div>
+                                <div class="h-4 bg-neutral-200 rounded"></div>
+                                <div class="h-4 bg-neutral-200 rounded"></div>
+                                <div class="h-4 bg-neutral-200 rounded w-12"></div>
+                                <div class="h-6 bg-neutral-200 rounded-full w-20"></div>
+                                <div class="h-4 bg-neutral-200 rounded w-16"></div>
+                            </div>
+                        </div>
+                        <div class="px-4 py-3">
+                            <div class="grid grid-cols-9 gap-4 items-center">
+                                <div class="h-4 bg-neutral-200 rounded"></div>
+                                <div class="h-4 bg-neutral-200 rounded"></div>
+                                <div class="h-4 bg-neutral-200 rounded"></div>
+                                <div class="h-4 bg-neutral-200 rounded"></div>
+                                <div class="h-4 bg-neutral-200 rounded"></div>
+                                <div class="h-4 bg-neutral-200 rounded"></div>
+                                <div class="h-4 bg-neutral-200 rounded w-12"></div>
+                                <div class="h-6 bg-neutral-200 rounded-full w-20"></div>
+                                <div class="h-4 bg-neutral-200 rounded w-16"></div>
+                            </div>
+                        </div>
+                        <div class="px-4 py-3">
+                            <div class="grid grid-cols-9 gap-4 items-center">
+                                <div class="h-4 bg-neutral-200 rounded"></div>
+                                <div class="h-4 bg-neutral-200 rounded"></div>
+                                <div class="h-4 bg-neutral-200 rounded"></div>
+                                <div class="h-4 bg-neutral-200 rounded"></div>
+                                <div class="h-4 bg-neutral-200 rounded"></div>
+                                <div class="h-4 bg-neutral-200 rounded"></div>
+                                <div class="h-4 bg-neutral-200 rounded w-12"></div>
+                                <div class="h-6 bg-neutral-200 rounded-full w-20"></div>
+                                <div class="h-4 bg-neutral-200 rounded w-16"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Actual Table -->
+            <table id="employees-table" class="w-full text-sm leading-5">
+                <thead class="bg-neutral-50 text-neutral-700">
+                    <tr>
+                        <th class="text-left font-semibold px-4 py-3 border-b border-neutral-200 min-w-24">Employee ID</th>
+                        <th class="text-left font-semibold px-4 py-3 border-b border-neutral-200 min-w-48">Name</th>
+                        <th class="text-left font-semibold px-4 py-3 border-b border-neutral-200 min-w-48">Email</th>
+                        <th class="text-left font-semibold px-4 py-3 border-b border-neutral-200 min-w-32">Job Title</th>
+                        <th class="text-left font-semibold px-4 py-3 border-b border-neutral-200 min-w-32">Department</th>
+                        <th class="text-left font-semibold px-4 py-3 border-b border-neutral-200 min-w-32">Team Lead</th>
+                        <th class="text-left font-semibold px-4 py-3 border-b border-neutral-200 min-w-20">Reports</th>
+                        <th class="text-left font-semibold px-4 py-3 border-b border-neutral-200 min-w-24">Role</th>
+                        <th class="text-left font-semibold px-4 py-3 border-b border-neutral-200 min-w-20">Status</th>
+                        <th class="text-left font-semibold px-4 py-3 border-b border-neutral-200 min-w-24">Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="employees-tbody" class="divide-y divide-neutral-200 bg-white">
+                    <!-- Table rows will be populated by JavaScript -->
+                </tbody>
+            </table>
+
+            <!-- Empty State -->
+            <div id="empty-state" class="hidden text-center py-12">
+                <svg class="mx-auto h-12 w-12 text-neutral-400" data-lucide="users"></svg>
+                <h3 class="mt-2 text-sm font-semibold text-neutral-900">No employees found</h3>
+                <p class="mt-1 text-sm text-neutral-500">Try adjusting your search criteria or filters.</p>
+            </div>
+        </div>
+
+        <!-- Pagination -->
+        <div id="pagination-container" class="px-4 py-3 border-t border-neutral-200 bg-neutral-50">
+            <div class="flex items-center justify-between">
+                <div class="text-sm text-neutral-700">
+                    Showing <span id="page-start">1</span> to <span id="page-end">25</span> of <span id="total-count">0</span> results
+                </div>
+                <div class="flex items-center gap-2">
+                    <button id="prev-page" class="px-3 py-2 text-sm border border-neutral-200 rounded-md bg-white text-neutral-900 hover:bg-neutral-50 disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2" disabled>
+                        Previous
+                    </button>
+                    <span id="page-info" class="text-sm text-neutral-700">Page 1</span>
+                    <button id="next-page" class="px-3 py-2 text-sm border border-neutral-200 rounded-md bg-white text-neutral-900 hover:bg-neutral-50 disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2">
+                        Next
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Bulk Import Modal -->
+<div id="bulk-import-modal" class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-lg border border-neutral-200 shadow-lg max-w-2xl w-full max-h-[90vh] overflow-hidden">
+        <div class="px-6 py-4 border-b border-neutral-200">
+            <div class="flex items-center justify-between">
+                <h2 class="text-xl leading-7 font-semibold text-neutral-950">Bulk Import Employees</h2>
+                <button id="close-bulk-import" class="text-neutral-500 hover:text-neutral-700 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2 rounded-md p-1">
+                    <svg class="w-5 h-5" data-lucide="x"></svg>
+                </button>
+            </div>
+        </div>
+        <div class="px-6 py-4 overflow-y-auto max-h-[calc(90vh-120px)]">
+            <!-- Upload Section -->
+            <div id="upload-section" class="space-y-4">
+                <div class="border-2 border-dashed border-neutral-300 rounded-md p-6 text-center">
+                    <svg class="mx-auto h-12 w-12 text-neutral-400" data-lucide="upload"></svg>
+                    <div class="mt-2">
+                        <label for="csv-file-input" class="cursor-pointer">
+                            <span class="text-sm font-medium text-brand-primary-600 hover:text-brand-primary-700">Upload CSV file</span>
+                            <input id="csv-file-input" type="file" accept=".csv" class="hidden">
+                        </label>
+                        <p class="text-sm text-neutral-500 mt-1">or drag and drop</p>
+                    </div>
+                    <p class="text-xs text-neutral-500 mt-2">CSV format with columns: firstName, lastName, email, employeeId, jobTitle, departmentId</p>
+                </div>
+            </div>
+
+            <!-- Preview Section -->
+            <div id="preview-section" class="hidden space-y-4">
+                <div class="border border-neutral-200 rounded-md overflow-hidden">
+                    <div class="bg-neutral-50 px-4 py-2 border-b border-neutral-200">
+                        <h3 class="text-sm font-semibold text-neutral-950">Preview (first 5 rows)</h3>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-sm">
+                            <thead class="bg-neutral-50">
+                                <tr id="preview-headers">
+                                    <!-- Headers will be populated -->
+                                </tr>
+                            </thead>
+                            <tbody id="preview-body">
+                                <!-- Preview rows will be populated -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Validation Results -->
+                <div id="validation-results" class="space-y-2">
+                    <!-- Validation messages will appear here -->
+                </div>
+            </div>
+
+            <!-- Import Results -->
+            <div id="import-results" class="hidden space-y-4">
+                <div class="rounded-md bg-success-600/10 border border-success-600/20 p-4">
+                    <div class="flex items-center">
+                        <svg class="w-5 h-5 text-success-600" data-lucide="check-circle"></svg>
+                        <h3 class="ml-2 text-sm font-semibold text-success-600">Import Completed</h3>
+                    </div>
+                    <div class="mt-2 text-sm text-neutral-700">
+                        <p>Successfully imported <span id="success-count">0</span> employees.</p>
+                        <p id="error-summary" class="hidden mt-1 text-danger-600"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="px-6 py-4 border-t border-neutral-200 bg-neutral-50 flex justify-end gap-3">
+            <button id="cancel-import" class="px-4 py-2 text-sm border border-neutral-200 rounded-md bg-white text-neutral-900 hover:bg-neutral-50 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2">
+                Cancel
+            </button>
+            <button id="process-import" class="hidden px-4 py-2 text-sm rounded-md bg-brand-primary-600 hover:bg-brand-primary-700 text-white focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2">
+                Import Employees
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Deactivate Employee Modal -->
+<div id="deactivate-modal" class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-lg border border-neutral-200 shadow-lg max-w-md w-full">
+        <div class="px-6 py-4 border-b border-neutral-200">
+            <h2 class="text-xl leading-7 font-semibold text-neutral-950">Deactivate Employee</h2>
+        </div>
+        <div class="px-6 py-4">
+            <div class="space-y-4">
+                <p class="text-sm text-neutral-700">
+                    Are you sure you want to deactivate <strong id="deactivate-employee-name"></strong>?
+                </p>
+                
+                <div id="deactivate-warnings" class="space-y-2">
+                    <!-- Warning messages will be populated here -->
+                </div>
+            </div>
+        </div>
+        <div class="px-6 py-4 border-t border-neutral-200 bg-neutral-50 flex justify-end gap-3">
+            <button id="cancel-deactivate" class="px-4 py-2 text-sm border border-neutral-200 rounded-md bg-white text-neutral-900 hover:bg-neutral-50 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2">
+                Cancel
+            </button>
+            <button id="confirm-deactivate" class="px-4 py-2 text-sm rounded-md bg-danger-600 hover:bg-danger-700 text-white focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2">
+                Deactivate
+            </button>
+        </div>
+    </div>
+</div>
+
+        </main>
+    </div>
+
+    <!-- Required: JavaScript -->
+    <script type="module" data-tiramai="web-gen">
+        import { showToast, showLoader, hideLoader, env } from "./scripts/main.js";
+        import { auth, db, storage } from "./scripts/firebase.js";
+        import { onAuthStateChanged, getAuth, signOut } from 'https://www.gstatic.com/firebasejs/10.12.4/firebase-auth.js';
+        import { doc, getDoc } from 'https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js';
+
+        // Initialize Lucide icons
+        lucide.createIcons();
+
+        // Mobile menu toggle
+        const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+        const sidebar = document.getElementById('sidebar');
+        const mobileOverlay = document.getElementById('mobileOverlay');
+
+        mobileMenuToggle?.addEventListener('click', () => {
+            sidebar.classList.toggle('-translate-x-full');
+            mobileOverlay.classList.toggle('hidden');
+        });
+
+        mobileOverlay?.addEventListener('click', () => {
+            sidebar.classList.add('-translate-x-full');
+            mobileOverlay.classList.add('hidden');
+        });
+
+        // Navigation group toggles
+        document.querySelectorAll('.nav-group-toggle').forEach(toggle => {
+            toggle.addEventListener('click', (e) => {
+                e.preventDefault();
+                const children = toggle.nextElementSibling;
+                const icon = toggle.querySelector('svg:last-child');
+                
+                children.classList.toggle('hidden');
+                icon.classList.toggle('rotate-90');
+            });
+        });
+
+        // User profile dropdown
+        const userProfileToggle = document.getElementById('userProfileToggle');
+        const userProfileDropdown = document.getElementById('userProfileDropdown');
+
+        userProfileToggle?.addEventListener('click', () => {
+            userProfileDropdown.classList.toggle('hidden');
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!userProfileToggle?.contains(e.target) && !userProfileDropdown?.contains(e.target)) {
+                userProfileDropdown?.classList.add('hidden');
+            }
+        });
+
+        // Sign out functionality
+        document.getElementById('signOutButton')?.addEventListener('click', async () => {
+            try {
+                await signOut(auth);
+                window.location.href = 'auth.html';
+            } catch (error) {
+                console.error('Sign out error:', error);
+                showToast('Failed to sign out', 'error');
+            }
+        });
+
+        // Auth state management
+        onAuthStateChanged(auth, async (user) => {
+            if (!user) {
+                window.location.href = 'auth.html';
+                return;
+            }
+
+            // Load user profile data
+            try {
+                const userDoc = await getDoc(doc(db, 'users', user.uid));
+                const userData = userDoc.exists() ? userDoc.data() : null;
+
+                // Update UI with user data
+                const displayName = userData?.firstName && userData?.lastName 
+                    ? `${userData.firstName} ${userData.lastName}`
+                    : user.displayName || 'John Doe';
+                
+                const email = user.email || 'johndoe@example.com';
+                const initials = displayName.split(' ').map(n => n[0]).join('').toUpperCase();
+
+                document.getElementById('userDisplayName').textContent = displayName;
+                document.getElementById('userEmail').textContent = email;
+                document.getElementById('userInitials').textContent = initials;
+
+            } catch (error) {
+                console.error('Error loading user data:', error);
+                // Fallback to default values
+                document.getElementById('userDisplayName').textContent = 'John Doe';
+                document.getElementById('userEmail').textContent = user.email || 'johndoe@example.com';
+                document.getElementById('userInitials').textContent = 'JD';
+            }
+        });
+
+        // Set active navigation item based on current page
+        function setActiveNavItem() {
+            const currentPath = window.location.pathname;
+            const navItems = document.querySelectorAll('.nav-item');
+            
+            navItems.forEach(item => {
+                const href = item.getAttribute('href');
+                if (href && currentPath.includes(href.split('?')[0])) {
+                    item.classList.add('bg-accent-gold-50', 'text-brand-primary-600', 'border-l-2', 'border-brand-primary-600');
+                    item.classList.remove('text-neutral-700', 'text-neutral-600');
+                    
+                    // Expand parent group if needed
+                    const parentGroup = item.closest('.nav-group');
+                    if (parentGroup) {
+                        const children = parentGroup.querySelector('.nav-group-children');
+                        const icon = parentGroup.querySelector('.nav-group-toggle svg:last-child');
+                        children?.classList.remove('hidden');
+                        icon?.classList.add('rotate-90');
+                    }
+                }
+            });
+        }
+
+        // Initialize active nav state
+        setActiveNavItem();
+    </script>
+
+    
+<script id="data-script" type="module" data-tiramai="web-gen">
+import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.12.4/firebase-auth.js';
+import {
+    collection, getDocs, setDoc, doc, getDoc, updateDoc, query, where, orderBy, limit, 
+    startAfter, getCountFromServer, writeBatch
+} from "https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js";
+import { auth, getDb } from "./scripts/firebase.js";
+import { showToast, showLoader, hideLoader } from "./scripts/main.js";
+
+const db = getDb();
+
+// State management
+let currentEmployees = [];
+let allDepartments = [];
+let currentPage = 1;
+let pageSize = 25;
+let totalCount = 0;
+let lastDoc = null;
+let currentFilters = {
+    search: '',
+    department: '',
+    status: 'active',
+    role: ''
+};
+
+// Concurrency control
+let currentAbort;
+
+// Web Worker for data processing
+const worker = new Worker(new URL("./workers/data-shaper.js", import.meta.url), { type: "module" });
+
+// Helper functions for yield to frame
+const yieldToFrame = () => new Promise(r => requestAnimationFrame(() => r()));
+
+// Create semaphore for limiting concurrent queries
+function createSemaphore(max = 2) {
+    const queue = [];
+    let active = 0;
+    const next = () => {
+        if (active >= max || queue.length === 0) return;
+        active++;
+        const { fn, res, rej } = queue.shift();
+        Promise.resolve()
+            .then(fn)
+            .then(v => res(v))
+            .catch(e => rej(e))
+            .finally(() => { active--; next(); });
+    };
+    return (fn) => new Promise((res, rej) => { queue.push({ fn, res, rej }); next(); });
+}
+const withLimit = createSemaphore(2);
+
+// Shape data using Web Worker
+const shapeData = (raw) => new Promise((resolve) => {
+    const id = crypto.randomUUID();
+    const handler = (e) => { 
+        if (e.data?.id === id) { 
+            worker.removeEventListener("message", handler); 
+            resolve(e.data.out); 
+        } 
+    };
+    worker.addEventListener("message", handler);
+    worker.postMessage({ id, raw }, { transfer: [] });
+});
+
+// Auth check
+onAuthStateChanged(auth, user => {
+    if (!user) {
+        location.href = "auth.html?redirect=" + encodeURIComponent(location.pathname);
+    }
+});
+
+// Initialize page
+document.addEventListener('DOMContentLoaded', async () => {
+    try {
+        lucide.createIcons();
+        await funInitialLoad();
+        funSetupEventListeners();
+    } catch (error) {
+        console.error('Initialization error:', error);
+        showToast('Failed to load employee data');
+    }
+});
+
+// Initial data load
+async function funInitialLoad(forceRefresh = false) {
+    try {
+        funShowSkeleton();
+        
+        // Load departments and employees in parallel (limited to 2)
+        const [departments] = await Promise.all([
+            withLimit(() => funLoadDepartments()),
+            withLimit(() => funLoadEmployees(forceRefresh))
+        ]);
+        
+        funPopulateDepartmentFilter(departments);
+        await yieldToFrame(); // Yield before UI update
+        funHideSkeleton();
+        
+    } catch (error) {
+        console.error('Load error:', error);
+        showToast('Failed to load data: ' + (error?.message || 'Unknown error'));
+        funHideSkeleton();
+    }
+}
+
+// Abortable employee loading with server-side pagination
+async function funLoadEmployees(reset = false) {
+    if (currentAbort) currentAbort.abort();
+    currentAbort = new AbortController();
+    const signal = currentAbort.signal;
+    
+    if (reset) {
+        currentPage = 1;
+        lastDoc = null;
+    }
+
+    try {
+        // Build query based on current filters
+        let q = collection(db, "users");
+        const conditions = [];
+
+        // Add filters
+        if (currentFilters.status) {
+            conditions.push(where("employeeStatus", "==", currentFilters.status));
+        }
+        if (currentFilters.role) {
+            conditions.push(where("systemRole", "==", currentFilters.role));
+        }
+        if (currentFilters.department) {
+            conditions.push(where("departmentId", "==", currentFilters.department));
+        }
+
+        // Build final query with pagination
+        if (conditions.length > 0) {
+            q = query(q, ...conditions, orderBy("firstName"), orderBy("lastName"), limit(pageSize));
+        } else {
+            q = query(q, orderBy("firstName"), orderBy("lastName"), limit(pageSize));
+        }
+
+        // Add pagination cursor
+        if (lastDoc && !reset) {
+            q = query(q, startAfter(lastDoc));
+        }
+
+        // Get total count using separate optimized query
+        const countQuery = conditions.length > 0 
+            ? query(collection(db, "users"), ...conditions)
+            : collection(db, "users");
+        
+        const [snapshot, countSnapshot] = await Promise.all([
+            getDocs(q),
+            getCountFromServer(countQuery)
+        ]);
+
+        if (signal.aborted) return { items: [], cursor: null, total: 0 };
+
+        totalCount = countSnapshot.data().count;
+        
+        // Process documents
+        const rawEmployees = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        
+        // Get departments for lookup
+        if (rawEmployees.length > 0) {
+            const departments = await funLoadDepartments();
+            const departmentMap = new Map(departments.map(d => [d.id, d.name]));
+            
+            // Process employees with department names and team lead info
+            const processedEmployees = await Promise.all(rawEmployees.map(async emp => {
+                const processedEmp = {
+                    ...emp,
+                    departmentName: departmentMap.get(emp.departmentId) || 'N/A',
+                    teamLeadName: 'N/A',
+                    directReportsCount: 0
+                };
+
+                // Get team lead name if exists
+                if (emp.teamLeadId) {
+                    try {
+                        const teamLeadDoc = await getDoc(doc(db, "users", emp.teamLeadId));
+                        if (teamLeadDoc.exists()) {
+                            const teamLeadData = teamLeadDoc.data();
+                            processedEmp.teamLeadName = `${teamLeadData.firstName || ''} ${teamLeadData.lastName || ''}`.trim() || 'N/A';
+                        }
+                    } catch (error) {
+                        console.warn('Failed to load team lead:', error);
+                    }
+                }
+
+                // Get direct reports count
+                try {
+                    const reportsQuery = query(
+                        collection(db, "users"),
+                        where("teamLeadId", "==", emp.id),
+                        where("employeeStatus", "==", "active")
+                    );
+                    const reportsCount = await getCountFromServer(reportsQuery);
+                    processedEmp.directReportsCount = reportsCount.data().count;
+                } catch (error) {
+                    console.warn('Failed to count reports:', error);
+                }
+
+                return processedEmp;
+            }));
+
+            // Update last document for pagination
+            lastDoc = snapshot.docs.at(-1) || null;
+            
+            if (reset) {
+                currentEmployees = processedEmployees;
+            } else {
+                currentEmployees = [...currentEmployees, ...processedEmployees];
+            }
+        } else {
+            if (reset) {
+                currentEmployees = [];
+            }
+            lastDoc = null;
+        }
+
+        // Apply client-side search if needed (only for current batch)
+        let filteredEmployees = currentEmployees;
+        if (currentFilters.search) {
+            const searchTerm = currentFilters.search.toLowerCase();
+            filteredEmployees = currentEmployees.filter(emp => {
+                const fullName = `${emp.firstName || ''} ${emp.lastName || ''}`.toLowerCase();
+                const email = (emp.email || '').toLowerCase();
+                const employeeId = (emp.employeeId || '').toLowerCase();
+                
+                return fullName.includes(searchTerm) || 
+                       email.includes(searchTerm) || 
+                       employeeId.includes(searchTerm);
+            });
+        }
+
+        await funRenderEmployees(filteredEmployees);
+        funUpdatePagination();
+
+        return {
+            items: filteredEmployees,
+            cursor: lastDoc,
+            total: totalCount
+        };
+
+    } catch (error) {
+        if (signal.aborted) return { items: [], cursor: null, total: 0 };
+        throw error;
+    }
+}
+
+// Load departments
+async function funLoadDepartments() {
+    try {
+        const q = query(
+            collection(db, "departments"),
+            where("status", "==", "active"),
+            orderBy("name")
+        );
+        const snapshot = await getDocs(q);
+        allDepartments = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        return allDepartments;
+    } catch (error) {
+        console.error('Failed to load departments:', error);
+        return [];
+    }
+}
+
+// Populate department filter
+function funPopulateDepartmentFilter(departments) {
+    const select = document.getElementById('department-filter');
+    if (!select) return;
+    
+    // Clear existing options except first
+    while (select.children.length > 1) {
+        select.removeChild(select.lastChild);
+    }
+    
+    departments.forEach(dept => {
+        const option = document.createElement('option');
+        option.value = dept.id;
+        option.textContent = dept.name;
+        select.appendChild(option);
+    });
+}
+
+// Render employees table
+async function funRenderEmployees(employees) {
+    const tbody = document.getElementById('employees-tbody');
+    const emptyState = document.getElementById('empty-state');
+    const resultsCount = document.getElementById('results-count');
+    
+    if (!tbody) return;
+
+    // Update results count
+    if (resultsCount) {
+        resultsCount.textContent = employees.length;
+    }
+
+    // Show empty state if no employees
+    if (employees.length === 0) {
+        tbody.innerHTML = '';
+        emptyState?.classList.remove('hidden');
+        return;
+    }
+
+    emptyState?.classList.add('hidden');
+    
+    // Clear existing rows
+    tbody.innerHTML = '';
+
+    // Render each employee row
+    employees.forEach(emp => {
+        const row = document.createElement('tr');
+        row.className = emp.systemRole === 'systemAdmin' ? 
+            'hover:bg-accent-gold-50 focus-within:bg-accent-gold-50 border-l-2 border-accent-gold-500' :
+            'hover:bg-neutral-50 focus-within:bg-neutral-50';
+
+        const fullName = `${emp.firstName || ''} ${emp.lastName || ''}`.trim() || 'N/A';
+        const statusColor = emp.employeeStatus === 'active' ? 'success-600' : 'neutral-500';
+        const roleColor = emp.systemRole === 'systemAdmin' ? 'accent-gold-500' : 'neutral-500';
+
+        row.innerHTML = `
+            <td class="px-4 py-3">
+                <span class="font-mono text-xs">${emp.employeeId || 'N/A'}</span>
+            </td>
+            <td class="px-4 py-3">
+                <button class="text-left hover:text-brand-primary-600 focus:outline-none focus:text-brand-primary-600" 
+                        onclick="funNavigateToDetail('${emp.id}')">
+                    <span class="font-medium">${fullName}</span>
+                </button>
+            </td>
+            <td class="px-4 py-3">
+                <span class="text-neutral-700">${emp.email || 'N/A'}</span>
+            </td>
+            <td class="px-4 py-3">
+                <span class="text-neutral-700">${emp.jobTitle || 'N/A'}</span>
+            </td>
+            <td class="px-4 py-3">
+                <span class="text-neutral-700">${emp.departmentName}</span>
+            </td>
+            <td class="px-4 py-3">
+                <span class="text-neutral-700">${emp.teamLeadName}</span>
+            </td>
+            <td class="px-4 py-3">
+                <span class="inline-flex items-center justify-center w-8 h-6 text-xs font-medium rounded-full bg-neutral-100 text-neutral-700">
+                    ${emp.directReportsCount}
+                </span>
+            </td>
+            <td class="px-4 py-3">
+                <span class="inline-flex items-center px-2 py-1 text-xs rounded-full font-medium bg-${roleColor}/10 text-${roleColor} border border-${roleColor}/20">
+                    ${emp.systemRole === 'systemAdmin' ? 'Admin' : 'Employee'}
+                </span>
+            </td>
+            <td class="px-4 py-3">
+                <span class="inline-flex items-center">
+                    <span class="h-2 w-2 rounded-full bg-${statusColor} mr-2"></span>
+                    <span class="text-sm capitalize">${emp.employeeStatus}</span>
+                </span>
+            </td>
+            <td class="px-4 py-3">
+                <div class="flex items-center gap-2">
+                    <button onclick="funNavigateToDetail('${emp.id}')" 
+                            class="text-neutral-500 hover:text-brand-primary-600 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2 rounded-md p-1"
+                            title="View Details">
+                        <svg class="w-4 h-4" data-lucide="eye"></svg>
+                    </button>
+                    <button onclick="funNavigateToEdit('${emp.id}')" 
+                            class="text-neutral-500 hover:text-brand-primary-600 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2 rounded-md p-1"
+                            title="Edit Employee">
+                        <svg class="w-4 h-4" data-lucide="edit"></svg>
+                    </button>
+                    ${emp.employeeStatus === 'active' ? `
+                        <button onclick="funOpenDeactivateModal('${emp.id}', '${fullName.replace(/'/g, "&#39;")}')" 
+                                class="text-neutral-500 hover:text-danger-600 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2 rounded-md p-1"
+                                title="Deactivate">
+                            <svg class="w-4 h-4" data-lucide="user-x"></svg>
+                        </button>
+                    ` : ''}
+                </div>
+            </td>
+        `;
+        
+        tbody.appendChild(row);
+    });
+
+    // Reinitialize icons for new content
+    await yieldToFrame();
+    lucide.createIcons();
+}
+
+// Update pagination
+function funUpdatePagination() {
+    const pageStart = document.getElementById('page-start');
+    const pageEnd = document.getElementById('page-end');
+    const totalCountEl = document.getElementById('total-count');
+    const pageInfo = document.getElementById('page-info');
+    const prevBtn = document.getElementById('prev-page');
+    const nextBtn = document.getElementById('next-page');
+
+    if (!pageStart || !pageEnd || !totalCountEl || !pageInfo || !prevBtn || !nextBtn) return;
+
+    const startIndex = Math.max(1, (currentPage - 1) * pageSize + 1);
+    const endIndex = Math.min(currentPage * pageSize, totalCount);
+    const totalPages = Math.ceil(totalCount / pageSize);
+
+    pageStart.textContent = startIndex;
+    pageEnd.textContent = endIndex;
+    totalCountEl.textContent = totalCount;
+    pageInfo.textContent = `Page ${currentPage} of ${totalPages}`;
+
+    prevBtn.disabled = currentPage <= 1;
+    nextBtn.disabled = currentPage >= totalPages;
+}
+
+// Show skeleton loading
+function funShowSkeleton() {
+    const table = document.getElementById('employees-table');
+    const skeleton = document.getElementById('table-skeleton');
+    
+    table?.classList.add('hidden');
+    skeleton?.classList.remove('hidden');
+}
+
+// Hide skeleton loading
+function funHideSkeleton() {
+    const table = document.getElementById('employees-table');
+    const skeleton = document.getElementById('table-skeleton');
+    
+    skeleton?.classList.add('hidden');
+    table?.classList.remove('hidden');
+}
+
+// Navigation functions
+window.funNavigateToDetail = (employeeId) => {
+    if (employeeId) {
+        location.href = `employee_detail.html?employeeId=${encodeURIComponent(employeeId)}`;
+    }
+};
+
+window.funNavigateToEdit = (employeeId) => {
+    if (employeeId) {
+        location.href = `employee_upsert.html?mode=edit&employeeId=${encodeURIComponent(employeeId)}`;
+    }
+};
+
+window.funNavigateToCreate = () => {
+    location.href = 'employee_upsert.html?mode=create';
+};
+
+// Deactivate modal functions
+window.funOpenDeactivateModal = async (employeeId, employeeName) => {
+    if (!employeeId) return;
+    
+    const modal = document.getElementById('deactivate-modal');
+    const nameEl = document.getElementById('deactivate-employee-name');
+    const warningsEl = document.getElementById('deactivate-warnings');
+    const confirmBtn = document.getElementById('confirm-deactivate');
+    
+    if (!modal || !nameEl || !warningsEl || !confirmBtn) return;
+    
+    nameEl.textContent = employeeName;
+    warningsEl.innerHTML = '';
+    
+    try {
+        showLoader();
+        
+        // Check for direct reports and pending assessments
+        const [reportsCount, assessmentsCount] = await Promise.all([
+            getCountFromServer(query(
+                collection(db, "users"),
+                where("teamLeadId", "==", employeeId),
+                where("employeeStatus", "==", "active")
+            )),
+            getCountFromServer(query(
+                collection(db, "assessments"),
+                where("employeeId", "==", employeeId),
+                where("isLocked", "==", false),
+                where("status", "==", "active")
+            ))
+        ]);
+        
+        hideLoader();
+        
+        const directReports = reportsCount.data().count;
+        const pendingAssessments = assessmentsCount.data().count;
+        
+        // Show warnings if any
+        if (directReports > 0) {
+            const warningDiv = document.createElement('div');
+            warningDiv.className = 'flex items-start gap-2 p-3 rounded-md bg-warning-600/10 border border-warning-600/20';
+            warningDiv.innerHTML = `
+                <svg class="w-5 h-5 text-warning-600 mt-0.5 flex-shrink-0" data-lucide="alert-triangle"></svg>
+                <div>
+                    <p class="text-sm font-medium text-warning-600">Direct Reports Warning</p>
+                    <p class="text-sm text-neutral-700">This employee has ${directReports} active direct report${directReports > 1 ? 's' : ''}. Consider reassigning them first.</p>
+                </div>
+            `;
+            warningsEl.appendChild(warningDiv);
+        }
+        
+        if (pendingAssessments > 0) {
+            const warningDiv = document.createElement('div');
+            warningDiv.className = 'flex items-start gap-2 p-3 rounded-md bg-warning-600/10 border border-warning-600/20';
+            warningDiv.innerHTML = `
+                <svg class="w-5 h-5 text-warning-600 mt-0.5 flex-shrink-0" data-lucide="alert-triangle"></svg>
+                <div>
+                    <p class="text-sm font-medium text-warning-600">Pending Assessments</p>
+                    <p class="text-sm text-neutral-700">This employee has ${pendingAssessments} pending assessment${pendingAssessments > 1 ? 's' : ''}.</p>
+                </div>
+            `;
+            warningsEl.appendChild(warningDiv);
+        }
+        
+        // Set up confirm handler
+        confirmBtn.onclick = () => funDeactivateEmployee(employeeId);
+        
+        modal.classList.remove('hidden');
+        lucide.createIcons();
+        
+    } catch (error) {
+        hideLoader();
+        showToast('Failed to check employee dependencies: ' + (error?.message || 'Unknown error'));
+    }
+};
+
+// Deactivate employee
+async function funDeactivateEmployee(employeeId) {
+    if (!employeeId) return;
+    
+    try {
+        showLoader();
+        
+        await updateDoc(doc(db, "users", employeeId), {
+            employeeStatus: 'inactive',
+            modifiedTimestamp: new Date().toISOString(),
+            modifiedBy: auth.currentUser?.uid || 'system'
+        });
+        
+        hideLoader();
+        document.getElementById('deactivate-modal')?.classList.add('hidden');
+        showToast('Employee deactivated successfully');
+        
+        // Refresh data
+        await funInitialLoad(true);
+        
+    } catch (error) {
+        hideLoader();
+        showToast('Failed to deactivate employee: ' + (error?.message || 'Unknown error'));
+    }
+}
+
+// Bulk import functions
+function funOpenBulkImportModal() {
+    const modal = document.getElementById('bulk-import-modal');
+    const uploadSection = document.getElementById('upload-section');
+    const previewSection = document.getElementById('preview-section');
+    const importResults = document.getElementById('import-results');
+    const processBtn = document.getElementById('process-import');
+    
+    if (!modal) return;
+    
+    // Reset modal state
+    uploadSection?.classList.remove('hidden');
+    previewSection?.classList.add('hidden');
+    importResults?.classList.add('hidden');
+    processBtn?.classList.add('hidden');
+    
+    // Clear file input
+    const fileInput = document.getElementById('csv-file-input');
+    if (fileInput) fileInput.value = '';
+    
+    modal.classList.remove('hidden');
+}
+
+function funCloseBulkImportModal() {
+    document.getElementById('bulk-import-modal')?.classList.add('hidden');
+}
+
+// CSV Processing
+async function funProcessCSVFile(file) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            try {
+                const text = e.target.result;
+                const lines = text.split('\n').filter(line => line.trim());
+                const headers = lines[0].split(',').map(h => h.trim().replace(/"/g, ''));
+                
+                const rows = lines.slice(1).map(line => {
+                    const values = line.split(',').map(v => v.trim().replace(/"/g, ''));
+                    const row = {};
+                    headers.forEach((header, index) => {
+                        row[header] = values[index] || '';
+                    });
+                    return row;
+                });
+                
+                resolve({ headers, rows });
+            } catch (error) {
+                reject(error);
+            }
+        };
+        reader.onerror = () => reject(new Error('Failed to read file'));
+        reader.readAsText(file);
+    });
+}
+
+// Show CSV preview
+async function funShowCSVPreview(headers, rows) {
+    const previewSection = document.getElementById('preview-section');
+    const headersRow = document.getElementById('preview-headers');
+    const previewBody = document.getElementById('preview-body');
+    const processBtn = document.getElementById('process-import');
+    
+    if (!previewSection || !headersRow || !previewBody || !processBtn) return;
+    
+    // Show headers
+    headersRow.innerHTML = '';
+    headers.forEach(header => {
+        const th = document.createElement('th');
+        th.className = 'text-left font-semibold px-3 py-2 text-xs';
+        th.textContent = header;
+        headersRow.appendChild(th);
+    });
+    
+    // Show first 5 rows
+    previewBody.innerHTML = '';
+    const previewRows = rows.slice(0, 5);
+    previewRows.forEach(row => {
+        const tr = document.createElement('tr');
+        tr.className = 'border-t border-neutral-200';
+        headers.forEach(header => {
+            const td = document.createElement('td');
+            td.className = 'px-3 py-2 text-xs text-neutral-700';
+            td.textContent = row[header] || '';
+            tr.appendChild(td);
+        });
+        previewBody.appendChild(tr);
+    });
+    
+    // Validate data
+    await funValidateCSVData(headers, rows);
+    
+    // Show preview section
+    document.getElementById('upload-section')?.classList.add('hidden');
+    previewSection.classList.remove('hidden');
+    processBtn.classList.remove('hidden');
+}
+
+// Validate CSV data
+async function funValidateCSVData(headers, rows) {
+    const validationResults = document.getElementById('validation-results');
+    if (!validationResults) return;
+    
+    validationResults.innerHTML = '';
+    const errors = [];
+    const warnings = [];
+    
+    // Check required headers
+    const requiredHeaders = ['firstName', 'lastName', 'email', 'employeeId', 'jobTitle', 'departmentId'];
+    const missingHeaders = requiredHeaders.filter(h => !headers.includes(h));
+    
+    if (missingHeaders.length > 0) {
+        errors.push(`Missing required columns: ${missingHeaders.join(', ')}`);
+    }
+    
+    // Check for duplicate employee IDs
+    const employeeIds = rows.map(row => row.employeeId).filter(Boolean);
+    const duplicateIds = employeeIds.filter((id, index) => employeeIds.indexOf(id) !== index);
+    if (duplicateIds.length > 0) {
+        errors.push(`Duplicate employee IDs found: ${[...new Set(duplicateIds)].join(', ')}`);
+    }
+    
+    // Validate department IDs exist
+    if (headers.includes('departmentId')) {
+        const departmentIds = [...new Set(rows.map(row => row.departmentId).filter(Boolean))];
+        const invalidDepts = [];
+        
+        for (const deptId of departmentIds) {
+            const deptExists = allDepartments.some(d => d.id === deptId);
+            if (!deptExists) {
+                invalidDepts.push(deptId);
+            }
+        }
+        
+        if (invalidDepts.length > 0) {
+            errors.push(`Invalid department IDs: ${invalidDepts.join(', ')}`);
+        }
+    }
+    
+    // Check for empty required fields
+    let emptyFieldCount = 0;
+    rows.forEach((row, index) => {
+        requiredHeaders.forEach(header => {
+            if (!row[header]) {
+                emptyFieldCount++;
+            }
+        });
+    });
+    
+    if (emptyFieldCount > 0) {
+        warnings.push(`Found ${emptyFieldCount} empty required field(s) across all rows`);
+    }
+    
+    // Display results
+    if (errors.length > 0) {
+        const errorDiv = document.createElement('div');
+        errorDiv.className = 'rounded-md bg-danger-600/10 border border-danger-600/20 p-3';
+        errorDiv.innerHTML = `
+            <div class="flex items-center">
+                <svg class="w-5 h-5 text-danger-600" data-lucide="x-circle"></svg>
+                <h3 class="ml-2 text-sm font-semibold text-danger-600">Validation Errors</h3>
+            </div>
+            <ul class="mt-2 text-sm text-danger-600 list-disc list-inside">
+                ${errors.map(error => `<li>${error}</li>`).join('')}
+            </ul>
+        `;
+        validationResults.appendChild(errorDiv);
+        document.getElementById('process-import')?.setAttribute('disabled', 'true');
+    }
+    
+    if (warnings.length > 0) {
+        const warningDiv = document.createElement('div');
+        warningDiv.className = 'rounded-md bg-warning-600/10 border border-warning-600/20 p-3';
+        warningDiv.innerHTML = `
+            <div class="flex items-center">
+                <svg class="w-5 h-5 text-warning-600" data-lucide="alert-triangle"></svg>
+                <h3 class="ml-2 text-sm font-semibold text-warning-600">Warnings</h3>
+            </div>
+            <ul class="mt-2 text-sm text-warning-600 list-disc list-inside">
+                ${warnings.map(warning => `<li>${warning}</li>`).join('')}
+            </ul>
+        `;
+        validationResults.appendChild(warningDiv);
+    }
+    
+    if (errors.length === 0) {
+        const successDiv = document.createElement('div');
+        successDiv.className = 'rounded-md bg-success-600/10 border border-success-600/20 p-3';
+        successDiv.innerHTML = `
+            <div class="flex items-center">
+                <svg class="w-5 h-5 text-success-600" data-lucide="check-circle"></svg>
+                <h3 class="ml-2 text-sm font-semibold text-success-600">Validation Passed</h3>
+            </div>
+            <p class="mt-1 text-sm text-neutral-700">Ready to import ${rows.length} employee(s).</p>
+        `;
+        validationResults.appendChild(successDiv);
+        document.getElementById('process-import')?.removeAttribute('disabled');
+    }
+    
+    lucide.createIcons();
+}
+
+// Import employees
+async function funImportEmployees(rows) {
+    try {
+        showLoader();
+        
+        const batch = writeBatch(db);
+        let successCount = 0;
+        let errorCount = 0;
+        const errors = [];
+        
+        for (const row of rows) {
+            try {
+                // Skip rows with missing required fields
+                if (!row.firstName || !row.lastName || !row.email || !row.employeeId) {
+                    errorCount++;
+                    errors.push(`Skipping row with missing required fields: ${row.employeeId || 'unknown'}`);
+                    continue;
+                }
+                
+                const userId = crypto.randomUUID();
+                const now = new Date().toISOString();
+                
+                const userData = {
+                    id: userId,
+                    firstName: row.firstName,
+                    lastName: row.lastName,
+                    email: row.email,
+                    employeeId: row.employeeId,
+                    jobTitle: row.jobTitle || '',
+                    departmentId: row.departmentId || '',
+                    teamLeadId: row.teamLeadId || null,
+                    employeeStatus: 'active',
+                    systemRole: row.systemRole || 'employee',
+                    role: row.role || 'employee',
+                    createdTimestamp: now,
+                    modifiedTimestamp: now,
+                    createdBy: auth.currentUser?.uid || 'system',
+                    modifiedBy: auth.currentUser?.uid || 'system'
+                };
+                
+                batch.set(doc(db, "users", userId), userData);
+                successCount++;
+                
+            } catch (error) {
+                errorCount++;
+                errors.push(`Error processing row ${row.employeeId}: ${error.message}`);
+            }
+        }
+        
+        // Commit batch if there are successful records
+        if (successCount > 0) {
+            await batch.commit();
+        }
+        
+        hideLoader();
+        
+        // Show results
+        const importResults = document.getElementById('import-results');
+        const successCountEl = document.getElementById('success-count');
+        const errorSummaryEl = document.getElementById('error-summary');
+        
+        if (successCountEl) successCountEl.textContent = successCount;
+        
+        if (errorCount > 0 && errorSummaryEl) {
+            errorSummaryEl.textContent = `${errorCount} error(s) occurred during import.`;
+            errorSummaryEl.classList.remove('hidden');
+        }
+        
+        // Hide preview section and show results
+        document.getElementById('preview-section')?.classList.add('hidden');
+        importResults?.classList.remove('hidden');
+        document.getElementById('process-import')?.classList.add('hidden');
+        
+        // Refresh main data if successful imports
+        if (successCount > 0) {
+            await funInitialLoad(true);
+            showToast(`Successfully imported ${successCount} employee(s)`);
+        }
+        
+        if (errorCount > 0) {
+            console.error('Import errors:', errors);
+        }
+        
+    } catch (error) {
+        hideLoader();
+        showToast('Failed to import employees: ' + (error?.message || 'Unknown error'));
+    }
+}
+
+// Event listeners
+function funSetupEventListeners() {
+    // Navigation buttons
+    document.getElementById('btn-add-employee')?.addEventListener('click', funNavigateToCreate);
+    document.getElementById('btn-bulk-import')?.addEventListener('click', funOpenBulkImportModal);
+    document.getElementById('btn-refresh')?.addEventListener('click', () => funInitialLoad(true));
+    
+    // Filter changes with debouncing
+    let filterTimeout;
+    const handleFilterChange = () => {
+        clearTimeout(filterTimeout);
+        filterTimeout = setTimeout(async () => {
+            currentFilters.search = document.getElementById('search-input')?.value || '';
+            currentFilters.department = document.getElementById('department-filter')?.value || '';
+            currentFilters.status = document.getElementById('status-filter')?.value || '';
+            currentFilters.role = document.getElementById('role-filter')?.value || '';
+            
+            await funLoadEmployees(true); // Reset to first page
+        }, 300);
+    };
+    
+    document.getElementById('search-input')?.addEventListener('input', handleFilterChange);
+    document.getElementById('department-filter')?.addEventListener('change', handleFilterChange);
+    document.getElementById('status-filter')?.addEventListener('change', handleFilterChange);
+    document.getElementById('role-filter')?.addEventListener('change', handleFilterChange);
+    
+    // Page size change
+    document.getElementById('page-size-select')?.addEventListener('change', async (e) => {
+        pageSize = parseInt(e.target.value);
+        await funLoadEmployees(true);
+    });
+    
+    // Pagination buttons
+    document.getElementById('prev-page')?.addEventListener('click', async () => {
+        if (currentPage > 1) {
+            currentPage--;
+            await funLoadEmployees(false);
+        }
+    });
+    
+    document.getElementById('next-page')?.addEventListener('click', async () => {
+        const totalPages = Math.ceil(totalCount / pageSize);
+        if (currentPage < totalPages) {
+            currentPage++;
+            await funLoadEmployees(false);
+        }
+    });
+    
+    // Bulk import modal
+    document.getElementById('close-bulk-import')?.addEventListener('click', funCloseBulkImportModal);
+    document.getElementById('cancel-import')?.addEventListener('click', funCloseBulkImportModal);
+    
+    // CSV file input
+    document.getElementById('csv-file-input')?.addEventListener('change', async (e) => {
+        const file = e.target.files?.[0];
+        if (file && file.type === 'text/csv') {
+            try {
+                const { headers, rows } = await funProcessCSVFile(file);
+                await funShowCSVPreview(headers, rows);
+                // Store for later processing
+                window.csvData = { headers, rows };
+            } catch (error) {
+                showToast('Failed to process CSV file: ' + (error?.message || 'Unknown error'));
+            }
+        } else {
+            showToast('Please select a valid CSV file');
+        }
+    });
+    
+    // Process import button
+    document.getElementById('process-import')?.addEventListener('click', async () => {
+        if (window.csvData) {
+            await funImportEmployees(window.csvData.rows);
+        }
+    });
+    
+    // Deactivate modal
+    document.getElementById('cancel-deactivate')?.addEventListener('click', () => {
+        document.getElementById('deactivate-modal')?.classList.add('hidden');
+    });
+    
+    // Close modals on backdrop click
+    document.getElementById('bulk-import-modal')?.addEventListener('click', (e) => {
+        if (e.target.id === 'bulk-import-modal') {
+            funCloseBulkImportModal();
+        }
+    });
+    
+    document.getElementById('deactivate-modal')?.addEventListener('click', (e) => {
+        if (e.target.id === 'deactivate-modal') {
+            document.getElementById('deactivate-modal')?.classList.add('hidden');
+        }
+    });
+    
+    // ESC key handling
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            document.getElementById('bulk-import-modal')?.classList.add('hidden');
+            document.getElementById('deactivate-modal')?.classList.add('hidden');
+        }
+    });
+}
+</script>
+
+</body>
+</html>

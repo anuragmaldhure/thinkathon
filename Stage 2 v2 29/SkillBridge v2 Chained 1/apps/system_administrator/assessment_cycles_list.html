@@ -1,0 +1,1201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SkillBridge</title>
+
+    <!-- Required: Main JS Script -->
+    <script type="module" src="scripts/main.js" data-tiramai="web-gen"></script>
+
+    <!-- Required: TailwindCSS -->
+    <script src="./lib/tailwindcss/tailwindcss.js" fetchpriority="high" data-tiramai="web-gen"></script>
+
+    <!-- Required: Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest" data-tiramai="web-gen"></script>
+
+    <!-- Required: Favicon -->
+    <link rel="icon" href="assets/imgs/logo.ico" type="image/x-icon" data-tiramai="web-gen"/>
+
+    <!-- ECharts Support (for charts/graphs) -->
+    <script defer src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js" data-tiramai="web-gen"></script>
+
+    <!-- Markdown Support (for content rendering) -->
+    <script defer src="https://cdn.jsdelivr.net/npm/marked/marked.min.js" data-tiramai="web-gen"></script>
+
+    <!-- Tailwind Config Extension -->
+    <script data-tiramai="web-gen">
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            'primary-600': '#1B2A44',
+                            'primary-700': '#14233A',
+                            'primary-800': '#0E1A2B',
+                        },
+                        accent: {
+                            'gold-50': '#FFF7E6',
+                            'gold-500': '#C59D42',
+                            'gold-600': '#A97D22',
+                        },
+                        success: { '600': '#16A34A' },
+                        warning: { '600': '#D97706' },
+                        danger: { '600': '#DC2626' },
+                        info: { '600': '#2563EB' },
+                        heat: {
+                            green: '#16A34A',
+                            amber: '#F59E0B',
+                            red: '#DC2626'
+                        },
+                        neutral: {
+                            '50': '#F8FAFC',
+                            '200': '#E2E8F0',
+                            '500': '#64748B',
+                            '700': '#334155',
+                            '900': '#111827',
+                            '950': '#0B1220',
+                        }
+                    },
+                    fontSize: {
+                        'xs': ['12px', '16px'],
+                        'sm': ['14px', '20px'],
+                        'base': ['16px', '24px'],
+                        'xl': ['20px', '28px'],
+                        '2xl': ['24px', '32px'],
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-neutral-50 min-h-screen text-neutral-900">
+    <!-- Top Navigation -->
+    <header class="fixed top-0 left-0 right-0 bg-brand-primary-800 border-b border-neutral-200 flex items-center justify-between px-6 py-4 z-30 h-16">
+        <div class="flex items-center gap-4">
+            <!-- Mobile menu toggle -->
+            <button id="mobileMenuToggle" class="md:hidden text-white p-2" aria-label="Toggle menu">
+                <svg class="w-5 h-5" data-lucide="menu"></svg>
+            </button>
+            <!-- Logo -->
+            <div class="flex items-center gap-3">
+                <svg width="32" height="32" viewBox="0 0 400 400" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="84" y="116" width="56" height="168" rx="8" fill="#1E40AF"/>
+                    <rect x="176" y="84" width="56" height="200" rx="8" fill="#059669"/>
+                    <rect x="268" y="156" width="48" height="128" rx="8" fill="#1E40AF"/>
+                    <rect x="114" y="180" width="172" height="20" rx="10" fill="#F59E0B"/>
+                </svg>
+                <span class="text-xl font-semibold text-white">SkillBridge</span>
+            </div>
+        </div>
+        <div class="flex items-center gap-4">
+            <!-- User Profile Dropdown -->
+            <div class="relative" id="userProfileContainer">
+                <button id="userProfileToggle" class="flex items-center gap-2 text-white hover:text-accent-gold-500 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2 focus:ring-offset-brand-primary-800 rounded-md p-2">
+                    <div class="w-8 h-8 bg-accent-gold-500 rounded-full flex items-center justify-center">
+                        <span id="userInitials" class="text-sm font-semibold text-white">JD</span>
+                    </div>
+                    <svg class="w-4 h-4" data-lucide="chevron-down"></svg>
+                </button>
+                <!-- Dropdown Menu -->
+                <div id="userProfileDropdown" class="hidden absolute right-0 mt-2 w-64 bg-white rounded-md shadow-lg border border-neutral-200 py-2 z-50">
+                    <div class="px-4 py-3 border-b border-neutral-200">
+                        <p id="userDisplayName" class="text-sm font-semibold text-neutral-900">John Doe</p>
+                        <p id="userEmail" class="text-xs text-neutral-500">johndoe@example.com</p>
+                        <p class="text-xs text-accent-gold-600 font-medium">System Administrator</p>
+                    </div>
+                    <button id="signOutButton" class="w-full text-left px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50 flex items-center gap-2">
+                        <svg class="w-4 h-4" data-lucide="log-out"></svg>
+                        Sign Out
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="flex pt-16">
+        <!-- Side Navigation -->
+        <aside id="sidebar" class="fixed md:sticky top-16 left-0 w-64 bg-white border-r border-neutral-200 h-[calc(100vh-4rem)] overflow-y-auto z-20 transform -translate-x-full md:translate-x-0 transition-transform duration-200">
+            <nav class="p-4 space-y-1">
+                <!-- Admin Dashboard -->
+                <a href="dashboard.html" id="nav-dashboard" class="nav-item flex items-center gap-3 px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                    <svg class="w-5 h-5" data-lucide="layout-dashboard"></svg>
+                    <span>Admin Dashboard</span>
+                </a>
+
+                <!-- Employees with Children -->
+                <div class="nav-group">
+                    <button class="nav-group-toggle flex items-center justify-between w-full px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                        <div class="flex items-center gap-3">
+                            <svg class="w-5 h-5" data-lucide="users"></svg>
+                            <span>Employees</span>
+                        </div>
+                        <svg class="w-4 h-4 transform transition-transform" data-lucide="chevron-right"></svg>
+                    </button>
+                    <div class="nav-group-children hidden ml-8 space-y-1 mt-1">
+                        <a href="employees_list.html" class="nav-item block px-3 py-2 rounded-md text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-600">Employee Directory</a>
+                        <a href="employee_upsert.html?mode=create" class="nav-item block px-3 py-2 rounded-md text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-600">Add Employee</a>
+                    </div>
+                </div>
+
+                <!-- Departments -->
+                <a href="departments_list.html" id="nav-departments" class="nav-item flex items-center gap-3 px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                    <svg class="w-5 h-5" data-lucide="building"></svg>
+                    <span>Departments</span>
+                </a>
+
+                <!-- Skill Categories -->
+                <a href="skill_categories_list.html" id="nav-skill-categories" class="nav-item flex items-center gap-3 px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                    <svg class="w-5 h-5" data-lucide="layers"></svg>
+                    <span>Skill Categories</span>
+                </a>
+
+                <!-- Criticality Levels -->
+                <a href="skill_criticalities_list.html" id="nav-criticalities" class="nav-item flex items-center gap-3 px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                    <svg class="w-5 h-5" data-lucide="sliders"></svg>
+                    <span>Criticality Levels</span>
+                </a>
+
+                <!-- Skills with Children -->
+                <div class="nav-group">
+                    <button class="nav-group-toggle flex items-center justify-between w-full px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                        <div class="flex items-center gap-3">
+                            <svg class="w-5 h-5" data-lucide="book"></svg>
+                            <span>Skills</span>
+                        </div>
+                        <svg class="w-4 h-4 transform transition-transform" data-lucide="chevron-right"></svg>
+                    </button>
+                    <div class="nav-group-children hidden ml-8 space-y-1 mt-1">
+                        <a href="skills_list.html" class="nav-item block px-3 py-2 rounded-md text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-600">Skills Directory</a>
+                        <a href="skill_upsert.html?mode=create" class="nav-item block px-3 py-2 rounded-md text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-600">Add Skill</a>
+                    </div>
+                </div>
+
+                <!-- Assessment Cycles with Children -->
+                <div class="nav-group">
+                    <button class="nav-group-toggle flex items-center justify-between w-full px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                        <div class="flex items-center gap-3">
+                            <svg class="w-5 h-5" data-lucide="calendar"></svg>
+                            <span>Assessment Cycles</span>
+                        </div>
+                        <svg class="w-4 h-4 transform transition-transform" data-lucide="chevron-right"></svg>
+                    </button>
+                    <div class="nav-group-children hidden ml-8 space-y-1 mt-1">
+                        <a href="assessment_cycles_list.html" class="nav-item block px-3 py-2 rounded-md text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-600">Cycles Directory</a>
+                        <a href="assessment_cycle_upsert.html?mode=create" class="nav-item block px-3 py-2 rounded-md text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-600">Create Cycle</a>
+                    </div>
+                </div>
+
+                <!-- Trainer Pool with Children -->
+                <div class="nav-group">
+                    <button class="nav-group-toggle flex items-center justify-between w-full px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                        <div class="flex items-center gap-3">
+                            <svg class="w-5 h-5" data-lucide="users"></svg>
+                            <span>Trainer Pool</span>
+                        </div>
+                        <svg class="w-4 h-4 transform transition-transform" data-lucide="chevron-right"></svg>
+                    </button>
+                    <div class="nav-group-children hidden ml-8 space-y-1 mt-1">
+                        <a href="trainers_list.html" class="nav-item block px-3 py-2 rounded-md text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-600">Trainer Directory</a>
+                        <a href="external_trainer_upsert.html?mode=create" class="nav-item block px-3 py-2 rounded-md text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-600">Add External Trainer</a>
+                    </div>
+                </div>
+
+                <!-- Training Sessions with Children -->
+                <div class="nav-group">
+                    <button class="nav-group-toggle flex items-center justify-between w-full px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                        <div class="flex items-center gap-3">
+                            <svg class="w-5 h-5" data-lucide="calendar"></svg>
+                            <span>Training Sessions</span>
+                        </div>
+                        <svg class="w-4 h-4 transform transition-transform" data-lucide="chevron-right"></svg>
+                    </button>
+                    <div class="nav-group-children hidden ml-8 space-y-1 mt-1">
+                        <a href="training_sessions_list.html" class="nav-item block px-3 py-2 rounded-md text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-600">Sessions Calendar</a>
+                        <a href="training_session_upsert.html?mode=create" class="nav-item block px-3 py-2 rounded-md text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-600">Create Session</a>
+                    </div>
+                </div>
+
+                <!-- Disputes -->
+                <a href="disputes_list.html" id="nav-disputes" class="nav-item flex items-center gap-3 px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                    <svg class="w-5 h-5" data-lucide="alert-circle"></svg>
+                    <span>Disputes</span>
+                </a>
+
+                <!-- Analytics Section -->
+                <div class="border-t border-neutral-200 pt-4 mt-4">
+                    <h4 class="px-3 text-xs font-semibold text-neutral-500 uppercase tracking-wider mb-2">Analytics</h4>
+                    
+                    <a href="analytics_skill_gap_heatmap.html" class="nav-item flex items-center gap-3 px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                        <svg class="w-5 h-5" data-lucide="grid"></svg>
+                        <span>Skill Gap Heatmap</span>
+                    </a>
+
+                    <a href="analytics_tni_dashboard.html" class="nav-item flex items-center gap-3 px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                        <svg class="w-5 h-5" data-lucide="bar-chart-2"></svg>
+                        <span>TNI Dashboard</span>
+                    </a>
+
+                    <a href="analytics_training_forecast.html" class="nav-item flex items-center gap-3 px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                        <svg class="w-5 h-5" data-lucide="trending-up"></svg>
+                        <span>Training Forecast</span>
+                    </a>
+
+                    <a href="analytics_assessment_completion.html" class="nav-item flex items-center gap-3 px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                        <svg class="w-5 h-5" data-lucide="pie-chart"></svg>
+                        <span>Assessment Completion</span>
+                    </a>
+
+                    <a href="analytics_dispute_metrics.html" class="nav-item flex items-center gap-3 px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                        <svg class="w-5 h-5" data-lucide="bar-chart"></svg>
+                        <span>Dispute Analytics</span>
+                    </a>
+                </div>
+            </nav>
+            
+            <!-- Footer -->
+            <div class="absolute bottom-4 w-full text-center text-xs text-neutral-500 bg-white px-4">
+                Made with ❤️ by TiramAi
+            </div>
+        </aside>
+
+        <!-- Mobile Overlay -->
+        <div id="mobileOverlay" class="hidden fixed inset-0 bg-black bg-opacity-50 z-10 md:hidden"></div>
+
+        <!-- Main Content -->
+        <main id="pageContent" class="flex-1 p-6 overflow-y-auto">
+            
+<!-- Assessment Cycles List Page -->
+<div class="container mx-auto max-w-[1280px] px-4">
+  <!-- Header Section -->
+  <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+    <div>
+      <h1 class="text-2xl leading-8 font-bold text-neutral-950 mb-2">Assessment Cycles</h1>
+      <p class="text-sm leading-5 text-neutral-700">Manage assessment cycles: create, set active, and monitor completion</p>
+    </div>
+    <a href="assessment_cycle_upsert.html?mode=create" 
+       class="inline-flex items-center gap-2 h-11 px-4 rounded-md bg-brand-primary-600 hover:bg-brand-primary-700 text-white focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2 transition-colors">
+      <svg class="w-5 h-5" data-lucide="plus"></svg>
+      Create Cycle
+    </a>
+  </div>
+
+  <!-- Filters Section -->
+  <div class="bg-white border border-neutral-200 rounded-md p-4 shadow-sm mb-6">
+    <div class="flex flex-col sm:flex-row gap-4">
+      <!-- Status Filter -->
+      <div class="flex-1">
+        <label for="statusFilter" class="block text-sm font-medium text-neutral-900 mb-1">Status</label>
+        <select id="statusFilter" class="w-full border border-neutral-200 rounded-sm px-3 py-2 bg-white text-sm leading-5 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2">
+          <option value="">All</option>
+          <option value="active">Active</option>
+          <option value="closed">Closed</option>
+        </select>
+      </div>
+      
+      <!-- Search -->
+      <div class="flex-2">
+        <label for="searchInput" class="block text-sm font-medium text-neutral-900 mb-1">Search Cycles</label>
+        <div class="relative">
+          <input type="text" id="searchInput" placeholder="Search by cycle name..." 
+                 class="w-full pl-10 pr-3 py-2 border border-neutral-200 rounded-sm text-sm leading-5 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2">
+          <svg class="absolute left-3 top-2.5 w-4 h-4 text-neutral-500" data-lucide="search"></svg>
+        </div>
+      </div>
+
+      <!-- Refresh Button -->
+      <div class="flex items-end">
+        <button id="refreshBtn" class="inline-flex items-center gap-2 h-11 px-3 rounded-md border border-neutral-200 bg-white text-neutral-700 hover:bg-neutral-50 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2" aria-label="Refresh data">
+          <svg class="w-5 h-5" data-lucide="refresh-cw"></svg>
+          Refresh
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading Skeleton -->
+  <div id="loadingSkeleton" class="hidden">
+    <div class="bg-white border border-neutral-200 rounded-md shadow-sm">
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm leading-5">
+          <thead class="bg-neutral-50 text-neutral-700">
+            <tr>
+              <th class="text-left font-semibold px-3 py-3 border-b border-neutral-200">Cycle Name</th>
+              <th class="text-left font-semibold px-3 py-3 border-b border-neutral-200">Start Date</th>
+              <th class="text-left font-semibold px-3 py-3 border-b border-neutral-200">End Date</th>
+              <th class="text-left font-semibold px-3 py-3 border-b border-neutral-200">Status</th>
+              <th class="text-left font-semibold px-3 py-3 border-b border-neutral-200">Active</th>
+              <th class="text-left font-semibold px-3 py-3 border-b border-neutral-200">Completion</th>
+              <th class="text-left font-semibold px-3 py-3 border-b border-neutral-200">Actions</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-neutral-200">
+            <tr class="hover:bg-neutral-50">
+              <td class="px-3 py-3">
+                <div class="h-4 bg-neutral-200 rounded animate-pulse"></div>
+              </td>
+              <td class="px-3 py-3">
+                <div class="h-4 bg-neutral-200 rounded animate-pulse"></div>
+              </td>
+              <td class="px-3 py-3">
+                <div class="h-4 bg-neutral-200 rounded animate-pulse"></div>
+              </td>
+              <td class="px-3 py-3">
+                <div class="h-6 w-16 bg-neutral-200 rounded-full animate-pulse"></div>
+              </td>
+              <td class="px-3 py-3">
+                <div class="h-4 bg-neutral-200 rounded animate-pulse"></div>
+              </td>
+              <td class="px-3 py-3">
+                <div class="h-4 bg-neutral-200 rounded animate-pulse"></div>
+              </td>
+              <td class="px-3 py-3">
+                <div class="flex gap-2">
+                  <div class="h-8 w-8 bg-neutral-200 rounded animate-pulse"></div>
+                  <div class="h-8 w-8 bg-neutral-200 rounded animate-pulse"></div>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Data Table -->
+  <div id="dataTable" class="bg-white border border-neutral-200 rounded-md shadow-sm">
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm leading-5">
+        <thead class="bg-neutral-50 text-neutral-700">
+          <tr>
+            <th class="text-left font-semibold px-3 py-3 border-b border-neutral-200 cursor-pointer hover:bg-neutral-100" data-sort="cycleName">
+              <div class="flex items-center gap-2">
+                Cycle Name
+                <svg class="w-4 h-4 text-neutral-400" data-lucide="arrows-up-down"></svg>
+              </div>
+            </th>
+            <th class="text-left font-semibold px-3 py-3 border-b border-neutral-200 cursor-pointer hover:bg-neutral-100" data-sort="startDate">
+              <div class="flex items-center gap-2">
+                Start Date
+                <svg class="w-4 h-4 text-neutral-400" data-lucide="arrows-up-down"></svg>
+              </div>
+            </th>
+            <th class="text-left font-semibold px-3 py-3 border-b border-neutral-200 cursor-pointer hover:bg-neutral-100" data-sort="endDate">
+              <div class="flex items-center gap-2">
+                End Date
+                <svg class="w-4 h-4 text-neutral-400" data-lucide="arrows-up-down"></svg>
+              </div>
+            </th>
+            <th class="text-left font-semibold px-3 py-3 border-b border-neutral-200">Status</th>
+            <th class="text-left font-semibold px-3 py-3 border-b border-neutral-200">Active</th>
+            <th class="text-left font-semibold px-3 py-3 border-b border-neutral-200">Completion</th>
+            <th class="text-left font-semibold px-3 py-3 border-b border-neutral-200">Actions</th>
+          </tr>
+        </thead>
+        <tbody id="tableBody" class="divide-y divide-neutral-200">
+          <!-- Dynamic content will be inserted here -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Empty State -->
+  <div id="emptyState" class="hidden text-center py-12">
+    <div class="bg-white border border-neutral-200 rounded-md p-8 shadow-sm">
+      <svg class="w-12 h-12 text-neutral-400 mx-auto mb-4" data-lucide="calendar"></svg>
+      <h3 class="text-base leading-6 font-semibold text-neutral-900 mb-2">No assessment cycles found</h3>
+      <p class="text-sm leading-5 text-neutral-500 mb-4">Create your first assessment cycle to get started.</p>
+      <a href="assessment_cycle_upsert.html?mode=create" 
+         class="inline-flex items-center gap-2 px-4 py-2 rounded-md bg-brand-primary-600 hover:bg-brand-primary-700 text-white focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2">
+        <svg class="w-4 h-4" data-lucide="plus"></svg>
+        Create Cycle
+      </a>
+    </div>
+  </div>
+
+  <!-- Pagination -->
+  <div id="pagination" class="hidden flex flex-col sm:flex-row justify-between items-center gap-4 mt-6">
+    <div class="text-sm text-neutral-700">
+      Showing <span id="showingFrom">1</span> to <span id="showingTo">10</span> of <span id="totalRecords">0</span> cycles
+    </div>
+    <div class="flex gap-2">
+      <button id="prevPageBtn" class="inline-flex items-center gap-2 h-10 px-3 rounded-md border border-neutral-200 bg-white text-neutral-700 hover:bg-neutral-50 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed">
+        <svg class="w-4 h-4" data-lucide="chevron-left"></svg>
+        Previous
+      </button>
+      <div id="pageNumbers" class="flex gap-1">
+        <!-- Page numbers will be generated dynamically -->
+      </div>
+      <button id="nextPageBtn" class="inline-flex items-center gap-2 h-10 px-3 rounded-md border border-neutral-200 bg-white text-neutral-700 hover:bg-neutral-50 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed">
+        Next
+        <svg class="w-4 h-4" data-lucide="chevron-right"></svg>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Set Active Cycle Modal -->
+<div id="setActiveModal" class="hidden fixed inset-0 z-50 overflow-y-auto">
+  <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+    <div class="fixed inset-0 transition-opacity bg-black/50 backdrop-blur-sm" aria-hidden="true"></div>
+    
+    <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+    
+    <div class="inline-block align-bottom bg-white rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full sm:p-6">
+      <div class="sm:flex sm:items-start">
+        <div class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-warning-100 sm:mx-0 sm:h-10 sm:w-10">
+          <svg class="h-6 w-6 text-warning-600" data-lucide="alert-triangle"></svg>
+        </div>
+        <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+          <h3 class="text-lg leading-6 font-medium text-neutral-900">Set Active Cycle</h3>
+          <div class="mt-2">
+            <p class="text-sm text-neutral-500">
+              Are you sure you want to set "<span id="modalCycleName" class="font-medium"></span>" as the active cycle?
+            </p>
+            <p id="modalCurrentActive" class="text-sm text-neutral-500 mt-2 hidden">
+              This will replace the current active cycle: "<span id="modalCurrentActiveName" class="font-medium"></span>".
+            </p>
+          </div>
+        </div>
+      </div>
+      <div class="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
+        <button type="button" id="confirmSetActiveBtn" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-brand-primary-600 text-base font-medium text-white hover:bg-brand-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-accent-gold-600 sm:ml-3 sm:w-auto sm:text-sm">
+          Set Active
+        </button>
+        <button type="button" id="cancelSetActiveBtn" class="mt-3 w-full inline-flex justify-center rounded-md border border-neutral-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-neutral-700 hover:text-neutral-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-accent-gold-600 sm:mt-0 sm:w-auto sm:text-sm">
+          Cancel
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+        </main>
+    </div>
+
+    <!-- Required: JavaScript -->
+    <script type="module" data-tiramai="web-gen">
+        import { showToast, showLoader, hideLoader, env } from "./scripts/main.js";
+        import { auth, db, storage } from "./scripts/firebase.js";
+        import { onAuthStateChanged, getAuth, signOut } from 'https://www.gstatic.com/firebasejs/10.12.4/firebase-auth.js';
+        import { doc, getDoc } from 'https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js';
+
+        // Initialize Lucide icons
+        lucide.createIcons();
+
+        // Mobile menu toggle
+        const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+        const sidebar = document.getElementById('sidebar');
+        const mobileOverlay = document.getElementById('mobileOverlay');
+
+        mobileMenuToggle?.addEventListener('click', () => {
+            sidebar.classList.toggle('-translate-x-full');
+            mobileOverlay.classList.toggle('hidden');
+        });
+
+        mobileOverlay?.addEventListener('click', () => {
+            sidebar.classList.add('-translate-x-full');
+            mobileOverlay.classList.add('hidden');
+        });
+
+        // Navigation group toggles
+        document.querySelectorAll('.nav-group-toggle').forEach(toggle => {
+            toggle.addEventListener('click', (e) => {
+                e.preventDefault();
+                const children = toggle.nextElementSibling;
+                const icon = toggle.querySelector('svg:last-child');
+                
+                children.classList.toggle('hidden');
+                icon.classList.toggle('rotate-90');
+            });
+        });
+
+        // User profile dropdown
+        const userProfileToggle = document.getElementById('userProfileToggle');
+        const userProfileDropdown = document.getElementById('userProfileDropdown');
+
+        userProfileToggle?.addEventListener('click', () => {
+            userProfileDropdown.classList.toggle('hidden');
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!userProfileToggle?.contains(e.target) && !userProfileDropdown?.contains(e.target)) {
+                userProfileDropdown?.classList.add('hidden');
+            }
+        });
+
+        // Sign out functionality
+        document.getElementById('signOutButton')?.addEventListener('click', async () => {
+            try {
+                await signOut(auth);
+                window.location.href = 'auth.html';
+            } catch (error) {
+                console.error('Sign out error:', error);
+                showToast('Failed to sign out', 'error');
+            }
+        });
+
+        // Auth state management
+        onAuthStateChanged(auth, async (user) => {
+            if (!user) {
+                window.location.href = 'auth.html';
+                return;
+            }
+
+            // Load user profile data
+            try {
+                const userDoc = await getDoc(doc(db, 'users', user.uid));
+                const userData = userDoc.exists() ? userDoc.data() : null;
+
+                // Update UI with user data
+                const displayName = userData?.firstName && userData?.lastName 
+                    ? `${userData.firstName} ${userData.lastName}`
+                    : user.displayName || 'John Doe';
+                
+                const email = user.email || 'johndoe@example.com';
+                const initials = displayName.split(' ').map(n => n[0]).join('').toUpperCase();
+
+                document.getElementById('userDisplayName').textContent = displayName;
+                document.getElementById('userEmail').textContent = email;
+                document.getElementById('userInitials').textContent = initials;
+
+            } catch (error) {
+                console.error('Error loading user data:', error);
+                // Fallback to default values
+                document.getElementById('userDisplayName').textContent = 'John Doe';
+                document.getElementById('userEmail').textContent = user.email || 'johndoe@example.com';
+                document.getElementById('userInitials').textContent = 'JD';
+            }
+        });
+
+        // Set active navigation item based on current page
+        function setActiveNavItem() {
+            const currentPath = window.location.pathname;
+            const navItems = document.querySelectorAll('.nav-item');
+            
+            navItems.forEach(item => {
+                const href = item.getAttribute('href');
+                if (href && currentPath.includes(href.split('?')[0])) {
+                    item.classList.add('bg-accent-gold-50', 'text-brand-primary-600', 'border-l-2', 'border-brand-primary-600');
+                    item.classList.remove('text-neutral-700', 'text-neutral-600');
+                    
+                    // Expand parent group if needed
+                    const parentGroup = item.closest('.nav-group');
+                    if (parentGroup) {
+                        const children = parentGroup.querySelector('.nav-group-children');
+                        const icon = parentGroup.querySelector('.nav-group-toggle svg:last-child');
+                        children?.classList.remove('hidden');
+                        icon?.classList.add('rotate-90');
+                    }
+                }
+            });
+        }
+
+        // Initialize active nav state
+        setActiveNavItem();
+    </script>
+
+    
+<script id="data-script" type="module" data-tiramai="web-gen">
+// Import Firebase modules
+import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.12.4/firebase-auth.js';
+import {
+  collection, getDocs, doc, updateDoc, writeBatch, getCountFromServer,
+  query, where, orderBy, limit, startAfter, onSnapshot, Timestamp
+} from 'https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js';
+import { auth, getDb } from "./scripts/firebase.js";
+import { showToast } from "./scripts/main.js";
+
+// Initialize
+const db = getDb();
+let currentData = [];
+let filteredData = [];
+let currentPage = 1;
+const itemsPerPage = 10;
+let sortField = 'startDate';
+let sortDirection = 'desc';
+let searchTerm = '';
+let statusFilter = '';
+let selectedCycleForActive = null;
+
+// Auth state management
+onAuthStateChanged(auth, user => {
+  if (!user) {
+    location.href = "auth.html?redirect=" + encodeURIComponent(location.pathname);
+  } else {
+    funInitialize();
+  }
+});
+
+// Initialize page
+async function funInitialize() {
+  lucide.createIcons();
+  funSetupEventListeners();
+  await funLoadData();
+}
+
+// Setup event listeners
+function funSetupEventListeners() {
+  // Search and filter
+  document.getElementById('searchInput')?.addEventListener('input', funDebounceSearch);
+  document.getElementById('statusFilter')?.addEventListener('change', funApplyFilters);
+  
+  // Sort headers
+  document.querySelectorAll('[data-sort]').forEach(header => {
+    header.addEventListener('click', (e) => {
+      const field = e.currentTarget.getAttribute('data-sort');
+      funToggleSort(field);
+    });
+  });
+
+  // Refresh button
+  document.getElementById('refreshBtn')?.addEventListener('click', () => funLoadData(true));
+
+  // Pagination
+  document.getElementById('prevPageBtn')?.addEventListener('click', () => funChangePage(currentPage - 1));
+  document.getElementById('nextPageBtn')?.addEventListener('click', () => funChangePage(currentPage + 1));
+
+  // Modal handlers
+  document.getElementById('cancelSetActiveBtn')?.addEventListener('click', funCloseActiveModal);
+  document.getElementById('confirmSetActiveBtn')?.addEventListener('click', funConfirmSetActive);
+
+  // Close modal on backdrop click
+  document.getElementById('setActiveModal')?.addEventListener('click', (e) => {
+    if (e.target.id === 'setActiveModal') funCloseActiveModal();
+  });
+}
+
+// Debounced search
+const funDebounceSearch = (() => {
+  let timeoutId;
+  return (e) => {
+    clearTimeout(timeoutId);
+    timeoutId = setTimeout(() => {
+      searchTerm = e.target.value.toLowerCase().trim();
+      funApplyFilters();
+    }, 300);
+  };
+})();
+
+// Apply filters and search
+function funApplyFilters() {
+  statusFilter = document.getElementById('statusFilter')?.value || '';
+  
+  filteredData = currentData.filter(cycle => {
+    const matchesSearch = !searchTerm || 
+      cycle.cycleName?.toLowerCase().includes(searchTerm);
+    
+    const matchesStatus = !statusFilter || cycle.status === statusFilter;
+    
+    return matchesSearch && matchesStatus;
+  });
+
+  currentPage = 1;
+  funUpdatePagination();
+  funRenderTable();
+}
+
+// Toggle sort
+function funToggleSort(field) {
+  if (sortField === field) {
+    sortDirection = sortDirection === 'asc' ? 'desc' : 'asc';
+  } else {
+    sortField = field;
+    sortDirection = 'asc';
+  }
+
+  funSortData();
+  funUpdateSortIcons();
+  funRenderTable();
+}
+
+// Sort data
+function funSortData() {
+  filteredData.sort((a, b) => {
+    let aValue = a[sortField];
+    let bValue = b[sortField];
+
+    // Handle date fields
+    if (sortField === 'startDate' || sortField === 'endDate') {
+      aValue = aValue ? new Date(aValue) : new Date(0);
+      bValue = bValue ? new Date(bValue) : new Date(0);
+    }
+
+    // Handle string fields
+    if (typeof aValue === 'string' && typeof bValue === 'string') {
+      aValue = aValue.toLowerCase();
+      bValue = bValue.toLowerCase();
+    }
+
+    // Handle null/undefined values
+    if (aValue == null && bValue == null) return 0;
+    if (aValue == null) return sortDirection === 'asc' ? -1 : 1;
+    if (bValue == null) return sortDirection === 'asc' ? 1 : -1;
+
+    if (aValue < bValue) return sortDirection === 'asc' ? -1 : 1;
+    if (aValue > bValue) return sortDirection === 'asc' ? 1 : -1;
+    return 0;
+  });
+}
+
+// Update sort icons
+function funUpdateSortIcons() {
+  document.querySelectorAll('[data-sort] svg').forEach(icon => {
+    icon.setAttribute('data-lucide', 'arrows-up-down');
+    icon.className = 'w-4 h-4 text-neutral-400';
+  });
+
+  const currentSortHeader = document.querySelector(`[data-sort="${sortField}"] svg`);
+  if (currentSortHeader) {
+    const iconName = sortDirection === 'asc' ? 'arrow-up' : 'arrow-down';
+    currentSortHeader.setAttribute('data-lucide', iconName);
+    currentSortHeader.className = 'w-4 h-4 text-brand-primary-600';
+  }
+  
+  lucide.createIcons();
+}
+
+// Load assessment cycles data
+async function funLoadData(forceRefresh = false) {
+  try {
+    funShowLoading();
+
+    // Get cycles and completion data
+    const [cyclesData, completionData] = await Promise.all([
+      funFetchCycles(),
+      funFetchCompletionData()
+    ]);
+
+    // Merge completion percentages with cycle data
+    currentData = cyclesData.map(cycle => ({
+      ...cycle,
+      completionPercentage: completionData[cycle.id] || 0
+    }));
+
+    // Apply current filters
+    filteredData = [...currentData];
+    funApplyFilters();
+    
+    funHideLoading();
+
+    if (currentData.length === 0) {
+      funShowEmptyState();
+    } else {
+      funHideEmptyState();
+      funSortData();
+      funUpdateSortIcons();
+      funRenderTable();
+      funUpdatePagination();
+    }
+
+  } catch (error) {
+    console.error('Error loading cycles:', error);
+    funHideLoading();
+    showToast('Failed to load assessment cycles', 'error');
+  }
+}
+
+// Fetch cycles from Firestore
+async function funFetchCycles() {
+  const q = query(
+    collection(db, 'assessmentCycles'),
+    orderBy('createdTimestamp', 'desc')
+  );
+  
+  const snapshot = await getDocs(q);
+  return snapshot.docs.map(doc => ({
+    id: doc.id,
+    ...doc.data()
+  }));
+}
+
+// Fetch completion data for all cycles
+async function funFetchCompletionData() {
+  try {
+    const completionData = {};
+    
+    // Get all skill mappings (expected assessments)
+    const mappingsQuery = query(
+      collection(db, 'skillMappings'),
+      where('status', '==', 'active')
+    );
+    const mappingsSnapshot = await getDocs(mappingsQuery);
+    
+    // Get active users
+    const usersQuery = query(
+      collection(db, 'users'),
+      where('employeeStatus', '==', 'active')
+    );
+    const usersSnapshot = await getDocs(usersQuery);
+    const activeUsers = new Set(usersSnapshot.docs.map(doc => doc.id));
+    
+    // Count expected assessments per active user
+    const expectedPerUser = mappingsSnapshot.docs.filter(doc => 
+      activeUsers.has(doc.data().employeeId)
+    ).length;
+    
+    if (expectedPerUser === 0) return completionData;
+    
+    // Get completed assessments for each cycle
+    const assessmentsQuery = query(
+      collection(db, 'assessments'),
+      where('isLocked', '==', true)
+    );
+    const assessmentsSnapshot = await getDocs(assessmentsQuery);
+    
+    // Group by cycle and count completions
+    const completionsByCycle = {};
+    assessmentsSnapshot.docs.forEach(doc => {
+      const data = doc.data();
+      const cycleId = data.assessmentCycleId;
+      if (cycleId && activeUsers.has(data.employeeId)) {
+        completionsByCycle[cycleId] = (completionsByCycle[cycleId] || 0) + 1;
+      }
+    });
+    
+    // Calculate percentages
+    for (const [cycleId, completedCount] of Object.entries(completionsByCycle)) {
+      completionData[cycleId] = Math.round((completedCount / expectedPerUser) * 100);
+    }
+    
+    return completionData;
+    
+  } catch (error) {
+    console.error('Error fetching completion data:', error);
+    return {};
+  }
+}
+
+// Render table
+function funRenderTable() {
+  const tbody = document.getElementById('tableBody');
+  if (!tbody) return;
+
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const pageData = filteredData.slice(startIndex, endIndex);
+
+  tbody.innerHTML = pageData.map(cycle => funRenderCycleRow(cycle)).join('');
+  
+  // Attach event listeners to action buttons
+  pageData.forEach(cycle => {
+    // Set Active buttons
+    const setActiveBtn = document.getElementById(`setActive-${cycle.id}`);
+    if (setActiveBtn) {
+      setActiveBtn.addEventListener('click', () => funShowActiveModal(cycle));
+    }
+  });
+
+  lucide.createIcons();
+}
+
+// Render individual cycle row
+function funRenderCycleRow(cycle) {
+  const startDate = cycle.startDate ? funFormatDate(cycle.startDate) : 'N/A';
+  const endDate = cycle.endDate ? funFormatDate(cycle.endDate) : 'N/A';
+  const today = new Date();
+  const cycleStartDate = cycle.startDate ? new Date(cycle.startDate) : null;
+  const canEdit = cycleStartDate && cycleStartDate > today;
+  const canSetActive = cycle.status !== 'closed' && !cycle.isActiveCycle;
+
+  return `
+    <tr class="hover:bg-neutral-50 focus-within:bg-neutral-50">
+      <td class="px-3 py-3">
+        <a href="assessment_cycle_detail.html?cycleId=${cycle.id}" 
+           class="text-brand-primary-600 hover:text-brand-primary-700 font-medium focus:outline-none focus:underline">
+          ${cycle.cycleName || 'N/A'}
+        </a>
+      </td>
+      <td class="px-3 py-3 text-neutral-900">${startDate}</td>
+      <td class="px-3 py-3 text-neutral-900">${endDate}</td>
+      <td class="px-3 py-3">
+        ${funRenderStatusBadge(cycle.status)}
+      </td>
+      <td class="px-3 py-3">
+        ${cycle.isActiveCycle 
+          ? '<span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-accent-gold-50 text-neutral-900 border border-accent-gold-500"><span class="h-2 w-2 rounded-full bg-accent-gold-500 mr-1"></span>Active</span>'
+          : '<span class="text-neutral-500 text-sm">Inactive</span>'
+        }
+      </td>
+      <td class="px-3 py-3">
+        ${funRenderProgressBar(cycle.completionPercentage || 0)}
+      </td>
+      <td class="px-3 py-3">
+        <div class="flex items-center gap-2">
+          <a href="assessment_cycle_detail.html?cycleId=${cycle.id}" 
+             class="inline-flex items-center justify-center h-8 w-8 rounded-md border border-neutral-200 bg-white text-neutral-600 hover:bg-neutral-50 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2" 
+             title="View Details">
+            <svg class="w-4 h-4" data-lucide="eye"></svg>
+          </a>
+          ${canEdit ? `
+            <a href="assessment_cycle_upsert.html?mode=edit&cycleId=${cycle.id}" 
+               class="inline-flex items-center justify-center h-8 w-8 rounded-md border border-neutral-200 bg-white text-neutral-600 hover:bg-neutral-50 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2" 
+               title="Edit">
+              <svg class="w-4 h-4" data-lucide="edit-2"></svg>
+            </a>
+          ` : ''}
+          ${canSetActive ? `
+            <button id="setActive-${cycle.id}" 
+                    class="inline-flex items-center justify-center h-8 w-8 rounded-md border border-neutral-200 bg-white text-neutral-600 hover:bg-neutral-50 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2" 
+                    title="Set Active">
+              <svg class="w-4 h-4" data-lucide="play-circle"></svg>
+            </button>
+          ` : ''}
+        </div>
+      </td>
+    </tr>
+  `;
+}
+
+// Render status badge
+function funRenderStatusBadge(status) {
+  const badgeClass = status === 'active' 
+    ? 'bg-success-600 text-white' 
+    : 'bg-neutral-500 text-white';
+  
+  return `<span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${badgeClass}">
+    ${status ? status.charAt(0).toUpperCase() + status.slice(1) : 'N/A'}
+  </span>`;
+}
+
+// Render progress bar
+function funRenderProgressBar(percentage) {
+  const width = Math.min(Math.max(percentage, 0), 100);
+  return `
+    <div class="flex items-center gap-2">
+      <div class="flex-1 bg-neutral-200 rounded-full h-2">
+        <div class="bg-accent-gold-500 h-2 rounded-full transition-all duration-300" style="width: ${width}%"></div>
+      </div>
+      <span class="text-sm text-neutral-600 font-medium min-w-[3ch]">${percentage}%</span>
+    </div>
+  `;
+}
+
+// Format date
+function funFormatDate(dateString) {
+  if (!dateString) return 'N/A';
+  try {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', { 
+      year: 'numeric', 
+      month: 'short', 
+      day: 'numeric' 
+    });
+  } catch (error) {
+    return 'N/A';
+  }
+}
+
+// Show active modal
+async function funShowActiveModal(cycle) {
+  selectedCycleForActive = cycle;
+  
+  // Find current active cycle
+  const currentActive = currentData.find(c => c.isActiveCycle);
+  
+  document.getElementById('modalCycleName').textContent = cycle.cycleName || 'Unknown Cycle';
+  
+  const currentActiveSection = document.getElementById('modalCurrentActive');
+  const currentActiveNameSpan = document.getElementById('modalCurrentActiveName');
+  
+  if (currentActive) {
+    currentActiveNameSpan.textContent = currentActive.cycleName || 'Unknown Cycle';
+    currentActiveSection.classList.remove('hidden');
+  } else {
+    currentActiveSection.classList.add('hidden');
+  }
+  
+  document.getElementById('setActiveModal').classList.remove('hidden');
+  
+  // Focus management
+  document.getElementById('cancelSetActiveBtn').focus();
+}
+
+// Close active modal
+function funCloseActiveModal() {
+  document.getElementById('setActiveModal').classList.add('hidden');
+  selectedCycleForActive = null;
+}
+
+// Confirm set active
+async function funConfirmSetActive() {
+  if (!selectedCycleForActive) return;
+
+  try {
+    const batch = writeBatch(db);
+    
+    // Clear isActiveCycle from all cycles
+    currentData.forEach(cycle => {
+      if (cycle.isActiveCycle) {
+        const cycleRef = doc(db, 'assessmentCycles', cycle.id);
+        batch.update(cycleRef, { isActiveCycle: false });
+      }
+    });
+    
+    // Set selected cycle as active
+    const selectedCycleRef = doc(db, 'assessmentCycles', selectedCycleForActive.id);
+    batch.update(selectedCycleRef, { isActiveCycle: true });
+    
+    await batch.commit();
+    
+    showToast('Active cycle updated successfully', 'success');
+    funCloseActiveModal();
+    await funLoadData(true);
+    
+  } catch (error) {
+    console.error('Error setting active cycle:', error);
+    showToast('Failed to set active cycle', 'error');
+  }
+}
+
+// Pagination functions
+function funUpdatePagination() {
+  const totalItems = filteredData.length;
+  const totalPages = Math.ceil(totalItems / itemsPerPage);
+  
+  if (totalPages <= 1) {
+    document.getElementById('pagination')?.classList.add('hidden');
+    return;
+  }
+
+  document.getElementById('pagination')?.classList.remove('hidden');
+  
+  // Update showing text
+  const startItem = totalItems === 0 ? 0 : ((currentPage - 1) * itemsPerPage) + 1;
+  const endItem = Math.min(currentPage * itemsPerPage, totalItems);
+  
+  const showingFromEl = document.getElementById('showingFrom');
+  const showingToEl = document.getElementById('showingTo');
+  const totalRecordsEl = document.getElementById('totalRecords');
+  
+  if (showingFromEl) showingFromEl.textContent = startItem;
+  if (showingToEl) showingToEl.textContent = endItem;
+  if (totalRecordsEl) totalRecordsEl.textContent = totalItems;
+
+  // Update buttons
+  const prevBtn = document.getElementById('prevPageBtn');
+  const nextBtn = document.getElementById('nextPageBtn');
+  
+  if (prevBtn) {
+    prevBtn.disabled = currentPage <= 1;
+    prevBtn.classList.toggle('opacity-50', currentPage <= 1);
+  }
+  
+  if (nextBtn) {
+    nextBtn.disabled = currentPage >= totalPages;
+    nextBtn.classList.toggle('opacity-50', currentPage >= totalPages);
+  }
+
+  // Generate page numbers
+  funGeneratePageNumbers(totalPages);
+}
+
+// Generate page numbers
+function funGeneratePageNumbers(totalPages) {
+  const pageNumbersEl = document.getElementById('pageNumbers');
+  if (!pageNumbersEl) return;
+
+  pageNumbersEl.innerHTML = '';
+
+  // Calculate range
+  const maxVisible = 5;
+  let startPage = Math.max(1, currentPage - Math.floor(maxVisible / 2));
+  let endPage = Math.min(totalPages, startPage + maxVisible - 1);
+  
+  if (endPage - startPage < maxVisible - 1) {
+    startPage = Math.max(1, endPage - maxVisible + 1);
+  }
+
+  // Add first page if not in range
+  if (startPage > 1) {
+    pageNumbersEl.appendChild(funCreatePageButton(1));
+    if (startPage > 2) {
+      pageNumbersEl.appendChild(funCreateEllipsis());
+    }
+  }
+
+  // Add page range
+  for (let i = startPage; i <= endPage; i++) {
+    pageNumbersEl.appendChild(funCreatePageButton(i));
+  }
+
+  // Add last page if not in range
+  if (endPage < totalPages) {
+    if (endPage < totalPages - 1) {
+      pageNumbersEl.appendChild(funCreateEllipsis());
+    }
+    pageNumbersEl.appendChild(funCreatePageButton(totalPages));
+  }
+}
+
+// Create page button
+function funCreatePageButton(pageNum) {
+  const button = document.createElement('button');
+  button.className = `h-10 px-3 rounded-md text-sm font-medium focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2 ${
+    pageNum === currentPage
+      ? 'bg-brand-primary-600 text-white'
+      : 'bg-white border border-neutral-200 text-neutral-700 hover:bg-neutral-50'
+  }`;
+  button.textContent = pageNum;
+  button.addEventListener('click', () => funChangePage(pageNum));
+  return button;
+}
+
+// Create ellipsis
+function funCreateEllipsis() {
+  const span = document.createElement('span');
+  span.className = 'h-10 px-3 flex items-center text-neutral-500';
+  span.textContent = '...';
+  return span;
+}
+
+// Change page
+function funChangePage(newPage) {
+  const totalPages = Math.ceil(filteredData.length / itemsPerPage);
+  if (newPage >= 1 && newPage <= totalPages && newPage !== currentPage) {
+    currentPage = newPage;
+    funRenderTable();
+    funUpdatePagination();
+    
+    // Scroll to top of table
+    document.getElementById('dataTable')?.scrollIntoView({ behavior: 'smooth' });
+  }
+}
+
+// Show/hide loading states
+function funShowLoading() {
+  document.getElementById('loadingSkeleton')?.classList.remove('hidden');
+  document.getElementById('dataTable')?.classList.add('hidden');
+  document.getElementById('emptyState')?.classList.add('hidden');
+  document.getElementById('pagination')?.classList.add('hidden');
+}
+
+function funHideLoading() {
+  document.getElementById('loadingSkeleton')?.classList.add('hidden');
+  document.getElementById('dataTable')?.classList.remove('hidden');
+}
+
+function funShowEmptyState() {
+  document.getElementById('emptyState')?.classList.remove('hidden');
+  document.getElementById('dataTable')?.classList.add('hidden');
+  document.getElementById('pagination')?.classList.add('hidden');
+}
+
+function funHideEmptyState() {
+  document.getElementById('emptyState')?.classList.add('hidden');
+}
+
+// Handle escape key for modal
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    const modal = document.getElementById('setActiveModal');
+    if (modal && !modal.classList.contains('hidden')) {
+      funCloseActiveModal();
+    }
+  }
+});
+</script>
+
+</body>
+</html>

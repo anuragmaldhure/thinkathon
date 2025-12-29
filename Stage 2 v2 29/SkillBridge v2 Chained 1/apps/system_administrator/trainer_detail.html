@@ -1,0 +1,1300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SkillBridge</title>
+
+    <!-- Required: Main JS Script -->
+    <script type="module" src="scripts/main.js" data-tiramai="web-gen"></script>
+
+    <!-- Required: TailwindCSS -->
+    <script src="./lib/tailwindcss/tailwindcss.js" fetchpriority="high" data-tiramai="web-gen"></script>
+
+    <!-- Required: Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest" data-tiramai="web-gen"></script>
+
+    <!-- Required: Favicon -->
+    <link rel="icon" href="assets/imgs/logo.ico" type="image/x-icon" data-tiramai="web-gen"/>
+
+    <!-- ECharts Support (for charts/graphs) -->
+    <script defer src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js" data-tiramai="web-gen"></script>
+
+    <!-- Markdown Support (for content rendering) -->
+    <script defer src="https://cdn.jsdelivr.net/npm/marked/marked.min.js" data-tiramai="web-gen"></script>
+
+    <!-- Tailwind Config Extension -->
+    <script data-tiramai="web-gen">
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            'primary-600': '#1B2A44',
+                            'primary-700': '#14233A',
+                            'primary-800': '#0E1A2B',
+                        },
+                        accent: {
+                            'gold-50': '#FFF7E6',
+                            'gold-500': '#C59D42',
+                            'gold-600': '#A97D22',
+                        },
+                        success: { '600': '#16A34A' },
+                        warning: { '600': '#D97706' },
+                        danger: { '600': '#DC2626' },
+                        info: { '600': '#2563EB' },
+                        heat: {
+                            green: '#16A34A',
+                            amber: '#F59E0B',
+                            red: '#DC2626'
+                        },
+                        neutral: {
+                            '50': '#F8FAFC',
+                            '200': '#E2E8F0',
+                            '500': '#64748B',
+                            '700': '#334155',
+                            '900': '#111827',
+                            '950': '#0B1220',
+                        }
+                    },
+                    fontSize: {
+                        'xs': ['12px', '16px'],
+                        'sm': ['14px', '20px'],
+                        'base': ['16px', '24px'],
+                        'xl': ['20px', '28px'],
+                        '2xl': ['24px', '32px'],
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-neutral-50 min-h-screen text-neutral-900">
+    <!-- Top Navigation -->
+    <header class="fixed top-0 left-0 right-0 bg-brand-primary-800 border-b border-neutral-200 flex items-center justify-between px-6 py-4 z-30 h-16">
+        <div class="flex items-center gap-4">
+            <!-- Mobile menu toggle -->
+            <button id="mobileMenuToggle" class="md:hidden text-white p-2" aria-label="Toggle menu">
+                <svg class="w-5 h-5" data-lucide="menu"></svg>
+            </button>
+            <!-- Logo -->
+            <div class="flex items-center gap-3">
+                <svg width="32" height="32" viewBox="0 0 400 400" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="84" y="116" width="56" height="168" rx="8" fill="#1E40AF"/>
+                    <rect x="176" y="84" width="56" height="200" rx="8" fill="#059669"/>
+                    <rect x="268" y="156" width="48" height="128" rx="8" fill="#1E40AF"/>
+                    <rect x="114" y="180" width="172" height="20" rx="10" fill="#F59E0B"/>
+                </svg>
+                <span class="text-xl font-semibold text-white">SkillBridge</span>
+            </div>
+        </div>
+        <div class="flex items-center gap-4">
+            <!-- User Profile Dropdown -->
+            <div class="relative" id="userProfileContainer">
+                <button id="userProfileToggle" class="flex items-center gap-2 text-white hover:text-accent-gold-500 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2 focus:ring-offset-brand-primary-800 rounded-md p-2">
+                    <div class="w-8 h-8 bg-accent-gold-500 rounded-full flex items-center justify-center">
+                        <span id="userInitials" class="text-sm font-semibold text-white">JD</span>
+                    </div>
+                    <svg class="w-4 h-4" data-lucide="chevron-down"></svg>
+                </button>
+                <!-- Dropdown Menu -->
+                <div id="userProfileDropdown" class="hidden absolute right-0 mt-2 w-64 bg-white rounded-md shadow-lg border border-neutral-200 py-2 z-50">
+                    <div class="px-4 py-3 border-b border-neutral-200">
+                        <p id="userDisplayName" class="text-sm font-semibold text-neutral-900">John Doe</p>
+                        <p id="userEmail" class="text-xs text-neutral-500">johndoe@example.com</p>
+                        <p class="text-xs text-accent-gold-600 font-medium">System Administrator</p>
+                    </div>
+                    <button id="signOutButton" class="w-full text-left px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50 flex items-center gap-2">
+                        <svg class="w-4 h-4" data-lucide="log-out"></svg>
+                        Sign Out
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="flex pt-16">
+        <!-- Side Navigation -->
+        <aside id="sidebar" class="fixed md:sticky top-16 left-0 w-64 bg-white border-r border-neutral-200 h-[calc(100vh-4rem)] overflow-y-auto z-20 transform -translate-x-full md:translate-x-0 transition-transform duration-200">
+            <nav class="p-4 space-y-1">
+                <!-- Admin Dashboard -->
+                <a href="dashboard.html" id="nav-dashboard" class="nav-item flex items-center gap-3 px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                    <svg class="w-5 h-5" data-lucide="layout-dashboard"></svg>
+                    <span>Admin Dashboard</span>
+                </a>
+
+                <!-- Employees with Children -->
+                <div class="nav-group">
+                    <button class="nav-group-toggle flex items-center justify-between w-full px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                        <div class="flex items-center gap-3">
+                            <svg class="w-5 h-5" data-lucide="users"></svg>
+                            <span>Employees</span>
+                        </div>
+                        <svg class="w-4 h-4 transform transition-transform" data-lucide="chevron-right"></svg>
+                    </button>
+                    <div class="nav-group-children hidden ml-8 space-y-1 mt-1">
+                        <a href="employees_list.html" class="nav-item block px-3 py-2 rounded-md text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-600">Employee Directory</a>
+                        <a href="employee_upsert.html?mode=create" class="nav-item block px-3 py-2 rounded-md text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-600">Add Employee</a>
+                    </div>
+                </div>
+
+                <!-- Departments -->
+                <a href="departments_list.html" id="nav-departments" class="nav-item flex items-center gap-3 px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                    <svg class="w-5 h-5" data-lucide="building"></svg>
+                    <span>Departments</span>
+                </a>
+
+                <!-- Skill Categories -->
+                <a href="skill_categories_list.html" id="nav-skill-categories" class="nav-item flex items-center gap-3 px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                    <svg class="w-5 h-5" data-lucide="layers"></svg>
+                    <span>Skill Categories</span>
+                </a>
+
+                <!-- Criticality Levels -->
+                <a href="skill_criticalities_list.html" id="nav-criticalities" class="nav-item flex items-center gap-3 px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                    <svg class="w-5 h-5" data-lucide="sliders"></svg>
+                    <span>Criticality Levels</span>
+                </a>
+
+                <!-- Skills with Children -->
+                <div class="nav-group">
+                    <button class="nav-group-toggle flex items-center justify-between w-full px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                        <div class="flex items-center gap-3">
+                            <svg class="w-5 h-5" data-lucide="book"></svg>
+                            <span>Skills</span>
+                        </div>
+                        <svg class="w-4 h-4 transform transition-transform" data-lucide="chevron-right"></svg>
+                    </button>
+                    <div class="nav-group-children hidden ml-8 space-y-1 mt-1">
+                        <a href="skills_list.html" class="nav-item block px-3 py-2 rounded-md text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-600">Skills Directory</a>
+                        <a href="skill_upsert.html?mode=create" class="nav-item block px-3 py-2 rounded-md text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-600">Add Skill</a>
+                    </div>
+                </div>
+
+                <!-- Assessment Cycles with Children -->
+                <div class="nav-group">
+                    <button class="nav-group-toggle flex items-center justify-between w-full px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                        <div class="flex items-center gap-3">
+                            <svg class="w-5 h-5" data-lucide="calendar"></svg>
+                            <span>Assessment Cycles</span>
+                        </div>
+                        <svg class="w-4 h-4 transform transition-transform" data-lucide="chevron-right"></svg>
+                    </button>
+                    <div class="nav-group-children hidden ml-8 space-y-1 mt-1">
+                        <a href="assessment_cycles_list.html" class="nav-item block px-3 py-2 rounded-md text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-600">Cycles Directory</a>
+                        <a href="assessment_cycle_upsert.html?mode=create" class="nav-item block px-3 py-2 rounded-md text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-600">Create Cycle</a>
+                    </div>
+                </div>
+
+                <!-- Trainer Pool with Children -->
+                <div class="nav-group">
+                    <button class="nav-group-toggle flex items-center justify-between w-full px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                        <div class="flex items-center gap-3">
+                            <svg class="w-5 h-5" data-lucide="users"></svg>
+                            <span>Trainer Pool</span>
+                        </div>
+                        <svg class="w-4 h-4 transform transition-transform" data-lucide="chevron-right"></svg>
+                    </button>
+                    <div class="nav-group-children hidden ml-8 space-y-1 mt-1">
+                        <a href="trainers_list.html" class="nav-item block px-3 py-2 rounded-md text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-600">Trainer Directory</a>
+                        <a href="external_trainer_upsert.html?mode=create" class="nav-item block px-3 py-2 rounded-md text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-600">Add External Trainer</a>
+                    </div>
+                </div>
+
+                <!-- Training Sessions with Children -->
+                <div class="nav-group">
+                    <button class="nav-group-toggle flex items-center justify-between w-full px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                        <div class="flex items-center gap-3">
+                            <svg class="w-5 h-5" data-lucide="calendar"></svg>
+                            <span>Training Sessions</span>
+                        </div>
+                        <svg class="w-4 h-4 transform transition-transform" data-lucide="chevron-right"></svg>
+                    </button>
+                    <div class="nav-group-children hidden ml-8 space-y-1 mt-1">
+                        <a href="training_sessions_list.html" class="nav-item block px-3 py-2 rounded-md text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-600">Sessions Calendar</a>
+                        <a href="training_session_upsert.html?mode=create" class="nav-item block px-3 py-2 rounded-md text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-600">Create Session</a>
+                    </div>
+                </div>
+
+                <!-- Disputes -->
+                <a href="disputes_list.html" id="nav-disputes" class="nav-item flex items-center gap-3 px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                    <svg class="w-5 h-5" data-lucide="alert-circle"></svg>
+                    <span>Disputes</span>
+                </a>
+
+                <!-- Analytics Section -->
+                <div class="border-t border-neutral-200 pt-4 mt-4">
+                    <h4 class="px-3 text-xs font-semibold text-neutral-500 uppercase tracking-wider mb-2">Analytics</h4>
+                    
+                    <a href="analytics_skill_gap_heatmap.html" class="nav-item flex items-center gap-3 px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                        <svg class="w-5 h-5" data-lucide="grid"></svg>
+                        <span>Skill Gap Heatmap</span>
+                    </a>
+
+                    <a href="analytics_tni_dashboard.html" class="nav-item flex items-center gap-3 px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                        <svg class="w-5 h-5" data-lucide="bar-chart-2"></svg>
+                        <span>TNI Dashboard</span>
+                    </a>
+
+                    <a href="analytics_training_forecast.html" class="nav-item flex items-center gap-3 px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                        <svg class="w-5 h-5" data-lucide="trending-up"></svg>
+                        <span>Training Forecast</span>
+                    </a>
+
+                    <a href="analytics_assessment_completion.html" class="nav-item flex items-center gap-3 px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                        <svg class="w-5 h-5" data-lucide="pie-chart"></svg>
+                        <span>Assessment Completion</span>
+                    </a>
+
+                    <a href="analytics_dispute_metrics.html" class="nav-item flex items-center gap-3 px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                        <svg class="w-5 h-5" data-lucide="bar-chart"></svg>
+                        <span>Dispute Analytics</span>
+                    </a>
+                </div>
+            </nav>
+            
+            <!-- Footer -->
+            <div class="absolute bottom-4 w-full text-center text-xs text-neutral-500 bg-white px-4">
+                Made with ❤️ by TiramAi
+            </div>
+        </aside>
+
+        <!-- Mobile Overlay -->
+        <div id="mobileOverlay" class="hidden fixed inset-0 bg-black bg-opacity-50 z-10 md:hidden"></div>
+
+        <!-- Main Content -->
+        <main id="pageContent" class="flex-1 p-6 overflow-y-auto">
+            
+<!-- Trainer Detail Page -->
+<div class="max-w-6xl mx-auto">
+  <!-- Header with Navigation -->
+  <div class="flex items-center justify-between mb-6">
+    <div class="flex items-center gap-4">
+      <button onclick="funNavigateBack()" class="inline-flex items-center gap-2 px-3 py-2 text-sm text-neutral-600 hover:text-brand-primary-600 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 rounded-md">
+        <svg class="w-4 h-4" data-lucide="arrow-left"></svg>
+        Back to Trainers
+      </button>
+    </div>
+    <div class="flex gap-3" id="trainerActions">
+      <!-- Actions populated by JavaScript -->
+    </div>
+  </div>
+
+  <!-- Skeleton loading state -->
+  <div id="skeletonLoader" class="space-y-6">
+    <div class="bg-white rounded-md border border-neutral-200 p-6 shadow-sm">
+      <div class="animate-pulse">
+        <div class="h-8 bg-neutral-200 rounded w-1/3 mb-4"></div>
+        <div class="space-y-2">
+          <div class="h-4 bg-neutral-200 rounded w-1/2"></div>
+          <div class="h-4 bg-neutral-200 rounded w-1/4"></div>
+        </div>
+      </div>
+    </div>
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div class="bg-white rounded-md border border-neutral-200 p-6 shadow-sm">
+        <div class="animate-pulse">
+          <div class="h-6 bg-neutral-200 rounded w-1/3 mb-4"></div>
+          <div class="space-y-3">
+            <div class="h-4 bg-neutral-200 rounded"></div>
+            <div class="h-4 bg-neutral-200 rounded"></div>
+            <div class="h-4 bg-neutral-200 rounded"></div>
+          </div>
+        </div>
+      </div>
+      <div class="bg-white rounded-md border border-neutral-200 p-6 shadow-sm">
+        <div class="animate-pulse">
+          <div class="h-6 bg-neutral-200 rounded w-1/3 mb-4"></div>
+          <div class="grid grid-cols-2 gap-4">
+            <div class="h-16 bg-neutral-200 rounded"></div>
+            <div class="h-16 bg-neutral-200 rounded"></div>
+            <div class="h-16 bg-neutral-200 rounded"></div>
+            <div class="h-16 bg-neutral-200 rounded"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main content (hidden initially) -->
+  <div id="mainContent" class="hidden space-y-6">
+    <!-- Trainer Header Card -->
+    <div class="bg-white rounded-md border border-neutral-200 p-6 shadow-sm">
+      <div class="flex items-start justify-between">
+        <div class="flex-1">
+          <div class="flex items-center gap-3 mb-2">
+            <h1 id="trainerName" class="text-2xl leading-8 font-bold text-neutral-950"></h1>
+            <div class="flex gap-2" id="trainerBadges">
+              <!-- Badges populated by JavaScript -->
+            </div>
+          </div>
+          <div class="flex items-center gap-4 text-sm text-neutral-600" id="trainerMeta">
+            <!-- Meta info populated by JavaScript -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Two-column layout -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <!-- Left Column: Profile -->
+      <div class="bg-white rounded-md border border-neutral-200 shadow-sm">
+        <div class="px-6 py-4 border-b border-neutral-200">
+          <h2 class="text-xl leading-7 font-semibold text-neutral-950">Profile</h2>
+        </div>
+        <div class="p-6">
+          <div class="space-y-4" id="profileContent">
+            <!-- Profile content populated by JavaScript -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Column: Statistics -->
+      <div class="bg-white rounded-md border border-neutral-200 shadow-sm">
+        <div class="px-6 py-4 border-b border-neutral-200">
+          <div class="flex items-center justify-between">
+            <h2 class="text-xl leading-7 font-semibold text-neutral-950">Trainer Statistics</h2>
+            <button onclick="funRefreshStats()" class="inline-flex items-center gap-2 text-sm text-neutral-500 hover:text-neutral-700 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 rounded-md px-2 py-1" aria-label="Refresh statistics">
+              <svg class="w-4 h-4" data-lucide="refresh-cw"></svg>
+              Refresh
+            </button>
+          </div>
+        </div>
+        <div class="p-6">
+          <div class="grid grid-cols-2 gap-4" id="statsContent">
+            <!-- Stats populated by JavaScript -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Eligible Skills Section -->
+    <div class="bg-white rounded-md border border-neutral-200 shadow-sm">
+      <div class="px-6 py-4 border-b border-neutral-200">
+        <div class="flex items-center justify-between">
+          <h2 class="text-xl leading-7 font-semibold text-neutral-950">Eligible Skills</h2>
+          <button onclick="funRefreshSkills()" class="inline-flex items-center gap-2 text-sm text-neutral-500 hover:text-neutral-700 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 rounded-md px-2 py-1" aria-label="Refresh skills">
+            <svg class="w-4 h-4" data-lucide="refresh-cw"></svg>
+            Refresh
+          </button>
+        </div>
+      </div>
+      <div class="p-6">
+        <div id="skillsContent">
+          <!-- Skills content populated by JavaScript -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Training Session History Section -->
+    <div class="bg-white rounded-md border border-neutral-200 shadow-sm">
+      <div class="px-6 py-4 border-b border-neutral-200">
+        <div class="flex items-center justify-between">
+          <h2 class="text-xl leading-7 font-semibold text-neutral-950">Training Session History</h2>
+          <div class="flex items-center gap-3">
+            <button onclick="funRefreshSessions()" class="inline-flex items-center gap-2 text-sm text-neutral-500 hover:text-neutral-700 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 rounded-md px-2 py-1" aria-label="Refresh sessions">
+              <svg class="w-4 h-4" data-lucide="refresh-cw"></svg>
+              Refresh
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="p-6">
+        <div id="sessionsContent">
+          <!-- Sessions table populated by JavaScript -->
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+        </main>
+    </div>
+
+    <!-- Required: JavaScript -->
+    <script type="module" data-tiramai="web-gen">
+        import { showToast, showLoader, hideLoader, env } from "./scripts/main.js";
+        import { auth, db, storage } from "./scripts/firebase.js";
+        import { onAuthStateChanged, getAuth, signOut } from 'https://www.gstatic.com/firebasejs/10.12.4/firebase-auth.js';
+        import { doc, getDoc } from 'https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js';
+
+        // Initialize Lucide icons
+        lucide.createIcons();
+
+        // Mobile menu toggle
+        const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+        const sidebar = document.getElementById('sidebar');
+        const mobileOverlay = document.getElementById('mobileOverlay');
+
+        mobileMenuToggle?.addEventListener('click', () => {
+            sidebar.classList.toggle('-translate-x-full');
+            mobileOverlay.classList.toggle('hidden');
+        });
+
+        mobileOverlay?.addEventListener('click', () => {
+            sidebar.classList.add('-translate-x-full');
+            mobileOverlay.classList.add('hidden');
+        });
+
+        // Navigation group toggles
+        document.querySelectorAll('.nav-group-toggle').forEach(toggle => {
+            toggle.addEventListener('click', (e) => {
+                e.preventDefault();
+                const children = toggle.nextElementSibling;
+                const icon = toggle.querySelector('svg:last-child');
+                
+                children.classList.toggle('hidden');
+                icon.classList.toggle('rotate-90');
+            });
+        });
+
+        // User profile dropdown
+        const userProfileToggle = document.getElementById('userProfileToggle');
+        const userProfileDropdown = document.getElementById('userProfileDropdown');
+
+        userProfileToggle?.addEventListener('click', () => {
+            userProfileDropdown.classList.toggle('hidden');
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!userProfileToggle?.contains(e.target) && !userProfileDropdown?.contains(e.target)) {
+                userProfileDropdown?.classList.add('hidden');
+            }
+        });
+
+        // Sign out functionality
+        document.getElementById('signOutButton')?.addEventListener('click', async () => {
+            try {
+                await signOut(auth);
+                window.location.href = 'auth.html';
+            } catch (error) {
+                console.error('Sign out error:', error);
+                showToast('Failed to sign out', 'error');
+            }
+        });
+
+        // Auth state management
+        onAuthStateChanged(auth, async (user) => {
+            if (!user) {
+                window.location.href = 'auth.html';
+                return;
+            }
+
+            // Load user profile data
+            try {
+                const userDoc = await getDoc(doc(db, 'users', user.uid));
+                const userData = userDoc.exists() ? userDoc.data() : null;
+
+                // Update UI with user data
+                const displayName = userData?.firstName && userData?.lastName 
+                    ? `${userData.firstName} ${userData.lastName}`
+                    : user.displayName || 'John Doe';
+                
+                const email = user.email || 'johndoe@example.com';
+                const initials = displayName.split(' ').map(n => n[0]).join('').toUpperCase();
+
+                document.getElementById('userDisplayName').textContent = displayName;
+                document.getElementById('userEmail').textContent = email;
+                document.getElementById('userInitials').textContent = initials;
+
+            } catch (error) {
+                console.error('Error loading user data:', error);
+                // Fallback to default values
+                document.getElementById('userDisplayName').textContent = 'John Doe';
+                document.getElementById('userEmail').textContent = user.email || 'johndoe@example.com';
+                document.getElementById('userInitials').textContent = 'JD';
+            }
+        });
+
+        // Set active navigation item based on current page
+        function setActiveNavItem() {
+            const currentPath = window.location.pathname;
+            const navItems = document.querySelectorAll('.nav-item');
+            
+            navItems.forEach(item => {
+                const href = item.getAttribute('href');
+                if (href && currentPath.includes(href.split('?')[0])) {
+                    item.classList.add('bg-accent-gold-50', 'text-brand-primary-600', 'border-l-2', 'border-brand-primary-600');
+                    item.classList.remove('text-neutral-700', 'text-neutral-600');
+                    
+                    // Expand parent group if needed
+                    const parentGroup = item.closest('.nav-group');
+                    if (parentGroup) {
+                        const children = parentGroup.querySelector('.nav-group-children');
+                        const icon = parentGroup.querySelector('.nav-group-toggle svg:last-child');
+                        children?.classList.remove('hidden');
+                        icon?.classList.add('rotate-90');
+                    }
+                }
+            });
+        }
+
+        // Initialize active nav state
+        setActiveNavItem();
+    </script>
+
+    
+<script id="data-script" type="module" data-tiramai="web-gen">
+// Firebase imports
+import { onAuthStateChanged, getAuth, signOut } from 'https://www.gstatic.com/firebasejs/10.12.4/firebase-auth.js';
+import { 
+  collection, getDocs, setDoc, addDoc, doc, getDoc, updateDoc, deleteDoc, 
+  query, where, orderBy, limit, startAfter, endBefore, Timestamp,
+  getCountFromServer
+} from 'https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js';
+import { auth, getDb, storage } from "./scripts/firebase.js";
+import { showToast, showLoader, hideLoader, env } from "./scripts/main.js";
+
+const db = getDb();
+
+// Global state
+let currentTrainer = null;
+let currentTrainerType = null;
+let currentTrainerId = null;
+let currentAbort = null;
+
+// Initialize page
+document.addEventListener('DOMContentLoaded', () => {
+  // Auth check
+  onAuthStateChanged(auth, user => {
+    if (!user) {
+      location.href = "auth.html?redirect=" + encodeURIComponent(location.pathname);
+      return;
+    }
+    
+    // Get URL parameters
+    const urlParams = new URLSearchParams(window.location.search);
+    const trainerType = urlParams.get('trainerType');
+    const trainerId = urlParams.get('trainerId');
+    
+    if (!trainerType || !trainerId || !['internal', 'external'].includes(trainerType)) {
+      showToast('Invalid trainer parameters');
+      location.href = 'trainers_list.html';
+      return;
+    }
+    
+    currentTrainerType = trainerType;
+    currentTrainerId = trainerId;
+    
+    // Initialize Lucide icons
+    lucide.createIcons();
+    
+    // Load trainer data
+    funInitialLoad();
+  });
+});
+
+// Concurrency control
+function createSemaphore(max = 2) {
+  const queue = [];
+  let active = 0;
+  const next = () => {
+    if (active >= max || queue.length === 0) return;
+    active++;
+    const { fn, res, rej } = queue.shift();
+    Promise.resolve()
+      .then(fn)
+      .then(v => res(v))
+      .catch(e => rej(e))
+      .finally(() => { active--; next(); });
+  };
+  return (fn) => new Promise((res, rej) => { queue.push({ fn, res, rej }); next(); });
+}
+const withLimit = createSemaphore(2);
+
+// Abortable reads
+async function funFetchWithAbort(fetchFn) {
+  if (currentAbort) currentAbort.abort();
+  currentAbort = new AbortController();
+  const signal = currentAbort.signal;
+  
+  try {
+    const result = await fetchFn();
+    if (signal.aborted) return null;
+    return result;
+  } catch (error) {
+    if (signal.aborted) return null;
+    throw error;
+  }
+}
+
+// Navigation functions
+function funNavigateBack() {
+  location.href = 'trainers_list.html';
+}
+
+function funNavigateToEdit() {
+  if (currentTrainerType === 'external') {
+    location.href = `external_trainer_upsert.html?mode=edit&trainerId=${currentTrainerId}`;
+  }
+}
+
+function funNavigateToEmployeeProfile() {
+  if (currentTrainerType === 'internal') {
+    location.href = `employee_detail.html?employeeId=${currentTrainerId}`;
+  }
+}
+
+function funNavigateToSkill(skillId) {
+  location.href = `skill_detail.html?skillId=${skillId}`;
+}
+
+function funNavigateToSession(sessionId) {
+  location.href = `training_session_detail.html?sessionId=${sessionId}`;
+}
+
+// Main data loading function
+async function funInitialLoad() {
+  try {
+    document.getElementById('skeletonLoader').classList.remove('hidden');
+    document.getElementById('mainContent').classList.add('hidden');
+    
+    // Load trainer data first
+    const trainer = await funFetchWithAbort(() => funLoadTrainerData());
+    if (!trainer) return;
+    
+    currentTrainer = trainer;
+    
+    // Render trainer header
+    funRenderTrainerHeader(trainer);
+    funRenderTrainerProfile(trainer);
+    
+    // Show main content
+    document.getElementById('skeletonLoader').classList.add('hidden');
+    document.getElementById('mainContent').classList.remove('hidden');
+    
+    // Load other data concurrently with limits
+    await Promise.all([
+      withLimit(() => funLoadAndRenderStats()),
+      withLimit(() => funLoadAndRenderSkills()),
+      funLoadAndRenderSessions() // This goes separately as it might be heavy
+    ]);
+    
+  } catch (error) {
+    console.error('Error loading trainer data:', error);
+    showToast(error?.message || 'Failed to load trainer data');
+  }
+}
+
+// Load trainer data
+async function funLoadTrainerData() {
+  if (currentTrainerType === 'internal') {
+    const trainerDoc = await getDoc(doc(db, 'users', currentTrainerId));
+    if (!trainerDoc.exists()) {
+      throw new Error('Trainer not found');
+    }
+    
+    const trainerData = { id: trainerDoc.id, ...trainerDoc.data() };
+    
+    // Load department info
+    if (trainerData.departmentId) {
+      const deptDoc = await getDoc(doc(db, 'departments', trainerData.departmentId));
+      if (deptDoc.exists()) {
+        trainerData.departmentName = deptDoc.data().name;
+      }
+    }
+    
+    return trainerData;
+  } else {
+    const trainerDoc = await getDoc(doc(db, 'externalTrainers', currentTrainerId));
+    if (!trainerDoc.exists()) {
+      throw new Error('External trainer not found');
+    }
+    
+    return { id: trainerDoc.id, ...trainerDoc.data() };
+  }
+}
+
+// Render trainer header
+function funRenderTrainerHeader(trainer) {
+  const nameElement = document.getElementById('trainerName');
+  const badgesElement = document.getElementById('trainerBadges');
+  const metaElement = document.getElementById('trainerMeta');
+  const actionsElement = document.getElementById('trainerActions');
+  
+  // Name
+  const displayName = currentTrainerType === 'internal' 
+    ? `${trainer.firstName || ''} ${trainer.lastName || ''}`.trim() || 'N/A'
+    : trainer.name || 'N/A';
+  nameElement.textContent = displayName;
+  
+  // Badges
+  const badges = [];
+  badges.push(`<span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
+    currentTrainerType === 'internal' 
+      ? 'bg-info-600 text-white' 
+      : 'bg-accent-gold-500 text-white'
+  }">${currentTrainerType === 'internal' ? 'Internal' : 'External'}</span>`);
+  
+  if (currentTrainerType === 'external' && trainer.status) {
+    const statusColor = trainer.status === 'active' ? 'success-600' : 'neutral-500';
+    badges.push(`<span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-${statusColor} text-white">${trainer.status || 'N/A'}</span>`);
+  }
+  
+  badgesElement.innerHTML = badges.join('');
+  
+  // Meta information
+  const metaInfo = [];
+  if (currentTrainerType === 'internal') {
+    if (trainer.employeeId) metaInfo.push(`Employee ID: ${trainer.employeeId}`);
+    if (trainer.departmentName) metaInfo.push(`Department: ${trainer.departmentName}`);
+    if (trainer.email) metaInfo.push(`Email: ${trainer.email}`);
+  } else {
+    if (trainer.email) metaInfo.push(`Email: ${trainer.email}`);
+    if (trainer.contactInfo?.phone) metaInfo.push(`Phone: ${trainer.contactInfo.phone}`);
+  }
+  
+  metaElement.innerHTML = metaInfo.map(info => `<span>${info}</span>`).join('');
+  
+  // Actions
+  const actions = [];
+  if (currentTrainerType === 'internal') {
+    actions.push(`<button onclick="funNavigateToEmployeeProfile()" class="inline-flex items-center gap-2 px-4 py-2 bg-brand-primary-600 hover:bg-brand-primary-700 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-accent-gold-600">
+      <svg class="w-4 h-4" data-lucide="user"></svg>
+      View Employee Profile
+    </button>`);
+  } else {
+    actions.push(`<button onclick="funNavigateToEdit()" class="inline-flex items-center gap-2 px-4 py-2 bg-brand-primary-600 hover:bg-brand-primary-700 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-accent-gold-600">
+      <svg class="w-4 h-4" data-lucide="edit"></svg>
+      Edit Trainer
+    </button>`);
+    
+    if (trainer.status === 'active') {
+      actions.push(`<button onclick="funDeactivateTrainer()" class="inline-flex items-center gap-2 px-4 py-2 border border-neutral-200 bg-white text-neutral-900 hover:bg-neutral-50 rounded-md focus:outline-none focus:ring-2 focus:ring-accent-gold-600">
+        <svg class="w-4 h-4" data-lucide="user-x"></svg>
+        Deactivate
+      </button>`);
+    }
+  }
+  
+  actionsElement.innerHTML = actions.join('');
+}
+
+// Render trainer profile
+function funRenderTrainerProfile(trainer) {
+  const profileElement = document.getElementById('profileContent');
+  
+  if (currentTrainerType === 'internal') {
+    const profileItems = [];
+    
+    profileItems.push(funCreateProfileItem('Employee ID', trainer.employeeId || 'N/A'));
+    profileItems.push(funCreateProfileItem('Job Title', trainer.jobTitle || 'N/A'));
+    profileItems.push(funCreateProfileItem('Department', trainer.departmentName || 'N/A'));
+    profileItems.push(funCreateProfileItem('Email', trainer.email || 'N/A'));
+    profileItems.push(funCreateProfileItem('Role', trainer.role || 'N/A'));
+    profileItems.push(funCreateProfileItem('Status', trainer.employeeStatus || 'N/A'));
+    
+    if (trainer.createdTimestamp) {
+      const createdDate = new Date(trainer.createdTimestamp).toLocaleDateString('en-US', {
+        year: 'numeric', month: 'long', day: 'numeric'
+      });
+      profileItems.push(funCreateProfileItem('Joined', createdDate));
+    }
+    
+    profileElement.innerHTML = profileItems.join('');
+  } else {
+    const profileItems = [];
+    
+    profileItems.push(funCreateProfileItem('Name', trainer.name || 'N/A'));
+    profileItems.push(funCreateProfileItem('Email', trainer.email || 'N/A'));
+    profileItems.push(funCreateProfileItem('Phone', trainer.contactInfo?.phone || 'N/A'));
+    profileItems.push(funCreateProfileItem('Address', trainer.contactInfo?.address || 'N/A'));
+    profileItems.push(funCreateProfileItem('Status', trainer.status || 'N/A'));
+    
+    if (trainer.createdTimestamp) {
+      const createdDate = new Date(trainer.createdTimestamp).toLocaleDateString('en-US', {
+        year: 'numeric', month: 'long', day: 'numeric'
+      });
+      profileItems.push(funCreateProfileItem('Added', createdDate));
+    }
+    
+    profileElement.innerHTML = profileItems.join('');
+  }
+  
+  // Reinitialize icons
+  lucide.createIcons();
+}
+
+function funCreateProfileItem(label, value) {
+  return `<div class="flex justify-between items-center py-2 border-b border-neutral-100 last:border-0">
+    <span class="text-sm font-medium text-neutral-700">${label}</span>
+    <span class="text-sm text-neutral-900">${value}</span>
+  </div>`;
+}
+
+// Load and render statistics
+async function funLoadAndRenderStats() {
+  try {
+    const statsElement = document.getElementById('statsContent');
+    
+    // Show loading skeleton
+    statsElement.innerHTML = `
+      <div class="animate-pulse">
+        <div class="h-16 bg-neutral-200 rounded"></div>
+      </div>
+      <div class="animate-pulse">
+        <div class="h-16 bg-neutral-200 rounded"></div>
+      </div>
+      <div class="animate-pulse">
+        <div class="h-16 bg-neutral-200 rounded"></div>
+      </div>
+      <div class="animate-pulse">
+        <div class="h-16 bg-neutral-200 rounded"></div>
+      </div>
+    `;
+    
+    const stats = await funFetchWithAbort(() => funCalculateStats());
+    if (!stats) return;
+    
+    const statCards = [
+      { title: 'Total Sessions', value: stats.totalSessions || 0, icon: 'calendar' },
+      { title: 'Upcoming Sessions', value: stats.upcomingSessions || 0, icon: 'clock' },
+      { title: 'Avg Feedback Rating', value: stats.avgRating ? stats.avgRating.toFixed(1) : 'N/A', icon: 'star' },
+      { title: 'Total Employees Trained', value: stats.totalEmployees || 0, icon: 'users' }
+    ];
+    
+    statsElement.innerHTML = statCards.map(stat => 
+      `<div class="bg-neutral-50 rounded-md p-4 border border-neutral-100">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-sm font-medium text-neutral-600">${stat.title}</p>
+            <p class="text-2xl font-bold text-neutral-900 mt-1">${stat.value}</p>
+          </div>
+          <div class="w-8 h-8 bg-brand-primary-600 rounded-md flex items-center justify-center">
+            <svg class="w-4 h-4 text-white" data-lucide="${stat.icon}"></svg>
+          </div>
+        </div>
+      </div>`
+    ).join('');
+    
+    // Reinitialize icons
+    lucide.createIcons();
+    
+  } catch (error) {
+    console.error('Error loading stats:', error);
+    document.getElementById('statsContent').innerHTML = 
+      '<div class="col-span-2 text-center text-neutral-500">Failed to load statistics</div>';
+  }
+}
+
+// Calculate trainer statistics
+async function funCalculateStats() {
+  const sessionsQuery = query(
+    collection(db, 'trainingSessions'),
+    where('trainerId', '==', currentTrainerId),
+    where('trainerType', '==', currentTrainerType)
+  );
+  
+  const [sessionsSnapshot, upcomingQuery] = await Promise.all([
+    getDocs(sessionsQuery),
+    getDocs(query(
+      collection(db, 'trainingSessions'),
+      where('trainerId', '==', currentTrainerId),
+      where('trainerType', '==', currentTrainerType),
+      where('status', '==', 'scheduled'),
+      where('scheduledDate', '>=', new Date().toISOString())
+    ))
+  ]);
+  
+  const sessions = sessionsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+  const upcomingSessions = upcomingQuery.docs.length;
+  
+  // Calculate unique employees trained from completed sessions
+  const completedSessions = sessions.filter(session => session.status === 'completed');
+  const uniqueEmployees = new Set();
+  completedSessions.forEach(session => {
+    if (session.assignedEmployees) {
+      session.assignedEmployees.forEach(emp => {
+        if (emp.attendanceStatus === 'attended') {
+          uniqueEmployees.add(emp.employeeId);
+        }
+      });
+    }
+  });
+  
+  // Calculate average feedback rating
+  let avgRating = null;
+  if (completedSessions.length > 0) {
+    const feedbackQuery = query(
+      collection(db, 'trainingFeedback'),
+      where('sessionId', 'in', completedSessions.map(s => s.id))
+    );
+    
+    const feedbackSnapshot = await getDocs(feedbackQuery);
+    const ratings = feedbackSnapshot.docs.map(doc => doc.data().rating).filter(r => r != null);
+    
+    if (ratings.length > 0) {
+      avgRating = ratings.reduce((sum, rating) => sum + rating, 0) / ratings.length;
+    }
+  }
+  
+  return {
+    totalSessions: sessions.length,
+    upcomingSessions,
+    avgRating,
+    totalEmployees: uniqueEmployees.size
+  };
+}
+
+// Load and render eligible skills
+async function funLoadAndRenderSkills() {
+  try {
+    const skillsElement = document.getElementById('skillsContent');
+    
+    // Show loading skeleton
+    skillsElement.innerHTML = `
+      <div class="animate-pulse space-y-2">
+        <div class="h-4 bg-neutral-200 rounded w-full"></div>
+        <div class="h-4 bg-neutral-200 rounded w-3/4"></div>
+        <div class="h-4 bg-neutral-200 rounded w-1/2"></div>
+      </div>
+    `;
+    
+    const skills = await funFetchWithAbort(() => funLoadEligibleSkills());
+    if (!skills) return;
+    
+    if (skills.length === 0) {
+      skillsElement.innerHTML = '<p class="text-neutral-500 text-center py-4">No eligible skills found</p>';
+      return;
+    }
+    
+    const skillsGrid = skills.map(skill => 
+      `<button onclick="funNavigateToSkill('${skill.id}')" class="flex items-center gap-3 p-3 border border-neutral-200 rounded-md hover:bg-neutral-50 hover:border-brand-primary-600 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 text-left w-full">
+        <div class="w-2 h-2 rounded-full bg-accent-gold-500"></div>
+        <div class="flex-1">
+          <h4 class="text-sm font-medium text-neutral-900">${skill.name || 'N/A'}</h4>
+          <p class="text-xs text-neutral-500">${skill.categoryName || 'N/A'}</p>
+        </div>
+      </button>`
+    ).join('');
+    
+    skillsElement.innerHTML = `<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">${skillsGrid}</div>`;
+    
+  } catch (error) {
+    console.error('Error loading skills:', error);
+    document.getElementById('skillsContent').innerHTML = '<p class="text-neutral-500 text-center py-4">Failed to load skills</p>';
+  }
+}
+
+// Load eligible skills data
+async function funLoadEligibleSkills() {
+  if (currentTrainerType === 'internal') {
+    // Get trainer eligibilities
+    const eligibilitiesQuery = query(
+      collection(db, 'trainerEligibility'),
+      where('employeeId', '==', currentTrainerId),
+      where('status', '==', 'active')
+    );
+    
+    const eligibilitiesSnapshot = await getDocs(eligibilitiesQuery);
+    const skillIds = eligibilitiesSnapshot.docs.map(doc => doc.data().skillId);
+    
+    if (skillIds.length === 0) return [];
+    
+    // Get skills details
+    const skillsPromises = skillIds.map(async skillId => {
+      const skillDoc = await getDoc(doc(db, 'skills', skillId));
+      if (!skillDoc.exists()) return null;
+      
+      const skillData = { id: skillDoc.id, ...skillDoc.data() };
+      
+      // Get category name
+      if (skillData.categoryId) {
+        const categoryDoc = await getDoc(doc(db, 'skillCategories', skillData.categoryId));
+        if (categoryDoc.exists()) {
+          skillData.categoryName = categoryDoc.data().categoryName;
+        }
+      }
+      
+      return skillData;
+    });
+    
+    const skills = await Promise.all(skillsPromises);
+    return skills.filter(skill => skill != null);
+    
+  } else {
+    // For external trainers, get skills from their skills array
+    if (!currentTrainer?.skills || !Array.isArray(currentTrainer.skills)) {
+      return [];
+    }
+    
+    const skillIds = currentTrainer.skills.map(skill => skill.skillId).filter(id => id);
+    if (skillIds.length === 0) return [];
+    
+    const skillsPromises = skillIds.map(async skillId => {
+      try {
+        const skillDoc = await getDoc(doc(db, 'skills', skillId));
+        if (!skillDoc.exists()) return null;
+        
+        const skillData = { id: skillDoc.id, ...skillDoc.data() };
+        
+        // Get category name
+        if (skillData.categoryId) {
+          const categoryDoc = await getDoc(doc(db, 'skillCategories', skillData.categoryId));
+          if (categoryDoc.exists()) {
+            skillData.categoryName = categoryDoc.data().categoryName;
+          }
+        }
+        
+        return skillData;
+      } catch (error) {
+        console.error('Error loading skill:', skillId, error);
+        return null;
+      }
+    });
+    
+    const skills = await Promise.all(skillsPromises);
+    return skills.filter(skill => skill != null);
+  }
+}
+
+// Load and render training sessions
+async function funLoadAndRenderSessions() {
+  try {
+    const sessionsElement = document.getElementById('sessionsContent');
+    
+    // Show loading skeleton
+    sessionsElement.innerHTML = `
+      <div class="animate-pulse">
+        <div class="h-8 bg-neutral-200 rounded w-full mb-4"></div>
+        <div class="space-y-2">
+          <div class="h-4 bg-neutral-200 rounded w-full"></div>
+          <div class="h-4 bg-neutral-200 rounded w-full"></div>
+          <div class="h-4 bg-neutral-200 rounded w-full"></div>
+        </div>
+      </div>
+    `;
+    
+    const sessions = await funFetchWithAbort(() => funLoadTrainingSessions());
+    if (!sessions) return;
+    
+    if (sessions.length === 0) {
+      sessionsElement.innerHTML = '<p class="text-neutral-500 text-center py-8">No training sessions found</p>';
+      return;
+    }
+    
+    // Create table
+    const tableHtml = `
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm leading-5">
+          <thead class="bg-neutral-50 text-neutral-700">
+            <tr>
+              <th class="text-left font-semibold px-3 py-3 border-b border-neutral-200">Skill</th>
+              <th class="text-left font-semibold px-3 py-3 border-b border-neutral-200">Date</th>
+              <th class="text-left font-semibold px-3 py-3 border-b border-neutral-200">Mode</th>
+              <th class="text-left font-semibold px-3 py-3 border-b border-neutral-200">Attendees</th>
+              <th class="text-left font-semibold px-3 py-3 border-b border-neutral-200">Status</th>
+              <th class="text-left font-semibold px-3 py-3 border-b border-neutral-200">Avg Feedback</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-neutral-200">
+            ${sessions.map(session => `
+              <tr class="hover:bg-neutral-50 focus-within:bg-neutral-50 cursor-pointer" onclick="funNavigateToSession('${session.id}')">
+                <td class="px-3 py-3">
+                  <div class="flex items-center gap-2">
+                    <button onclick="event.stopPropagation(); funNavigateToSkill('${session.skillId || ''}')" class="text-brand-primary-600 hover:text-brand-primary-700 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 rounded text-left">
+                      ${session.skillName || 'N/A'}
+                    </button>
+                  </div>
+                </td>
+                <td class="px-3 py-3">
+                  ${session.scheduledDate ? new Date(session.scheduledDate).toLocaleDateString('en-US', {
+                    year: 'numeric', month: 'short', day: 'numeric'
+                  }) : 'N/A'}
+                </td>
+                <td class="px-3 py-3">
+                  <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
+                    session.mode === 'online' ? 'bg-info-600 text-white' : 'bg-accent-gold-500 text-white'
+                  }">
+                    ${session.mode || 'N/A'}
+                  </span>
+                </td>
+                <td class="px-3 py-3">${session.attendeesCount || 0}</td>
+                <td class="px-3 py-3">
+                  <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
+                    session.status === 'completed' ? 'bg-success-600 text-white' :
+                    session.status === 'scheduled' ? 'bg-info-600 text-white' :
+                    'bg-neutral-500 text-white'
+                  }">
+                    ${session.status || 'N/A'}
+                  </span>
+                </td>
+                <td class="px-3 py-3">
+                  ${session.avgFeedback ? session.avgFeedback.toFixed(1) : 'N/A'}
+                </td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      </div>
+    `;
+    
+    sessionsElement.innerHTML = tableHtml;
+    
+  } catch (error) {
+    console.error('Error loading sessions:', error);
+    document.getElementById('sessionsContent').innerHTML = '<p class="text-neutral-500 text-center py-8">Failed to load training sessions</p>';
+  }
+}
+
+// Load training sessions data
+async function funLoadTrainingSessions() {
+  const sessionsQuery = query(
+    collection(db, 'trainingSessions'),
+    where('trainerId', '==', currentTrainerId),
+    where('trainerType', '==', currentTrainerType),
+    orderBy('scheduledDate', 'desc'),
+    limit(50)
+  );
+  
+  const sessionsSnapshot = await getDocs(sessionsQuery);
+  const sessions = sessionsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+  
+  // Enhance sessions with skill names and feedback data
+  const enhancedSessions = await Promise.all(sessions.map(async session => {
+    try {
+      // Get skill name
+      if (session.skillId) {
+        const skillDoc = await getDoc(doc(db, 'skills', session.skillId));
+        if (skillDoc.exists()) {
+          session.skillName = skillDoc.data().name;
+        }
+      }
+      
+      // Count attendees
+      if (session.assignedEmployees) {
+        session.attendeesCount = session.assignedEmployees.filter(emp => 
+          emp.attendanceStatus === 'attended'
+        ).length;
+      }
+      
+      // Get average feedback rating
+      if (session.status === 'completed') {
+        const feedbackQuery = query(
+          collection(db, 'trainingFeedback'),
+          where('sessionId', '==', session.id)
+        );
+        
+        const feedbackSnapshot = await getDocs(feedbackQuery);
+        const ratings = feedbackSnapshot.docs.map(doc => doc.data().rating).filter(r => r != null);
+        
+        if (ratings.length > 0) {
+          session.avgFeedback = ratings.reduce((sum, rating) => sum + rating, 0) / ratings.length;
+        }
+      }
+      
+      return session;
+    } catch (error) {
+      console.error('Error enhancing session:', session.id, error);
+      return session;
+    }
+  }));
+  
+  return enhancedSessions;
+}
+
+// Refresh functions
+async function funRefreshStats() {
+  const btn = event?.target?.closest('button');
+  if (btn) {
+    btn.disabled = true;
+    const originalContent = btn.innerHTML;
+    btn.innerHTML = '<svg class="w-4 h-4 animate-spin" data-lucide="loader-2"></svg> Refreshing...';
+    lucide.createIcons();
+    
+    try {
+      await funLoadAndRenderStats();
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = originalContent;
+      lucide.createIcons();
+    }
+  } else {
+    await funLoadAndRenderStats();
+  }
+}
+
+async function funRefreshSkills() {
+  const btn = event?.target?.closest('button');
+  if (btn) {
+    btn.disabled = true;
+    const originalContent = btn.innerHTML;
+    btn.innerHTML = '<svg class="w-4 h-4 animate-spin" data-lucide="loader-2"></svg> Refreshing...';
+    lucide.createIcons();
+    
+    try {
+      await funLoadAndRenderSkills();
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = originalContent;
+      lucide.createIcons();
+    }
+  } else {
+    await funLoadAndRenderSkills();
+  }
+}
+
+async function funRefreshSessions() {
+  const btn = event?.target?.closest('button');
+  if (btn) {
+    btn.disabled = true;
+    const originalContent = btn.innerHTML;
+    btn.innerHTML = '<svg class="w-4 h-4 animate-spin" data-lucide="loader-2"></svg> Refreshing...';
+    lucide.createIcons();
+    
+    try {
+      await funLoadAndRenderSessions();
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = originalContent;
+      lucide.createIcons();
+    }
+  } else {
+    await funLoadAndRenderSessions();
+  }
+}
+
+// Deactivate external trainer
+async function funDeactivateTrainer() {
+  if (currentTrainerType !== 'external') return;
+  
+  if (!confirm('Are you sure you want to deactivate this trainer? This action can be undone by editing the trainer.')) {
+    return;
+  }
+  
+  try {
+    showLoader();
+    
+    await updateDoc(doc(db, 'externalTrainers', currentTrainerId), {
+      status: 'inactive',
+      modifiedTimestamp: new Date().toISOString()
+    });
+    
+    showToast('Trainer deactivated successfully');
+    
+    // Reload page to reflect changes
+    funInitialLoad();
+    
+  } catch (error) {
+    console.error('Error deactivating trainer:', error);
+    showToast(error?.message || 'Failed to deactivate trainer');
+  } finally {
+    hideLoader();
+  }
+}
+
+// Make functions globally available
+window.funNavigateBack = funNavigateBack;
+window.funNavigateToEdit = funNavigateToEdit;
+window.funNavigateToEmployeeProfile = funNavigateToEmployeeProfile;
+window.funNavigateToSkill = funNavigateToSkill;
+window.funNavigateToSession = funNavigateToSession;
+window.funRefreshStats = funRefreshStats;
+window.funRefreshSkills = funRefreshSkills;
+window.funRefreshSessions = funRefreshSessions;
+window.funDeactivateTrainer = funDeactivateTrainer;
+</script>
+
+</body>
+</html>

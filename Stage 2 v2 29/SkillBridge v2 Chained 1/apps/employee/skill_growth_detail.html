@@ -1,0 +1,1160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SkillBridge</title>
+
+    <!-- Required: Main JS Script -->
+    <script type="module" src="scripts/main.js" data-tiramai="web-gen"></script>
+
+    <!-- Required: TailwindCSS -->
+    <script src="./lib/tailwindcss/tailwindcss.js" fetchpriority="high" data-tiramai="web-gen"></script>
+
+    <!-- Required: Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest" data-tiramai="web-gen"></script>
+
+    <!-- Required: Favicon -->
+    <link rel="icon" href="assets/imgs/logo.ico" type="image/x-icon" data-tiramai="web-gen"/>
+
+    <!-- ECharts Support (for charts/graphs) -->
+    <script defer src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js" data-tiramai="web-gen"></script>
+
+    <!-- Markdown Support (for content rendering) -->
+    <script defer src="https://cdn.jsdelivr.net/npm/marked/marked.min.js" data-tiramai="web-gen"></script>
+
+    <!-- Custom Tailwind Config -->
+    <script data-tiramai="web-gen">
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'brand-primary-600': '#1B2A44',
+                        'brand-primary-700': '#14233A',
+                        'brand-primary-800': '#0E1A2B',
+                        'accent-gold-50': '#FFF7E6',
+                        'accent-gold-500': '#C59D42',
+                        'accent-gold-600': '#A97D22',
+                        'success-600': '#16A34A',
+                        'warning-600': '#D97706',
+                        'danger-600': '#DC2626',
+                        'info-600': '#2563EB',
+                        'heat-green': '#16A34A',
+                        'heat-amber': '#F59E0B',
+                        'heat-red': '#DC2626',
+                        'neutral-50': '#F8FAFC',
+                        'neutral-200': '#E2E8F0',
+                        'neutral-500': '#64748B',
+                        'neutral-700': '#334155',
+                        'neutral-900': '#111827',
+                        'neutral-950': '#0B1220',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-neutral-50 min-h-screen text-neutral-900 text-sm leading-5">
+    <!-- Top Navigation -->
+    <header class="fixed top-0 left-0 right-0 bg-brand-primary-800 border-b border-neutral-200 flex items-center justify-between px-6 py-4 z-30 h-16">
+        <div class="flex items-center gap-4">
+            <svg width="32" height="32" viewBox="0 0 400 400" fill="none" xmlns="http://www.w3.org/2000/svg" class="h-8 w-8">
+                <rect x="84" y="116" width="56" height="168" rx="8" fill="#1E40AF"/>
+                <rect x="176" y="84" width="56" height="200" rx="8" fill="#059669"/>
+                <rect x="268" y="156" width="48" height="128" rx="8" fill="#1E40AF"/>
+                <rect x="114" y="180" width="172" height="20" rx="10" fill="#F59E0B"/>
+            </svg>
+            <span class="text-xl leading-7 font-semibold text-white">SkillBridge</span>
+        </div>
+        
+        <!-- Mobile Menu Button -->
+        <button id="mobile-menu-btn" class="md:hidden text-white hover:bg-brand-primary-700 p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2">
+            <i data-lucide="menu" class="w-5 h-5"></i>
+        </button>
+
+        <div class="hidden md:flex items-center gap-4">
+            <!-- User Profile Dropdown -->
+            <div class="relative">
+                <button id="user-profile-btn" class="flex items-center gap-2 text-white hover:bg-brand-primary-700 px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2">
+                    <div id="user-avatar" class="w-8 h-8 bg-accent-gold-500 rounded-full flex items-center justify-center text-brand-primary-800 font-semibold text-xs">
+                        JD
+                    </div>
+                    <span id="user-name" class="text-sm">John Doe</span>
+                    <i data-lucide="chevron-down" class="w-4 h-4"></i>
+                </button>
+                
+                <!-- Dropdown Menu -->
+                <div id="user-dropdown" class="hidden absolute right-0 mt-2 w-48 bg-white border border-neutral-200 rounded-md shadow-lg z-50">
+                    <div class="px-4 py-3 border-b border-neutral-200">
+                        <p class="text-sm font-medium text-neutral-900" id="dropdown-user-name">John Doe</p>
+                        <p class="text-xs text-neutral-500" id="dropdown-user-email">johndoe@example.com</p>
+                    </div>
+                    <div class="py-1">
+                        <button id="sign-out-btn" class="block w-full text-left px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50 focus:outline-none focus:bg-neutral-50">
+                            <i data-lucide="log-out" class="w-4 h-4 inline mr-2"></i>
+                            Sign Out
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="flex pt-16">
+        <!-- Side Navigation -->
+        <aside id="sidebar" class="fixed md:static inset-y-0 left-0 z-20 w-64 bg-white border-r border-neutral-200 transform -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out pt-16 md:pt-0 overflow-y-auto" style="height: calc(100vh - 4rem);">
+            <nav class="p-4 space-y-1">
+                <!-- Employee Dashboard -->
+                <a href="employee_dashboard.html" class="nav-link flex items-center gap-3 px-3 py-2 text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-700 rounded-md group" data-page="employee_dashboard">
+                    <i data-lucide="layout-dashboard" class="w-5 h-5 text-neutral-500 group-hover:text-brand-primary-700"></i>
+                    <span class="font-medium">Employee Dashboard</span>
+                </a>
+
+                <!-- My Skills with Children -->
+                <div class="space-y-1">
+                    <a href="my_skills.html" class="nav-link flex items-center gap-3 px-3 py-2 text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-700 rounded-md group" data-page="my_skills">
+                        <i data-lucide="list" class="w-5 h-5 text-neutral-500 group-hover:text-brand-primary-700"></i>
+                        <span class="font-medium">My Skills</span>
+                    </a>
+                </div>
+
+                <!-- My Training Sessions with Children -->
+                <div class="space-y-1">
+                    <a href="my_training_sessions.html" class="nav-link flex items-center gap-3 px-3 py-2 text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-700 rounded-md group" data-page="my_training_sessions">
+                        <i data-lucide="calendar" class="w-5 h-5 text-neutral-500 group-hover:text-brand-primary-700"></i>
+                        <span class="font-medium">My Training Sessions</span>
+                    </a>
+                </div>
+
+                <!-- My Disputes with Children -->
+                <div class="space-y-1">
+                    <button class="nav-group-btn flex items-center justify-between w-full px-3 py-2 text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-700 rounded-md group" data-group="disputes">
+                        <div class="flex items-center gap-3">
+                            <i data-lucide="flag" class="w-5 h-5 text-neutral-500 group-hover:text-brand-primary-700"></i>
+                            <span class="font-medium">My Disputes</span>
+                        </div>
+                        <i data-lucide="chevron-down" class="w-4 h-4 text-neutral-500 group-hover:text-brand-primary-700 transition-transform duration-200"></i>
+                    </button>
+                    <div class="nav-group-children ml-8 space-y-1 hidden" data-group-target="disputes">
+                        <a href="my_disputes.html" class="nav-link flex items-center gap-3 px-3 py-2 text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-700 rounded-md text-xs" data-page="my_disputes">
+                            <i data-lucide="flag" class="w-4 h-4"></i>
+                            <span>View Disputes</span>
+                        </a>
+                        <a href="raise_dispute.html" class="nav-link flex items-center gap-3 px-3 py-2 text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-700 rounded-md text-xs" data-page="raise_dispute">
+                            <i data-lucide="plus-circle" class="w-4 h-4"></i>
+                            <span>Raise Dispute</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- My Profile -->
+                <a href="my_profile.html" class="nav-link flex items-center gap-3 px-3 py-2 text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-700 rounded-md group" data-page="my_profile">
+                    <i data-lucide="user" class="w-5 h-5 text-neutral-500 group-hover:text-brand-primary-700"></i>
+                    <span class="font-medium">My Profile</span>
+                </a>
+            </nav>
+
+            <!-- Footer -->
+            <div class="absolute bottom-4 left-0 right-0 text-center text-xs text-neutral-500 bg-white px-4">
+                Made with ❤️ by TiramAi
+            </div>
+        </aside>
+
+        <!-- Mobile Overlay -->
+        <div id="mobile-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-10 hidden md:hidden"></div>
+
+        <!-- Main Content -->
+        <main id="pageContent" class="flex-1 p-6 overflow-y-auto min-h-screen">
+            
+<!-- Breadcrumb Navigation -->
+<nav class="flex items-center gap-2 text-sm text-neutral-700 mb-6" aria-label="Breadcrumb">
+  <button id="nav-dashboard" class="hover:text-brand-primary-700 focus:outline-none focus:underline">Dashboard</button>
+  <i data-lucide="chevron-right" class="w-4 h-4 text-neutral-500"></i>
+  <button id="nav-my-skills" class="hover:text-brand-primary-700 focus:outline-none focus:underline">My Skills</button>
+  <i data-lucide="chevron-right" class="w-4 h-4 text-neutral-500"></i>
+  <span class="text-neutral-950 font-medium">Skill Growth Detail</span>
+</nav>
+
+<!-- Header with Back Button -->
+<div class="flex items-center justify-between mb-6">
+  <div class="flex items-center gap-4">
+    <button id="back-btn" class="inline-flex items-center gap-2 px-3 py-2 text-sm text-neutral-700 hover:text-brand-primary-700 hover:bg-neutral-50 rounded-md focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2" aria-label="Go back to My Skills">
+      <i data-lucide="arrow-left" class="w-4 h-4"></i>
+      Back to My Skills
+    </button>
+  </div>
+  
+  <!-- Raise Dispute Action -->
+  <div id="dispute-container" class="hidden">
+    <button id="raise-dispute-btn" class="inline-flex items-center gap-2 px-4 py-2 bg-danger-600 hover:bg-danger-700 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+      <i data-lucide="flag" class="w-4 h-4"></i>
+      Raise Dispute
+    </button>
+  </div>
+</div>
+
+<!-- Loading Skeleton -->
+<div id="loading-skeleton" class="space-y-6">
+  <div class="bg-white border border-neutral-200 rounded-md p-6 shadow-sm">
+    <div class="h-6 bg-neutral-200 rounded w-1/4 mb-4 animate-pulse"></div>
+    <div class="space-y-3">
+      <div class="h-4 bg-neutral-200 rounded w-full animate-pulse"></div>
+      <div class="h-4 bg-neutral-200 rounded w-3/4 animate-pulse"></div>
+    </div>
+  </div>
+  <div class="bg-white border border-neutral-200 rounded-md p-6 shadow-sm">
+    <div class="h-64 bg-neutral-200 rounded animate-pulse"></div>
+  </div>
+  <div class="bg-white border border-neutral-200 rounded-md p-6 shadow-sm">
+    <div class="h-32 bg-neutral-200 rounded animate-pulse"></div>
+  </div>
+</div>
+
+<!-- Main Content (Hidden initially) -->
+<div id="main-content" class="hidden space-y-6">
+  
+  <!-- Current Status Card -->
+  <section class="bg-white border border-neutral-200 rounded-md p-6 shadow-sm">
+    <h2 class="text-xl leading-7 font-semibold text-neutral-950 mb-4">Current Status</h2>
+    
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <!-- Skill Info -->
+      <div class="md:col-span-2 space-y-4">
+        <div>
+          <h1 id="skill-name" class="text-2xl leading-8 font-bold text-neutral-950 mb-2">Loading...</h1>
+          <p id="skill-description" class="text-sm text-neutral-700 mb-3">Loading description...</p>
+          
+          <div class="flex flex-wrap gap-2 mb-4">
+            <span id="skill-category" class="inline-flex items-center px-2 py-1 text-xs rounded-full bg-neutral-100 text-neutral-700">Loading...</span>
+            <span id="skill-criticality" class="inline-flex items-center px-2 py-1 text-xs rounded-full bg-accent-gold-50 text-neutral-900 border border-accent-gold-500">Loading...</span>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Current Score Status -->
+      <div class="space-y-4">
+        <div class="text-center">
+          <div class="inline-flex items-center justify-center w-24 h-24 mb-2 rounded-full bg-neutral-100">
+            <span id="current-score" class="text-2xl font-bold text-neutral-950">-</span>
+          </div>
+          <p class="text-xs text-neutral-500">Current Score</p>
+        </div>
+        
+        <div class="space-y-2">
+          <div class="flex justify-between text-sm">
+            <span class="text-neutral-700">Benchmark:</span>
+            <span id="current-benchmark" class="font-medium">-</span>
+          </div>
+          <div class="flex justify-between text-sm">
+            <span class="text-neutral-700">Gap:</span>
+            <span id="current-gap" class="font-medium">-</span>
+          </div>
+          <div class="flex justify-between text-sm">
+            <span class="text-neutral-700">Last Assessed:</span>
+            <span id="last-assessed" class="text-xs text-neutral-500">-</span>
+          </div>
+          
+          <!-- TNI Badge -->
+          <div id="tni-badge" class="hidden pt-2">
+            <span class="inline-flex items-center px-2 py-1 text-xs rounded-full bg-warning-600 text-white">
+              <i data-lucide="alert-triangle" class="w-3 h-3 mr-1"></i>
+              Training Required
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Timeline Chart -->
+  <section class="bg-white border border-neutral-200 rounded-md p-6 shadow-sm">
+    <div class="flex items-center justify-between mb-4">
+      <h2 class="text-xl leading-7 font-semibold text-neutral-950">Score Timeline</h2>
+      <button id="refresh-chart" class="inline-flex items-center text-sm text-neutral-500 hover:text-neutral-700 focus:outline-none" aria-label="Refresh chart data">
+        <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+      </button>
+    </div>
+    
+    <div id="timeline-chart" class="w-full h-80"></div>
+  </section>
+
+  <!-- Training Impact Analysis -->
+  <section class="bg-white border border-neutral-200 rounded-md p-6 shadow-sm">
+    <div class="flex items-center justify-between mb-4">
+      <h2 class="text-xl leading-7 font-semibold text-neutral-950">Training Impact Analysis</h2>
+      <button id="refresh-training" class="inline-flex items-center text-sm text-neutral-500 hover:text-neutral-700 focus:outline-none" aria-label="Refresh training data">
+        <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+      </button>
+    </div>
+    
+    <div id="training-impact-content">
+      <div id="training-impact-loading" class="text-center py-8">
+        <div class="inline-block animate-spin rounded-full h-6 w-6 border-b-2 border-brand-primary-600"></div>
+        <p class="text-sm text-neutral-500 mt-2">Loading training impact data...</p>
+      </div>
+      
+      <div id="training-impact-list" class="hidden space-y-4"></div>
+      
+      <div id="training-impact-empty" class="hidden text-center py-8">
+        <i data-lucide="book-open" class="w-12 h-12 text-neutral-400 mx-auto mb-3"></i>
+        <h3 class="text-base font-medium text-neutral-900 mb-1">No Training Sessions</h3>
+        <p class="text-sm text-neutral-500">No completed training sessions found for this skill.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Assessment History -->
+  <section class="bg-white border border-neutral-200 rounded-md p-6 shadow-sm">
+    <div class="flex items-center justify-between mb-4">
+      <h2 class="text-xl leading-7 font-semibold text-neutral-950">Assessment History</h2>
+      <button id="refresh-assessments" class="inline-flex items-center text-sm text-neutral-500 hover:text-neutral-700 focus:outline-none" aria-label="Refresh assessment data">
+        <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+      </button>
+    </div>
+    
+    <div id="assessment-history-content">
+      <div id="assessment-history-loading" class="text-center py-8">
+        <div class="inline-block animate-spin rounded-full h-6 w-6 border-b-2 border-brand-primary-600"></div>
+        <p class="text-sm text-neutral-500 mt-2">Loading assessment history...</p>
+      </div>
+      
+      <div id="assessment-table-container" class="hidden">
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm leading-5">
+            <thead class="bg-neutral-50 text-neutral-700">
+              <tr>
+                <th class="text-left font-semibold px-3 py-3 border-b border-neutral-200">Date</th>
+                <th class="text-left font-semibold px-3 py-3 border-b border-neutral-200">Score</th>
+                <th class="text-left font-semibold px-3 py-3 border-b border-neutral-200">Benchmark</th>
+                <th class="text-left font-semibold px-3 py-3 border-b border-neutral-200">Gap</th>
+                <th class="text-left font-semibold px-3 py-3 border-b border-neutral-200">Assessor</th>
+                <th class="text-left font-semibold px-3 py-3 border-b border-neutral-200">Cycle</th>
+                <th class="text-left font-semibold px-3 py-3 border-b border-neutral-200">Comments</th>
+              </tr>
+            </thead>
+            <tbody id="assessment-table-body" class="divide-y divide-neutral-200">
+              <!-- Assessment rows will be populated here -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+      
+      <div id="assessment-history-empty" class="hidden text-center py-8">
+        <i data-lucide="clipboard-list" class="w-12 h-12 text-neutral-400 mx-auto mb-3"></i>
+        <h3 class="text-base font-medium text-neutral-900 mb-1">No Assessment History</h3>
+        <p class="text-sm text-neutral-500">No assessment records found for this skill.</p>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<!-- Error State -->
+<div id="error-state" class="hidden text-center py-12">
+  <i data-lucide="alert-circle" class="w-16 h-16 text-danger-600 mx-auto mb-4"></i>
+  <h2 class="text-xl font-semibold text-neutral-900 mb-2">Unable to Load Skill Data</h2>
+  <p class="text-neutral-600 mb-4">There was an error loading the skill information. Please try again.</p>
+  <button id="retry-btn" class="inline-flex items-center gap-2 px-4 py-2 bg-brand-primary-600 hover:bg-brand-primary-700 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2">
+    <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+    Retry
+  </button>
+</div>
+
+        </main>
+    </div>
+
+    <!-- Required: JavaScript -->
+    <script type="module" data-tiramai="web-gen">
+        import { showToast, showLoader, hideLoader, env } from "./scripts/main.js";
+        import { auth, db, storage } from "./scripts/firebase.js";
+        import { onAuthStateChanged, getAuth, signOut } from 'https://www.gstatic.com/firebasejs/10.12.4/firebase-auth.js';
+        import { doc, getDoc } from 'https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js';
+
+        // Initialize Lucide icons
+        lucide.createIcons();
+
+        // Mobile menu functionality
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const sidebar = document.getElementById('sidebar');
+        const mobileOverlay = document.getElementById('mobile-overlay');
+
+        function toggleMobileMenu() {
+            sidebar.classList.toggle('-translate-x-full');
+            mobileOverlay.classList.toggle('hidden');
+        }
+
+        mobileMenuBtn?.addEventListener('click', toggleMobileMenu);
+        mobileOverlay?.addEventListener('click', toggleMobileMenu);
+
+        // Navigation group toggle functionality
+        document.querySelectorAll('.nav-group-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const groupName = btn.getAttribute('data-group');
+                const children = document.querySelector(`[data-group-target="${groupName}"]`);
+                const chevron = btn.querySelector('[data-lucide="chevron-down"]');
+                
+                children?.classList.toggle('hidden');
+                chevron?.classList.toggle('rotate-180');
+            });
+        });
+
+        // User profile dropdown
+        const userProfileBtn = document.getElementById('user-profile-btn');
+        const userDropdown = document.getElementById('user-dropdown');
+
+        userProfileBtn?.addEventListener('click', (e) => {
+            e.stopPropagation();
+            userDropdown?.classList.toggle('hidden');
+        });
+
+        document.addEventListener('click', (e) => {
+            if (!userProfileBtn?.contains(e.target)) {
+                userDropdown?.classList.add('hidden');
+            }
+        });
+
+        // Active navigation highlighting
+        function updateActiveNav() {
+            const currentPage = window.location.pathname.split('/').pop()?.replace('.html', '') || 'employee_dashboard';
+            
+            document.querySelectorAll('.nav-link').forEach(link => {
+                const page = link.getAttribute('data-page');
+                if (page === currentPage) {
+                    link.classList.add('bg-accent-gold-50', 'text-brand-primary-700', 'border-l-4', 'border-accent-gold-500');
+                    link.classList.remove('text-neutral-700', 'text-neutral-600');
+                } else {
+                    link.classList.remove('bg-accent-gold-50', 'text-brand-primary-700', 'border-l-4', 'border-accent-gold-500');
+                }
+            });
+        }
+
+        // Auth state management
+        let currentUser = null;
+
+        function updateUserProfile(user, userData = null) {
+            const userAvatar = document.getElementById('user-avatar');
+            const userName = document.getElementById('user-name');
+            const dropdownUserName = document.getElementById('dropdown-user-name');
+            const dropdownUserEmail = document.getElementById('dropdown-user-email');
+
+            if (userData) {
+                const displayName = `${userData.firstName || ''} ${userData.lastName || ''}`.trim() || 'User';
+                const initials = displayName.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
+                
+                userAvatar.textContent = initials;
+                userName.textContent = displayName;
+                dropdownUserName.textContent = displayName;
+                dropdownUserEmail.textContent = userData.email || user.email;
+            } else {
+                // Fallback to auth data
+                const displayName = user.displayName || user.email.split('@')[0];
+                const initials = displayName.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
+                
+                userAvatar.textContent = initials;
+                userName.textContent = displayName;
+                dropdownUserName.textContent = displayName;
+                dropdownUserEmail.textContent = user.email;
+            }
+        }
+
+        async function loadUserData(user) {
+            try {
+                const userDocRef = doc(db, 'users', user.uid);
+                const userDoc = await getDoc(userDocRef);
+                
+                if (userDoc.exists()) {
+                    return userDoc.data();
+                } else {
+                    // Fallback data
+                    return {
+                        firstName: 'John',
+                        lastName: 'Doe',
+                        email: user.email
+                    };
+                }
+            } catch (error) {
+                console.error('Error loading user data:', error);
+                return null;
+            }
+        }
+
+        // Sign out functionality
+        document.getElementById('sign-out-btn')?.addEventListener('click', async () => {
+            try {
+                showLoader();
+                await signOut(auth);
+                showToast('Signed out successfully', 'success');
+                window.location.href = 'auth.html';
+            } catch (error) {
+                console.error('Sign out error:', error);
+                showToast('Error signing out', 'error');
+            } finally {
+                hideLoader();
+            }
+        });
+
+        // Initialize auth state listener
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                currentUser = user;
+                const userData = await loadUserData(user);
+                updateUserProfile(user, userData);
+                updateActiveNav();
+            } else {
+                window.location.href = 'auth.html';
+            }
+        });
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', () => {
+            updateActiveNav();
+        });
+    </script>
+
+    
+<script id="data-script" type="module" data-tiramai="web-gen">
+  import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.12.4/firebase-auth.js';
+  import {
+    collection, getDocs, doc, getDoc, query, where, orderBy, limit,
+    Timestamp
+  } from 'https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js';
+  import { auth, getDb } from "./scripts/firebase.js";
+  import { showToast } from "./scripts/main.js";
+
+  const db = getDb();
+  let currentUser = null;
+  let skillId = null;
+
+  // Get skill ID from URL params
+  function getSkillIdFromURL() {
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get('skillId');
+  }
+
+  // Utility to yield control back to the browser
+  const yieldToFrame = () => new Promise(r => requestAnimationFrame(() => r()));
+
+  // Data processing worker simulation for heavy calculations
+  async function processTimelineData(assessments, trainings) {
+    await yieldToFrame(); // Defer heavy processing
+    
+    const chartData = {
+      dates: [],
+      scores: [],
+      benchmarks: [],
+      trainingMarkers: []
+    };
+
+    // Process assessments chronologically
+    assessments.forEach(assessment => {
+      const date = new Date(assessment.assessmentTimestamp);
+      chartData.dates.push(date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: '2-digit' }));
+      chartData.scores.push(assessment.score || 0);
+      chartData.benchmarks.push(assessment.benchmarkAtTimeOfAssessment || 0);
+    });
+
+    // Process training markers
+    trainings.forEach(training => {
+      if (training.status === 'completed') {
+        chartData.trainingMarkers.push({
+          start: new Date(training.scheduledDate),
+          end: new Date(training.endDate),
+          name: `Training Session`
+        });
+      }
+    });
+
+    return chartData;
+  }
+
+  // Calculate gap color based on thresholds
+  function getGapColor(gap) {
+    if (gap <= 0) return 'text-success-600';
+    if (gap <= 2) return 'text-warning-600';
+    return 'text-danger-600';
+  }
+
+  // Format date for display
+  function formatDate(dateString) {
+    if (!dateString) return 'N/A';
+    try {
+      return new Date(dateString).toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      });
+    } catch {
+      return 'N/A';
+    }
+  }
+
+  // Abortable fetch pattern
+  let currentAbort;
+  async function abortableFetch(fetchFn) {
+    if (currentAbort) currentAbort.abort();
+    currentAbort = new AbortController();
+    const signal = currentAbort.signal;
+
+    try {
+      const result = await fetchFn();
+      if (signal.aborted) return null;
+      return result;
+    } catch (err) {
+      if (signal.aborted) return null;
+      throw err;
+    }
+  }
+
+  // Load skill data
+  async function funLoadSkillData() {
+    try {
+      const skillDoc = await getDoc(doc(db, 'skills', skillId));
+      if (!skillDoc.exists()) {
+        throw new Error('Skill not found');
+      }
+
+      const skillData = skillDoc.data();
+      
+      // Load related data
+      const [categoryDoc, criticalityDoc] = await Promise.all([
+        skillData.categoryId ? getDoc(doc(db, 'skillCategories', skillData.categoryId)) : null,
+        skillData.criticalityId ? getDoc(doc(db, 'skillCriticalities', skillData.criticalityId)) : null
+      ]);
+
+      return {
+        ...skillData,
+        id: skillDoc.id,
+        categoryName: categoryDoc?.exists() ? categoryDoc.data().categoryName : 'N/A',
+        criticalityName: criticalityDoc?.exists() ? criticalityDoc.data().criticalityName : 'N/A'
+      };
+    } catch (error) {
+      console.error('Error loading skill data:', error);
+      throw error;
+    }
+  }
+
+  // Load assessments for this user and skill
+  async function funLoadAssessments() {
+    try {
+      const q = query(
+        collection(db, 'assessments'),
+        where('employeeId', '==', currentUser.uid),
+        where('skillId', '==', skillId),
+        where('status', '==', 'active'),
+        orderBy('assessmentTimestamp', 'asc')
+      );
+
+      const snapshot = await getDocs(q);
+      const assessments = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      }));
+
+      // Load assessor names
+      const assessorIds = [...new Set(assessments.map(a => a.assessedByEmployeeId).filter(Boolean))];
+      const assessorPromises = assessorIds.map(id => getDoc(doc(db, 'users', id)));
+      const assessorDocs = await Promise.all(assessorPromises);
+      
+      const assessorMap = {};
+      assessorDocs.forEach((doc, index) => {
+        if (doc.exists()) {
+          const data = doc.data();
+          assessorMap[assessorIds[index]] = `${data.firstName || ''} ${data.lastName || ''}`.trim() || 'N/A';
+        }
+      });
+
+      // Load cycle names
+      const cycleIds = [...new Set(assessments.map(a => a.assessmentCycleId).filter(Boolean))];
+      const cyclePromises = cycleIds.map(id => getDoc(doc(db, 'assessmentCycles', id)));
+      const cycleDocs = await Promise.all(cyclePromises);
+      
+      const cycleMap = {};
+      cycleDocs.forEach((doc, index) => {
+        if (doc.exists()) {
+          cycleMap[cycleIds[index]] = doc.data().cycleName || 'N/A';
+        }
+      });
+
+      return assessments.map(assessment => ({
+        ...assessment,
+        assessorName: assessorMap[assessment.assessedByEmployeeId] || 'N/A',
+        cycleName: cycleMap[assessment.assessmentCycleId] || 'N/A'
+      }));
+    } catch (error) {
+      console.error('Error loading assessments:', error);
+      throw error;
+    }
+  }
+
+  // Load training sessions for this skill assigned to the user
+  async function funLoadTrainingSessions() {
+    try {
+      const q = query(
+        collection(db, 'trainingSessions'),
+        where('skillId', '==', skillId)
+      );
+
+      const snapshot = await getDocs(q);
+      const trainings = snapshot.docs
+        .map(doc => ({ id: doc.id, ...doc.data() }))
+        .filter(training => {
+          // Check if user is assigned to this training
+          return training.assignedEmployees?.some(assignment => assignment.employeeId === currentUser.uid);
+        });
+
+      return trainings;
+    } catch (error) {
+      console.error('Error loading training sessions:', error);
+      throw error;
+    }
+  }
+
+  // Check if user can dispute (latest assessment in active cycle, no existing open dispute)
+  async function funCheckDisputeEligibility(latestAssessment) {
+    try {
+      if (!latestAssessment) return false;
+
+      // Check if assessment is from active cycle
+      const cycleDoc = await getDoc(doc(db, 'assessmentCycles', latestAssessment.assessmentCycleId));
+      if (!cycleDoc.exists() || !cycleDoc.data().isActiveCycle) return false;
+
+      // Check for existing open disputes
+      const disputeQuery = query(
+        collection(db, 'disputes'),
+        where('employeeId', '==', currentUser.uid),
+        where('status', '==', 'open')
+      );
+
+      const disputeSnapshot = await getDocs(disputeQuery);
+      const openDisputes = disputeSnapshot.docs.map(doc => doc.data());
+      
+      // Check if any open dispute covers this skill
+      const hasOpenDisputeForSkill = openDisputes.some(dispute => 
+        dispute.disputedSkills?.some(skill => skill.skillId === skillId)
+      );
+
+      return !hasOpenDisputeForSkill;
+    } catch (error) {
+      console.error('Error checking dispute eligibility:', error);
+      return false;
+    }
+  }
+
+  // Update current status display
+  function updateCurrentStatus(skillData, latestAssessment) {
+    // Skill info
+    document.getElementById('skill-name').textContent = skillData.name || 'N/A';
+    document.getElementById('skill-description').textContent = skillData.description || 'No description available.';
+    document.getElementById('skill-category').textContent = skillData.categoryName || 'N/A';
+    document.getElementById('skill-criticality').textContent = skillData.criticalityName || 'N/A';
+
+    if (latestAssessment) {
+      // Current status
+      document.getElementById('current-score').textContent = latestAssessment.score || 'N/A';
+      document.getElementById('current-benchmark').textContent = latestAssessment.benchmarkAtTimeOfAssessment || 'N/A';
+      
+      const gap = (latestAssessment.benchmarkAtTimeOfAssessment || 0) - (latestAssessment.score || 0);
+      const gapElement = document.getElementById('current-gap');
+      gapElement.textContent = gap;
+      gapElement.className = `font-medium ${getGapColor(gap)}`;
+      
+      document.getElementById('last-assessed').textContent = formatDate(latestAssessment.assessmentTimestamp);
+
+      // TNI badge
+      if (latestAssessment.tniFlag) {
+        document.getElementById('tni-badge').classList.remove('hidden');
+      }
+    } else {
+      // No assessments
+      document.getElementById('current-score').textContent = 'N/A';
+      document.getElementById('current-benchmark').textContent = 'N/A';
+      document.getElementById('current-gap').textContent = 'N/A';
+      document.getElementById('last-assessed').textContent = 'Never assessed';
+    }
+  }
+
+  // Render timeline chart using ECharts
+  async function funRenderChart(assessments, trainings) {
+    try {
+      const chartContainer = document.getElementById('timeline-chart');
+      if (!window.echarts) {
+        chartContainer.innerHTML = '<p class="text-center text-neutral-500 py-8">Chart library not available</p>';
+        return;
+      }
+
+      const chartData = await processTimelineData(assessments, trainings);
+
+      const chart = echarts.init(chartContainer);
+      
+      const option = {
+        tooltip: {
+          trigger: 'axis',
+          axisPointer: { type: 'cross' }
+        },
+        legend: {
+          data: ['Score', 'Benchmark'],
+          bottom: 0
+        },
+        grid: {
+          left: '3%',
+          right: '4%',
+          bottom: '15%',
+          containLabel: true
+        },
+        xAxis: {
+          type: 'category',
+          boundaryGap: false,
+          data: chartData.dates
+        },
+        yAxis: {
+          type: 'value',
+          min: 0,
+          max: 10,
+          axisLabel: {
+            formatter: '{value}'
+          }
+        },
+        series: [
+          {
+            name: 'Score',
+            type: 'line',
+            data: chartData.scores,
+            lineStyle: { color: '#1B2A44' },
+            itemStyle: { color: '#1B2A44' },
+            symbol: 'circle',
+            symbolSize: 6
+          },
+          {
+            name: 'Benchmark',
+            type: 'line',
+            data: chartData.benchmarks,
+            lineStyle: { color: '#C59D42', type: 'dashed' },
+            itemStyle: { color: '#C59D42' },
+            symbol: 'diamond',
+            symbolSize: 6
+          }
+        ]
+      };
+
+      chart.setOption(option);
+
+      // Handle responsive resize
+      const resizeChart = () => chart.resize();
+      window.addEventListener('resize', resizeChart);
+      
+      return () => {
+        window.removeEventListener('resize', resizeChart);
+        chart.dispose();
+      };
+    } catch (error) {
+      console.error('Error rendering chart:', error);
+      document.getElementById('timeline-chart').innerHTML = '<p class="text-center text-neutral-500 py-8">Error loading chart</p>';
+    }
+  }
+
+  // Calculate and render training impact
+  async function funRenderTrainingImpact(assessments, trainings) {
+    const container = document.getElementById('training-impact-list');
+    const loading = document.getElementById('training-impact-loading');
+    const empty = document.getElementById('training-impact-empty');
+
+    try {
+      loading.classList.remove('hidden');
+      container.classList.add('hidden');
+      empty.classList.add('hidden');
+
+      await yieldToFrame(); // Defer heavy processing
+
+      if (trainings.length === 0) {
+        loading.classList.add('hidden');
+        empty.classList.remove('hidden');
+        return;
+      }
+
+      const completedTrainings = trainings.filter(t => t.status === 'completed');
+      if (completedTrainings.length === 0) {
+        loading.classList.add('hidden');
+        empty.classList.remove('hidden');
+        return;
+      }
+
+      const impacts = [];
+
+      for (const training of completedTrainings) {
+        const trainingStart = new Date(training.scheduledDate);
+        const trainingEnd = new Date(training.endDate);
+        
+        // Find pre-training score (last assessment before start)
+        const preAssessments = assessments.filter(a => new Date(a.assessmentTimestamp) < trainingStart);
+        const preAssessment = preAssessments[preAssessments.length - 1];
+
+        // Find post-training score (first assessment after training + delay days)
+        const activeCycleDoc = await abortableFetch(async () => {
+          const q = query(collection(db, 'assessmentCycles'), where('isActiveCycle', '==', true), limit(1));
+          const snapshot = await getDocs(q);
+          return snapshot.docs[0];
+        });
+
+        const reassessmentDelay = activeCycleDoc?.data()?.reassessmentDelayDays || 14;
+        const reassessmentEligibleDate = new Date(trainingEnd.getTime() + (reassessmentDelay * 24 * 60 * 60 * 1000));
+        
+        const postAssessments = assessments.filter(a => new Date(a.assessmentTimestamp) >= reassessmentEligibleDate);
+        const postAssessment = postAssessments[0];
+
+        impacts.push({
+          training,
+          preAssessment,
+          postAssessment,
+          improvement: preAssessment && postAssessment ? (postAssessment.score - preAssessment.score) : null,
+          tniCleared: postAssessment ? (postAssessment.score >= postAssessment.benchmarkAtTimeOfAssessment) : false
+        });
+      }
+
+      // Render impact cards
+      container.innerHTML = impacts.map(impact => `
+        <div class="border border-neutral-200 rounded-md p-4">
+          <div class="flex items-center justify-between mb-3">
+            <h4 class="font-medium text-neutral-950">
+              ${formatDate(impact.training.scheduledDate)} - ${formatDate(impact.training.endDate)}
+            </h4>
+            <span class="inline-flex items-center px-2 py-1 text-xs rounded-full ${
+              impact.tniCleared 
+                ? 'bg-success-600 text-white'
+                : 'bg-warning-600 text-white'
+            }">
+              ${impact.tniCleared ? 'TNI Cleared' : 'TNI Not Cleared'}
+            </span>
+          </div>
+          
+          <div class="grid grid-cols-3 gap-4 text-sm">
+            <div class="text-center">
+              <div class="text-lg font-semibold ${impact.preAssessment ? 'text-neutral-950' : 'text-neutral-400'}">
+                ${impact.preAssessment?.score || 'N/A'}
+              </div>
+              <div class="text-xs text-neutral-500">Pre-training</div>
+            </div>
+            
+            <div class="text-center">
+              <div class="text-lg font-semibold ${
+                impact.improvement !== null
+                  ? impact.improvement > 0 
+                    ? 'text-success-600' 
+                    : impact.improvement < 0 
+                      ? 'text-danger-600' 
+                      : 'text-neutral-500'
+                  : 'text-neutral-400'
+              }">
+                ${impact.improvement !== null 
+                  ? (impact.improvement > 0 ? '+' : '') + impact.improvement
+                  : 'N/A'
+                }
+              </div>
+              <div class="text-xs text-neutral-500">Improvement</div>
+            </div>
+            
+            <div class="text-center">
+              <div class="text-lg font-semibold ${impact.postAssessment ? 'text-neutral-950' : 'text-neutral-400'}">
+                ${impact.postAssessment?.score || 'N/A'}
+              </div>
+              <div class="text-xs text-neutral-500">Post-training</div>
+            </div>
+          </div>
+          
+          ${impact.preAssessment && impact.postAssessment ? '' : `
+            <div class="mt-2 text-xs text-neutral-500">
+              ${!impact.preAssessment ? 'No pre-training assessment available. ' : ''}
+              ${!impact.postAssessment ? 'No post-training assessment available yet.' : ''}
+            </div>
+          `}
+        </div>
+      `).join('');
+
+      loading.classList.add('hidden');
+      container.classList.remove('hidden');
+
+    } catch (error) {
+      console.error('Error rendering training impact:', error);
+      loading.classList.add('hidden');
+      container.innerHTML = '<p class="text-center text-danger-600 py-4">Error loading training impact data</p>';
+      container.classList.remove('hidden');
+    }
+  }
+
+  // Render assessment history table
+  function renderAssessmentHistory(assessments) {
+    const container = document.getElementById('assessment-table-container');
+    const loading = document.getElementById('assessment-history-loading');
+    const empty = document.getElementById('assessment-history-empty');
+    const tbody = document.getElementById('assessment-table-body');
+
+    loading.classList.add('hidden');
+
+    if (assessments.length === 0) {
+      container.classList.add('hidden');
+      empty.classList.remove('hidden');
+      return;
+    }
+
+    // Reverse order to show latest first
+    const sortedAssessments = [...assessments].reverse();
+
+    tbody.innerHTML = sortedAssessments.map(assessment => {
+      const gap = (assessment.benchmarkAtTimeOfAssessment || 0) - (assessment.score || 0);
+      return `
+        <tr class="hover:bg-neutral-50">
+          <td class="px-3 py-3">${formatDate(assessment.assessmentTimestamp)}</td>
+          <td class="px-3 py-3">
+            <span class="font-medium">${assessment.score || 'N/A'}</span>
+          </td>
+          <td class="px-3 py-3">${assessment.benchmarkAtTimeOfAssessment || 'N/A'}</td>
+          <td class="px-3 py-3">
+            <span class="${getGapColor(gap)}">${gap}</span>
+          </td>
+          <td class="px-3 py-3">${assessment.assessorName || 'N/A'}</td>
+          <td class="px-3 py-3">${assessment.cycleName || 'N/A'}</td>
+          <td class="px-3 py-3">
+            <div class="max-w-xs truncate" title="${assessment.comments || 'No comments'}">
+              ${assessment.comments || 'No comments'}
+            </div>
+          </td>
+        </tr>
+      `;
+    }).join('');
+
+    container.classList.remove('hidden');
+    empty.classList.add('hidden');
+  }
+
+  // Main load function with concurrency control
+  async function funLoadSkillGrowthData() {
+    try {
+      document.getElementById('loading-skeleton').classList.remove('hidden');
+      document.getElementById('main-content').classList.add('hidden');
+      document.getElementById('error-state').classList.add('hidden');
+
+      // Load skill data first
+      const skillData = await abortableFetch(funLoadSkillData);
+      if (!skillData) return; // Aborted
+
+      // Load assessments and trainings in parallel (limited to 2)
+      const [assessments, trainings] = await Promise.all([
+        abortableFetch(funLoadAssessments),
+        abortableFetch(funLoadTrainingSessions)
+      ]);
+
+      if (!assessments || !trainings) return; // Aborted
+
+      // Update UI
+      const latestAssessment = assessments[assessments.length - 1];
+      updateCurrentStatus(skillData, latestAssessment);
+
+      // Check dispute eligibility
+      if (latestAssessment) {
+        const canDispute = await funCheckDisputeEligibility(latestAssessment);
+        const disputeContainer = document.getElementById('dispute-container');
+        const disputeBtn = document.getElementById('raise-dispute-btn');
+        
+        if (canDispute) {
+          disputeContainer.classList.remove('hidden');
+          disputeBtn.disabled = false;
+        } else {
+          disputeContainer.classList.remove('hidden');
+          disputeBtn.disabled = true;
+          disputeBtn.title = 'Cannot dispute: either not from active cycle or open dispute exists';
+        }
+      }
+
+      // Render sections
+      await Promise.all([
+        funRenderChart(assessments, trainings),
+        funRenderTrainingImpact(assessments, trainings)
+      ]);
+
+      renderAssessmentHistory(assessments);
+
+      // Show main content
+      document.getElementById('loading-skeleton').classList.add('hidden');
+      document.getElementById('main-content').classList.remove('hidden');
+
+    } catch (error) {
+      console.error('Error loading skill growth data:', error);
+      document.getElementById('loading-skeleton').classList.add('hidden');
+      document.getElementById('error-state').classList.remove('hidden');
+      showToast('Failed to load skill data', 'error');
+    }
+  }
+
+  // Navigation handlers
+  function setupNavigation() {
+    document.getElementById('back-btn')?.addEventListener('click', () => {
+      window.location.href = 'my_skills.html';
+    });
+
+    document.getElementById('nav-dashboard')?.addEventListener('click', () => {
+      window.location.href = 'employee_dashboard.html';
+    });
+
+    document.getElementById('nav-my-skills')?.addEventListener('click', () => {
+      window.location.href = 'my_skills.html';
+    });
+
+    document.getElementById('raise-dispute-btn')?.addEventListener('click', () => {
+      window.location.href = `/raise_dispute.html?preselected_skill_ids=${encodeURIComponent(JSON.stringify([skillId]))}`;
+    });
+
+    // Refresh buttons
+    document.getElementById('refresh-chart')?.addEventListener('click', () => {
+      funLoadSkillGrowthData();
+    });
+
+    document.getElementById('refresh-training')?.addEventListener('click', () => {
+      funLoadSkillGrowthData();
+    });
+
+    document.getElementById('refresh-assessments')?.addEventListener('click', () => {
+      funLoadSkillGrowthData();
+    });
+
+    document.getElementById('retry-btn')?.addEventListener('click', () => {
+      funLoadSkillGrowthData();
+    });
+  }
+
+  // Initialize page
+  function initialize() {
+    skillId = getSkillIdFromURL();
+    
+    if (!skillId) {
+      showToast('No skill ID provided', 'error');
+      window.location.href = 'my_skills.html';
+      return;
+    }
+
+    setupNavigation();
+
+    // Auth state listener
+    onAuthStateChanged(auth, (user) => {
+      if (!user) {
+        window.location.href = `auth.html?redirect=${encodeURIComponent(location.pathname + location.search)}`;
+      } else {
+        currentUser = user;
+        funLoadSkillGrowthData();
+      }
+    });
+  }
+
+  // Initialize when DOM is ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initialize);
+  } else {
+    initialize();
+  }
+
+  // Initialize Lucide icons
+  if (window.lucide) {
+    lucide.createIcons();
+  }
+</script>
+
+</body>
+</html>

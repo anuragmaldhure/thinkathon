@@ -1,0 +1,1432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SkillBridge</title>
+
+    <!-- Required: Main JS Script -->
+    <script type="module" src="scripts/main.js" data-tiramai="web-gen"></script>
+
+    <!-- Required: TailwindCSS -->
+    <script src="./lib/tailwindcss/tailwindcss.js" fetchpriority="high" data-tiramai="web-gen"></script>
+
+    <!-- Required: Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest" data-tiramai="web-gen"></script>
+
+    <!-- Required: Favicon -->
+    <link rel="icon" href="assets/imgs/logo.ico" type="image/x-icon" data-tiramai="web-gen"/>
+
+    <!-- ECharts Support (for charts/graphs) -->
+    <script defer src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js" data-tiramai="web-gen"></script>
+
+    <!-- Markdown Support (for content rendering) -->
+    <script defer src="https://cdn.jsdelivr.net/npm/marked/marked.min.js" data-tiramai="web-gen"></script>
+
+    <!-- Tailwind Config Extension -->
+    <script data-tiramai="web-gen">
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            'primary-600': '#1B2A44',
+                            'primary-700': '#14233A',
+                            'primary-800': '#0E1A2B',
+                        },
+                        accent: {
+                            'gold-50': '#FFF7E6',
+                            'gold-500': '#C59D42',
+                            'gold-600': '#A97D22',
+                        },
+                        success: { '600': '#16A34A' },
+                        warning: { '600': '#D97706' },
+                        danger: { '600': '#DC2626' },
+                        info: { '600': '#2563EB' },
+                        heat: {
+                            green: '#16A34A',
+                            amber: '#F59E0B',
+                            red: '#DC2626'
+                        },
+                        neutral: {
+                            '50': '#F8FAFC',
+                            '200': '#E2E8F0',
+                            '500': '#64748B',
+                            '700': '#334155',
+                            '900': '#111827',
+                            '950': '#0B1220',
+                        }
+                    },
+                    fontSize: {
+                        'xs': ['12px', '16px'],
+                        'sm': ['14px', '20px'],
+                        'base': ['16px', '24px'],
+                        'xl': ['20px', '28px'],
+                        '2xl': ['24px', '32px'],
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-neutral-50 min-h-screen text-neutral-900">
+    <!-- Top Navigation -->
+    <header class="fixed top-0 left-0 right-0 bg-brand-primary-800 border-b border-neutral-200 flex items-center justify-between px-6 py-4 z-30 h-16">
+        <div class="flex items-center gap-4">
+            <!-- Mobile menu toggle -->
+            <button id="mobileMenuToggle" class="md:hidden text-white p-2" aria-label="Toggle menu">
+                <svg class="w-5 h-5" data-lucide="menu"></svg>
+            </button>
+            <!-- Logo -->
+            <div class="flex items-center gap-3">
+                <svg width="32" height="32" viewBox="0 0 400 400" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="84" y="116" width="56" height="168" rx="8" fill="#1E40AF"/>
+                    <rect x="176" y="84" width="56" height="200" rx="8" fill="#059669"/>
+                    <rect x="268" y="156" width="48" height="128" rx="8" fill="#1E40AF"/>
+                    <rect x="114" y="180" width="172" height="20" rx="10" fill="#F59E0B"/>
+                </svg>
+                <span class="text-xl font-semibold text-white">SkillBridge</span>
+            </div>
+        </div>
+        <div class="flex items-center gap-4">
+            <!-- User Profile Dropdown -->
+            <div class="relative" id="userProfileContainer">
+                <button id="userProfileToggle" class="flex items-center gap-2 text-white hover:text-accent-gold-500 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2 focus:ring-offset-brand-primary-800 rounded-md p-2">
+                    <div class="w-8 h-8 bg-accent-gold-500 rounded-full flex items-center justify-center">
+                        <span id="userInitials" class="text-sm font-semibold text-white">JD</span>
+                    </div>
+                    <svg class="w-4 h-4" data-lucide="chevron-down"></svg>
+                </button>
+                <!-- Dropdown Menu -->
+                <div id="userProfileDropdown" class="hidden absolute right-0 mt-2 w-64 bg-white rounded-md shadow-lg border border-neutral-200 py-2 z-50">
+                    <div class="px-4 py-3 border-b border-neutral-200">
+                        <p id="userDisplayName" class="text-sm font-semibold text-neutral-900">John Doe</p>
+                        <p id="userEmail" class="text-xs text-neutral-500">johndoe@example.com</p>
+                        <p class="text-xs text-accent-gold-600 font-medium">System Administrator</p>
+                    </div>
+                    <button id="signOutButton" class="w-full text-left px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50 flex items-center gap-2">
+                        <svg class="w-4 h-4" data-lucide="log-out"></svg>
+                        Sign Out
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="flex pt-16">
+        <!-- Side Navigation -->
+        <aside id="sidebar" class="fixed md:sticky top-16 left-0 w-64 bg-white border-r border-neutral-200 h-[calc(100vh-4rem)] overflow-y-auto z-20 transform -translate-x-full md:translate-x-0 transition-transform duration-200">
+            <nav class="p-4 space-y-1">
+                <!-- Admin Dashboard -->
+                <a href="dashboard.html" id="nav-dashboard" class="nav-item flex items-center gap-3 px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                    <svg class="w-5 h-5" data-lucide="layout-dashboard"></svg>
+                    <span>Admin Dashboard</span>
+                </a>
+
+                <!-- Employees with Children -->
+                <div class="nav-group">
+                    <button class="nav-group-toggle flex items-center justify-between w-full px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                        <div class="flex items-center gap-3">
+                            <svg class="w-5 h-5" data-lucide="users"></svg>
+                            <span>Employees</span>
+                        </div>
+                        <svg class="w-4 h-4 transform transition-transform" data-lucide="chevron-right"></svg>
+                    </button>
+                    <div class="nav-group-children hidden ml-8 space-y-1 mt-1">
+                        <a href="employees_list.html" class="nav-item block px-3 py-2 rounded-md text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-600">Employee Directory</a>
+                        <a href="employee_upsert.html?mode=create" class="nav-item block px-3 py-2 rounded-md text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-600">Add Employee</a>
+                    </div>
+                </div>
+
+                <!-- Departments -->
+                <a href="departments_list.html" id="nav-departments" class="nav-item flex items-center gap-3 px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                    <svg class="w-5 h-5" data-lucide="building"></svg>
+                    <span>Departments</span>
+                </a>
+
+                <!-- Skill Categories -->
+                <a href="skill_categories_list.html" id="nav-skill-categories" class="nav-item flex items-center gap-3 px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                    <svg class="w-5 h-5" data-lucide="layers"></svg>
+                    <span>Skill Categories</span>
+                </a>
+
+                <!-- Criticality Levels -->
+                <a href="skill_criticalities_list.html" id="nav-criticalities" class="nav-item flex items-center gap-3 px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                    <svg class="w-5 h-5" data-lucide="sliders"></svg>
+                    <span>Criticality Levels</span>
+                </a>
+
+                <!-- Skills with Children -->
+                <div class="nav-group">
+                    <button class="nav-group-toggle flex items-center justify-between w-full px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                        <div class="flex items-center gap-3">
+                            <svg class="w-5 h-5" data-lucide="book"></svg>
+                            <span>Skills</span>
+                        </div>
+                        <svg class="w-4 h-4 transform transition-transform" data-lucide="chevron-right"></svg>
+                    </button>
+                    <div class="nav-group-children hidden ml-8 space-y-1 mt-1">
+                        <a href="skills_list.html" class="nav-item block px-3 py-2 rounded-md text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-600">Skills Directory</a>
+                        <a href="skill_upsert.html?mode=create" class="nav-item block px-3 py-2 rounded-md text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-600">Add Skill</a>
+                    </div>
+                </div>
+
+                <!-- Assessment Cycles with Children -->
+                <div class="nav-group">
+                    <button class="nav-group-toggle flex items-center justify-between w-full px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                        <div class="flex items-center gap-3">
+                            <svg class="w-5 h-5" data-lucide="calendar"></svg>
+                            <span>Assessment Cycles</span>
+                        </div>
+                        <svg class="w-4 h-4 transform transition-transform" data-lucide="chevron-right"></svg>
+                    </button>
+                    <div class="nav-group-children hidden ml-8 space-y-1 mt-1">
+                        <a href="assessment_cycles_list.html" class="nav-item block px-3 py-2 rounded-md text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-600">Cycles Directory</a>
+                        <a href="assessment_cycle_upsert.html?mode=create" class="nav-item block px-3 py-2 rounded-md text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-600">Create Cycle</a>
+                    </div>
+                </div>
+
+                <!-- Trainer Pool with Children -->
+                <div class="nav-group">
+                    <button class="nav-group-toggle flex items-center justify-between w-full px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                        <div class="flex items-center gap-3">
+                            <svg class="w-5 h-5" data-lucide="users"></svg>
+                            <span>Trainer Pool</span>
+                        </div>
+                        <svg class="w-4 h-4 transform transition-transform" data-lucide="chevron-right"></svg>
+                    </button>
+                    <div class="nav-group-children hidden ml-8 space-y-1 mt-1">
+                        <a href="trainers_list.html" class="nav-item block px-3 py-2 rounded-md text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-600">Trainer Directory</a>
+                        <a href="external_trainer_upsert.html?mode=create" class="nav-item block px-3 py-2 rounded-md text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-600">Add External Trainer</a>
+                    </div>
+                </div>
+
+                <!-- Training Sessions with Children -->
+                <div class="nav-group">
+                    <button class="nav-group-toggle flex items-center justify-between w-full px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                        <div class="flex items-center gap-3">
+                            <svg class="w-5 h-5" data-lucide="calendar"></svg>
+                            <span>Training Sessions</span>
+                        </div>
+                        <svg class="w-4 h-4 transform transition-transform" data-lucide="chevron-right"></svg>
+                    </button>
+                    <div class="nav-group-children hidden ml-8 space-y-1 mt-1">
+                        <a href="training_sessions_list.html" class="nav-item block px-3 py-2 rounded-md text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-600">Sessions Calendar</a>
+                        <a href="training_session_upsert.html?mode=create" class="nav-item block px-3 py-2 rounded-md text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-600">Create Session</a>
+                    </div>
+                </div>
+
+                <!-- Disputes -->
+                <a href="disputes_list.html" id="nav-disputes" class="nav-item flex items-center gap-3 px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                    <svg class="w-5 h-5" data-lucide="alert-circle"></svg>
+                    <span>Disputes</span>
+                </a>
+
+                <!-- Analytics Section -->
+                <div class="border-t border-neutral-200 pt-4 mt-4">
+                    <h4 class="px-3 text-xs font-semibold text-neutral-500 uppercase tracking-wider mb-2">Analytics</h4>
+                    
+                    <a href="analytics_skill_gap_heatmap.html" class="nav-item flex items-center gap-3 px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                        <svg class="w-5 h-5" data-lucide="grid"></svg>
+                        <span>Skill Gap Heatmap</span>
+                    </a>
+
+                    <a href="analytics_tni_dashboard.html" class="nav-item flex items-center gap-3 px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                        <svg class="w-5 h-5" data-lucide="bar-chart-2"></svg>
+                        <span>TNI Dashboard</span>
+                    </a>
+
+                    <a href="analytics_training_forecast.html" class="nav-item flex items-center gap-3 px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                        <svg class="w-5 h-5" data-lucide="trending-up"></svg>
+                        <span>Training Forecast</span>
+                    </a>
+
+                    <a href="analytics_assessment_completion.html" class="nav-item flex items-center gap-3 px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                        <svg class="w-5 h-5" data-lucide="pie-chart"></svg>
+                        <span>Assessment Completion</span>
+                    </a>
+
+                    <a href="analytics_dispute_metrics.html" class="nav-item flex items-center gap-3 px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                        <svg class="w-5 h-5" data-lucide="bar-chart"></svg>
+                        <span>Dispute Analytics</span>
+                    </a>
+                </div>
+            </nav>
+            
+            <!-- Footer -->
+            <div class="absolute bottom-4 w-full text-center text-xs text-neutral-500 bg-white px-4">
+                Made with ❤️ by TiramAi
+            </div>
+        </aside>
+
+        <!-- Mobile Overlay -->
+        <div id="mobileOverlay" class="hidden fixed inset-0 bg-black bg-opacity-50 z-10 md:hidden"></div>
+
+        <!-- Main Content -->
+        <main id="pageContent" class="flex-1 p-6 overflow-y-auto">
+            
+<!-- Dispute Detail Resolution Page -->
+<div class="container mx-auto max-w-[1280px] space-y-6">
+  <!-- Header Section -->
+  <div class="bg-white border border-neutral-200 rounded-md p-6 shadow-sm">
+    <div class="flex items-start justify-between">
+      <div class="space-y-2">
+        <!-- Back Button -->
+        <button id="btn-back" class="inline-flex items-center gap-2 text-sm text-neutral-600 hover:text-brand-primary-600 mb-2" aria-label="Back to Disputes">
+          <svg class="w-4 h-4" data-lucide="arrow-left"></svg>
+          Back to Disputes
+        </button>
+        
+        <div class="flex items-center gap-4">
+          <h1 id="dispute-title" class="text-2xl leading-8 font-bold text-neutral-950">Dispute #<span id="dispute-id"></span></h1>
+          <span id="dispute-status-badge" class="inline-flex items-center px-2 py-1 text-xs rounded-full bg-warning-600 text-white">
+            Open
+          </span>
+        </div>
+        <p class="text-sm text-neutral-600">Review and resolve assessment disputes</p>
+      </div>
+      
+      <!-- Primary CTA (only shown for open disputes) -->
+      <div id="submit-resolution-container" class="hidden">
+        <button id="btn-submit-resolution" class="inline-flex items-center justify-center h-11 px-6 rounded-md bg-brand-primary-600 hover:bg-brand-primary-700 text-white focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2">
+          Submit Resolution
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Summary Cards Section -->
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+    <!-- Employee Card -->
+    <div class="bg-white border border-neutral-200 rounded-md p-4 shadow-sm">
+      <h3 class="text-base leading-6 font-semibold text-neutral-950 mb-2">Employee</h3>
+      <div class="space-y-1">
+        <button id="employee-link" class="text-sm font-medium text-brand-primary-600 hover:text-brand-primary-700 block">
+          <span id="employee-name">Loading...</span>
+        </button>
+        <p id="employee-details" class="text-xs text-neutral-500">Loading...</p>
+      </div>
+    </div>
+
+    <!-- Assessment Cycle Card -->
+    <div class="bg-white border border-neutral-200 rounded-md p-4 shadow-sm">
+      <h3 class="text-base leading-6 font-semibold text-neutral-950 mb-2">Assessment Cycle</h3>
+      <div class="space-y-1">
+        <p id="cycle-name" class="text-sm font-medium text-neutral-900">Loading...</p>
+        <p id="cycle-period" class="text-xs text-neutral-500">Loading...</p>
+      </div>
+    </div>
+
+    <!-- Submission Date Card -->
+    <div class="bg-white border border-neutral-200 rounded-md p-4 shadow-sm">
+      <h3 class="text-base leading-6 font-semibold text-neutral-950 mb-2">Date Submitted</h3>
+      <div class="space-y-1">
+        <p id="submission-date" class="text-sm font-medium text-neutral-900">Loading...</p>
+        <p id="submission-time" class="text-xs text-neutral-500">Loading...</p>
+      </div>
+    </div>
+
+    <!-- Re-escalation Card -->
+    <div class="bg-white border border-neutral-200 rounded-md p-4 shadow-sm">
+      <h3 class="text-base leading-6 font-semibold text-neutral-950 mb-2">Prior Resolution</h3>
+      <div id="prior-resolution-content">
+        <p id="prior-resolution-text" class="text-sm text-neutral-500">Loading...</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Team Lead Info Card -->
+  <div class="bg-white border border-neutral-200 rounded-md p-4 shadow-sm">
+    <h3 class="text-base leading-6 font-semibold text-neutral-950 mb-3">Assessment Team Lead</h3>
+    <div class="flex items-center gap-3">
+      <div class="w-8 h-8 bg-accent-gold-500 rounded-full flex items-center justify-center">
+        <span id="team-lead-initials" class="text-sm font-semibold text-white">TL</span>
+      </div>
+      <div>
+        <button id="team-lead-link" class="text-sm font-medium text-brand-primary-600 hover:text-brand-primary-700">
+          <span id="team-lead-name">Loading...</span>
+        </button>
+        <p id="team-lead-details" class="text-xs text-neutral-500">Loading...</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Disputed Skills Accordion -->
+  <div class="bg-white border border-neutral-200 rounded-md shadow-sm">
+    <div class="border-b border-neutral-200 px-6 py-4">
+      <h2 class="text-xl leading-7 font-semibold text-neutral-950">Disputed Skills</h2>
+      <p class="text-sm text-neutral-600 mt-1">Review each disputed skill and provide resolution actions</p>
+    </div>
+    
+    <!-- Skills List Container -->
+    <div id="disputed-skills-container" class="divide-y divide-neutral-200">
+      <!-- Skeleton Loading -->
+      <div id="skills-skeleton" class="space-y-1">
+        <div class="px-6 py-4 animate-pulse">
+          <div class="h-4 bg-neutral-200 rounded w-1/4 mb-2"></div>
+          <div class="h-3 bg-neutral-200 rounded w-1/2"></div>
+        </div>
+        <div class="px-6 py-4 animate-pulse">
+          <div class="h-4 bg-neutral-200 rounded w-1/3 mb-2"></div>
+          <div class="h-3 bg-neutral-200 rounded w-2/3"></div>
+        </div>
+      </div>
+      
+      <!-- Actual skills will be populated here -->
+    </div>
+  </div>
+
+  <!-- Overall Reason -->
+  <div class="bg-white border border-neutral-200 rounded-md p-6 shadow-sm">
+    <h3 class="text-base leading-6 font-semibold text-neutral-950 mb-3">Overall Dispute Reason</h3>
+    <div id="overall-reason-content" class="prose prose-sm max-w-none">
+      <p id="overall-reason-text" class="text-sm leading-5 text-neutral-700">Loading...</p>
+    </div>
+  </div>
+
+  <!-- Audit Trail (only shown for resolved disputes) -->
+  <div id="audit-trail-section" class="hidden bg-white border border-neutral-200 rounded-md p-6 shadow-sm">
+    <h3 class="text-base leading-6 font-semibold text-neutral-950 mb-4">Audit Trail</h3>
+    <div id="audit-trail-container" class="space-y-3">
+      <!-- Audit entries will be populated here -->
+    </div>
+  </div>
+</div>
+
+<!-- Submit Resolution Confirmation Modal -->
+<div id="submit-resolution-modal" class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50" role="dialog" aria-labelledby="modal-title" aria-modal="true">
+  <div class="bg-white rounded-lg shadow-lg max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+    <div class="border-b border-neutral-200 px-6 py-4">
+      <div class="flex items-center justify-between">
+        <h2 id="modal-title" class="text-xl leading-7 font-semibold text-neutral-950">Confirm Resolution</h2>
+        <button id="modal-close" class="p-2 text-neutral-400 hover:text-neutral-600 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2 rounded-md" aria-label="Close modal">
+          <svg class="w-5 h-5" data-lucide="x"></svg>
+        </button>
+      </div>
+    </div>
+    
+    <div class="p-6">
+      <div class="space-y-4">
+        <p class="text-sm text-neutral-700">Please review the resolution actions for each disputed skill:</p>
+        
+        <!-- Resolution Summary -->
+        <div id="resolution-summary-container" class="space-y-3">
+          <!-- Resolution items will be populated here -->
+        </div>
+        
+        <div class="bg-accent-gold-50 border border-accent-gold-500 rounded-md p-4 mt-4">
+          <div class="flex items-start gap-2">
+            <svg class="w-5 h-5 text-accent-gold-600 mt-0.5" data-lucide="info"></svg>
+            <div class="text-sm">
+              <p class="font-medium text-neutral-900">Note</p>
+              <p class="text-neutral-700">This action will update assessment scores and training needs. Employees will be notified of the resolution.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="border-t border-neutral-200 px-6 py-4 flex justify-end gap-3">
+      <button id="modal-cancel" class="inline-flex items-center h-11 px-4 rounded-md border border-neutral-200 bg-white text-neutral-900 hover:bg-neutral-50 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2">
+        Cancel
+      </button>
+      <button id="modal-confirm" class="inline-flex items-center justify-center h-11 px-6 rounded-md bg-brand-primary-600 hover:bg-brand-primary-700 text-white focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2">
+        Confirm Resolution
+      </button>
+    </div>
+  </div>
+</div>
+
+        </main>
+    </div>
+
+    <!-- Required: JavaScript -->
+    <script type="module" data-tiramai="web-gen">
+        import { showToast, showLoader, hideLoader, env } from "./scripts/main.js";
+        import { auth, db, storage } from "./scripts/firebase.js";
+        import { onAuthStateChanged, getAuth, signOut } from 'https://www.gstatic.com/firebasejs/10.12.4/firebase-auth.js';
+        import { doc, getDoc } from 'https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js';
+
+        // Initialize Lucide icons
+        lucide.createIcons();
+
+        // Mobile menu toggle
+        const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+        const sidebar = document.getElementById('sidebar');
+        const mobileOverlay = document.getElementById('mobileOverlay');
+
+        mobileMenuToggle?.addEventListener('click', () => {
+            sidebar.classList.toggle('-translate-x-full');
+            mobileOverlay.classList.toggle('hidden');
+        });
+
+        mobileOverlay?.addEventListener('click', () => {
+            sidebar.classList.add('-translate-x-full');
+            mobileOverlay.classList.add('hidden');
+        });
+
+        // Navigation group toggles
+        document.querySelectorAll('.nav-group-toggle').forEach(toggle => {
+            toggle.addEventListener('click', (e) => {
+                e.preventDefault();
+                const children = toggle.nextElementSibling;
+                const icon = toggle.querySelector('svg:last-child');
+                
+                children.classList.toggle('hidden');
+                icon.classList.toggle('rotate-90');
+            });
+        });
+
+        // User profile dropdown
+        const userProfileToggle = document.getElementById('userProfileToggle');
+        const userProfileDropdown = document.getElementById('userProfileDropdown');
+
+        userProfileToggle?.addEventListener('click', () => {
+            userProfileDropdown.classList.toggle('hidden');
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!userProfileToggle?.contains(e.target) && !userProfileDropdown?.contains(e.target)) {
+                userProfileDropdown?.classList.add('hidden');
+            }
+        });
+
+        // Sign out functionality
+        document.getElementById('signOutButton')?.addEventListener('click', async () => {
+            try {
+                await signOut(auth);
+                window.location.href = 'auth.html';
+            } catch (error) {
+                console.error('Sign out error:', error);
+                showToast('Failed to sign out', 'error');
+            }
+        });
+
+        // Auth state management
+        onAuthStateChanged(auth, async (user) => {
+            if (!user) {
+                window.location.href = 'auth.html';
+                return;
+            }
+
+            // Load user profile data
+            try {
+                const userDoc = await getDoc(doc(db, 'users', user.uid));
+                const userData = userDoc.exists() ? userDoc.data() : null;
+
+                // Update UI with user data
+                const displayName = userData?.firstName && userData?.lastName 
+                    ? `${userData.firstName} ${userData.lastName}`
+                    : user.displayName || 'John Doe';
+                
+                const email = user.email || 'johndoe@example.com';
+                const initials = displayName.split(' ').map(n => n[0]).join('').toUpperCase();
+
+                document.getElementById('userDisplayName').textContent = displayName;
+                document.getElementById('userEmail').textContent = email;
+                document.getElementById('userInitials').textContent = initials;
+
+            } catch (error) {
+                console.error('Error loading user data:', error);
+                // Fallback to default values
+                document.getElementById('userDisplayName').textContent = 'John Doe';
+                document.getElementById('userEmail').textContent = user.email || 'johndoe@example.com';
+                document.getElementById('userInitials').textContent = 'JD';
+            }
+        });
+
+        // Set active navigation item based on current page
+        function setActiveNavItem() {
+            const currentPath = window.location.pathname;
+            const navItems = document.querySelectorAll('.nav-item');
+            
+            navItems.forEach(item => {
+                const href = item.getAttribute('href');
+                if (href && currentPath.includes(href.split('?')[0])) {
+                    item.classList.add('bg-accent-gold-50', 'text-brand-primary-600', 'border-l-2', 'border-brand-primary-600');
+                    item.classList.remove('text-neutral-700', 'text-neutral-600');
+                    
+                    // Expand parent group if needed
+                    const parentGroup = item.closest('.nav-group');
+                    if (parentGroup) {
+                        const children = parentGroup.querySelector('.nav-group-children');
+                        const icon = parentGroup.querySelector('.nav-group-toggle svg:last-child');
+                        children?.classList.remove('hidden');
+                        icon?.classList.add('rotate-90');
+                    }
+                }
+            });
+        }
+
+        // Initialize active nav state
+        setActiveNavItem();
+    </script>
+
+    
+<script id="data-script" type="module" data-tiramai="web-gen">
+import { 
+  collection, getDocs, setDoc, addDoc, doc, getDoc, updateDoc, deleteDoc, writeBatch,
+  query, where, orderBy, limit, startAfter, endBefore, onSnapshot, Timestamp,
+  getCountFromServer, enableIndexedDbPersistence
+} from "https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js";
+import { onAuthStateChanged, getAuth, signOut } from 'https://www.gstatic.com/firebasejs/10.12.4/firebase-auth.js';
+import { auth, getDb, storage } from "./scripts/firebase.js";
+import { showToast, showLoader, hideLoader, env } from "./scripts/main.js";
+
+const db = getDb();
+
+// Auth check
+onAuthStateChanged(auth, user => {
+  if (!user) location.href = "auth.html?redirect=" + encodeURIComponent(location.pathname);
+});
+
+// Get dispute ID from URL
+const urlParams = new URLSearchParams(window.location.search);
+const disputeId = urlParams.get('disputeId');
+
+if (!disputeId) {
+  showToast('No dispute ID provided', 'error');
+  location.href = 'disputes_list.html';
+}
+
+// State management
+let currentDispute = null;
+let disputedSkillsData = [];
+let resolutionActions = new Map(); // Map<skillId, {action: 'editRating'|'dismiss', newScore?: number, notes?: string, rejectionReason?: string}>
+
+// Initialize page
+async function funInitialLoad() {
+  try {
+    await Promise.all([
+      funLoadDisputeData(),
+      yieldToFrame()
+    ]);
+  } catch (error) {
+    console.error('Error loading dispute data:', error);
+    showToast(error?.message || 'Failed to load dispute data', 'error');
+  }
+}
+
+// Load main dispute data
+async function funLoadDisputeData() {
+  try {
+    // Get dispute document
+    const disputeDoc = await getDoc(doc(db, 'disputes', disputeId));
+    
+    if (!disputeDoc.exists()) {
+      throw new Error('Dispute not found');
+    }
+    
+    currentDispute = { id: disputeDoc.id, ...disputeDoc.data() };
+    
+    // Load related data in parallel but with concurrency limit
+    await withLimit(() => funLoadEmployeeData());
+    await withLimit(() => funLoadCycleData());
+    await funLoadDisputedSkillsData();
+    
+    // Update UI
+    funRenderDisputeHeader();
+    funRenderSummaryCards();
+    funRenderDisputedSkills();
+    
+    if (currentDispute.auditTrail && currentDispute.auditTrail.length > 0) {
+      funRenderAuditTrail();
+    }
+    
+  } catch (error) {
+    throw error;
+  }
+}
+
+// Load employee data
+async function funLoadEmployeeData() {
+  if (!currentDispute?.employeeId) return;
+  
+  try {
+    const employeeDoc = await getDoc(doc(db, 'users', currentDispute.employeeId));
+    if (employeeDoc.exists()) {
+      currentDispute.employeeData = employeeDoc.data();
+    }
+  } catch (error) {
+    console.error('Error loading employee data:', error);
+  }
+}
+
+// Load assessment cycle data
+async function funLoadCycleData() {
+  if (!currentDispute?.assessmentCycleId) return;
+  
+  try {
+    const cycleDoc = await getDoc(doc(db, 'assessmentCycles', currentDispute.assessmentCycleId));
+    if (cycleDoc.exists()) {
+      currentDispute.cycleData = cycleDoc.data();
+    }
+  } catch (error) {
+    console.error('Error loading cycle data:', error);
+  }
+}
+
+// Load disputed skills with related data
+async function funLoadDisputedSkillsData() {
+  if (!currentDispute?.disputedSkills || !Array.isArray(currentDispute.disputedSkills)) return;
+  
+  try {
+    const skillIds = currentDispute.disputedSkills.map(ds => ds.skillId).filter(Boolean);
+    
+    // Load skills, categories, criticalities, and assessments
+    const [skillsSnapshot, assessmentsSnapshot] = await Promise.all([
+      getDocs(query(collection(db, 'skills'), where('__name__', 'in', skillIds))),
+      getDocs(query(
+        collection(db, 'assessments'), 
+        where('employeeId', '==', currentDispute.employeeId),
+        where('assessmentCycleId', '==', currentDispute.assessmentCycleId),
+        where('skillId', 'in', skillIds)
+      ))
+    ]);
+    
+    // Build skills map
+    const skillsMap = new Map();
+    for (const skillDoc of skillsSnapshot.docs) {
+      skillsMap.set(skillDoc.id, { id: skillDoc.id, ...skillDoc.data() });
+    }
+    
+    // Build assessments map
+    const assessmentsMap = new Map();
+    for (const assessmentDoc of assessmentsSnapshot.docs) {
+      const assessment = assessmentDoc.data();
+      assessmentsMap.set(assessment.skillId, { id: assessmentDoc.id, ...assessment });
+    }
+    
+    // Get unique category and criticality IDs
+    const categoryIds = [...new Set(Array.from(skillsMap.values()).map(s => s.categoryId).filter(Boolean))];
+    const criticalityIds = [...new Set(Array.from(skillsMap.values()).map(s => s.criticalityId).filter(Boolean))];
+    
+    // Load categories and criticalities
+    const [categoriesSnapshot, criticalitiesSnapshot] = await Promise.all([
+      categoryIds.length > 0 ? getDocs(query(collection(db, 'skillCategories'), where('__name__', 'in', categoryIds))) : Promise.resolve({docs: []}),
+      criticalityIds.length > 0 ? getDocs(query(collection(db, 'skillCriticalities'), where('__name__', 'in', criticalityIds))) : Promise.resolve({docs: []})
+    ]);
+    
+    // Build lookup maps
+    const categoriesMap = new Map();
+    for (const categoryDoc of categoriesSnapshot.docs) {
+      categoriesMap.set(categoryDoc.id, categoryDoc.data());
+    }
+    
+    const criticalitiesMap = new Map();
+    for (const criticalityDoc of criticalitiesSnapshot.docs) {
+      criticalitiesMap.set(criticalityDoc.id, criticalityDoc.data());
+    }
+    
+    // Get team lead data
+    let teamLeadData = null;
+    const firstAssessment = Array.from(assessmentsMap.values())[0];
+    if (firstAssessment?.assessedByEmployeeId) {
+      try {
+        const teamLeadDoc = await getDoc(doc(db, 'users', firstAssessment.assessedByEmployeeId));
+        if (teamLeadDoc.exists()) {
+          teamLeadData = teamLeadDoc.data();
+        }
+      } catch (error) {
+        console.error('Error loading team lead data:', error);
+      }
+    }
+    
+    currentDispute.teamLeadData = teamLeadData;
+    currentDispute.assessedByEmployeeId = firstAssessment?.assessedByEmployeeId;
+    
+    // Combine all data
+    disputedSkillsData = currentDispute.disputedSkills.map(disputedSkill => {
+      const skill = skillsMap.get(disputedSkill.skillId);
+      const assessment = assessmentsMap.get(disputedSkill.skillId);
+      const category = skill ? categoriesMap.get(skill.categoryId) : null;
+      const criticality = skill ? criticalitiesMap.get(skill.criticalityId) : null;
+      
+      return {
+        ...disputedSkill,
+        skill: skill || { name: 'Unknown Skill' },
+        assessment: assessment || { score: 0, benchmarkAtTimeOfAssessment: 0 },
+        category: category || { categoryName: 'Unknown Category' },
+        criticality: criticality || { criticalityName: 'Unknown Criticality' },
+        gap: assessment && assessment.benchmarkAtTimeOfAssessment ? 
+          assessment.benchmarkAtTimeOfAssessment - assessment.score : 0
+      };
+    });
+    
+  } catch (error) {
+    console.error('Error loading disputed skills data:', error);
+    disputedSkillsData = [];
+  }
+}
+
+// Render dispute header
+function funRenderDisputeHeader() {
+  const disputeIdEl = document.getElementById('dispute-id');
+  const statusBadgeEl = document.getElementById('dispute-status-badge');
+  const submitContainer = document.getElementById('submit-resolution-container');
+  
+  if (disputeIdEl) disputeIdEl.textContent = currentDispute?.id?.slice(-8) || 'Unknown';
+  
+  if (statusBadgeEl) {
+    const status = currentDispute?.status || 'open';
+    statusBadgeEl.textContent = status.charAt(0).toUpperCase() + status.slice(1);
+    
+    if (status === 'open') {
+      statusBadgeEl.className = 'inline-flex items-center px-2 py-1 text-xs rounded-full bg-warning-600 text-white';
+      submitContainer?.classList.remove('hidden');
+    } else {
+      statusBadgeEl.className = 'inline-flex items-center px-2 py-1 text-xs rounded-full bg-success-600 text-white';
+      submitContainer?.classList.add('hidden');
+    }
+  }
+}
+
+// Render summary cards
+function funRenderSummaryCards() {
+  // Employee info
+  const employeeName = document.getElementById('employee-name');
+  const employeeDetails = document.getElementById('employee-details');
+  if (currentDispute?.employeeData) {
+    const fullName = `${currentDispute.employeeData.firstName || ''} ${currentDispute.employeeData.lastName || ''}`.trim();
+    if (employeeName) employeeName.textContent = fullName || 'Unknown Employee';
+    if (employeeDetails) employeeDetails.textContent = `${currentDispute.employeeData.jobTitle || 'N/A'} • ${currentDispute.employeeData.employeeId || 'N/A'}`;
+  }
+  
+  // Cycle info
+  const cycleName = document.getElementById('cycle-name');
+  const cyclePeriod = document.getElementById('cycle-period');
+  if (currentDispute?.cycleData) {
+    if (cycleName) cycleName.textContent = currentDispute.cycleData.cycleName || 'Unknown Cycle';
+    if (cyclePeriod) {
+      const startDate = currentDispute.cycleData.startDate ? new Date(currentDispute.cycleData.startDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '';
+      const endDate = currentDispute.cycleData.endDate ? new Date(currentDispute.cycleData.endDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '';
+      cyclePeriod.textContent = startDate && endDate ? `${startDate} - ${endDate}` : 'N/A';
+    }
+  }
+  
+  // Submission date
+  const submissionDate = document.getElementById('submission-date');
+  const submissionTime = document.getElementById('submission-time');
+  if (currentDispute?.submissionDate) {
+    const date = new Date(currentDispute.submissionDate);
+    if (submissionDate) submissionDate.textContent = date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+    if (submissionTime) submissionTime.textContent = date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+  }
+  
+  // Prior resolution
+  const priorResolutionText = document.getElementById('prior-resolution-text');
+  if (priorResolutionText) {
+    const isReescalated = currentDispute?.auditTrail && currentDispute.auditTrail.length > 1;
+    priorResolutionText.textContent = isReescalated ? 'Previously resolved - Re-escalated' : 'First submission';
+    priorResolutionText.className = isReescalated ? 'text-sm text-warning-600 font-medium' : 'text-sm text-neutral-500';
+  }
+  
+  // Team lead info
+  if (currentDispute?.teamLeadData) {
+    const teamLeadName = document.getElementById('team-lead-name');
+    const teamLeadDetails = document.getElementById('team-lead-details');
+    const teamLeadInitials = document.getElementById('team-lead-initials');
+    
+    const fullName = `${currentDispute.teamLeadData.firstName || ''} ${currentDispute.teamLeadData.lastName || ''}`.trim();
+    if (teamLeadName) teamLeadName.textContent = fullName || 'Unknown Team Lead';
+    if (teamLeadDetails) teamLeadDetails.textContent = `${currentDispute.teamLeadData.jobTitle || 'N/A'} • ${currentDispute.teamLeadData.employeeId || 'N/A'}`;
+    if (teamLeadInitials) {
+      const initials = fullName.split(' ').map(n => n[0]).join('').toUpperCase() || 'TL';
+      teamLeadInitials.textContent = initials;
+    }
+  }
+  
+  // Overall reason
+  const overallReasonText = document.getElementById('overall-reason-text');
+  if (overallReasonText) {
+    overallReasonText.textContent = currentDispute?.reason || 'No reason provided';
+  }
+}
+
+// Render disputed skills
+function funRenderDisputedSkills() {
+  const container = document.getElementById('disputed-skills-container');
+  const skeleton = document.getElementById('skills-skeleton');
+  
+  if (!container) return;
+  
+  // Hide skeleton
+  if (skeleton) skeleton.classList.add('hidden');
+  
+  // Clear container
+  container.innerHTML = '';
+  
+  if (!disputedSkillsData || disputedSkillsData.length === 0) {
+    container.innerHTML = `
+      <div class="px-6 py-8 text-center text-neutral-500">
+        <svg class="w-12 h-12 mx-auto mb-4 text-neutral-300" data-lucide="file-x"></svg>
+        <p>No disputed skills found</p>
+      </div>
+    `;
+    return;
+  }
+  
+  // Render each disputed skill
+  disputedSkillsData.forEach((item, index) => {
+    const skillElement = funCreateSkillAccordionItem(item, index);
+    container.appendChild(skillElement);
+  });
+  
+  // Re-initialize Lucide icons
+  lucide.createIcons();
+}
+
+// Create skill accordion item
+function funCreateSkillAccordionItem(item, index) {
+  const div = document.createElement('div');
+  div.className = 'border-b border-neutral-200 last:border-b-0';
+  
+  const isOpen = index === 0; // Open first item by default
+  
+  div.innerHTML = `
+    <button class="skill-accordion-toggle w-full text-left px-6 py-4 hover:bg-neutral-50 focus:outline-none focus:bg-neutral-50" data-skill-id="${item.skillId}" aria-expanded="${isOpen}">
+      <div class="flex items-center justify-between">
+        <div class="flex-1">
+          <div class="flex items-center gap-3 mb-2">
+            <h3 class="text-base leading-6 font-semibold text-neutral-950">${item.skill?.name || 'Unknown Skill'}</h3>
+            <span class="inline-flex items-center px-2 py-1 text-xs rounded-full bg-neutral-100 text-neutral-700">
+              ${item.category?.categoryName || 'N/A'}
+            </span>
+            <span class="inline-flex items-center px-2 py-1 text-xs rounded-full ${funGetCriticalityColor(item.criticality?.criticalityName)}">
+              ${item.criticality?.criticalityName || 'N/A'}
+            </span>
+          </div>
+          <div class="grid grid-cols-3 md:grid-cols-5 gap-4 text-sm">
+            <div>
+              <span class="text-neutral-500">Original Score:</span>
+              <span class="font-medium ml-1">${item.assessment?.score || 0}/10</span>
+            </div>
+            <div>
+              <span class="text-neutral-500">Benchmark:</span>
+              <span class="font-medium ml-1">${item.assessment?.benchmarkAtTimeOfAssessment || 0}/10</span>
+            </div>
+            <div>
+              <span class="text-neutral-500">Gap:</span>
+              <span class="font-medium ml-1 ${item.gap > 0 ? 'text-danger-600' : 'text-success-600'}">${item.gap}</span>
+            </div>
+            <div class="col-span-2 md:col-span-1">
+              <span class="text-neutral-500">Resolution:</span>
+              <span class="font-medium ml-1" id="resolution-status-${item.skillId}">Pending</span>
+            </div>
+          </div>
+        </div>
+        <svg class="w-5 h-5 text-neutral-400 transform transition-transform ${isOpen ? 'rotate-180' : ''}" data-lucide="chevron-down"></svg>
+      </div>
+    </button>
+    
+    <div class="skill-accordion-content px-6 pb-6 ${isOpen ? '' : 'hidden'}">
+      <div class="border-t border-neutral-200 pt-4 space-y-4">
+        <!-- Employee Reason -->
+        <div>
+          <h4 class="text-sm font-semibold text-neutral-950 mb-2">Employee's Dispute Reason</h4>
+          <p class="text-sm text-neutral-700 bg-neutral-50 rounded-md p-3">${item.reason || 'No reason provided'}</p>
+        </div>
+        
+        <!-- Resolution Actions -->
+        <div class="bg-accent-gold-50 border border-accent-gold-500 rounded-md p-4">
+          <h4 class="text-sm font-semibold text-neutral-950 mb-3">Resolution Action</h4>
+          
+          <div class="space-y-4">
+            <div class="space-y-2">
+              <label class="flex items-center gap-2">
+                <input type="radio" name="action-${item.skillId}" value="editRating" class="resolution-radio" data-skill-id="${item.skillId}">
+                <span class="text-sm font-medium text-neutral-900">Edit Rating</span>
+              </label>
+              <label class="flex items-center gap-2">
+                <input type="radio" name="action-${item.skillId}" value="dismiss" class="resolution-radio" data-skill-id="${item.skillId}">
+                <span class="text-sm font-medium text-neutral-900">Dismiss Dispute</span>
+              </label>
+            </div>
+            
+            <!-- Edit Rating Section -->
+            <div id="edit-rating-section-${item.skillId}" class="hidden space-y-3 ml-6 border-l-2 border-accent-gold-500 pl-4">
+              <div>
+                <label for="new-score-${item.skillId}" class="block text-sm font-medium text-neutral-900 mb-1">New Score (1-10)</label>
+                <input type="number" id="new-score-${item.skillId}" min="1" max="10" class="w-24 border border-neutral-200 rounded-sm px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2">
+              </div>
+              <div>
+                <label for="edit-notes-${item.skillId}" class="block text-sm font-medium text-neutral-900 mb-1">Resolution Notes (Optional)</label>
+                <textarea id="edit-notes-${item.skillId}" rows="3" placeholder="Explain the reason for the score change..." class="w-full border border-neutral-200 rounded-sm px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2"></textarea>
+              </div>
+            </div>
+            
+            <!-- Dismiss Section -->
+            <div id="dismiss-section-${item.skillId}" class="hidden space-y-3 ml-6 border-l-2 border-danger-600 pl-4">
+              <div>
+                <label for="rejection-reason-${item.skillId}" class="block text-sm font-medium text-neutral-900 mb-1">Rejection Reason (Required)</label>
+                <textarea id="rejection-reason-${item.skillId}" rows="3" placeholder="Provide a detailed reason for dismissing this dispute..." class="w-full border border-neutral-200 rounded-sm px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2"></textarea>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+  
+  return div;
+}
+
+// Get criticality color classes
+function funGetCriticalityColor(criticality) {
+  if (!criticality) return 'bg-neutral-100 text-neutral-700';
+  
+  const lower = criticality.toLowerCase();
+  if (lower.includes('high') || lower.includes('critical')) {
+    return 'bg-danger-600 text-white';
+  } else if (lower.includes('medium') || lower.includes('moderate')) {
+    return 'bg-warning-600 text-white';
+  } else {
+    return 'bg-success-600 text-white';
+  }
+}
+
+// Render audit trail
+function funRenderAuditTrail() {
+  const section = document.getElementById('audit-trail-section');
+  const container = document.getElementById('audit-trail-container');
+  
+  if (!section || !container || !currentDispute?.auditTrail) return;
+  
+  section.classList.remove('hidden');
+  container.innerHTML = '';
+  
+  currentDispute.auditTrail.forEach(entry => {
+    const entryDiv = document.createElement('div');
+    entryDiv.className = 'border border-neutral-200 rounded-md p-3 bg-neutral-50';
+    
+    const timestamp = entry.timestamp ? new Date(entry.timestamp).toLocaleString('en-US', { 
+      month: 'short', day: 'numeric', year: 'numeric',
+      hour: '2-digit', minute: '2-digit' 
+    }) : 'Unknown time';
+    
+    entryDiv.innerHTML = `
+      <div class="flex items-start justify-between mb-2">
+        <span class="text-sm font-medium text-neutral-950">${entry.action || 'Unknown action'}</span>
+        <span class="text-xs text-neutral-500">${timestamp}</span>
+      </div>
+      <p class="text-sm text-neutral-700">${entry.notes || 'No notes provided'}</p>
+      ${entry.actor ? `<p class="text-xs text-neutral-500 mt-1">by ${entry.actor}</p>` : ''}
+    `;
+    
+    container.appendChild(entryDiv);
+  });
+}
+
+// Event handlers
+function funSetupEventListeners() {
+  // Back button
+  const backBtn = document.getElementById('btn-back');
+  if (backBtn) {
+    backBtn.addEventListener('click', () => {
+      history.back();
+    });
+  }
+  
+  // Employee link
+  const employeeLink = document.getElementById('employee-link');
+  if (employeeLink) {
+    employeeLink.addEventListener('click', () => {
+      if (currentDispute?.employeeId) {
+        location.href = `employee_detail.html?employeeId=${currentDispute.employeeId}`;
+      }
+    });
+  }
+  
+  // Team lead link
+  const teamLeadLink = document.getElementById('team-lead-link');
+  if (teamLeadLink) {
+    teamLeadLink.addEventListener('click', () => {
+      if (currentDispute?.assessedByEmployeeId) {
+        location.href = `employee_detail.html?employeeId=${currentDispute.assessedByEmployeeId}`;
+      }
+    });
+  }
+  
+  // Skill accordion toggles
+  document.addEventListener('click', (e) => {
+    if (e.target.closest('.skill-accordion-toggle')) {
+      e.preventDefault();
+      const toggle = e.target.closest('.skill-accordion-toggle');
+      const content = toggle.nextElementSibling;
+      const chevron = toggle.querySelector('svg');
+      
+      if (content) {
+        content.classList.toggle('hidden');
+        chevron?.classList.toggle('rotate-180');
+        
+        const isExpanded = !content.classList.contains('hidden');
+        toggle.setAttribute('aria-expanded', isExpanded.toString());
+      }
+    }
+  });
+  
+  // Resolution radio buttons
+  document.addEventListener('change', (e) => {
+    if (e.target.matches('.resolution-radio')) {
+      const skillId = e.target.getAttribute('data-skill-id');
+      const action = e.target.value;
+      
+      const editSection = document.getElementById(`edit-rating-section-${skillId}`);
+      const dismissSection = document.getElementById(`dismiss-section-${skillId}`);
+      const statusSpan = document.getElementById(`resolution-status-${skillId}`);
+      
+      if (action === 'editRating') {
+        editSection?.classList.remove('hidden');
+        dismissSection?.classList.add('hidden');
+        if (statusSpan) statusSpan.textContent = 'Edit Rating';
+      } else if (action === 'dismiss') {
+        editSection?.classList.add('hidden');
+        dismissSection?.classList.remove('hidden');
+        if (statusSpan) statusSpan.textContent = 'Dismiss';
+      }
+      
+      // Update resolution actions map
+      if (!resolutionActions.has(skillId)) {
+        resolutionActions.set(skillId, {});
+      }
+      resolutionActions.get(skillId).action = action;
+    }
+  });
+  
+  // Input changes
+  document.addEventListener('input', (e) => {
+    if (e.target.id?.startsWith('new-score-') || 
+        e.target.id?.startsWith('edit-notes-') || 
+        e.target.id?.startsWith('rejection-reason-')) {
+      
+      const skillId = e.target.id.split('-').slice(2).join('-');
+      
+      if (!resolutionActions.has(skillId)) {
+        resolutionActions.set(skillId, {});
+      }
+      
+      const resolution = resolutionActions.get(skillId);
+      
+      if (e.target.id?.startsWith('new-score-')) {
+        resolution.newScore = parseInt(e.target.value) || null;
+      } else if (e.target.id?.startsWith('edit-notes-')) {
+        resolution.notes = e.target.value;
+      } else if (e.target.id?.startsWith('rejection-reason-')) {
+        resolution.rejectionReason = e.target.value;
+      }
+    }
+  });
+  
+  // Submit resolution button
+  const submitBtn = document.getElementById('btn-submit-resolution');
+  if (submitBtn) {
+    submitBtn.addEventListener('click', funValidateAndShowConfirmation);
+  }
+  
+  // Modal handlers
+  funSetupModalHandlers();
+}
+
+// Validate resolution and show confirmation modal
+function funValidateAndShowConfirmation() {
+  // Check if all disputed skills have resolution actions
+  const missingResolutions = [];
+  const validationErrors = [];
+  
+  for (const item of disputedSkillsData) {
+    const resolution = resolutionActions.get(item.skillId);
+    
+    if (!resolution || !resolution.action) {
+      missingResolutions.push(item.skill?.name || 'Unknown skill');
+      continue;
+    }
+    
+    if (resolution.action === 'editRating') {
+      if (!resolution.newScore || resolution.newScore < 1 || resolution.newScore > 10) {
+        validationErrors.push(`${item.skill?.name || 'Unknown skill'}: New score must be between 1 and 10`);
+      }
+    } else if (resolution.action === 'dismiss') {
+      if (!resolution.rejectionReason || resolution.rejectionReason.trim().length === 0) {
+        validationErrors.push(`${item.skill?.name || 'Unknown skill'}: Rejection reason is required`);
+      }
+    }
+  }
+  
+  // Show validation errors
+  if (missingResolutions.length > 0) {
+    showToast(`Please select a resolution action for: ${missingResolutions.join(', ')}`, 'error');
+    return;
+  }
+  
+  if (validationErrors.length > 0) {
+    showToast(validationErrors[0], 'error');
+    return;
+  }
+  
+  // Generate resolution summary and show modal
+  funShowConfirmationModal();
+}
+
+// Show confirmation modal with resolution summary
+function funShowConfirmationModal() {
+  const modal = document.getElementById('submit-resolution-modal');
+  const summaryContainer = document.getElementById('resolution-summary-container');
+  
+  if (!modal || !summaryContainer) return;
+  
+  // Generate summary
+  summaryContainer.innerHTML = '';
+  
+  for (const item of disputedSkillsData) {
+    const resolution = resolutionActions.get(item.skillId);
+    if (!resolution) continue;
+    
+    const summaryItem = document.createElement('div');
+    summaryItem.className = 'border border-neutral-200 rounded-md p-3 bg-white';
+    
+    let actionText = '';
+    if (resolution.action === 'editRating') {
+      actionText = `Edit score to ${resolution.newScore}/10`;
+    } else if (resolution.action === 'dismiss') {
+      actionText = 'Dismiss dispute';
+    }
+    
+    summaryItem.innerHTML = `
+      <div class="flex items-center justify-between mb-2">
+        <span class="text-sm font-medium text-neutral-950">${item.skill?.name || 'Unknown skill'}</span>
+        <span class="text-sm text-brand-primary-600 font-medium">${actionText}</span>
+      </div>
+      ${resolution.notes || resolution.rejectionReason ? `
+        <p class="text-xs text-neutral-600 bg-neutral-50 rounded px-2 py-1">
+          ${resolution.notes || resolution.rejectionReason}
+        </p>
+      ` : ''}
+    `;
+    
+    summaryContainer.appendChild(summaryItem);
+  }
+  
+  modal.classList.remove('hidden');
+}
+
+// Setup modal event handlers
+function funSetupModalHandlers() {
+  const modal = document.getElementById('submit-resolution-modal');
+  const closeBtn = document.getElementById('modal-close');
+  const cancelBtn = document.getElementById('modal-cancel');
+  const confirmBtn = document.getElementById('modal-confirm');
+  
+  const closeModal = () => {
+    modal?.classList.add('hidden');
+  };
+  
+  closeBtn?.addEventListener('click', closeModal);
+  cancelBtn?.addEventListener('click', closeModal);
+  
+  // Close on backdrop click
+  modal?.addEventListener('click', (e) => {
+    if (e.target === modal) closeModal();
+  });
+  
+  // ESC to close
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && !modal?.classList.contains('hidden')) {
+      closeModal();
+    }
+  });
+  
+  confirmBtn?.addEventListener('click', async () => {
+    await funSubmitResolution();
+    closeModal();
+  });
+}
+
+// Submit resolution
+async function funSubmitResolution() {
+  showLoader();
+  
+  try {
+    const batch = writeBatch(db);
+    const currentTime = new Date().toISOString();
+    const currentUser = auth.currentUser;
+    
+    // Determine overall resolution action
+    const actions = Array.from(resolutionActions.values()).map(r => r.action);
+    const allSame = actions.every(action => action === actions[0]);
+    const overallAction = allSame ? actions[0] : 'editRating'; // If mixed, default to editRating
+    
+    // Update assessments for editRating actions
+    const assessmentUpdates = [];
+    for (const item of disputedSkillsData) {
+      const resolution = resolutionActions.get(item.skillId);
+      if (resolution?.action === 'editRating') {
+        const assessmentRef = doc(db, 'assessments', item.assessment.id);
+        const newScore = resolution.newScore;
+        const benchmarkAtTimeOfAssessment = item.assessment.benchmarkAtTimeOfAssessment;
+        const newTniFlag = (benchmarkAtTimeOfAssessment - newScore) > 0; // gap > 0
+        
+        batch.update(assessmentRef, {
+          score: newScore,
+          tniFlag: newTniFlag,
+          modifiedTimestamp: currentTime,
+          modifiedBy: currentUser?.uid || 'system'
+        });
+        
+        assessmentUpdates.push({
+          employeeId: currentDispute.employeeId,
+          skillId: item.skillId,
+          newScore,
+          benchmarkAtTimeOfAssessment,
+          gap: benchmarkAtTimeOfAssessment - newScore
+        });
+      }
+    }
+    
+    // Create audit trail entry
+    const auditEntry = {
+      timestamp: currentTime,
+      action: 'resolved',
+      actor: currentUser?.email || 'Unknown',
+      notes: `Dispute resolved with ${overallAction} action`,
+      resolutionDetails: Array.from(resolutionActions.entries()).map(([skillId, resolution]) => ({
+        skillId,
+        action: resolution.action,
+        newScore: resolution.newScore,
+        notes: resolution.notes,
+        rejectionReason: resolution.rejectionReason
+      }))
+    };
+    
+    // Update dispute document
+    const disputeRef = doc(db, 'disputes', disputeId);
+    batch.update(disputeRef, {
+      status: 'resolved',
+      resolvedByAdminId: currentUser?.uid,
+      resolutionTimestamp: currentTime,
+      resolutionAction: overallAction,
+      resolutionNotes: Array.from(resolutionActions.values())
+        .map(r => r.notes || r.rejectionReason)
+        .filter(Boolean)
+        .join('; '),
+      auditTrail: [...(currentDispute.auditTrail || []), auditEntry]
+    });
+    
+    // Commit all changes
+    await batch.commit();
+    
+    // Update training needs for score changes
+    if (assessmentUpdates.length > 0) {
+      await funUpdateTrainingNeeds(assessmentUpdates);
+    }
+    
+    hideLoader();
+    showToast('Dispute resolved successfully', 'success');
+    
+    // Reload the page to show updated state
+    setTimeout(() => {
+      location.reload();
+    }, 1500);
+    
+  } catch (error) {
+    hideLoader();
+    console.error('Error submitting resolution:', error);
+    showToast(error?.message || 'Failed to submit resolution', 'error');
+  }
+}
+
+// Update training needs based on assessment changes
+async function funUpdateTrainingNeeds(assessmentUpdates) {
+  try {
+    const batch = writeBatch(db);
+    const currentTime = new Date().toISOString();
+    
+    for (const update of assessmentUpdates) {
+      // Check if training need exists for this employee/skill
+      const q = query(
+        collection(db, 'trainingNeeds'),
+        where('employeeId', '==', update.employeeId),
+        where('skillId', '==', update.skillId)
+      );
+      
+      const existingSnapshot = await getDocs(q);
+      
+      if (update.gap > 0) {
+        // Create or update training need
+        const trainingNeedData = {
+          employeeId: update.employeeId,
+          skillId: update.skillId,
+          gap: update.gap,
+          benchmarkScore: update.benchmarkAtTimeOfAssessment,
+          employeeScore: update.newScore,
+          criticalityWeight: 1, // Default weight
+          tniStatus: 'trainingRequired',
+          createdTimestamp: currentTime
+        };
+        
+        if (existingSnapshot.empty) {
+          // Create new training need
+          const newRef = doc(collection(db, 'trainingNeeds'));
+          batch.set(newRef, {
+            id: newRef.id,
+            ...trainingNeedData
+          });
+        } else {
+          // Update existing training need
+          const existingDoc = existingSnapshot.docs[0];
+          batch.update(existingDoc.ref, trainingNeedData);
+        }
+      } else {
+        // Remove training need if gap is 0 or negative
+        existingSnapshot.docs.forEach(doc => {
+          batch.delete(doc.ref);
+        });
+      }
+    }
+    
+    await batch.commit();
+  } catch (error) {
+    console.error('Error updating training needs:', error);
+    // Don't throw - this is a secondary operation
+  }
+}
+
+// Concurrency control
+function createSemaphore(max = 2) {
+  const queue = [];
+  let active = 0;
+  
+  const next = () => {
+    if (active >= max || queue.length === 0) return;
+    active++;
+    const { fn, res, rej } = queue.shift();
+    Promise.resolve()
+      .then(fn)
+      .then(v => res(v))
+      .catch(e => rej(e))
+      .finally(() => { active--; next(); });
+  };
+  
+  return (fn) => new Promise((res, rej) => { 
+    queue.push({ fn, res, rej }); 
+    next(); 
+  });
+}
+
+const withLimit = createSemaphore(2);
+
+// Utility functions
+const yieldToFrame = () => new Promise(r => requestAnimationFrame(() => r()));
+
+// Initialize page
+document.addEventListener('DOMContentLoaded', () => {
+  funSetupEventListeners();
+  funInitialLoad();
+  
+  // Initialize Lucide icons
+  lucide.createIcons();
+});
+</script>
+
+</body>
+</html>

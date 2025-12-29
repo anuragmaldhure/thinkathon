@@ -1,0 +1,1275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SkillBridge</title>
+
+    <!-- Required: Main JS Script -->
+    <script type="module" src="scripts/main.js" data-tiramai="web-gen"></script>
+
+    <!-- Required: TailwindCSS -->
+    <script src="./lib/tailwindcss/tailwindcss.js" fetchpriority="high" data-tiramai="web-gen"></script>
+
+    <!-- Required: Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest" data-tiramai="web-gen"></script>
+
+    <!-- Required: Favicon -->
+    <link rel="icon" href="assets/imgs/logo.ico" type="image/x-icon" data-tiramai="web-gen"/>
+
+    <!-- ECharts Support (for charts/graphs) -->
+    <script defer src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js" data-tiramai="web-gen"></script>
+
+    <!-- Markdown Support (for content rendering) -->
+    <script defer src="https://cdn.jsdelivr.net/npm/marked/marked.min.js" data-tiramai="web-gen"></script>
+
+    <!-- Tailwind Config Extension -->
+    <script data-tiramai="web-gen">
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            'primary-600': '#1B2A44',
+                            'primary-700': '#14233A',
+                            'primary-800': '#0E1A2B',
+                        },
+                        accent: {
+                            'gold-50': '#FFF7E6',
+                            'gold-500': '#C59D42',
+                            'gold-600': '#A97D22',
+                        },
+                        success: { '600': '#16A34A' },
+                        warning: { '600': '#D97706' },
+                        danger: { '600': '#DC2626' },
+                        info: { '600': '#2563EB' },
+                        heat: {
+                            green: '#16A34A',
+                            amber: '#F59E0B',
+                            red: '#DC2626'
+                        },
+                        neutral: {
+                            '50': '#F8FAFC',
+                            '200': '#E2E8F0',
+                            '500': '#64748B',
+                            '700': '#334155',
+                            '900': '#111827',
+                            '950': '#0B1220',
+                        }
+                    },
+                    fontSize: {
+                        'xs': ['12px', '16px'],
+                        'sm': ['14px', '20px'],
+                        'base': ['16px', '24px'],
+                        'xl': ['20px', '28px'],
+                        '2xl': ['24px', '32px'],
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-neutral-50 min-h-screen text-neutral-900">
+    <!-- Top Navigation -->
+    <header class="fixed top-0 left-0 right-0 bg-brand-primary-800 border-b border-neutral-200 flex items-center justify-between px-6 py-4 z-30 h-16">
+        <div class="flex items-center gap-4">
+            <!-- Mobile menu toggle -->
+            <button id="mobileMenuToggle" class="md:hidden text-white p-2" aria-label="Toggle menu">
+                <svg class="w-5 h-5" data-lucide="menu"></svg>
+            </button>
+            <!-- Logo -->
+            <div class="flex items-center gap-3">
+                <svg width="32" height="32" viewBox="0 0 400 400" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="84" y="116" width="56" height="168" rx="8" fill="#1E40AF"/>
+                    <rect x="176" y="84" width="56" height="200" rx="8" fill="#059669"/>
+                    <rect x="268" y="156" width="48" height="128" rx="8" fill="#1E40AF"/>
+                    <rect x="114" y="180" width="172" height="20" rx="10" fill="#F59E0B"/>
+                </svg>
+                <span class="text-xl font-semibold text-white">SkillBridge</span>
+            </div>
+        </div>
+        <div class="flex items-center gap-4">
+            <!-- User Profile Dropdown -->
+            <div class="relative" id="userProfileContainer">
+                <button id="userProfileToggle" class="flex items-center gap-2 text-white hover:text-accent-gold-500 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2 focus:ring-offset-brand-primary-800 rounded-md p-2">
+                    <div class="w-8 h-8 bg-accent-gold-500 rounded-full flex items-center justify-center">
+                        <span id="userInitials" class="text-sm font-semibold text-white">JD</span>
+                    </div>
+                    <svg class="w-4 h-4" data-lucide="chevron-down"></svg>
+                </button>
+                <!-- Dropdown Menu -->
+                <div id="userProfileDropdown" class="hidden absolute right-0 mt-2 w-64 bg-white rounded-md shadow-lg border border-neutral-200 py-2 z-50">
+                    <div class="px-4 py-3 border-b border-neutral-200">
+                        <p id="userDisplayName" class="text-sm font-semibold text-neutral-900">John Doe</p>
+                        <p id="userEmail" class="text-xs text-neutral-500">johndoe@example.com</p>
+                        <p class="text-xs text-accent-gold-600 font-medium">System Administrator</p>
+                    </div>
+                    <button id="signOutButton" class="w-full text-left px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50 flex items-center gap-2">
+                        <svg class="w-4 h-4" data-lucide="log-out"></svg>
+                        Sign Out
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="flex pt-16">
+        <!-- Side Navigation -->
+        <aside id="sidebar" class="fixed md:sticky top-16 left-0 w-64 bg-white border-r border-neutral-200 h-[calc(100vh-4rem)] overflow-y-auto z-20 transform -translate-x-full md:translate-x-0 transition-transform duration-200">
+            <nav class="p-4 space-y-1">
+                <!-- Admin Dashboard -->
+                <a href="dashboard.html" id="nav-dashboard" class="nav-item flex items-center gap-3 px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                    <svg class="w-5 h-5" data-lucide="layout-dashboard"></svg>
+                    <span>Admin Dashboard</span>
+                </a>
+
+                <!-- Employees with Children -->
+                <div class="nav-group">
+                    <button class="nav-group-toggle flex items-center justify-between w-full px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                        <div class="flex items-center gap-3">
+                            <svg class="w-5 h-5" data-lucide="users"></svg>
+                            <span>Employees</span>
+                        </div>
+                        <svg class="w-4 h-4 transform transition-transform" data-lucide="chevron-right"></svg>
+                    </button>
+                    <div class="nav-group-children hidden ml-8 space-y-1 mt-1">
+                        <a href="employees_list.html" class="nav-item block px-3 py-2 rounded-md text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-600">Employee Directory</a>
+                        <a href="employee_upsert.html?mode=create" class="nav-item block px-3 py-2 rounded-md text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-600">Add Employee</a>
+                    </div>
+                </div>
+
+                <!-- Departments -->
+                <a href="departments_list.html" id="nav-departments" class="nav-item flex items-center gap-3 px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                    <svg class="w-5 h-5" data-lucide="building"></svg>
+                    <span>Departments</span>
+                </a>
+
+                <!-- Skill Categories -->
+                <a href="skill_categories_list.html" id="nav-skill-categories" class="nav-item flex items-center gap-3 px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                    <svg class="w-5 h-5" data-lucide="layers"></svg>
+                    <span>Skill Categories</span>
+                </a>
+
+                <!-- Criticality Levels -->
+                <a href="skill_criticalities_list.html" id="nav-criticalities" class="nav-item flex items-center gap-3 px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                    <svg class="w-5 h-5" data-lucide="sliders"></svg>
+                    <span>Criticality Levels</span>
+                </a>
+
+                <!-- Skills with Children -->
+                <div class="nav-group">
+                    <button class="nav-group-toggle flex items-center justify-between w-full px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                        <div class="flex items-center gap-3">
+                            <svg class="w-5 h-5" data-lucide="book"></svg>
+                            <span>Skills</span>
+                        </div>
+                        <svg class="w-4 h-4 transform transition-transform" data-lucide="chevron-right"></svg>
+                    </button>
+                    <div class="nav-group-children hidden ml-8 space-y-1 mt-1">
+                        <a href="skills_list.html" class="nav-item block px-3 py-2 rounded-md text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-600">Skills Directory</a>
+                        <a href="skill_upsert.html?mode=create" class="nav-item block px-3 py-2 rounded-md text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-600">Add Skill</a>
+                    </div>
+                </div>
+
+                <!-- Assessment Cycles with Children -->
+                <div class="nav-group">
+                    <button class="nav-group-toggle flex items-center justify-between w-full px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                        <div class="flex items-center gap-3">
+                            <svg class="w-5 h-5" data-lucide="calendar"></svg>
+                            <span>Assessment Cycles</span>
+                        </div>
+                        <svg class="w-4 h-4 transform transition-transform" data-lucide="chevron-right"></svg>
+                    </button>
+                    <div class="nav-group-children hidden ml-8 space-y-1 mt-1">
+                        <a href="assessment_cycles_list.html" class="nav-item block px-3 py-2 rounded-md text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-600">Cycles Directory</a>
+                        <a href="assessment_cycle_upsert.html?mode=create" class="nav-item block px-3 py-2 rounded-md text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-600">Create Cycle</a>
+                    </div>
+                </div>
+
+                <!-- Trainer Pool with Children -->
+                <div class="nav-group">
+                    <button class="nav-group-toggle flex items-center justify-between w-full px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                        <div class="flex items-center gap-3">
+                            <svg class="w-5 h-5" data-lucide="users"></svg>
+                            <span>Trainer Pool</span>
+                        </div>
+                        <svg class="w-4 h-4 transform transition-transform" data-lucide="chevron-right"></svg>
+                    </button>
+                    <div class="nav-group-children hidden ml-8 space-y-1 mt-1">
+                        <a href="trainers_list.html" class="nav-item block px-3 py-2 rounded-md text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-600">Trainer Directory</a>
+                        <a href="external_trainer_upsert.html?mode=create" class="nav-item block px-3 py-2 rounded-md text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-600">Add External Trainer</a>
+                    </div>
+                </div>
+
+                <!-- Training Sessions with Children -->
+                <div class="nav-group">
+                    <button class="nav-group-toggle flex items-center justify-between w-full px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                        <div class="flex items-center gap-3">
+                            <svg class="w-5 h-5" data-lucide="calendar"></svg>
+                            <span>Training Sessions</span>
+                        </div>
+                        <svg class="w-4 h-4 transform transition-transform" data-lucide="chevron-right"></svg>
+                    </button>
+                    <div class="nav-group-children hidden ml-8 space-y-1 mt-1">
+                        <a href="training_sessions_list.html" class="nav-item block px-3 py-2 rounded-md text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-600">Sessions Calendar</a>
+                        <a href="training_session_upsert.html?mode=create" class="nav-item block px-3 py-2 rounded-md text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-600">Create Session</a>
+                    </div>
+                </div>
+
+                <!-- Disputes -->
+                <a href="disputes_list.html" id="nav-disputes" class="nav-item flex items-center gap-3 px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                    <svg class="w-5 h-5" data-lucide="alert-circle"></svg>
+                    <span>Disputes</span>
+                </a>
+
+                <!-- Analytics Section -->
+                <div class="border-t border-neutral-200 pt-4 mt-4">
+                    <h4 class="px-3 text-xs font-semibold text-neutral-500 uppercase tracking-wider mb-2">Analytics</h4>
+                    
+                    <a href="analytics_skill_gap_heatmap.html" class="nav-item flex items-center gap-3 px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                        <svg class="w-5 h-5" data-lucide="grid"></svg>
+                        <span>Skill Gap Heatmap</span>
+                    </a>
+
+                    <a href="analytics_tni_dashboard.html" class="nav-item flex items-center gap-3 px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                        <svg class="w-5 h-5" data-lucide="bar-chart-2"></svg>
+                        <span>TNI Dashboard</span>
+                    </a>
+
+                    <a href="analytics_training_forecast.html" class="nav-item flex items-center gap-3 px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                        <svg class="w-5 h-5" data-lucide="trending-up"></svg>
+                        <span>Training Forecast</span>
+                    </a>
+
+                    <a href="analytics_assessment_completion.html" class="nav-item flex items-center gap-3 px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                        <svg class="w-5 h-5" data-lucide="pie-chart"></svg>
+                        <span>Assessment Completion</span>
+                    </a>
+
+                    <a href="analytics_dispute_metrics.html" class="nav-item flex items-center gap-3 px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                        <svg class="w-5 h-5" data-lucide="bar-chart"></svg>
+                        <span>Dispute Analytics</span>
+                    </a>
+                </div>
+            </nav>
+            
+            <!-- Footer -->
+            <div class="absolute bottom-4 w-full text-center text-xs text-neutral-500 bg-white px-4">
+                Made with ❤️ by TiramAi
+            </div>
+        </aside>
+
+        <!-- Mobile Overlay -->
+        <div id="mobileOverlay" class="hidden fixed inset-0 bg-black bg-opacity-50 z-10 md:hidden"></div>
+
+        <!-- Main Content -->
+        <main id="pageContent" class="flex-1 p-6 overflow-y-auto">
+            
+<!-- Assessment Completion Analytics Page -->
+<div class="max-w-[1280px] mx-auto space-y-6">
+  <!-- Page Header -->
+  <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+    <div>
+      <h1 class="text-2xl leading-8 font-bold text-neutral-950">Assessment Completion</h1>
+      <p class="text-sm leading-5 text-neutral-700 mt-1">Track progress and identify lagging areas for intervention</p>
+    </div>
+    
+    <!-- Cycle Selector -->
+    <div class="flex items-center gap-3">
+      <label for="cycleSelector" class="text-sm font-medium text-neutral-900">Assessment Cycle:</label>
+      <select id="cycleSelector" class="border border-neutral-200 rounded-sm px-3 py-2 bg-white text-sm leading-5 min-w-[200px] focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2">
+        <option value="">Loading cycles...</option>
+      </select>
+      <button id="refreshData" class="inline-flex items-center text-sm text-neutral-500 hover:text-neutral-700" aria-label="Refresh data">
+        <svg class="w-5 h-5" data-lucide="refresh-cw"></svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- KPI Cards -->
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4" id="kpiContainer">
+    <!-- Organization Completion Rate -->
+    <div class="bg-white rounded-md border border-neutral-200 p-4 shadow-sm">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-sm leading-5 font-medium text-neutral-700">Org Completion Rate</p>
+          <p id="kpiOrgCompletion" class="text-2xl font-bold text-neutral-950 mt-1">--</p>
+        </div>
+        <div class="w-12 h-12 bg-accent-gold-50 rounded-full flex items-center justify-center">
+          <svg class="w-6 h-6 text-accent-gold-500" data-lucide="pie-chart"></svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- Total Expected -->
+    <div class="bg-white rounded-md border border-neutral-200 p-4 shadow-sm">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-sm leading-5 font-medium text-neutral-700">Total Expected</p>
+          <p id="kpiTotalExpected" class="text-2xl font-bold text-neutral-950 mt-1">--</p>
+        </div>
+        <div class="w-12 h-12 bg-info-600/10 rounded-full flex items-center justify-center">
+          <svg class="w-6 h-6 text-info-600" data-lucide="target"></svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- Completed Assessments -->
+    <div class="bg-white rounded-md border border-neutral-200 p-4 shadow-sm">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-sm leading-5 font-medium text-neutral-700">Completed</p>
+          <p id="kpiCompleted" class="text-2xl font-bold text-neutral-950 mt-1">--</p>
+        </div>
+        <div class="w-12 h-12 bg-success-600/10 rounded-full flex items-center justify-center">
+          <svg class="w-6 h-6 text-success-600" data-lucide="check-circle"></svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- Days Until End -->
+    <div class="bg-white rounded-md border border-neutral-200 p-4 shadow-sm">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-sm leading-5 font-medium text-neutral-700">Days Until End</p>
+          <p id="kpiDaysUntilEnd" class="text-2xl font-bold text-neutral-950 mt-1">--</p>
+        </div>
+        <div class="w-12 h-12 bg-warning-600/10 rounded-full flex items-center justify-center">
+          <svg class="w-6 h-6 text-warning-600" data-lucide="calendar"></svg>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Department Breakdown Table -->
+  <div class="bg-white rounded-md border border-neutral-200 shadow-sm">
+    <div class="px-4 py-3 border-b border-neutral-200 flex items-center justify-between">
+      <h2 class="text-base leading-6 font-semibold text-neutral-950">Department Breakdown</h2>
+      <div class="flex items-center gap-3">
+        <input type="text" id="departmentSearch" placeholder="Search departments..." class="border border-neutral-200 rounded-sm px-3 py-2 text-sm leading-5 w-64 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2">
+        <button id="sortDepartments" class="inline-flex items-center text-sm text-neutral-500 hover:text-neutral-700" aria-label="Sort departments">
+          <svg class="w-4 h-4" data-lucide="arrow-up-down"></svg>
+        </button>
+      </div>
+    </div>
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm leading-5">
+        <thead class="bg-neutral-50 text-neutral-700">
+          <tr>
+            <th class="text-left font-semibold px-4 py-3 border-b border-neutral-200">Department</th>
+            <th class="text-left font-semibold px-4 py-3 border-b border-neutral-200">Completion %</th>
+            <th class="text-left font-semibold px-4 py-3 border-b border-neutral-200">Completed</th>
+            <th class="text-left font-semibold px-4 py-3 border-b border-neutral-200">Expected</th>
+            <th class="text-left font-semibold px-4 py-3 border-b border-neutral-200">Status</th>
+            <th class="text-left font-semibold px-4 py-3 border-b border-neutral-200">Actions</th>
+          </tr>
+        </thead>
+        <tbody id="departmentTableBody" class="divide-y divide-neutral-200">
+          <!-- Skeleton rows -->
+          <tr class="skeleton-row">
+            <td class="px-4 py-3"><div class="h-4 bg-neutral-200 rounded w-32"></div></td>
+            <td class="px-4 py-3"><div class="h-4 bg-neutral-200 rounded w-16"></div></td>
+            <td class="px-4 py-3"><div class="h-4 bg-neutral-200 rounded w-12"></div></td>
+            <td class="px-4 py-3"><div class="h-4 bg-neutral-200 rounded w-12"></div></td>
+            <td class="px-4 py-3"><div class="h-6 bg-neutral-200 rounded-full w-20"></div></td>
+            <td class="px-4 py-3"><div class="h-6 bg-neutral-200 rounded w-24"></div></td>
+          </tr>
+          <tr class="skeleton-row">
+            <td class="px-4 py-3"><div class="h-4 bg-neutral-200 rounded w-40"></div></td>
+            <td class="px-4 py-3"><div class="h-4 bg-neutral-200 rounded w-16"></div></td>
+            <td class="px-4 py-3"><div class="h-4 bg-neutral-200 rounded w-12"></div></td>
+            <td class="px-4 py-3"><div class="h-4 bg-neutral-200 rounded w-12"></div></td>
+            <td class="px-4 py-3"><div class="h-6 bg-neutral-200 rounded-full w-20"></div></td>
+            <td class="px-4 py-3"><div class="h-6 bg-neutral-200 rounded w-24"></div></td>
+          </tr>
+          <tr class="skeleton-row">
+            <td class="px-4 py-3"><div class="h-4 bg-neutral-200 rounded w-28"></div></td>
+            <td class="px-4 py-3"><div class="h-4 bg-neutral-200 rounded w-16"></div></td>
+            <td class="px-4 py-3"><div class="h-4 bg-neutral-200 rounded w-12"></div></td>
+            <td class="px-4 py-3"><div class="h-4 bg-neutral-200 rounded w-12"></div></td>
+            <td class="px-4 py-3"><div class="h-6 bg-neutral-200 rounded-full w-20"></div></td>
+            <td class="px-4 py-3"><div class="h-6 bg-neutral-200 rounded w-24"></div></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Team Lead Breakdown Table -->
+  <div class="bg-white rounded-md border border-neutral-200 shadow-sm">
+    <div class="px-4 py-3 border-b border-neutral-200 flex items-center justify-between">
+      <h2 class="text-base leading-6 font-semibold text-neutral-950">Team Lead Breakdown</h2>
+      <div class="flex items-center gap-3">
+        <input type="text" id="teamLeadSearch" placeholder="Search team leads..." class="border border-neutral-200 rounded-sm px-3 py-2 text-sm leading-5 w-64 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2">
+        <button id="sortTeamLeads" class="inline-flex items-center text-sm text-neutral-500 hover:text-neutral-700" aria-label="Sort team leads">
+          <svg class="w-4 h-4" data-lucide="arrow-up-down"></svg>
+        </button>
+      </div>
+    </div>
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm leading-5">
+        <thead class="bg-neutral-50 text-neutral-700">
+          <tr>
+            <th class="text-left font-semibold px-4 py-3 border-b border-neutral-200">Team Lead</th>
+            <th class="text-left font-semibold px-4 py-3 border-b border-neutral-200">Department</th>
+            <th class="text-left font-semibold px-4 py-3 border-b border-neutral-200">Completion %</th>
+            <th class="text-left font-semibold px-4 py-3 border-b border-neutral-200">Completed</th>
+            <th class="text-left font-semibold px-4 py-3 border-b border-neutral-200">Expected</th>
+            <th class="text-left font-semibold px-4 py-3 border-b border-neutral-200">Status</th>
+            <th class="text-left font-semibold px-4 py-3 border-b border-neutral-200">Actions</th>
+          </tr>
+        </thead>
+        <tbody id="teamLeadTableBody" class="divide-y divide-neutral-200">
+          <!-- Skeleton rows -->
+          <tr class="skeleton-row">
+            <td class="px-4 py-3"><div class="h-4 bg-neutral-200 rounded w-32"></div></td>
+            <td class="px-4 py-3"><div class="h-4 bg-neutral-200 rounded w-24"></div></td>
+            <td class="px-4 py-3"><div class="h-4 bg-neutral-200 rounded w-16"></div></td>
+            <td class="px-4 py-3"><div class="h-4 bg-neutral-200 rounded w-12"></div></td>
+            <td class="px-4 py-3"><div class="h-4 bg-neutral-200 rounded w-12"></div></td>
+            <td class="px-4 py-3"><div class="h-6 bg-neutral-200 rounded-full w-20"></div></td>
+            <td class="px-4 py-3"><div class="h-6 bg-neutral-200 rounded w-32"></div></td>
+          </tr>
+          <tr class="skeleton-row">
+            <td class="px-4 py-3"><div class="h-4 bg-neutral-200 rounded w-28"></div></td>
+            <td class="px-4 py-3"><div class="h-4 bg-neutral-200 rounded w-28"></div></td>
+            <td class="px-4 py-3"><div class="h-4 bg-neutral-200 rounded w-16"></div></td>
+            <td class="px-4 py-3"><div class="h-4 bg-neutral-200 rounded w-12"></div></td>
+            <td class="px-4 py-3"><div class="h-4 bg-neutral-200 rounded w-12"></div></td>
+            <td class="px-4 py-3"><div class="h-6 bg-neutral-200 rounded-full w-20"></div></td>
+            <td class="px-4 py-3"><div class="h-6 bg-neutral-200 rounded w-32"></div></td>
+          </tr>
+          <tr class="skeleton-row">
+            <td class="px-4 py-3"><div class="h-4 bg-neutral-200 rounded w-36"></div></td>
+            <td class="px-4 py-3"><div class="h-4 bg-neutral-200 rounded w-20"></div></td>
+            <td class="px-4 py-3"><div class="h-4 bg-neutral-200 rounded w-16"></div></td>
+            <td class="px-4 py-3"><div class="h-4 bg-neutral-200 rounded w-12"></div></td>
+            <td class="px-4 py-3"><div class="h-4 bg-neutral-200 rounded w-12"></div></td>
+            <td class="px-4 py-3"><div class="h-6 bg-neutral-200 rounded-full w-20"></div></td>
+            <td class="px-4 py-3"><div class="h-6 bg-neutral-200 rounded w-32"></div></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- Team Lead Detail Modal -->
+<div id="teamLeadDetailModal" class="fixed inset-0 z-50 hidden">
+  <div class="fixed inset-0 bg-black/50 backdrop-blur-sm" id="modalBackdrop"></div>
+  <div class="fixed inset-0 overflow-y-auto">
+    <div class="flex items-center justify-center min-h-full p-4">
+      <div class="relative bg-white rounded-lg shadow-lg max-w-4xl w-full max-h-[90vh] overflow-hidden">
+        <!-- Modal Header -->
+        <div class="flex items-center justify-between px-6 py-4 border-b border-neutral-200">
+          <div>
+            <h3 id="modalTeamLeadName" class="text-xl leading-7 font-semibold text-neutral-950">Team Lead Details</h3>
+            <p id="modalDepartmentName" class="text-sm text-neutral-700 mt-1"></p>
+          </div>
+          <button id="closeModal" class="text-neutral-500 hover:text-neutral-700 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2 rounded-md p-2">
+            <svg class="w-6 h-6" data-lucide="x"></svg>
+          </button>
+        </div>
+        
+        <!-- Modal Content -->
+        <div class="px-6 py-4 overflow-y-auto max-h-[70vh]">
+          <div class="mb-4">
+            <h4 class="text-base font-semibold text-neutral-950 mb-3">Direct Reports Completion Status</h4>
+            <div class="overflow-x-auto">
+              <table class="w-full text-sm leading-5">
+                <thead class="bg-neutral-50 text-neutral-700">
+                  <tr>
+                    <th class="text-left font-semibold px-3 py-3 border-b border-neutral-200">Employee</th>
+                    <th class="text-left font-semibold px-3 py-3 border-b border-neutral-200">Completion %</th>
+                    <th class="text-left font-semibold px-3 py-3 border-b border-neutral-200">Completed</th>
+                    <th class="text-left font-semibold px-3 py-3 border-b border-neutral-200">Expected</th>
+                    <th class="text-left font-semibold px-3 py-3 border-b border-neutral-200">Status</th>
+                  </tr>
+                </thead>
+                <tbody id="modalEmployeeTableBody" class="divide-y divide-neutral-200">
+                  <!-- Skeleton rows for modal -->
+                  <tr class="modal-skeleton-row">
+                    <td class="px-3 py-3"><div class="h-4 bg-neutral-200 rounded w-32"></div></td>
+                    <td class="px-3 py-3"><div class="h-4 bg-neutral-200 rounded w-16"></div></td>
+                    <td class="px-3 py-3"><div class="h-4 bg-neutral-200 rounded w-12"></div></td>
+                    <td class="px-3 py-3"><div class="h-4 bg-neutral-200 rounded w-12"></div></td>
+                    <td class="px-3 py-3"><div class="h-6 bg-neutral-200 rounded-full w-20"></div></td>
+                  </tr>
+                  <tr class="modal-skeleton-row">
+                    <td class="px-3 py-3"><div class="h-4 bg-neutral-200 rounded w-28"></div></td>
+                    <td class="px-3 py-3"><div class="h-4 bg-neutral-200 rounded w-16"></div></td>
+                    <td class="px-3 py-3"><div class="h-4 bg-neutral-200 rounded w-12"></div></td>
+                    <td class="px-3 py-3"><div class="h-4 bg-neutral-200 rounded w-12"></div></td>
+                    <td class="px-3 py-3"><div class="h-6 bg-neutral-200 rounded-full w-20"></div></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Modal Footer -->
+        <div class="flex justify-end px-6 py-4 border-t border-neutral-200 gap-3">
+          <button id="sendReminderModal" class="inline-flex items-center px-4 py-2 rounded-md bg-brand-primary-600 hover:bg-brand-primary-700 text-white text-sm font-medium focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2">
+            <svg class="w-4 h-4 mr-2" data-lucide="send"></svg>
+            Send Reminder
+          </button>
+          <button id="closeModalBtn" class="inline-flex items-center px-4 py-2 rounded-md border border-neutral-200 bg-white text-neutral-900 text-sm font-medium hover:bg-neutral-50 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2">
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+        </main>
+    </div>
+
+    <!-- Required: JavaScript -->
+    <script type="module" data-tiramai="web-gen">
+        import { showToast, showLoader, hideLoader, env } from "./scripts/main.js";
+        import { auth, db, storage } from "./scripts/firebase.js";
+        import { onAuthStateChanged, getAuth, signOut } from 'https://www.gstatic.com/firebasejs/10.12.4/firebase-auth.js';
+        import { doc, getDoc } from 'https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js';
+
+        // Initialize Lucide icons
+        lucide.createIcons();
+
+        // Mobile menu toggle
+        const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+        const sidebar = document.getElementById('sidebar');
+        const mobileOverlay = document.getElementById('mobileOverlay');
+
+        mobileMenuToggle?.addEventListener('click', () => {
+            sidebar.classList.toggle('-translate-x-full');
+            mobileOverlay.classList.toggle('hidden');
+        });
+
+        mobileOverlay?.addEventListener('click', () => {
+            sidebar.classList.add('-translate-x-full');
+            mobileOverlay.classList.add('hidden');
+        });
+
+        // Navigation group toggles
+        document.querySelectorAll('.nav-group-toggle').forEach(toggle => {
+            toggle.addEventListener('click', (e) => {
+                e.preventDefault();
+                const children = toggle.nextElementSibling;
+                const icon = toggle.querySelector('svg:last-child');
+                
+                children.classList.toggle('hidden');
+                icon.classList.toggle('rotate-90');
+            });
+        });
+
+        // User profile dropdown
+        const userProfileToggle = document.getElementById('userProfileToggle');
+        const userProfileDropdown = document.getElementById('userProfileDropdown');
+
+        userProfileToggle?.addEventListener('click', () => {
+            userProfileDropdown.classList.toggle('hidden');
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!userProfileToggle?.contains(e.target) && !userProfileDropdown?.contains(e.target)) {
+                userProfileDropdown?.classList.add('hidden');
+            }
+        });
+
+        // Sign out functionality
+        document.getElementById('signOutButton')?.addEventListener('click', async () => {
+            try {
+                await signOut(auth);
+                window.location.href = 'auth.html';
+            } catch (error) {
+                console.error('Sign out error:', error);
+                showToast('Failed to sign out', 'error');
+            }
+        });
+
+        // Auth state management
+        onAuthStateChanged(auth, async (user) => {
+            if (!user) {
+                window.location.href = 'auth.html';
+                return;
+            }
+
+            // Load user profile data
+            try {
+                const userDoc = await getDoc(doc(db, 'users', user.uid));
+                const userData = userDoc.exists() ? userDoc.data() : null;
+
+                // Update UI with user data
+                const displayName = userData?.firstName && userData?.lastName 
+                    ? `${userData.firstName} ${userData.lastName}`
+                    : user.displayName || 'John Doe';
+                
+                const email = user.email || 'johndoe@example.com';
+                const initials = displayName.split(' ').map(n => n[0]).join('').toUpperCase();
+
+                document.getElementById('userDisplayName').textContent = displayName;
+                document.getElementById('userEmail').textContent = email;
+                document.getElementById('userInitials').textContent = initials;
+
+            } catch (error) {
+                console.error('Error loading user data:', error);
+                // Fallback to default values
+                document.getElementById('userDisplayName').textContent = 'John Doe';
+                document.getElementById('userEmail').textContent = user.email || 'johndoe@example.com';
+                document.getElementById('userInitials').textContent = 'JD';
+            }
+        });
+
+        // Set active navigation item based on current page
+        function setActiveNavItem() {
+            const currentPath = window.location.pathname;
+            const navItems = document.querySelectorAll('.nav-item');
+            
+            navItems.forEach(item => {
+                const href = item.getAttribute('href');
+                if (href && currentPath.includes(href.split('?')[0])) {
+                    item.classList.add('bg-accent-gold-50', 'text-brand-primary-600', 'border-l-2', 'border-brand-primary-600');
+                    item.classList.remove('text-neutral-700', 'text-neutral-600');
+                    
+                    // Expand parent group if needed
+                    const parentGroup = item.closest('.nav-group');
+                    if (parentGroup) {
+                        const children = parentGroup.querySelector('.nav-group-children');
+                        const icon = parentGroup.querySelector('.nav-group-toggle svg:last-child');
+                        children?.classList.remove('hidden');
+                        icon?.classList.add('rotate-90');
+                    }
+                }
+            });
+        }
+
+        // Initialize active nav state
+        setActiveNavItem();
+    </script>
+
+    
+<script id="data-script" type="module" data-tiramai="web-gen">
+import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.12.4/firebase-auth.js';
+import {
+  collection, getDocs, query, where, orderBy, limit, getCountFromServer
+} from "https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js";
+import { auth, getDb } from "./scripts/firebase.js";
+import { showToast, showLoader, hideLoader } from "./scripts/main.js";
+
+const db = getDb();
+
+// State management
+let currentCycleId = null;
+let currentAbort = null;
+let departmentData = [];
+let teamLeadData = [];
+let cyclesMap = new Map();
+let departmentsMap = new Map();
+
+// URL parameters
+const urlParams = new URLSearchParams(window.location.search);
+const preselectedCycleId = urlParams.get('cycleId');
+const preselectedDepartmentId = urlParams.get('departmentId');
+
+// Initialize page
+onAuthStateChanged(auth, user => {
+  if (!user) {
+    location.href = "auth.html?redirect=" + encodeURIComponent(location.pathname);
+  } else {
+    funInitializePage();
+  }
+});
+
+// Abortable fetch helper
+function createAbortableFetch() {
+  if (currentAbort) currentAbort.abort();
+  currentAbort = new AbortController();
+  return currentAbort.signal;
+}
+
+// Concurrency helper
+function createSemaphore(max = 2) {
+  const queue = [];
+  let active = 0;
+  const next = () => {
+    if (active >= max || queue.length === 0) return;
+    active++;
+    const { fn, res, rej } = queue.shift();
+    Promise.resolve()
+      .then(fn)
+      .then(v => res(v))
+      .catch(e => rej(e))
+      .finally(() => { active--; next(); });
+  };
+  return (fn) => new Promise((res, rej) => { queue.push({ fn, res, rej }); next(); });
+}
+
+const withLimit = createSemaphore(2);
+
+// Initialize page
+async function funInitializePage() {
+  try {
+    funSetupEventListeners();
+    await funLoadCycles();
+    
+    // Set default cycle (active or preselected)
+    if (preselectedCycleId && cyclesMap.has(preselectedCycleId)) {
+      currentCycleId = preselectedCycleId;
+      document.getElementById('cycleSelector').value = preselectedCycleId;
+    } else {
+      // Find active cycle
+      const activeCycle = Array.from(cyclesMap.values()).find(cycle => cycle.isActiveCycle);
+      if (activeCycle) {
+        currentCycleId = activeCycle.id;
+        document.getElementById('cycleSelector').value = activeCycle.id;
+      }
+    }
+    
+    if (currentCycleId) {
+      await funLoadAssessmentData();
+    }
+    
+  } catch (error) {
+    console.error('Error initializing page:', error);
+    showToast('Failed to initialize page', 'error');
+  }
+}
+
+// Load assessment cycles
+async function funLoadCycles() {
+  try {
+    const q = query(
+      collection(db, 'assessmentCycles'),
+      where('status', '==', 'active'),
+      orderBy('startDate', 'desc')
+    );
+    
+    const snapshot = await withLimit(() => getDocs(q));
+    const cycles = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    
+    cycles.forEach(cycle => cyclesMap.set(cycle.id, cycle));
+    
+    const selector = document.getElementById('cycleSelector');
+    selector.innerHTML = '<option value="">Select assessment cycle...</option>';
+    
+    cycles.forEach(cycle => {
+      const option = document.createElement('option');
+      option.value = cycle.id;
+      option.textContent = `${cycle.cycleName} (${funFormatDate(cycle.startDate)} - ${funFormatDate(cycle.endDate)})`;
+      if (cycle.isActiveCycle) option.textContent += ' - Active';
+      selector.appendChild(option);
+    });
+    
+  } catch (error) {
+    console.error('Error loading cycles:', error);
+    showToast('Failed to load assessment cycles', 'error');
+  }
+}
+
+// Load departments
+async function funLoadDepartments() {
+  try {
+    const q = query(
+      collection(db, 'departments'),
+      where('status', '==', 'active'),
+      orderBy('name')
+    );
+    
+    const snapshot = await withLimit(() => getDocs(q));
+    const departments = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    
+    departments.forEach(dept => departmentsMap.set(dept.id, dept));
+    
+  } catch (error) {
+    console.error('Error loading departments:', error);
+    showToast('Failed to load departments', 'error');
+  }
+}
+
+// Main data loading function
+async function funLoadAssessmentData(forceRefresh = false) {
+  if (!currentCycleId) return;
+  
+  const signal = createAbortableFetch();
+  
+  try {
+    // Clear skeleton only on force refresh
+    if (forceRefresh) {
+      funShowSkeletons();
+      funClearKPIs();
+    }
+    
+    await funLoadDepartments();
+    
+    // Load all required data concurrently
+    const [users, skillMappings, assessments] = await Promise.all([
+      withLimit(() => funLoadUsers()),
+      withLimit(() => funLoadSkillMappings()),
+      withLimit(() => funLoadAssessments())
+    ]);
+    
+    if (signal.aborted) return;
+    
+    // Calculate completion data
+    const completionData = funCalculateCompletionData(users, skillMappings, assessments);
+    
+    // Update UI
+    funUpdateKPIs(completionData.kpis);
+    funUpdateDepartmentTable(completionData.departments);
+    funUpdateTeamLeadTable(completionData.teamLeads);
+    
+    funHideSkeletons();
+    
+  } catch (error) {
+    if (signal.aborted) return;
+    console.error('Error loading assessment data:', error);
+    showToast('Failed to load assessment data', 'error');
+  }
+}
+
+// Load users
+async function funLoadUsers() {
+  const q = query(
+    collection(db, 'users'),
+    where('employeeStatus', '==', 'active'),
+    orderBy('firstName')
+  );
+  
+  const snapshot = await getDocs(q);
+  return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+}
+
+// Load skill mappings
+async function funLoadSkillMappings() {
+  const q = query(
+    collection(db, 'skillMappings'),
+    where('status', '==', 'active')
+  );
+  
+  const snapshot = await getDocs(q);
+  return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+}
+
+// Load assessments for current cycle
+async function funLoadAssessments() {
+  const q = query(
+    collection(db, 'assessments'),
+    where('assessmentCycleId', '==', currentCycleId),
+    where('status', '==', 'active')
+  );
+  
+  const snapshot = await getDocs(q);
+  return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+}
+
+// Calculate completion data
+function funCalculateCompletionData(users, skillMappings, assessments) {
+  const employeeMap = new Map();
+  users.forEach(user => employeeMap.set(user.id, user));
+  
+  // Group skill mappings by employee
+  const employeeSkillMappings = new Map();
+  skillMappings.forEach(mapping => {
+    if (!employeeSkillMappings.has(mapping.employeeId)) {
+      employeeSkillMappings.set(mapping.employeeId, []);
+    }
+    employeeSkillMappings.get(mapping.employeeId).push(mapping);
+  });
+  
+  // Group completed assessments by employee
+  const employeeCompletedAssessments = new Map();
+  assessments.filter(a => a.isLocked).forEach(assessment => {
+    if (!employeeCompletedAssessments.has(assessment.employeeId)) {
+      employeeCompletedAssessments.set(assessment.employeeId, []);
+    }
+    employeeCompletedAssessments.get(assessment.employeeId).push(assessment);
+  });
+  
+  // Calculate department aggregations
+  const departmentStats = new Map();
+  const teamLeadStats = new Map();
+  
+  let totalExpected = 0;
+  let totalCompleted = 0;
+  
+  users.forEach(user => {
+    const expected = employeeSkillMappings.get(user.id)?.length || 0;
+    const completed = employeeCompletedAssessments.get(user.id)?.length || 0;
+    
+    totalExpected += expected;
+    totalCompleted += completed;
+    
+    // Department stats
+    const deptId = user.departmentId;
+    if (deptId && departmentsMap.has(deptId)) {
+      if (!departmentStats.has(deptId)) {
+        departmentStats.set(deptId, {
+          id: deptId,
+          name: departmentsMap.get(deptId).name,
+          expected: 0,
+          completed: 0,
+          employees: []
+        });
+      }
+      const deptData = departmentStats.get(deptId);
+      deptData.expected += expected;
+      deptData.completed += completed;
+      deptData.employees.push({ ...user, expected, completed });
+    }
+    
+    // Team lead stats (if user is a team lead)
+    if (user.role === 'teamLead') {
+      const directReports = users.filter(u => u.teamLeadId === user.id);
+      const teamExpected = directReports.reduce((sum, u) => sum + (employeeSkillMappings.get(u.id)?.length || 0), 0);
+      const teamCompleted = directReports.reduce((sum, u) => sum + (employeeCompletedAssessments.get(u.id)?.length || 0), 0);
+      
+      teamLeadStats.set(user.id, {
+        id: user.id,
+        name: `${user.firstName || ''} ${user.lastName || ''}`.trim(),
+        departmentId: user.departmentId,
+        departmentName: departmentsMap.get(user.departmentId)?.name || 'N/A',
+        expected: teamExpected,
+        completed: teamCompleted,
+        directReports: directReports.map(dr => ({
+          ...dr,
+          expected: employeeSkillMappings.get(dr.id)?.length || 0,
+          completed: employeeCompletedAssessments.get(dr.id)?.length || 0
+        }))
+      });
+    }
+  });
+  
+  // Calculate cycle days until end
+  const selectedCycle = cyclesMap.get(currentCycleId);
+  const daysUntilEnd = selectedCycle ? Math.max(0, Math.ceil((new Date(selectedCycle.endDate) - new Date()) / (1000 * 60 * 60 * 24))) : 0;
+  
+  return {
+    kpis: {
+      orgCompletion: totalExpected > 0 ? Math.round((totalCompleted / totalExpected) * 100) : 0,
+      totalExpected,
+      completed: totalCompleted,
+      daysUntilEnd
+    },
+    departments: Array.from(departmentStats.values()),
+    teamLeads: Array.from(teamLeadStats.values())
+  };
+}
+
+// Update KPIs
+function funUpdateKPIs(kpis) {
+  document.getElementById('kpiOrgCompletion').textContent = `${kpis.orgCompletion}%`;
+  document.getElementById('kpiTotalExpected').textContent = kpis.totalExpected.toLocaleString();
+  document.getElementById('kpiCompleted').textContent = kpis.completed.toLocaleString();
+  document.getElementById('kpiDaysUntilEnd').textContent = kpis.daysUntilEnd;
+}
+
+// Update department table
+function funUpdateDepartmentTable(departments) {
+  const tbody = document.getElementById('departmentTableBody');
+  
+  if (departments.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="6" class="px-4 py-8 text-center text-neutral-500">No data available for selected cycle</td></tr>';
+    return;
+  }
+  
+  departmentData = departments;
+  
+  tbody.innerHTML = departments.map(dept => {
+    const completionRate = dept.expected > 0 ? Math.round((dept.completed / dept.expected) * 100) : 0;
+    const status = funGetCompletionStatus(completionRate);
+    
+    return `
+      <tr class="hover:bg-neutral-50">
+        <td class="px-4 py-3 font-medium text-neutral-950">${dept.name}</td>
+        <td class="px-4 py-3">${completionRate}%</td>
+        <td class="px-4 py-3">${dept.completed}</td>
+        <td class="px-4 py-3">${dept.expected}</td>
+        <td class="px-4 py-3">${status}</td>
+        <td class="px-4 py-3">
+          <button class="send-reminder-btn inline-flex items-center px-3 py-1 rounded-md text-sm bg-brand-primary-600 hover:bg-brand-primary-700 text-white focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2" data-dept-id="${dept.id}">
+            <svg class="w-4 h-4 mr-1" data-lucide="send"></svg>
+            Send Reminder
+          </button>
+        </td>
+      </tr>
+    `;
+  }).join('');
+  
+  // Re-initialize icons
+  lucide.createIcons();
+  
+  // Add event listeners for reminder buttons
+  tbody.querySelectorAll('.send-reminder-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      const deptId = e.currentTarget.dataset.deptId;
+      funSendDepartmentReminder(deptId);
+    });
+  });
+}
+
+// Update team lead table  
+function funUpdateTeamLeadTable(teamLeads) {
+  const tbody = document.getElementById('teamLeadTableBody');
+  
+  if (teamLeads.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="7" class="px-4 py-8 text-center text-neutral-500">No team leads found for selected cycle</td></tr>';
+    return;
+  }
+  
+  teamLeadData = teamLeads;
+  
+  tbody.innerHTML = teamLeads.map(tl => {
+    const completionRate = tl.expected > 0 ? Math.round((tl.completed / tl.expected) * 100) : 0;
+    const status = funGetCompletionStatus(completionRate);
+    
+    return `
+      <tr class="hover:bg-neutral-50">
+        <td class="px-4 py-3">
+          <button class="team-lead-name font-medium text-brand-primary-600 hover:text-brand-primary-700 focus:outline-none focus:underline" data-team-lead-id="${tl.id}">
+            ${tl.name || 'N/A'}
+          </button>
+        </td>
+        <td class="px-4 py-3 text-neutral-700">${tl.departmentName}</td>
+        <td class="px-4 py-3">${completionRate}%</td>
+        <td class="px-4 py-3">${tl.completed}</td>
+        <td class="px-4 py-3">${tl.expected}</td>
+        <td class="px-4 py-3">${status}</td>
+        <td class="px-4 py-3">
+          <div class="flex items-center gap-2">
+            <button class="view-details-btn inline-flex items-center px-3 py-1 rounded-md text-sm border border-neutral-200 bg-white text-neutral-700 hover:bg-neutral-50 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2" data-team-lead-id="${tl.id}">
+              <svg class="w-4 h-4 mr-1" data-lucide="eye"></svg>
+              Details
+            </button>
+            <button class="send-reminder-btn inline-flex items-center px-3 py-1 rounded-md text-sm bg-brand-primary-600 hover:bg-brand-primary-700 text-white focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2" data-team-lead-id="${tl.id}">
+              <svg class="w-4 h-4 mr-1" data-lucide="send"></svg>
+              Reminder
+            </button>
+          </div>
+        </td>
+      </tr>
+    `;
+  }).join('');
+  
+  // Re-initialize icons
+  lucide.createIcons();
+  
+  // Add event listeners
+  tbody.querySelectorAll('.team-lead-name, .view-details-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      const teamLeadId = e.currentTarget.dataset.teamLeadId;
+      funShowTeamLeadDetails(teamLeadId);
+    });
+  });
+  
+  tbody.querySelectorAll('.send-reminder-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      const teamLeadId = e.currentTarget.dataset.teamLeadId;
+      funSendTeamLeadReminder(teamLeadId);
+    });
+  });
+}
+
+// Get completion status badge
+function funGetCompletionStatus(completionRate) {
+  if (completionRate >= 90) {
+    return '<span class="inline-flex items-center px-2 py-1 text-xs rounded-full bg-success-600 text-white">Excellent</span>';
+  } else if (completionRate >= 70) {
+    return '<span class="inline-flex items-center px-2 py-1 text-xs rounded-full bg-accent-gold-500 text-white">Good</span>';
+  } else if (completionRate >= 50) {
+    return '<span class="inline-flex items-center px-2 py-1 text-xs rounded-full bg-warning-600 text-white">At Risk</span>';
+  } else {
+    return '<span class="inline-flex items-center px-2 py-1 text-xs rounded-full bg-danger-600 text-white">Critical</span>';
+  }
+}
+
+// Show team lead details modal
+function funShowTeamLeadDetails(teamLeadId) {
+  const teamLead = teamLeadData.find(tl => tl.id === teamLeadId);
+  if (!teamLead) return;
+  
+  document.getElementById('modalTeamLeadName').textContent = teamLead.name || 'N/A';
+  document.getElementById('modalDepartmentName').textContent = teamLead.departmentName;
+  
+  const tbody = document.getElementById('modalEmployeeTableBody');
+  
+  if (teamLead.directReports.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="5" class="px-3 py-4 text-center text-neutral-500">No direct reports found</td></tr>';
+  } else {
+    tbody.innerHTML = teamLead.directReports.map(emp => {
+      const completionRate = emp.expected > 0 ? Math.round((emp.completed / emp.expected) * 100) : 0;
+      const status = funGetCompletionStatus(completionRate);
+      
+      return `
+        <tr class="hover:bg-neutral-50">
+          <td class="px-3 py-3">
+            <button class="employee-name font-medium text-brand-primary-600 hover:text-brand-primary-700 focus:outline-none focus:underline" data-employee-id="${emp.id}">
+              ${emp.firstName || ''} ${emp.lastName || ''}
+            </button>
+          </td>
+          <td class="px-3 py-3">${completionRate}%</td>
+          <td class="px-3 py-3">${emp.completed}</td>
+          <td class="px-3 py-3">${emp.expected}</td>
+          <td class="px-3 py-3">${status}</td>
+        </tr>
+      `;
+    }).join('');
+  }
+  
+  // Re-initialize icons
+  lucide.createIcons();
+  
+  // Add navigation event listeners
+  tbody.querySelectorAll('.employee-name').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      const employeeId = e.currentTarget.dataset.employeeId;
+      window.location.href = `employee_detail.html?employeeId=${employeeId}`;
+    });
+  });
+  
+  // Show modal
+  document.getElementById('teamLeadDetailModal').classList.remove('hidden');
+  document.body.classList.add('overflow-hidden');
+}
+
+// Send department reminder (placeholder)
+function funSendDepartmentReminder(departmentId) {
+  const dept = departmentData.find(d => d.id === departmentId);
+  if (!dept) return;
+  
+  // Record the action (no external API as per spec)
+  showToast(`Reminder sent to ${dept.name} department`, 'success');
+}
+
+// Send team lead reminder (placeholder)
+function funSendTeamLeadReminder(teamLeadId) {
+  const teamLead = teamLeadData.find(tl => tl.id === teamLeadId);
+  if (!teamLead) return;
+  
+  // Record the action (no external API as per spec)
+  showToast(`Reminder sent to ${teamLead.name}`, 'success');
+}
+
+// Setup event listeners
+function funSetupEventListeners() {
+  // Cycle selector change
+  document.getElementById('cycleSelector').addEventListener('change', async (e) => {
+    currentCycleId = e.target.value;
+    if (currentCycleId) {
+      await funLoadAssessmentData(true);
+    } else {
+      funClearData();
+    }
+  });
+  
+  // Refresh button
+  document.getElementById('refreshData').addEventListener('click', async () => {
+    if (currentCycleId) {
+      await funLoadAssessmentData(true);
+    }
+  });
+  
+  // Search inputs
+  funSetupSearch('departmentSearch', 'departmentTableBody', (item, query) => 
+    item.name.toLowerCase().includes(query.toLowerCase())
+  );
+  
+  funSetupSearch('teamLeadSearch', 'teamLeadTableBody', (item, query) => 
+    item.name.toLowerCase().includes(query.toLowerCase()) ||
+    item.departmentName.toLowerCase().includes(query.toLowerCase())
+  );
+  
+  // Modal event listeners
+  document.getElementById('closeModal').addEventListener('click', funCloseModal);
+  document.getElementById('closeModalBtn').addEventListener('click', funCloseModal);
+  document.getElementById('modalBackdrop').addEventListener('click', funCloseModal);
+  
+  document.getElementById('sendReminderModal').addEventListener('click', () => {
+    // Get current team lead from modal context
+    const teamLeadName = document.getElementById('modalTeamLeadName').textContent;
+    showToast(`Reminder sent to ${teamLeadName}`, 'success');
+  });
+  
+  // ESC key for modal
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      funCloseModal();
+    }
+  });
+}
+
+// Setup search functionality
+function funSetupSearch(inputId, tableBodyId, filterFn) {
+  let searchTimeout;
+  document.getElementById(inputId).addEventListener('input', (e) => {
+    clearTimeout(searchTimeout);
+    searchTimeout = setTimeout(() => {
+      const query = e.target.value.trim();
+      const dataSource = inputId.includes('department') ? departmentData : teamLeadData;
+      const filteredData = query ? dataSource.filter(item => filterFn(item, query)) : dataSource;
+      
+      if (inputId.includes('department')) {
+        funUpdateDepartmentTable(filteredData);
+      } else {
+        funUpdateTeamLeadTable(filteredData);
+      }
+    }, 300);
+  });
+}
+
+// Close modal
+function funCloseModal() {
+  document.getElementById('teamLeadDetailModal').classList.add('hidden');
+  document.body.classList.remove('overflow-hidden');
+}
+
+// Clear KPIs
+function funClearKPIs() {
+  document.getElementById('kpiOrgCompletion').textContent = '--';
+  document.getElementById('kpiTotalExpected').textContent = '--';
+  document.getElementById('kpiCompleted').textContent = '--';
+  document.getElementById('kpiDaysUntilEnd').textContent = '--';
+}
+
+// Show skeleton loaders
+function funShowSkeletons() {
+  document.querySelectorAll('.skeleton-row').forEach(row => row.style.display = '');
+  document.querySelectorAll('.modal-skeleton-row').forEach(row => row.style.display = '');
+}
+
+// Hide skeleton loaders
+function funHideSkeletons() {
+  document.querySelectorAll('.skeleton-row').forEach(row => row.style.display = 'none');
+  document.querySelectorAll('.modal-skeleton-row').forEach(row => row.style.display = 'none');
+}
+
+// Clear all data
+function funClearData() {
+  funClearKPIs();
+  document.getElementById('departmentTableBody').innerHTML = '<tr><td colspan="6" class="px-4 py-8 text-center text-neutral-500">Select an assessment cycle to view data</td></tr>';
+  document.getElementById('teamLeadTableBody').innerHTML = '<tr><td colspan="7" class="px-4 py-8 text-center text-neutral-500">Select an assessment cycle to view data</td></tr>';
+  departmentData = [];
+  teamLeadData = [];
+}
+
+// Format date helper
+function funFormatDate(dateString) {
+  if (!dateString) return 'N/A';
+  try {
+    return new Date(dateString).toLocaleDateString('en-US', { 
+      year: 'numeric', 
+      month: 'short', 
+      day: 'numeric' 
+    });
+  } catch (error) {
+    return 'N/A';
+  }
+}
+
+// Initialize icons
+lucide.createIcons();
+</script>
+
+</body>
+</html>

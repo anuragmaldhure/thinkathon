@@ -1,0 +1,1704 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SkillBridge</title>
+
+    <!-- Required: Main JS Script -->
+    <script type="module" src="scripts/main.js" data-tiramai="web-gen"></script>
+
+    <!-- Required: TailwindCSS -->
+    <script src="./lib/tailwindcss/tailwindcss.js" fetchpriority="high" data-tiramai="web-gen"></script>
+
+    <!-- Required: Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest" data-tiramai="web-gen"></script>
+
+    <!-- Required: Favicon -->
+    <link rel="icon" href="assets/imgs/logo.ico" type="image/x-icon" data-tiramai="web-gen"/>
+
+    <!-- ECharts Support (for charts/graphs) -->
+    <script defer src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js" data-tiramai="web-gen"></script>
+
+    <!-- Markdown Support (for content rendering) -->
+    <script defer src="https://cdn.jsdelivr.net/npm/marked/marked.min.js" data-tiramai="web-gen"></script>
+
+    <!-- Tailwind Config Extension -->
+    <script data-tiramai="web-gen">
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            'primary-600': '#1B2A44',
+                            'primary-700': '#14233A',
+                            'primary-800': '#0E1A2B',
+                        },
+                        accent: {
+                            'gold-50': '#FFF7E6',
+                            'gold-500': '#C59D42',
+                            'gold-600': '#A97D22',
+                        },
+                        success: { '600': '#16A34A' },
+                        warning: { '600': '#D97706' },
+                        danger: { '600': '#DC2626' },
+                        info: { '600': '#2563EB' },
+                        heat: {
+                            green: '#16A34A',
+                            amber: '#F59E0B',
+                            red: '#DC2626'
+                        },
+                        neutral: {
+                            '50': '#F8FAFC',
+                            '200': '#E2E8F0',
+                            '500': '#64748B',
+                            '700': '#334155',
+                            '900': '#111827',
+                            '950': '#0B1220',
+                        }
+                    },
+                    fontSize: {
+                        'xs': ['12px', '16px'],
+                        'sm': ['14px', '20px'],
+                        'base': ['16px', '24px'],
+                        'xl': ['20px', '28px'],
+                        '2xl': ['24px', '32px'],
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-neutral-50 min-h-screen text-neutral-900">
+    <!-- Top Navigation -->
+    <header class="fixed top-0 left-0 right-0 bg-brand-primary-800 border-b border-neutral-200 flex items-center justify-between px-6 py-4 z-30 h-16">
+        <div class="flex items-center gap-4">
+            <!-- Mobile menu toggle -->
+            <button id="mobileMenuToggle" class="md:hidden text-white p-2" aria-label="Toggle menu">
+                <svg class="w-5 h-5" data-lucide="menu"></svg>
+            </button>
+            <!-- Logo -->
+            <div class="flex items-center gap-3">
+                <svg width="32" height="32" viewBox="0 0 400 400" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="84" y="116" width="56" height="168" rx="8" fill="#1E40AF"/>
+                    <rect x="176" y="84" width="56" height="200" rx="8" fill="#059669"/>
+                    <rect x="268" y="156" width="48" height="128" rx="8" fill="#1E40AF"/>
+                    <rect x="114" y="180" width="172" height="20" rx="10" fill="#F59E0B"/>
+                </svg>
+                <span class="text-xl font-semibold text-white">SkillBridge</span>
+            </div>
+        </div>
+        <div class="flex items-center gap-4">
+            <!-- User Profile Dropdown -->
+            <div class="relative" id="userProfileContainer">
+                <button id="userProfileToggle" class="flex items-center gap-2 text-white hover:text-accent-gold-500 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2 focus:ring-offset-brand-primary-800 rounded-md p-2">
+                    <div class="w-8 h-8 bg-accent-gold-500 rounded-full flex items-center justify-center">
+                        <span id="userInitials" class="text-sm font-semibold text-white">JD</span>
+                    </div>
+                    <svg class="w-4 h-4" data-lucide="chevron-down"></svg>
+                </button>
+                <!-- Dropdown Menu -->
+                <div id="userProfileDropdown" class="hidden absolute right-0 mt-2 w-64 bg-white rounded-md shadow-lg border border-neutral-200 py-2 z-50">
+                    <div class="px-4 py-3 border-b border-neutral-200">
+                        <p id="userDisplayName" class="text-sm font-semibold text-neutral-900">John Doe</p>
+                        <p id="userEmail" class="text-xs text-neutral-500">johndoe@example.com</p>
+                        <p class="text-xs text-accent-gold-600 font-medium">System Administrator</p>
+                    </div>
+                    <button id="signOutButton" class="w-full text-left px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50 flex items-center gap-2">
+                        <svg class="w-4 h-4" data-lucide="log-out"></svg>
+                        Sign Out
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="flex pt-16">
+        <!-- Side Navigation -->
+        <aside id="sidebar" class="fixed md:sticky top-16 left-0 w-64 bg-white border-r border-neutral-200 h-[calc(100vh-4rem)] overflow-y-auto z-20 transform -translate-x-full md:translate-x-0 transition-transform duration-200">
+            <nav class="p-4 space-y-1">
+                <!-- Admin Dashboard -->
+                <a href="dashboard.html" id="nav-dashboard" class="nav-item flex items-center gap-3 px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                    <svg class="w-5 h-5" data-lucide="layout-dashboard"></svg>
+                    <span>Admin Dashboard</span>
+                </a>
+
+                <!-- Employees with Children -->
+                <div class="nav-group">
+                    <button class="nav-group-toggle flex items-center justify-between w-full px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                        <div class="flex items-center gap-3">
+                            <svg class="w-5 h-5" data-lucide="users"></svg>
+                            <span>Employees</span>
+                        </div>
+                        <svg class="w-4 h-4 transform transition-transform" data-lucide="chevron-right"></svg>
+                    </button>
+                    <div class="nav-group-children hidden ml-8 space-y-1 mt-1">
+                        <a href="employees_list.html" class="nav-item block px-3 py-2 rounded-md text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-600">Employee Directory</a>
+                        <a href="employee_upsert.html?mode=create" class="nav-item block px-3 py-2 rounded-md text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-600">Add Employee</a>
+                    </div>
+                </div>
+
+                <!-- Departments -->
+                <a href="departments_list.html" id="nav-departments" class="nav-item flex items-center gap-3 px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                    <svg class="w-5 h-5" data-lucide="building"></svg>
+                    <span>Departments</span>
+                </a>
+
+                <!-- Skill Categories -->
+                <a href="skill_categories_list.html" id="nav-skill-categories" class="nav-item flex items-center gap-3 px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                    <svg class="w-5 h-5" data-lucide="layers"></svg>
+                    <span>Skill Categories</span>
+                </a>
+
+                <!-- Criticality Levels -->
+                <a href="skill_criticalities_list.html" id="nav-criticalities" class="nav-item flex items-center gap-3 px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                    <svg class="w-5 h-5" data-lucide="sliders"></svg>
+                    <span>Criticality Levels</span>
+                </a>
+
+                <!-- Skills with Children -->
+                <div class="nav-group">
+                    <button class="nav-group-toggle flex items-center justify-between w-full px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                        <div class="flex items-center gap-3">
+                            <svg class="w-5 h-5" data-lucide="book"></svg>
+                            <span>Skills</span>
+                        </div>
+                        <svg class="w-4 h-4 transform transition-transform" data-lucide="chevron-right"></svg>
+                    </button>
+                    <div class="nav-group-children hidden ml-8 space-y-1 mt-1">
+                        <a href="skills_list.html" class="nav-item block px-3 py-2 rounded-md text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-600">Skills Directory</a>
+                        <a href="skill_upsert.html?mode=create" class="nav-item block px-3 py-2 rounded-md text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-600">Add Skill</a>
+                    </div>
+                </div>
+
+                <!-- Assessment Cycles with Children -->
+                <div class="nav-group">
+                    <button class="nav-group-toggle flex items-center justify-between w-full px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                        <div class="flex items-center gap-3">
+                            <svg class="w-5 h-5" data-lucide="calendar"></svg>
+                            <span>Assessment Cycles</span>
+                        </div>
+                        <svg class="w-4 h-4 transform transition-transform" data-lucide="chevron-right"></svg>
+                    </button>
+                    <div class="nav-group-children hidden ml-8 space-y-1 mt-1">
+                        <a href="assessment_cycles_list.html" class="nav-item block px-3 py-2 rounded-md text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-600">Cycles Directory</a>
+                        <a href="assessment_cycle_upsert.html?mode=create" class="nav-item block px-3 py-2 rounded-md text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-600">Create Cycle</a>
+                    </div>
+                </div>
+
+                <!-- Trainer Pool with Children -->
+                <div class="nav-group">
+                    <button class="nav-group-toggle flex items-center justify-between w-full px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                        <div class="flex items-center gap-3">
+                            <svg class="w-5 h-5" data-lucide="users"></svg>
+                            <span>Trainer Pool</span>
+                        </div>
+                        <svg class="w-4 h-4 transform transition-transform" data-lucide="chevron-right"></svg>
+                    </button>
+                    <div class="nav-group-children hidden ml-8 space-y-1 mt-1">
+                        <a href="trainers_list.html" class="nav-item block px-3 py-2 rounded-md text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-600">Trainer Directory</a>
+                        <a href="external_trainer_upsert.html?mode=create" class="nav-item block px-3 py-2 rounded-md text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-600">Add External Trainer</a>
+                    </div>
+                </div>
+
+                <!-- Training Sessions with Children -->
+                <div class="nav-group">
+                    <button class="nav-group-toggle flex items-center justify-between w-full px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                        <div class="flex items-center gap-3">
+                            <svg class="w-5 h-5" data-lucide="calendar"></svg>
+                            <span>Training Sessions</span>
+                        </div>
+                        <svg class="w-4 h-4 transform transition-transform" data-lucide="chevron-right"></svg>
+                    </button>
+                    <div class="nav-group-children hidden ml-8 space-y-1 mt-1">
+                        <a href="training_sessions_list.html" class="nav-item block px-3 py-2 rounded-md text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-600">Sessions Calendar</a>
+                        <a href="training_session_upsert.html?mode=create" class="nav-item block px-3 py-2 rounded-md text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-600">Create Session</a>
+                    </div>
+                </div>
+
+                <!-- Disputes -->
+                <a href="disputes_list.html" id="nav-disputes" class="nav-item flex items-center gap-3 px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                    <svg class="w-5 h-5" data-lucide="alert-circle"></svg>
+                    <span>Disputes</span>
+                </a>
+
+                <!-- Analytics Section -->
+                <div class="border-t border-neutral-200 pt-4 mt-4">
+                    <h4 class="px-3 text-xs font-semibold text-neutral-500 uppercase tracking-wider mb-2">Analytics</h4>
+                    
+                    <a href="analytics_skill_gap_heatmap.html" class="nav-item flex items-center gap-3 px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                        <svg class="w-5 h-5" data-lucide="grid"></svg>
+                        <span>Skill Gap Heatmap</span>
+                    </a>
+
+                    <a href="analytics_tni_dashboard.html" class="nav-item flex items-center gap-3 px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                        <svg class="w-5 h-5" data-lucide="bar-chart-2"></svg>
+                        <span>TNI Dashboard</span>
+                    </a>
+
+                    <a href="analytics_training_forecast.html" class="nav-item flex items-center gap-3 px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                        <svg class="w-5 h-5" data-lucide="trending-up"></svg>
+                        <span>Training Forecast</span>
+                    </a>
+
+                    <a href="analytics_assessment_completion.html" class="nav-item flex items-center gap-3 px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                        <svg class="w-5 h-5" data-lucide="pie-chart"></svg>
+                        <span>Assessment Completion</span>
+                    </a>
+
+                    <a href="analytics_dispute_metrics.html" class="nav-item flex items-center gap-3 px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                        <svg class="w-5 h-5" data-lucide="bar-chart"></svg>
+                        <span>Dispute Analytics</span>
+                    </a>
+                </div>
+            </nav>
+            
+            <!-- Footer -->
+            <div class="absolute bottom-4 w-full text-center text-xs text-neutral-500 bg-white px-4">
+                Made with ❤️ by TiramAi
+            </div>
+        </aside>
+
+        <!-- Mobile Overlay -->
+        <div id="mobileOverlay" class="hidden fixed inset-0 bg-black bg-opacity-50 z-10 md:hidden"></div>
+
+        <!-- Main Content -->
+        <main id="pageContent" class="flex-1 p-6 overflow-y-auto">
+            
+<!-- Training Session Upsert Page -->
+<div class="max-w-4xl mx-auto space-y-6">
+  <!-- Page Header -->
+  <div class="flex items-center justify-between">
+    <div>
+      <h1 id="pageTitle" class="text-2xl leading-8 font-bold text-neutral-950">Create Training Session</h1>
+      <p class="text-sm leading-5 text-neutral-700 mt-1">Set up a training session with the right trainer and attendees</p>
+    </div>
+    <button id="btnCancel" class="inline-flex items-center gap-2 px-4 py-2 rounded-md border border-neutral-200 bg-white text-neutral-900 hover:bg-neutral-50 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2">
+      <svg class="w-4 h-4" data-lucide="x"></svg>
+      Cancel
+    </button>
+  </div>
+
+  <!-- Progress Stepper -->
+  <div class="bg-white rounded-md border border-neutral-200 p-6">
+    <div class="flex items-center justify-between mb-6">
+      <!-- Step 1: Select Skill -->
+      <div class="flex items-center">
+        <div id="step1-indicator" class="flex items-center justify-center w-8 h-8 rounded-full bg-brand-primary-600 text-white text-sm font-semibold">1</div>
+        <span id="step1-label" class="ml-3 text-sm font-medium text-brand-primary-600">Select Skill</span>
+      </div>
+      <div class="flex-1 h-px bg-neutral-200 mx-4"></div>
+
+      <!-- Step 2: Choose Trainer -->
+      <div class="flex items-center">
+        <div id="step2-indicator" class="flex items-center justify-center w-8 h-8 rounded-full bg-neutral-200 text-neutral-500 text-sm font-semibold">2</div>
+        <span id="step2-label" class="ml-3 text-sm font-medium text-neutral-500">Choose Trainer</span>
+      </div>
+      <div class="flex-1 h-px bg-neutral-200 mx-4"></div>
+
+      <!-- Step 3: Set Schedule -->
+      <div class="flex items-center">
+        <div id="step3-indicator" class="flex items-center justify-center w-8 h-8 rounded-full bg-neutral-200 text-neutral-500 text-sm font-semibold">3</div>
+        <span id="step3-label" class="ml-3 text-sm font-medium text-neutral-500">Set Schedule</span>
+      </div>
+      <div class="flex-1 h-px bg-neutral-200 mx-4"></div>
+
+      <!-- Step 4: Assign Attendees -->
+      <div class="flex items-center">
+        <div id="step4-indicator" class="flex items-center justify-center w-8 h-8 rounded-full bg-neutral-200 text-neutral-500 text-sm font-semibold">4</div>
+        <span id="step4-label" class="ml-3 text-sm font-medium text-neutral-500">Assign Attendees</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Step Content Container -->
+  <div class="bg-white rounded-md border border-neutral-200 min-h-[500px]">
+    
+    <!-- Step 1: Select Skill -->
+    <div id="step1-content" class="p-6">
+      <h2 class="text-xl leading-7 font-semibold mb-4">Select Training Skill</h2>
+      <p class="text-sm leading-5 text-neutral-700 mb-6">Choose the skill that will be the focus of this training session</p>
+      
+      <!-- Search and Filter -->
+      <div class="mb-6">
+        <div class="relative">
+          <input type="text" id="skillSearch" placeholder="Search skills..." 
+                 class="w-full pl-10 pr-4 py-3 border border-neutral-200 rounded-md bg-white text-sm leading-5 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2">
+          <svg class="w-5 h-5 absolute left-3 top-3.5 text-neutral-400" data-lucide="search"></svg>
+        </div>
+      </div>
+
+      <!-- Skills List -->
+      <div class="space-y-3" id="skillsList">
+        <!-- Skills will be populated here -->
+        <div class="skill-loading space-y-3">
+          <div class="animate-pulse flex items-center justify-between p-4 border border-neutral-200 rounded-md">
+            <div class="flex-1">
+              <div class="h-4 bg-neutral-200 rounded w-1/3 mb-2"></div>
+              <div class="h-3 bg-neutral-200 rounded w-2/3"></div>
+            </div>
+            <div class="w-16 h-8 bg-neutral-200 rounded"></div>
+          </div>
+        </div>
+      </div>
+
+      <div id="skillsEmpty" class="hidden text-center py-12">
+        <svg class="w-12 h-12 mx-auto text-neutral-400 mb-4" data-lucide="book"></svg>
+        <p class="text-neutral-500">No skills found</p>
+      </div>
+    </div>
+
+    <!-- Step 2: Choose Trainer -->
+    <div id="step2-content" class="p-6 hidden">
+      <h2 class="text-xl leading-7 font-semibold mb-4">Choose Trainer</h2>
+      <p class="text-sm leading-5 text-neutral-700 mb-6">Select an internal or external trainer for this skill</p>
+      
+      <!-- Trainer Type Tabs -->
+      <div class="flex space-x-1 bg-neutral-100 p-1 rounded-md mb-6">
+        <button id="tabInternal" class="flex-1 px-4 py-2 rounded bg-white text-brand-primary-600 text-sm font-medium">
+          Internal Trainers
+        </button>
+        <button id="tabExternal" class="flex-1 px-4 py-2 rounded text-neutral-700 text-sm font-medium hover:text-brand-primary-600">
+          External Trainers
+        </button>
+      </div>
+
+      <!-- Internal Trainers -->
+      <div id="internalTrainers" class="space-y-3">
+        <div class="trainer-loading space-y-3">
+          <div class="animate-pulse flex items-center justify-between p-4 border border-neutral-200 rounded-md">
+            <div class="flex items-center space-x-3">
+              <div class="w-10 h-10 bg-neutral-200 rounded-full"></div>
+              <div class="flex-1">
+                <div class="h-4 bg-neutral-200 rounded w-1/3 mb-2"></div>
+                <div class="h-3 bg-neutral-200 rounded w-1/2"></div>
+              </div>
+            </div>
+            <div class="w-16 h-8 bg-neutral-200 rounded"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- External Trainers -->
+      <div id="externalTrainers" class="space-y-3 hidden">
+        <div class="trainer-loading space-y-3">
+          <div class="animate-pulse flex items-center justify-between p-4 border border-neutral-200 rounded-md">
+            <div class="flex items-center space-x-3">
+              <div class="w-10 h-10 bg-neutral-200 rounded-full"></div>
+              <div class="flex-1">
+                <div class="h-4 bg-neutral-200 rounded w-1/3 mb-2"></div>
+                <div class="h-3 bg-neutral-200 rounded w-1/2"></div>
+              </div>
+            </div>
+            <div class="w-16 h-8 bg-neutral-200 rounded"></div>
+          </div>
+        </div>
+      </div>
+
+      <div id="trainersEmpty" class="hidden text-center py-12">
+        <svg class="w-12 h-12 mx-auto text-neutral-400 mb-4" data-lucide="users"></svg>
+        <p class="text-neutral-500 mb-3">No eligible trainers found for this skill</p>
+        <a href="trainers_list.html" class="inline-flex items-center gap-2 px-4 py-2 rounded-md bg-brand-primary-600 text-white hover:bg-brand-primary-700 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2">
+          <svg class="w-4 h-4" data-lucide="plus"></svg>
+          Manage Trainers
+        </a>
+      </div>
+    </div>
+
+    <!-- Step 3: Set Schedule -->
+    <div id="step3-content" class="p-6 hidden">
+      <h2 class="text-xl leading-7 font-semibold mb-4">Set Schedule Details</h2>
+      <p class="text-sm leading-5 text-neutral-700 mb-6">Configure the training session schedule and format</p>
+      
+      <form id="scheduleForm" class="space-y-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <label for="scheduledDate" class="block text-sm font-medium text-neutral-900 mb-2">Start Date & Time *</label>
+            <input type="datetime-local" id="scheduledDate" required
+                   class="w-full border border-neutral-200 rounded-sm px-3 py-2 bg-white text-sm leading-5 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2">
+            <p class="mt-1 text-xs text-neutral-500">Training session start date and time</p>
+          </div>
+          
+          <div>
+            <label for="endDate" class="block text-sm font-medium text-neutral-900 mb-2">End Date & Time *</label>
+            <input type="datetime-local" id="endDate" required
+                   class="w-full border border-neutral-200 rounded-sm px-3 py-2 bg-white text-sm leading-5 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2">
+            <p class="mt-1 text-xs text-neutral-500">Training session end date and time</p>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <label for="mode" class="block text-sm font-medium text-neutral-900 mb-2">Training Mode *</label>
+            <select id="mode" required
+                    class="w-full border border-neutral-200 rounded-sm px-3 py-2 bg-white text-sm leading-5 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2">
+              <option value="">Select training mode</option>
+              <option value="online">Online</option>
+              <option value="offline">Offline</option>
+            </select>
+            <p class="mt-1 text-xs text-neutral-500">Choose between online or in-person training</p>
+          </div>
+          
+          <div>
+            <label for="capacity" class="block text-sm font-medium text-neutral-900 mb-2">Capacity (Optional)</label>
+            <input type="number" id="capacity" min="1" max="100"
+                   class="w-full border border-neutral-200 rounded-sm px-3 py-2 bg-white text-sm leading-5 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2"
+                   placeholder="e.g., 20">
+            <p class="mt-1 text-xs text-neutral-500">Maximum number of attendees</p>
+          </div>
+        </div>
+
+        <div id="scheduleErrors" class="hidden bg-danger-600 border border-danger-600 text-white px-4 py-3 rounded-md text-sm"></div>
+      </form>
+    </div>
+
+    <!-- Step 4: Assign Attendees -->
+    <div id="step4-content" class="p-6 hidden">
+      <h2 class="text-xl leading-7 font-semibold mb-4">Assign Attendees</h2>
+      <p class="text-sm leading-5 text-neutral-700 mb-6">Add employees who need this training based on their skill gaps</p>
+      
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <!-- Available Employees (TNIs) -->
+        <div>
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="text-base leading-6 font-semibold">Available Employees</h3>
+            <span id="availableCount" class="text-sm text-neutral-500">0 employees</span>
+          </div>
+          
+          <!-- Search Available -->
+          <div class="mb-4">
+            <div class="relative">
+              <input type="text" id="availableSearch" placeholder="Search employees..." 
+                     class="w-full pl-10 pr-4 py-2 border border-neutral-200 rounded-md bg-white text-sm leading-5 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2">
+              <svg class="w-4 h-4 absolute left-3 top-3 text-neutral-400" data-lucide="search"></svg>
+            </div>
+          </div>
+
+          <div id="availableEmployees" class="max-h-80 overflow-y-auto space-y-2 border border-neutral-200 rounded-md p-3 bg-neutral-50">
+            <div class="available-loading space-y-2">
+              <div class="animate-pulse flex items-center justify-between p-3 border border-neutral-200 rounded-md bg-white">
+                <div class="flex items-center space-x-3">
+                  <div class="w-8 h-8 bg-neutral-200 rounded-full"></div>
+                  <div class="flex-1">
+                    <div class="h-3 bg-neutral-200 rounded w-2/3 mb-1"></div>
+                    <div class="h-2 bg-neutral-200 rounded w-1/2"></div>
+                  </div>
+                </div>
+                <div class="w-16 h-6 bg-neutral-200 rounded"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Assigned Employees -->
+        <div>
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="text-base leading-6 font-semibold">Assigned Attendees</h3>
+            <span id="assignedCount" class="text-sm text-neutral-500">0 assigned</span>
+          </div>
+          
+          <div id="assignedEmployees" class="min-h-[200px] max-h-80 overflow-y-auto space-y-2 border border-neutral-200 rounded-md p-3 bg-white">
+            <div class="text-center py-12 text-neutral-500">
+              <svg class="w-8 h-8 mx-auto mb-3 text-neutral-300" data-lucide="user-plus"></svg>
+              <p class="text-sm">No attendees assigned yet</p>
+              <p class="text-xs">Select employees from the left panel</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="attendeesEmpty" class="hidden text-center py-12">
+        <svg class="w-12 h-12 mx-auto text-neutral-400 mb-4" data-lucide="users"></svg>
+        <p class="text-neutral-500">No employees require training for this skill</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Step Navigation -->
+  <div class="flex items-center justify-between">
+    <button id="btnPrevious" class="inline-flex items-center gap-2 px-4 py-2 rounded-md border border-neutral-200 bg-white text-neutral-900 hover:bg-neutral-50 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+      <svg class="w-4 h-4" data-lucide="chevron-left"></svg>
+      Previous
+    </button>
+    
+    <div class="flex items-center gap-3">
+      <button id="btnNext" class="inline-flex items-center gap-2 px-6 py-2 rounded-md bg-brand-primary-600 hover:bg-brand-primary-700 text-white focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed">
+        Next
+        <svg class="w-4 h-4" data-lucide="chevron-right"></svg>
+      </button>
+      
+      <button id="btnSave" class="hidden inline-flex items-center gap-2 px-6 py-2 rounded-md bg-success-600 hover:bg-success-700 text-white focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed">
+        <svg class="w-4 h-4" data-lucide="check"></svg>
+        Save Session
+      </button>
+    </div>
+  </div>
+</div>
+
+        </main>
+    </div>
+
+    <!-- Required: JavaScript -->
+    <script type="module" data-tiramai="web-gen">
+        import { showToast, showLoader, hideLoader, env } from "./scripts/main.js";
+        import { auth, db, storage } from "./scripts/firebase.js";
+        import { onAuthStateChanged, getAuth, signOut } from 'https://www.gstatic.com/firebasejs/10.12.4/firebase-auth.js';
+        import { doc, getDoc } from 'https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js';
+
+        // Initialize Lucide icons
+        lucide.createIcons();
+
+        // Mobile menu toggle
+        const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+        const sidebar = document.getElementById('sidebar');
+        const mobileOverlay = document.getElementById('mobileOverlay');
+
+        mobileMenuToggle?.addEventListener('click', () => {
+            sidebar.classList.toggle('-translate-x-full');
+            mobileOverlay.classList.toggle('hidden');
+        });
+
+        mobileOverlay?.addEventListener('click', () => {
+            sidebar.classList.add('-translate-x-full');
+            mobileOverlay.classList.add('hidden');
+        });
+
+        // Navigation group toggles
+        document.querySelectorAll('.nav-group-toggle').forEach(toggle => {
+            toggle.addEventListener('click', (e) => {
+                e.preventDefault();
+                const children = toggle.nextElementSibling;
+                const icon = toggle.querySelector('svg:last-child');
+                
+                children.classList.toggle('hidden');
+                icon.classList.toggle('rotate-90');
+            });
+        });
+
+        // User profile dropdown
+        const userProfileToggle = document.getElementById('userProfileToggle');
+        const userProfileDropdown = document.getElementById('userProfileDropdown');
+
+        userProfileToggle?.addEventListener('click', () => {
+            userProfileDropdown.classList.toggle('hidden');
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!userProfileToggle?.contains(e.target) && !userProfileDropdown?.contains(e.target)) {
+                userProfileDropdown?.classList.add('hidden');
+            }
+        });
+
+        // Sign out functionality
+        document.getElementById('signOutButton')?.addEventListener('click', async () => {
+            try {
+                await signOut(auth);
+                window.location.href = 'auth.html';
+            } catch (error) {
+                console.error('Sign out error:', error);
+                showToast('Failed to sign out', 'error');
+            }
+        });
+
+        // Auth state management
+        onAuthStateChanged(auth, async (user) => {
+            if (!user) {
+                window.location.href = 'auth.html';
+                return;
+            }
+
+            // Load user profile data
+            try {
+                const userDoc = await getDoc(doc(db, 'users', user.uid));
+                const userData = userDoc.exists() ? userDoc.data() : null;
+
+                // Update UI with user data
+                const displayName = userData?.firstName && userData?.lastName 
+                    ? `${userData.firstName} ${userData.lastName}`
+                    : user.displayName || 'John Doe';
+                
+                const email = user.email || 'johndoe@example.com';
+                const initials = displayName.split(' ').map(n => n[0]).join('').toUpperCase();
+
+                document.getElementById('userDisplayName').textContent = displayName;
+                document.getElementById('userEmail').textContent = email;
+                document.getElementById('userInitials').textContent = initials;
+
+            } catch (error) {
+                console.error('Error loading user data:', error);
+                // Fallback to default values
+                document.getElementById('userDisplayName').textContent = 'John Doe';
+                document.getElementById('userEmail').textContent = user.email || 'johndoe@example.com';
+                document.getElementById('userInitials').textContent = 'JD';
+            }
+        });
+
+        // Set active navigation item based on current page
+        function setActiveNavItem() {
+            const currentPath = window.location.pathname;
+            const navItems = document.querySelectorAll('.nav-item');
+            
+            navItems.forEach(item => {
+                const href = item.getAttribute('href');
+                if (href && currentPath.includes(href.split('?')[0])) {
+                    item.classList.add('bg-accent-gold-50', 'text-brand-primary-600', 'border-l-2', 'border-brand-primary-600');
+                    item.classList.remove('text-neutral-700', 'text-neutral-600');
+                    
+                    // Expand parent group if needed
+                    const parentGroup = item.closest('.nav-group');
+                    if (parentGroup) {
+                        const children = parentGroup.querySelector('.nav-group-children');
+                        const icon = parentGroup.querySelector('.nav-group-toggle svg:last-child');
+                        children?.classList.remove('hidden');
+                        icon?.classList.add('rotate-90');
+                    }
+                }
+            });
+        }
+
+        // Initialize active nav state
+        setActiveNavItem();
+    </script>
+
+    
+<script id="data-script" type="module" data-tiramai="web-gen">
+import { auth, getDb } from "./scripts/firebase.js";
+import { showToast, showLoader, hideLoader } from "./scripts/main.js";
+import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.12.4/firebase-auth.js';
+import {
+  collection, getDocs, query, where, orderBy, limit, doc, getDoc, setDoc, addDoc, updateDoc, 
+  Timestamp, getCountFromServer
+} from 'https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js';
+
+const db = getDb();
+
+// State management
+let currentStep = 1;
+let sessionData = {
+  skillId: null,
+  trainerId: null,
+  trainerType: 'internal',
+  scheduledDate: null,
+  endDate: null,
+  mode: null,
+  capacity: null,
+  assignedEmployees: []
+};
+
+let selectedSkill = null;
+let selectedTrainer = null;
+let availableEmployeesData = [];
+let assignedEmployeesData = [];
+
+// URL params for edit mode
+const urlParams = new URLSearchParams(window.location.search);
+const mode = urlParams.get('mode') || 'create';
+const sessionId = urlParams.get('sessionId');
+const preselectedSkillId = urlParams.get('skillId');
+const preselectedEmployeeIds = urlParams.get('preselectedEmployeeIds')?.split(',').filter(Boolean) || [];
+
+// Auth check
+onAuthStateChanged(auth, user => {
+  if (!user) {
+    location.href = "auth.html?redirect=" + encodeURIComponent(location.pathname + location.search);
+  } else {
+    funInitializePage();
+  }
+});
+
+// Initialize page
+async function funInitializePage() {
+  try {
+    // Update page title based on mode
+    const titleEl = document.getElementById('pageTitle');
+    titleEl.textContent = mode === 'edit' ? 'Edit Training Session' : 'Create Training Session';
+
+    // Load existing session data for edit mode
+    if (mode === 'edit' && sessionId) {
+      await funLoadExistingSession();
+    }
+
+    // Preselect skill if provided
+    if (preselectedSkillId) {
+      sessionData.skillId = preselectedSkillId;
+    }
+
+    // Initialize step navigation
+    funSetupStepNavigation();
+    
+    // Load initial step
+    await funLoadStep1();
+    
+    lucide.createIcons();
+  } catch (error) {
+    console.error('Error initializing page:', error);
+    showToast('Failed to load page data');
+  }
+}
+
+// Load existing session for edit mode
+async function funLoadExistingSession() {
+  try {
+    const sessionDoc = await getDoc(doc(db, 'trainingSessions', sessionId));
+    if (!sessionDoc.exists()) {
+      showToast('Training session not found');
+      location.href = 'training_sessions_list.html';
+      return;
+    }
+
+    const data = sessionDoc.data();
+    sessionData = {
+      skillId: data.skillId,
+      trainerId: data.trainerId,
+      trainerType: data.trainerType || 'internal',
+      scheduledDate: data.scheduledDate,
+      endDate: data.endDate,
+      mode: data.mode,
+      capacity: data.capacity,
+      assignedEmployees: data.assignedEmployees || []
+    };
+
+    // Convert assigned employees to the expected format for dual panel
+    assignedEmployeesData = sessionData.assignedEmployees.map(emp => ({
+      employeeId: emp.employeeId,
+      ...emp
+    }));
+
+  } catch (error) {
+    console.error('Error loading session:', error);
+    showToast('Failed to load session data');
+  }
+}
+
+// Setup step navigation event listeners
+function funSetupStepNavigation() {
+  const btnPrevious = document.getElementById('btnPrevious');
+  const btnNext = document.getElementById('btnNext');
+  const btnSave = document.getElementById('btnSave');
+  const btnCancel = document.getElementById('btnCancel');
+
+  btnPrevious?.addEventListener('click', funGoToPreviousStep);
+  btnNext?.addEventListener('click', funGoToNextStep);
+  btnSave?.addEventListener('click', funSaveSession);
+  btnCancel?.addEventListener('click', () => {
+    location.href = 'training_sessions_list.html';
+  });
+}
+
+// Navigation functions
+function funGoToPreviousStep() {
+  if (currentStep > 1) {
+    currentStep--;
+    funUpdateStepDisplay();
+    funLoadCurrentStep();
+  }
+}
+
+async function funGoToNextStep() {
+  // Validate current step
+  const isValid = await funValidateCurrentStep();
+  if (!isValid) return;
+
+  if (currentStep < 4) {
+    currentStep++;
+    funUpdateStepDisplay();
+    await funLoadCurrentStep();
+  }
+}
+
+// Update step visual indicators
+function funUpdateStepDisplay() {
+  // Update step indicators and labels
+  for (let i = 1; i <= 4; i++) {
+    const indicator = document.getElementById(`step${i}-indicator`);
+    const label = document.getElementById(`step${i}-label`);
+    
+    if (i === currentStep) {
+      // Active step
+      indicator.className = 'flex items-center justify-center w-8 h-8 rounded-full bg-brand-primary-600 text-white text-sm font-semibold';
+      label.className = 'ml-3 text-sm font-medium text-brand-primary-600';
+    } else if (i < currentStep) {
+      // Completed step
+      indicator.className = 'flex items-center justify-center w-8 h-8 rounded-full bg-success-600 text-white text-sm font-semibold';
+      indicator.innerHTML = '<svg class="w-4 h-4" data-lucide="check"></svg>';
+      label.className = 'ml-3 text-sm font-medium text-success-600';
+    } else {
+      // Future step
+      indicator.className = 'flex items-center justify-center w-8 h-8 rounded-full bg-neutral-200 text-neutral-500 text-sm font-semibold';
+      indicator.textContent = i.toString();
+      label.className = 'ml-3 text-sm font-medium text-neutral-500';
+    }
+  }
+
+  // Show/hide step content
+  for (let i = 1; i <= 4; i++) {
+    const content = document.getElementById(`step${i}-content`);
+    content.classList.toggle('hidden', i !== currentStep);
+  }
+
+  // Update navigation buttons
+  const btnPrevious = document.getElementById('btnPrevious');
+  const btnNext = document.getElementById('btnNext');
+  const btnSave = document.getElementById('btnSave');
+
+  btnPrevious.disabled = currentStep === 1;
+  
+  if (currentStep === 4) {
+    btnNext.classList.add('hidden');
+    btnSave.classList.remove('hidden');
+  } else {
+    btnNext.classList.remove('hidden');
+    btnSave.classList.add('hidden');
+  }
+
+  lucide.createIcons();
+}
+
+// Load appropriate step content
+async function funLoadCurrentStep() {
+  switch (currentStep) {
+    case 1:
+      await funLoadStep1();
+      break;
+    case 2:
+      await funLoadStep2();
+      break;
+    case 3:
+      await funLoadStep3();
+      break;
+    case 4:
+      await funLoadStep4();
+      break;
+  }
+}
+
+// Step 1: Load skills
+async function funLoadStep1() {
+  try {
+    const skillsList = document.getElementById('skillsList');
+    const skillsEmpty = document.getElementById('skillsEmpty');
+    const searchInput = document.getElementById('skillSearch');
+
+    // Setup search
+    let searchTimeout;
+    searchInput.addEventListener('input', (e) => {
+      clearTimeout(searchTimeout);
+      searchTimeout = setTimeout(() => funFilterSkills(e.target.value), 300);
+    });
+
+    // Load active skills
+    const skillsQuery = query(
+      collection(db, 'skills'),
+      where('status', '==', 'active'),
+      orderBy('name')
+    );
+
+    const skillsSnapshot = await getDocs(skillsQuery);
+    const skills = skillsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+    if (skills.length === 0) {
+      skillsList.innerHTML = '';
+      skillsEmpty.classList.remove('hidden');
+      return;
+    }
+
+    // Load training demand counts
+    const skillsWithDemand = await Promise.all(skills.map(async (skill) => {
+      try {
+        const demandQuery = query(
+          collection(db, 'trainingNeeds'),
+          where('skillId', '==', skill.id),
+          where('tniStatus', '==', 'trainingRequired')
+        );
+        const demandCount = await getCountFromServer(demandQuery);
+        return { ...skill, demandCount: demandCount.data().count };
+      } catch (error) {
+        console.error('Error loading demand for skill:', skill.id, error);
+        return { ...skill, demandCount: 0 };
+      }
+    }));
+
+    // Render skills
+    skillsList.innerHTML = skillsWithDemand.map(skill => `
+      <div class="skill-item flex items-center justify-between p-4 border border-neutral-200 rounded-md hover:bg-neutral-50 cursor-pointer ${sessionData.skillId === skill.id ? 'border-brand-primary-600 bg-accent-gold-50' : ''}"
+           data-skill-id="${skill.id}">
+        <div class="flex-1">
+          <h4 class="text-sm font-medium text-neutral-900">${skill.name || 'N/A'}</h4>
+          <p class="text-xs text-neutral-500 mt-1">${skill.description || 'No description available'}</p>
+          <div class="flex items-center gap-2 mt-2">
+            <span class="text-xs text-neutral-500">Training demand:</span>
+            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
+              skill.demandCount > 0 ? 'bg-warning-600 text-white' : 'bg-success-600 text-white'
+            }">
+              ${skill.demandCount} employees
+            </span>
+          </div>
+        </div>
+        <button class="select-skill-btn px-3 py-1 text-xs rounded border ${
+          sessionData.skillId === skill.id 
+            ? 'bg-brand-primary-600 text-white border-brand-primary-600' 
+            : 'border-neutral-300 text-neutral-700 hover:bg-neutral-50'
+        }">
+          ${sessionData.skillId === skill.id ? 'Selected' : 'Select'}
+        </button>
+      </div>
+    `).join('');
+
+    // Add click handlers for skill selection
+    skillsList.querySelectorAll('.skill-item').forEach(item => {
+      item.addEventListener('click', (e) => {
+        const skillId = item.dataset.skillId;
+        const skill = skillsWithDemand.find(s => s.id === skillId);
+        funSelectSkill(skill);
+      });
+    });
+
+    skillsEmpty.classList.add('hidden');
+
+  } catch (error) {
+    console.error('Error loading skills:', error);
+    showToast('Failed to load skills');
+  }
+}
+
+// Filter skills based on search
+function funFilterSkills(searchTerm) {
+  const skillItems = document.querySelectorAll('.skill-item');
+  const searchLower = searchTerm.toLowerCase();
+
+  skillItems.forEach(item => {
+    const skillName = item.querySelector('h4').textContent.toLowerCase();
+    const skillDesc = item.querySelector('p').textContent.toLowerCase();
+    
+    if (skillName.includes(searchLower) || skillDesc.includes(searchLower)) {
+      item.classList.remove('hidden');
+    } else {
+      item.classList.add('hidden');
+    }
+  });
+}
+
+// Select skill
+function funSelectSkill(skill) {
+  sessionData.skillId = skill.id;
+  selectedSkill = skill;
+
+  // Update UI
+  document.querySelectorAll('.skill-item').forEach(item => {
+    const btn = item.querySelector('.select-skill-btn');
+    if (item.dataset.skillId === skill.id) {
+      item.className = 'skill-item flex items-center justify-between p-4 border border-brand-primary-600 bg-accent-gold-50 rounded-md hover:bg-neutral-50 cursor-pointer';
+      btn.className = 'select-skill-btn px-3 py-1 text-xs rounded border bg-brand-primary-600 text-white border-brand-primary-600';
+      btn.textContent = 'Selected';
+    } else {
+      item.className = 'skill-item flex items-center justify-between p-4 border border-neutral-200 rounded-md hover:bg-neutral-50 cursor-pointer';
+      btn.className = 'select-skill-btn px-3 py-1 text-xs rounded border border-neutral-300 text-neutral-700 hover:bg-neutral-50';
+      btn.textContent = 'Select';
+    }
+  });
+}
+
+// Step 2: Load trainers
+async function funLoadStep2() {
+  if (!sessionData.skillId) return;
+
+  try {
+    const tabInternal = document.getElementById('tabInternal');
+    const tabExternal = document.getElementById('tabExternal');
+    const internalTrainers = document.getElementById('internalTrainers');
+    const externalTrainers = document.getElementById('externalTrainers');
+    const trainersEmpty = document.getElementById('trainersEmpty');
+
+    // Setup tab switching
+    tabInternal.addEventListener('click', () => funSwitchTrainerTab('internal'));
+    tabExternal.addEventListener('click', () => funSwitchTrainerTab('external'));
+
+    // Load both types of trainers
+    await Promise.all([
+      funLoadInternalTrainers(),
+      funLoadExternalTrainers()
+    ]);
+
+    // Set initial tab
+    funSwitchTrainerTab(sessionData.trainerType);
+
+  } catch (error) {
+    console.error('Error loading trainers:', error);
+    showToast('Failed to load trainers');
+  }
+}
+
+// Switch trainer tab
+function funSwitchTrainerTab(type) {
+  const tabInternal = document.getElementById('tabInternal');
+  const tabExternal = document.getElementById('tabExternal');
+  const internalTrainers = document.getElementById('internalTrainers');
+  const externalTrainers = document.getElementById('externalTrainers');
+
+  if (type === 'internal') {
+    tabInternal.className = 'flex-1 px-4 py-2 rounded bg-white text-brand-primary-600 text-sm font-medium';
+    tabExternal.className = 'flex-1 px-4 py-2 rounded text-neutral-700 text-sm font-medium hover:text-brand-primary-600';
+    internalTrainers.classList.remove('hidden');
+    externalTrainers.classList.add('hidden');
+  } else {
+    tabExternal.className = 'flex-1 px-4 py-2 rounded bg-white text-brand-primary-600 text-sm font-medium';
+    tabInternal.className = 'flex-1 px-4 py-2 rounded text-neutral-700 text-sm font-medium hover:text-brand-primary-600';
+    externalTrainers.classList.remove('hidden');
+    internalTrainers.classList.add('hidden');
+  }
+}
+
+// Load internal trainers
+async function funLoadInternalTrainers() {
+  try {
+    const container = document.getElementById('internalTrainers');
+    
+    // Load trainer eligibility for this skill
+    const eligibilityQuery = query(
+      collection(db, 'trainerEligibility'),
+      where('skillId', '==', sessionData.skillId),
+      where('status', '==', 'active')
+    );
+
+    const eligibilitySnapshot = await getDocs(eligibilityQuery);
+    const eligibleEmployeeIds = eligibilitySnapshot.docs.map(doc => doc.data().employeeId);
+
+    if (eligibleEmployeeIds.length === 0) {
+      container.innerHTML = `
+        <div class="text-center py-8">
+          <p class="text-neutral-500 mb-3">No internal trainers eligible for this skill</p>
+          <a href="trainers_list.html" class="text-brand-primary-600 hover:text-brand-primary-700 text-sm">Manage trainer eligibility</a>
+        </div>
+      `;
+      return;
+    }
+
+    // Load eligible employees
+    const trainers = await Promise.all(
+      eligibleEmployeeIds.map(async (employeeId) => {
+        const userDoc = await getDoc(doc(db, 'users', employeeId));
+        if (userDoc.exists()) {
+          return { id: userDoc.id, ...userDoc.data() };
+        }
+        return null;
+      })
+    );
+
+    const validTrainers = trainers.filter(t => t !== null);
+
+    container.innerHTML = validTrainers.map(trainer => {
+      const initials = `${trainer.firstName?.[0] || ''}${trainer.lastName?.[0] || ''}`.toUpperCase();
+      const isSelected = sessionData.trainerId === trainer.id && sessionData.trainerType === 'internal';
+      
+      return `
+        <div class="trainer-item flex items-center justify-between p-4 border border-neutral-200 rounded-md hover:bg-neutral-50 cursor-pointer ${isSelected ? 'border-brand-primary-600 bg-accent-gold-50' : ''}"
+             data-trainer-id="${trainer.id}" data-trainer-type="internal">
+          <div class="flex items-center space-x-3">
+            <div class="w-10 h-10 rounded-full bg-accent-gold-500 flex items-center justify-center">
+              <span class="text-sm font-semibold text-white">${initials}</span>
+            </div>
+            <div>
+              <h4 class="text-sm font-medium text-neutral-900">${trainer.firstName || 'N/A'} ${trainer.lastName || 'N/A'}</h4>
+              <p class="text-xs text-neutral-500">${trainer.jobTitle || 'N/A'} • ${trainer.departmentId || 'N/A'}</p>
+            </div>
+          </div>
+          <button class="select-trainer-btn px-3 py-1 text-xs rounded border ${
+            isSelected 
+              ? 'bg-brand-primary-600 text-white border-brand-primary-600' 
+              : 'border-neutral-300 text-neutral-700 hover:bg-neutral-50'
+          }">
+            ${isSelected ? 'Selected' : 'Select'}
+          </button>
+        </div>
+      `;
+    }).join('');
+
+    // Add click handlers
+    container.querySelectorAll('.trainer-item').forEach(item => {
+      item.addEventListener('click', () => {
+        const trainerId = item.dataset.trainerId;
+        const trainer = validTrainers.find(t => t.id === trainerId);
+        funSelectTrainer(trainer, 'internal');
+      });
+    });
+
+  } catch (error) {
+    console.error('Error loading internal trainers:', error);
+  }
+}
+
+// Load external trainers
+async function funLoadExternalTrainers() {
+  try {
+    const container = document.getElementById('externalTrainers');
+    
+    // Load external trainers with this skill
+    const externalQuery = query(
+      collection(db, 'externalTrainers'),
+      where('status', '==', 'active')
+    );
+
+    const externalSnapshot = await getDocs(externalQuery);
+    const allExternalTrainers = externalSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+    // Filter trainers who have this skill
+    const eligibleTrainers = allExternalTrainers.filter(trainer => 
+      trainer.skills && trainer.skills.some(skill => skill.skillId === sessionData.skillId)
+    );
+
+    if (eligibleTrainers.length === 0) {
+      container.innerHTML = `
+        <div class="text-center py-8">
+          <p class="text-neutral-500 mb-3">No external trainers available for this skill</p>
+          <a href="trainers_list.html" class="text-brand-primary-600 hover:text-brand-primary-700 text-sm">Manage external trainers</a>
+        </div>
+      `;
+      return;
+    }
+
+    container.innerHTML = eligibleTrainers.map(trainer => {
+      const initials = trainer.name?.split(' ').map(n => n[0]).join('').toUpperCase() || 'ET';
+      const isSelected = sessionData.trainerId === trainer.id && sessionData.trainerType === 'external';
+      
+      return `
+        <div class="trainer-item flex items-center justify-between p-4 border border-neutral-200 rounded-md hover:bg-neutral-50 cursor-pointer ${isSelected ? 'border-brand-primary-600 bg-accent-gold-50' : ''}"
+             data-trainer-id="${trainer.id}" data-trainer-type="external">
+          <div class="flex items-center space-x-3">
+            <div class="w-10 h-10 rounded-full bg-info-600 flex items-center justify-center">
+              <span class="text-sm font-semibold text-white">${initials}</span>
+            </div>
+            <div>
+              <h4 class="text-sm font-medium text-neutral-900">${trainer.name || 'N/A'}</h4>
+              <p class="text-xs text-neutral-500">${trainer.email || 'N/A'} • External Trainer</p>
+            </div>
+          </div>
+          <button class="select-trainer-btn px-3 py-1 text-xs rounded border ${
+            isSelected 
+              ? 'bg-brand-primary-600 text-white border-brand-primary-600' 
+              : 'border-neutral-300 text-neutral-700 hover:bg-neutral-50'
+          }">
+            ${isSelected ? 'Selected' : 'Select'}
+          </button>
+        </div>
+      `;
+    }).join('');
+
+    // Add click handlers
+    container.querySelectorAll('.trainer-item').forEach(item => {
+      item.addEventListener('click', () => {
+        const trainerId = item.dataset.trainerId;
+        const trainer = eligibleTrainers.find(t => t.id === trainerId);
+        funSelectTrainer(trainer, 'external');
+      });
+    });
+
+  } catch (error) {
+    console.error('Error loading external trainers:', error);
+  }
+}
+
+// Select trainer
+function funSelectTrainer(trainer, type) {
+  sessionData.trainerId = trainer.id;
+  sessionData.trainerType = type;
+  selectedTrainer = trainer;
+
+  // Update current tab's UI
+  const currentContainer = type === 'internal' ? 
+    document.getElementById('internalTrainers') : 
+    document.getElementById('externalTrainers');
+    
+  currentContainer.querySelectorAll('.trainer-item').forEach(item => {
+    const btn = item.querySelector('.select-trainer-btn');
+    if (item.dataset.trainerId === trainer.id) {
+      item.className = 'trainer-item flex items-center justify-between p-4 border border-brand-primary-600 bg-accent-gold-50 rounded-md hover:bg-neutral-50 cursor-pointer';
+      btn.className = 'select-trainer-btn px-3 py-1 text-xs rounded border bg-brand-primary-600 text-white border-brand-primary-600';
+      btn.textContent = 'Selected';
+    } else {
+      item.className = 'trainer-item flex items-center justify-between p-4 border border-neutral-200 rounded-md hover:bg-neutral-50 cursor-pointer';
+      btn.className = 'select-trainer-btn px-3 py-1 text-xs rounded border border-neutral-300 text-neutral-700 hover:bg-neutral-50';
+      btn.textContent = 'Select';
+    }
+  });
+
+  // Clear selection from other tab
+  const otherContainer = type === 'internal' ? 
+    document.getElementById('externalTrainers') : 
+    document.getElementById('internalTrainers');
+    
+  otherContainer.querySelectorAll('.trainer-item').forEach(item => {
+    item.className = 'trainer-item flex items-center justify-between p-4 border border-neutral-200 rounded-md hover:bg-neutral-50 cursor-pointer';
+    const btn = item.querySelector('.select-trainer-btn');
+    btn.className = 'select-trainer-btn px-3 py-1 text-xs rounded border border-neutral-300 text-neutral-700 hover:bg-neutral-50';
+    btn.textContent = 'Select';
+  });
+}
+
+// Step 3: Setup schedule form
+function funLoadStep3() {
+  const form = document.getElementById('scheduleForm');
+  const scheduledDate = document.getElementById('scheduledDate');
+  const endDate = document.getElementById('endDate');
+  const mode = document.getElementById('mode');
+  const capacity = document.getElementById('capacity');
+
+  // Populate existing values
+  if (sessionData.scheduledDate) {
+    scheduledDate.value = new Date(sessionData.scheduledDate).toISOString().slice(0, 16);
+  }
+  if (sessionData.endDate) {
+    endDate.value = new Date(sessionData.endDate).toISOString().slice(0, 16);
+  }
+  if (sessionData.mode) {
+    mode.value = sessionData.mode;
+  }
+  if (sessionData.capacity) {
+    capacity.value = sessionData.capacity;
+  }
+
+  // Add validation
+  scheduledDate.addEventListener('change', funValidateScheduleDates);
+  endDate.addEventListener('change', funValidateScheduleDates);
+  
+  // Store values on change
+  scheduledDate.addEventListener('change', (e) => {
+    sessionData.scheduledDate = e.target.value ? new Date(e.target.value).toISOString() : null;
+  });
+  endDate.addEventListener('change', (e) => {
+    sessionData.endDate = e.target.value ? new Date(e.target.value).toISOString() : null;
+  });
+  mode.addEventListener('change', (e) => {
+    sessionData.mode = e.target.value || null;
+  });
+  capacity.addEventListener('change', (e) => {
+    sessionData.capacity = e.target.value ? parseInt(e.target.value) : null;
+  });
+}
+
+// Validate schedule dates
+function funValidateScheduleDates() {
+  const scheduledDate = document.getElementById('scheduledDate');
+  const endDate = document.getElementById('endDate');
+  const errors = document.getElementById('scheduleErrors');
+
+  const startDateTime = new Date(scheduledDate.value);
+  const endDateTime = new Date(endDate.value);
+  const now = new Date();
+
+  let errorMessages = [];
+
+  // Check if start date is in the future
+  if (scheduledDate.value && startDateTime <= now) {
+    errorMessages.push('Start date must be in the future');
+  }
+
+  // Check if end date is after start date
+  if (scheduledDate.value && endDate.value && endDateTime <= startDateTime) {
+    errorMessages.push('End date must be after start date');
+  }
+
+  if (errorMessages.length > 0) {
+    errors.innerHTML = errorMessages.join('<br>');
+    errors.classList.remove('hidden');
+    return false;
+  } else {
+    errors.classList.add('hidden');
+    return true;
+  }
+}
+
+// Step 4: Load attendees
+async function funLoadStep4() {
+  if (!sessionData.skillId) return;
+
+  try {
+    await Promise.all([
+      funLoadAvailableEmployees(),
+      funLoadAssignedEmployees()
+    ]);
+
+    funSetupAttendeesSearch();
+
+  } catch (error) {
+    console.error('Error loading attendees:', error);
+    showToast('Failed to load attendee data');
+  }
+}
+
+// Load available employees (with TNIs for this skill)
+async function funLoadAvailableEmployees() {
+  try {
+    const container = document.getElementById('availableEmployees');
+    const countEl = document.getElementById('availableCount');
+
+    // Load training needs for this skill
+    const needsQuery = query(
+      collection(db, 'trainingNeeds'),
+      where('skillId', '==', sessionData.skillId),
+      where('tniStatus', '==', 'trainingRequired'),
+      orderBy('gap', 'desc')
+    );
+
+    const needsSnapshot = await getDocs(needsQuery);
+    const trainingNeeds = needsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+    if (trainingNeeds.length === 0) {
+      container.innerHTML = `
+        <div class="text-center py-8 text-neutral-500">
+          <svg class="w-8 h-8 mx-auto mb-3 text-neutral-300" data-lucide="users"></svg>
+          <p class="text-sm">No employees need training for this skill</p>
+        </div>
+      `;
+      countEl.textContent = '0 employees';
+      return;
+    }
+
+    // Load employee details
+    const employees = await Promise.all(
+      trainingNeeds.map(async (need) => {
+        try {
+          const userDoc = await getDoc(doc(db, 'users', need.employeeId));
+          if (userDoc.exists()) {
+            const userData = userDoc.data();
+            return {
+              ...need,
+              employee: userData,
+              initials: `${userData.firstName?.[0] || ''}${userData.lastName?.[0] || ''}`.toUpperCase()
+            };
+          }
+          return null;
+        } catch (error) {
+          console.error('Error loading employee:', need.employeeId, error);
+          return null;
+        }
+      })
+    );
+
+    availableEmployeesData = employees.filter(emp => emp !== null);
+
+    // Filter out already assigned employees
+    const unassignedEmployees = availableEmployeesData.filter(emp => 
+      !assignedEmployeesData.some(assigned => assigned.employeeId === emp.employeeId)
+    );
+
+    funRenderAvailableEmployees(unassignedEmployees);
+
+  } catch (error) {
+    console.error('Error loading available employees:', error);
+  }
+}
+
+// Render available employees
+function funRenderAvailableEmployees(employees) {
+  const container = document.getElementById('availableEmployees');
+  const countEl = document.getElementById('availableCount');
+
+  countEl.textContent = `${employees.length} employees`;
+
+  if (employees.length === 0) {
+    container.innerHTML = `
+      <div class="text-center py-8 text-neutral-500">
+        <p class="text-sm">All employees are already assigned</p>
+      </div>
+    `;
+    return;
+  }
+
+  container.innerHTML = employees.map(emp => `
+    <div class="available-employee-item flex items-center justify-between p-3 border border-neutral-200 rounded-md bg-white hover:bg-neutral-50 cursor-pointer"
+         data-employee-id="${emp.employeeId}">
+      <div class="flex items-center space-x-3">
+        <div class="w-8 h-8 rounded-full bg-accent-gold-500 flex items-center justify-center">
+          <span class="text-xs font-semibold text-white">${emp.initials}</span>
+        </div>
+        <div class="flex-1 min-w-0">
+          <h5 class="text-sm font-medium text-neutral-900 truncate">${emp.employee.firstName || 'N/A'} ${emp.employee.lastName || 'N/A'}</h5>
+          <p class="text-xs text-neutral-500 truncate">${emp.employee.jobTitle || 'N/A'}</p>
+          <div class="flex items-center gap-1 mt-1">
+            <span class="text-xs text-neutral-500">Gap:</span>
+            <span class="text-xs font-medium ${emp.gap >= 3 ? 'text-danger-600' : emp.gap >= 2 ? 'text-warning-600' : 'text-success-600'}">${emp.gap || 0}</span>
+          </div>
+        </div>
+      </div>
+      <button class="add-employee-btn px-2 py-1 text-xs rounded border border-success-600 text-success-600 hover:bg-success-600 hover:text-white">
+        <svg class="w-3 h-3" data-lucide="plus"></svg>
+      </button>
+    </div>
+  `).join('');
+
+  // Add click handlers
+  container.querySelectorAll('.available-employee-item').forEach(item => {
+    item.addEventListener('click', () => {
+      const employeeId = item.dataset.employeeId;
+      const employee = employees.find(emp => emp.employeeId === employeeId);
+      funAssignEmployee(employee);
+    });
+  });
+
+  lucide.createIcons();
+}
+
+// Load already assigned employees
+function funLoadAssignedEmployees() {
+  const container = document.getElementById('assignedEmployees');
+  const countEl = document.getElementById('assignedCount');
+
+  countEl.textContent = `${assignedEmployeesData.length} assigned`;
+
+  if (assignedEmployeesData.length === 0) {
+    container.innerHTML = `
+      <div class="text-center py-12 text-neutral-500">
+        <svg class="w-8 h-8 mx-auto mb-3 text-neutral-300" data-lucide="user-plus"></svg>
+        <p class="text-sm">No attendees assigned yet</p>
+        <p class="text-xs">Select employees from the left panel</p>
+      </div>
+    `;
+    return;
+  }
+
+  container.innerHTML = assignedEmployeesData.map((assigned, index) => {
+    const initials = assigned.employee ? 
+      `${assigned.employee.firstName?.[0] || ''}${assigned.employee.lastName?.[0] || ''}`.toUpperCase() : 
+      'N/A';
+
+    return `
+      <div class="assigned-employee-item flex items-center justify-between p-3 border border-neutral-200 rounded-md bg-white"
+           data-employee-id="${assigned.employeeId}" data-index="${index}">
+        <div class="flex items-center space-x-3">
+          <div class="w-8 h-8 rounded-full bg-success-600 flex items-center justify-center">
+            <span class="text-xs font-semibold text-white">${initials}</span>
+          </div>
+          <div class="flex-1 min-w-0">
+            <h5 class="text-sm font-medium text-neutral-900 truncate">
+              ${assigned.employee ? `${assigned.employee.firstName || 'N/A'} ${assigned.employee.lastName || 'N/A'}` : 'Unknown Employee'}
+            </h5>
+            <p class="text-xs text-neutral-500 truncate">${assigned.employee?.jobTitle || 'N/A'}</p>
+            <p class="text-xs text-neutral-400">Assigned ${new Date(assigned.assignmentDate || new Date()).toLocaleDateString()}</p>
+          </div>
+        </div>
+        <button class="remove-employee-btn px-2 py-1 text-xs rounded border border-danger-600 text-danger-600 hover:bg-danger-600 hover:text-white">
+          <svg class="w-3 h-3" data-lucide="x"></svg>
+        </button>
+      </div>
+    `;
+  }).join('');
+
+  // Add remove handlers
+  container.querySelectorAll('.remove-employee-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const item = btn.closest('.assigned-employee-item');
+      const index = parseInt(item.dataset.index);
+      funRemoveEmployee(index);
+    });
+  });
+
+  lucide.createIcons();
+}
+
+// Setup attendees search
+function funSetupAttendeesSearch() {
+  const searchInput = document.getElementById('availableSearch');
+  let searchTimeout;
+
+  searchInput.addEventListener('input', (e) => {
+    clearTimeout(searchTimeout);
+    searchTimeout = setTimeout(() => {
+      const searchTerm = e.target.value.toLowerCase();
+      const filteredEmployees = availableEmployeesData.filter(emp => {
+        const fullName = `${emp.employee.firstName || ''} ${emp.employee.lastName || ''}`.toLowerCase();
+        const jobTitle = (emp.employee.jobTitle || '').toLowerCase();
+        return fullName.includes(searchTerm) || jobTitle.includes(searchTerm);
+      }).filter(emp => 
+        !assignedEmployeesData.some(assigned => assigned.employeeId === emp.employeeId)
+      );
+      
+      funRenderAvailableEmployees(filteredEmployees);
+    }, 300);
+  });
+}
+
+// Assign employee to training
+async function funAssignEmployee(employee) {
+  try {
+    // Load employee details if not already loaded
+    if (!employee.employee) {
+      const userDoc = await getDoc(doc(db, 'users', employee.employeeId));
+      if (userDoc.exists()) {
+        employee.employee = userDoc.data();
+        employee.initials = `${employee.employee.firstName?.[0] || ''}${employee.employee.lastName?.[0] || ''}`.toUpperCase();
+      }
+    }
+
+    // Add to assigned list
+    assignedEmployeesData.push({
+      employeeId: employee.employeeId,
+      assignmentDate: new Date().toISOString(),
+      attendanceStatus: 'assigned',
+      employee: employee.employee,
+      initials: employee.initials
+    });
+
+    // Update session data
+    sessionData.assignedEmployees = assignedEmployeesData.map(emp => ({
+      employeeId: emp.employeeId,
+      assignmentDate: emp.assignmentDate,
+      attendanceStatus: emp.attendanceStatus
+    }));
+
+    // Refresh both panels
+    const unassignedEmployees = availableEmployeesData.filter(emp => 
+      !assignedEmployeesData.some(assigned => assigned.employeeId === emp.employeeId)
+    );
+    funRenderAvailableEmployees(unassignedEmployees);
+    funLoadAssignedEmployees();
+
+  } catch (error) {
+    console.error('Error assigning employee:', error);
+    showToast('Failed to assign employee');
+  }
+}
+
+// Remove employee from assignment
+function funRemoveEmployee(index) {
+  if (index >= 0 && index < assignedEmployeesData.length) {
+    assignedEmployeesData.splice(index, 1);
+    
+    // Update session data
+    sessionData.assignedEmployees = assignedEmployeesData.map(emp => ({
+      employeeId: emp.employeeId,
+      assignmentDate: emp.assignmentDate,
+      attendanceStatus: emp.attendanceStatus
+    }));
+
+    // Refresh both panels
+    const unassignedEmployees = availableEmployeesData.filter(emp => 
+      !assignedEmployeesData.some(assigned => assigned.employeeId === emp.employeeId)
+    );
+    funRenderAvailableEmployees(unassignedEmployees);
+    funLoadAssignedEmployees();
+  }
+}
+
+// Validate current step
+async function funValidateCurrentStep() {
+  switch (currentStep) {
+    case 1:
+      if (!sessionData.skillId) {
+        showToast('Please select a skill for the training session');
+        return false;
+      }
+      return true;
+
+    case 2:
+      if (!sessionData.trainerId || !sessionData.trainerType) {
+        showToast('Please select a trainer for the training session');
+        return false;
+      }
+      return true;
+
+    case 3:
+      if (!sessionData.scheduledDate || !sessionData.endDate || !sessionData.mode) {
+        showToast('Please fill in all required schedule fields');
+        return false;
+      }
+      
+      if (!funValidateScheduleDates()) {
+        return false;
+      }
+
+      // Store form values
+      const scheduledDateInput = document.getElementById('scheduledDate');
+      const endDateInput = document.getElementById('endDate');
+      const modeInput = document.getElementById('mode');
+      const capacityInput = document.getElementById('capacity');
+
+      sessionData.scheduledDate = scheduledDateInput.value ? new Date(scheduledDateInput.value).toISOString() : null;
+      sessionData.endDate = endDateInput.value ? new Date(endDateInput.value).toISOString() : null;
+      sessionData.mode = modeInput.value || null;
+      sessionData.capacity = capacityInput.value ? parseInt(capacityInput.value) : null;
+
+      return true;
+
+    case 4:
+      // No strict validation for attendees - can be empty
+      return true;
+
+    default:
+      return true;
+  }
+}
+
+// Save training session
+async function funSaveSession() {
+  try {
+    showLoader();
+
+    // Final validation
+    if (!sessionData.skillId || !sessionData.trainerId || !sessionData.scheduledDate || !sessionData.endDate || !sessionData.mode) {
+      showToast('Please complete all required fields');
+      hideLoader();
+      return;
+    }
+
+    const now = new Date().toISOString();
+    const user = auth.currentUser;
+
+    const sessionDoc = {
+      skillId: sessionData.skillId,
+      trainerId: sessionData.trainerId,
+      trainerType: sessionData.trainerType,
+      scheduledDate: sessionData.scheduledDate,
+      endDate: sessionData.endDate,
+      mode: sessionData.mode,
+      capacity: sessionData.capacity,
+      assignedEmployees: sessionData.assignedEmployees,
+      status: 'scheduled',
+      createdTimestamp: mode === 'create' ? now : undefined,
+      createdBy: mode === 'create' ? user.uid : undefined,
+      modifiedTimestamp: now,
+      modifiedBy: user.uid
+    };
+
+    // Remove undefined fields
+    Object.keys(sessionDoc).forEach(key => {
+      if (sessionDoc[key] === undefined) {
+        delete sessionDoc[key];
+      }
+    });
+
+    let savedSessionId;
+
+    if (mode === 'create') {
+      // Create new session
+      const newSessionRef = await addDoc(collection(db, 'trainingSessions'), sessionDoc);
+      savedSessionId = newSessionRef.id;
+      showToast('Training session created successfully', 'success');
+    } else {
+      // Update existing session
+      await updateDoc(doc(db, 'trainingSessions', sessionId), sessionDoc);
+      savedSessionId = sessionId;
+      showToast('Training session updated successfully', 'success');
+    }
+
+    hideLoader();
+
+    // Redirect to session detail
+    setTimeout(() => {
+      location.href = `training_session_detail.html?sessionId=${savedSessionId}`;
+    }, 1000);
+
+  } catch (error) {
+    console.error('Error saving session:', error);
+    hideLoader();
+    showToast('Failed to save training session');
+  }
+}
+
+// Initialize page
+funUpdateStepDisplay();
+</script>
+
+</body>
+</html>

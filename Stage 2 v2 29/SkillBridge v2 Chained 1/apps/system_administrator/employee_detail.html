@@ -1,0 +1,1628 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SkillBridge</title>
+
+    <!-- Required: Main JS Script -->
+    <script type="module" src="scripts/main.js" data-tiramai="web-gen"></script>
+
+    <!-- Required: TailwindCSS -->
+    <script src="./lib/tailwindcss/tailwindcss.js" fetchpriority="high" data-tiramai="web-gen"></script>
+
+    <!-- Required: Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest" data-tiramai="web-gen"></script>
+
+    <!-- Required: Favicon -->
+    <link rel="icon" href="assets/imgs/logo.ico" type="image/x-icon" data-tiramai="web-gen"/>
+
+    <!-- ECharts Support (for charts/graphs) -->
+    <script defer src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js" data-tiramai="web-gen"></script>
+
+    <!-- Markdown Support (for content rendering) -->
+    <script defer src="https://cdn.jsdelivr.net/npm/marked/marked.min.js" data-tiramai="web-gen"></script>
+
+    <!-- Tailwind Config Extension -->
+    <script data-tiramai="web-gen">
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            'primary-600': '#1B2A44',
+                            'primary-700': '#14233A',
+                            'primary-800': '#0E1A2B',
+                        },
+                        accent: {
+                            'gold-50': '#FFF7E6',
+                            'gold-500': '#C59D42',
+                            'gold-600': '#A97D22',
+                        },
+                        success: { '600': '#16A34A' },
+                        warning: { '600': '#D97706' },
+                        danger: { '600': '#DC2626' },
+                        info: { '600': '#2563EB' },
+                        heat: {
+                            green: '#16A34A',
+                            amber: '#F59E0B',
+                            red: '#DC2626'
+                        },
+                        neutral: {
+                            '50': '#F8FAFC',
+                            '200': '#E2E8F0',
+                            '500': '#64748B',
+                            '700': '#334155',
+                            '900': '#111827',
+                            '950': '#0B1220',
+                        }
+                    },
+                    fontSize: {
+                        'xs': ['12px', '16px'],
+                        'sm': ['14px', '20px'],
+                        'base': ['16px', '24px'],
+                        'xl': ['20px', '28px'],
+                        '2xl': ['24px', '32px'],
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-neutral-50 min-h-screen text-neutral-900">
+    <!-- Top Navigation -->
+    <header class="fixed top-0 left-0 right-0 bg-brand-primary-800 border-b border-neutral-200 flex items-center justify-between px-6 py-4 z-30 h-16">
+        <div class="flex items-center gap-4">
+            <!-- Mobile menu toggle -->
+            <button id="mobileMenuToggle" class="md:hidden text-white p-2" aria-label="Toggle menu">
+                <svg class="w-5 h-5" data-lucide="menu"></svg>
+            </button>
+            <!-- Logo -->
+            <div class="flex items-center gap-3">
+                <svg width="32" height="32" viewBox="0 0 400 400" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="84" y="116" width="56" height="168" rx="8" fill="#1E40AF"/>
+                    <rect x="176" y="84" width="56" height="200" rx="8" fill="#059669"/>
+                    <rect x="268" y="156" width="48" height="128" rx="8" fill="#1E40AF"/>
+                    <rect x="114" y="180" width="172" height="20" rx="10" fill="#F59E0B"/>
+                </svg>
+                <span class="text-xl font-semibold text-white">SkillBridge</span>
+            </div>
+        </div>
+        <div class="flex items-center gap-4">
+            <!-- User Profile Dropdown -->
+            <div class="relative" id="userProfileContainer">
+                <button id="userProfileToggle" class="flex items-center gap-2 text-white hover:text-accent-gold-500 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2 focus:ring-offset-brand-primary-800 rounded-md p-2">
+                    <div class="w-8 h-8 bg-accent-gold-500 rounded-full flex items-center justify-center">
+                        <span id="userInitials" class="text-sm font-semibold text-white">JD</span>
+                    </div>
+                    <svg class="w-4 h-4" data-lucide="chevron-down"></svg>
+                </button>
+                <!-- Dropdown Menu -->
+                <div id="userProfileDropdown" class="hidden absolute right-0 mt-2 w-64 bg-white rounded-md shadow-lg border border-neutral-200 py-2 z-50">
+                    <div class="px-4 py-3 border-b border-neutral-200">
+                        <p id="userDisplayName" class="text-sm font-semibold text-neutral-900">John Doe</p>
+                        <p id="userEmail" class="text-xs text-neutral-500">johndoe@example.com</p>
+                        <p class="text-xs text-accent-gold-600 font-medium">System Administrator</p>
+                    </div>
+                    <button id="signOutButton" class="w-full text-left px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50 flex items-center gap-2">
+                        <svg class="w-4 h-4" data-lucide="log-out"></svg>
+                        Sign Out
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="flex pt-16">
+        <!-- Side Navigation -->
+        <aside id="sidebar" class="fixed md:sticky top-16 left-0 w-64 bg-white border-r border-neutral-200 h-[calc(100vh-4rem)] overflow-y-auto z-20 transform -translate-x-full md:translate-x-0 transition-transform duration-200">
+            <nav class="p-4 space-y-1">
+                <!-- Admin Dashboard -->
+                <a href="dashboard.html" id="nav-dashboard" class="nav-item flex items-center gap-3 px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                    <svg class="w-5 h-5" data-lucide="layout-dashboard"></svg>
+                    <span>Admin Dashboard</span>
+                </a>
+
+                <!-- Employees with Children -->
+                <div class="nav-group">
+                    <button class="nav-group-toggle flex items-center justify-between w-full px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                        <div class="flex items-center gap-3">
+                            <svg class="w-5 h-5" data-lucide="users"></svg>
+                            <span>Employees</span>
+                        </div>
+                        <svg class="w-4 h-4 transform transition-transform" data-lucide="chevron-right"></svg>
+                    </button>
+                    <div class="nav-group-children hidden ml-8 space-y-1 mt-1">
+                        <a href="employees_list.html" class="nav-item block px-3 py-2 rounded-md text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-600">Employee Directory</a>
+                        <a href="employee_upsert.html?mode=create" class="nav-item block px-3 py-2 rounded-md text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-600">Add Employee</a>
+                    </div>
+                </div>
+
+                <!-- Departments -->
+                <a href="departments_list.html" id="nav-departments" class="nav-item flex items-center gap-3 px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                    <svg class="w-5 h-5" data-lucide="building"></svg>
+                    <span>Departments</span>
+                </a>
+
+                <!-- Skill Categories -->
+                <a href="skill_categories_list.html" id="nav-skill-categories" class="nav-item flex items-center gap-3 px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                    <svg class="w-5 h-5" data-lucide="layers"></svg>
+                    <span>Skill Categories</span>
+                </a>
+
+                <!-- Criticality Levels -->
+                <a href="skill_criticalities_list.html" id="nav-criticalities" class="nav-item flex items-center gap-3 px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                    <svg class="w-5 h-5" data-lucide="sliders"></svg>
+                    <span>Criticality Levels</span>
+                </a>
+
+                <!-- Skills with Children -->
+                <div class="nav-group">
+                    <button class="nav-group-toggle flex items-center justify-between w-full px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                        <div class="flex items-center gap-3">
+                            <svg class="w-5 h-5" data-lucide="book"></svg>
+                            <span>Skills</span>
+                        </div>
+                        <svg class="w-4 h-4 transform transition-transform" data-lucide="chevron-right"></svg>
+                    </button>
+                    <div class="nav-group-children hidden ml-8 space-y-1 mt-1">
+                        <a href="skills_list.html" class="nav-item block px-3 py-2 rounded-md text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-600">Skills Directory</a>
+                        <a href="skill_upsert.html?mode=create" class="nav-item block px-3 py-2 rounded-md text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-600">Add Skill</a>
+                    </div>
+                </div>
+
+                <!-- Assessment Cycles with Children -->
+                <div class="nav-group">
+                    <button class="nav-group-toggle flex items-center justify-between w-full px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                        <div class="flex items-center gap-3">
+                            <svg class="w-5 h-5" data-lucide="calendar"></svg>
+                            <span>Assessment Cycles</span>
+                        </div>
+                        <svg class="w-4 h-4 transform transition-transform" data-lucide="chevron-right"></svg>
+                    </button>
+                    <div class="nav-group-children hidden ml-8 space-y-1 mt-1">
+                        <a href="assessment_cycles_list.html" class="nav-item block px-3 py-2 rounded-md text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-600">Cycles Directory</a>
+                        <a href="assessment_cycle_upsert.html?mode=create" class="nav-item block px-3 py-2 rounded-md text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-600">Create Cycle</a>
+                    </div>
+                </div>
+
+                <!-- Trainer Pool with Children -->
+                <div class="nav-group">
+                    <button class="nav-group-toggle flex items-center justify-between w-full px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                        <div class="flex items-center gap-3">
+                            <svg class="w-5 h-5" data-lucide="users"></svg>
+                            <span>Trainer Pool</span>
+                        </div>
+                        <svg class="w-4 h-4 transform transition-transform" data-lucide="chevron-right"></svg>
+                    </button>
+                    <div class="nav-group-children hidden ml-8 space-y-1 mt-1">
+                        <a href="trainers_list.html" class="nav-item block px-3 py-2 rounded-md text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-600">Trainer Directory</a>
+                        <a href="external_trainer_upsert.html?mode=create" class="nav-item block px-3 py-2 rounded-md text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-600">Add External Trainer</a>
+                    </div>
+                </div>
+
+                <!-- Training Sessions with Children -->
+                <div class="nav-group">
+                    <button class="nav-group-toggle flex items-center justify-between w-full px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                        <div class="flex items-center gap-3">
+                            <svg class="w-5 h-5" data-lucide="calendar"></svg>
+                            <span>Training Sessions</span>
+                        </div>
+                        <svg class="w-4 h-4 transform transition-transform" data-lucide="chevron-right"></svg>
+                    </button>
+                    <div class="nav-group-children hidden ml-8 space-y-1 mt-1">
+                        <a href="training_sessions_list.html" class="nav-item block px-3 py-2 rounded-md text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-600">Sessions Calendar</a>
+                        <a href="training_session_upsert.html?mode=create" class="nav-item block px-3 py-2 rounded-md text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-600">Create Session</a>
+                    </div>
+                </div>
+
+                <!-- Disputes -->
+                <a href="disputes_list.html" id="nav-disputes" class="nav-item flex items-center gap-3 px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                    <svg class="w-5 h-5" data-lucide="alert-circle"></svg>
+                    <span>Disputes</span>
+                </a>
+
+                <!-- Analytics Section -->
+                <div class="border-t border-neutral-200 pt-4 mt-4">
+                    <h4 class="px-3 text-xs font-semibold text-neutral-500 uppercase tracking-wider mb-2">Analytics</h4>
+                    
+                    <a href="analytics_skill_gap_heatmap.html" class="nav-item flex items-center gap-3 px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                        <svg class="w-5 h-5" data-lucide="grid"></svg>
+                        <span>Skill Gap Heatmap</span>
+                    </a>
+
+                    <a href="analytics_tni_dashboard.html" class="nav-item flex items-center gap-3 px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                        <svg class="w-5 h-5" data-lucide="bar-chart-2"></svg>
+                        <span>TNI Dashboard</span>
+                    </a>
+
+                    <a href="analytics_training_forecast.html" class="nav-item flex items-center gap-3 px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                        <svg class="w-5 h-5" data-lucide="trending-up"></svg>
+                        <span>Training Forecast</span>
+                    </a>
+
+                    <a href="analytics_assessment_completion.html" class="nav-item flex items-center gap-3 px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                        <svg class="w-5 h-5" data-lucide="pie-chart"></svg>
+                        <span>Assessment Completion</span>
+                    </a>
+
+                    <a href="analytics_dispute_metrics.html" class="nav-item flex items-center gap-3 px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                        <svg class="w-5 h-5" data-lucide="bar-chart"></svg>
+                        <span>Dispute Analytics</span>
+                    </a>
+                </div>
+            </nav>
+            
+            <!-- Footer -->
+            <div class="absolute bottom-4 w-full text-center text-xs text-neutral-500 bg-white px-4">
+                Made with ❤️ by TiramAi
+            </div>
+        </aside>
+
+        <!-- Mobile Overlay -->
+        <div id="mobileOverlay" class="hidden fixed inset-0 bg-black bg-opacity-50 z-10 md:hidden"></div>
+
+        <!-- Main Content -->
+        <main id="pageContent" class="flex-1 p-6 overflow-y-auto">
+            
+<!-- Employee Detail Header -->
+<div class="bg-white border border-neutral-200 rounded-md shadow-sm mb-6">
+  <div class="px-6 py-4 border-b border-neutral-200">
+    <div class="flex items-start justify-between">
+      <div class="flex items-start gap-4">
+        <!-- Back Button -->
+        <button id="btn-back" class="inline-flex items-center gap-2 text-sm text-neutral-500 hover:text-brand-primary-600 mt-1">
+          <svg class="w-4 h-4" data-lucide="arrow-left"></svg>
+          Back to Employees
+        </button>
+      </div>
+    </div>
+  </div>
+  
+  <div class="px-6 py-6">
+    <!-- Employee Header Info -->
+    <div id="employee-header" class="hidden">
+      <div class="flex items-start justify-between mb-4">
+        <div class="flex items-start gap-6">
+          <!-- Avatar -->
+          <div class="w-16 h-16 bg-accent-gold-500 rounded-full flex items-center justify-center">
+            <span id="employee-initials" class="text-xl font-semibold text-white">--</span>
+          </div>
+          
+          <!-- Basic Info -->
+          <div>
+            <h1 id="employee-name" class="text-2xl font-bold text-neutral-950 mb-1">--</h1>
+            <p id="employee-job-title" class="text-base text-neutral-700 mb-2">--</p>
+            <div class="flex items-center gap-3">
+              <span id="employee-status-badge" class="inline-flex items-center px-2 py-1 text-xs rounded-full bg-success-600 text-white">Active</span>
+              <span id="employee-role-badge" class="inline-flex items-center px-2 py-1 text-xs rounded-full bg-info-600 text-white">Employee</span>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Action Buttons -->
+        <div class="flex items-center gap-2">
+          <button id="btn-edit" class="inline-flex items-center justify-center h-11 px-4 rounded-md border border-neutral-200 bg-white text-neutral-900 hover:bg-neutral-50 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2">
+            <svg class="w-5 h-5 mr-2" data-lucide="edit"></svg>
+            Edit
+          </button>
+          <button id="btn-deactivate" class="inline-flex items-center justify-center h-11 px-4 rounded-md bg-danger-600 hover:bg-danger-700 text-white focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2">
+            <svg class="w-5 h-5 mr-2" data-lucide="user-x"></svg>
+            Deactivate
+          </button>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Skeleton Loading for Header -->
+    <div id="employee-header-skeleton" class="animate-pulse">
+      <div class="flex items-start justify-between mb-4">
+        <div class="flex items-start gap-6">
+          <div class="w-16 h-16 bg-neutral-200 rounded-full"></div>
+          <div>
+            <div class="h-8 w-48 bg-neutral-200 rounded mb-2"></div>
+            <div class="h-5 w-32 bg-neutral-200 rounded mb-2"></div>
+            <div class="flex items-center gap-3">
+              <div class="h-6 w-16 bg-neutral-200 rounded-full"></div>
+              <div class="h-6 w-20 bg-neutral-200 rounded-full"></div>
+            </div>
+          </div>
+        </div>
+        <div class="flex items-center gap-2">
+          <div class="h-11 w-20 bg-neutral-200 rounded"></div>
+          <div class="h-11 w-24 bg-neutral-200 rounded"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Tab Navigation -->
+<div class="bg-white border border-neutral-200 rounded-md shadow-sm">
+  <div class="border-b border-neutral-200">
+    <nav class="flex overflow-x-auto">
+      <button class="tab-button whitespace-nowrap py-3 px-6 text-sm font-medium border-b-2 border-brand-primary-600 text-brand-primary-600" data-tab="profile">
+        Profile
+      </button>
+      <button class="tab-button whitespace-nowrap py-3 px-6 text-sm font-medium border-b-2 border-transparent text-neutral-500 hover:text-neutral-700 hover:border-neutral-300" data-tab="skills">
+        Skills & Assessments
+      </button>
+      <button class="tab-button whitespace-nowrap py-3 px-6 text-sm font-medium border-b-2 border-transparent text-neutral-500 hover:text-neutral-700 hover:border-neutral-300" data-tab="training">
+        Training
+      </button>
+      <button class="tab-button whitespace-nowrap py-3 px-6 text-sm font-medium border-b-2 border-transparent text-neutral-500 hover:text-neutral-700 hover:border-neutral-300" data-tab="disputes">
+        Disputes
+      </button>
+    </nav>
+  </div>
+  
+  <!-- Tab Content -->
+  <div class="p-6">
+    <!-- Profile Tab -->
+    <div id="tab-profile" class="tab-content">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <!-- Personal Information -->
+        <div class="bg-neutral-50 rounded-md border border-neutral-200 p-4">
+          <h3 class="text-base font-semibold text-neutral-950 mb-4">Personal Information</h3>
+          <div id="profile-info" class="hidden space-y-3">
+            <div>
+              <label class="text-xs font-medium text-neutral-500 uppercase tracking-wider">Employee ID</label>
+              <p id="profile-employee-id" class="text-sm text-neutral-900 mt-1">--</p>
+            </div>
+            <div>
+              <label class="text-xs font-medium text-neutral-500 uppercase tracking-wider">Email</label>
+              <p id="profile-email" class="text-sm text-neutral-900 mt-1">--</p>
+            </div>
+            <div>
+              <label class="text-xs font-medium text-neutral-500 uppercase tracking-wider">Department</label>
+              <p id="profile-department" class="text-sm text-brand-primary-600 hover:text-brand-primary-700 cursor-pointer underline mt-1">--</p>
+            </div>
+          </div>
+          <!-- Skeleton -->
+          <div id="profile-info-skeleton" class="animate-pulse space-y-3">
+            <div>
+              <div class="h-3 w-20 bg-neutral-200 rounded mb-1"></div>
+              <div class="h-4 w-24 bg-neutral-200 rounded"></div>
+            </div>
+            <div>
+              <div class="h-3 w-12 bg-neutral-200 rounded mb-1"></div>
+              <div class="h-4 w-40 bg-neutral-200 rounded"></div>
+            </div>
+            <div>
+              <div class="h-3 w-20 bg-neutral-200 rounded mb-1"></div>
+              <div class="h-4 w-28 bg-neutral-200 rounded"></div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Organization Structure -->
+        <div class="bg-neutral-50 rounded-md border border-neutral-200 p-4">
+          <h3 class="text-base font-semibold text-neutral-950 mb-4">Organization Structure</h3>
+          <div id="org-info" class="hidden space-y-3">
+            <div>
+              <label class="text-xs font-medium text-neutral-500 uppercase tracking-wider">Team Lead</label>
+              <p id="org-team-lead" class="text-sm text-brand-primary-600 hover:text-brand-primary-700 cursor-pointer underline mt-1">--</p>
+            </div>
+            <div>
+              <label class="text-xs font-medium text-neutral-500 uppercase tracking-wider">Direct Reports</label>
+              <div class="mt-2">
+                <button id="direct-reports-toggle" class="flex items-center justify-between w-full text-sm text-neutral-700 hover:text-neutral-900">
+                  <span id="direct-reports-count">0 employees</span>
+                  <svg class="w-4 h-4 transform transition-transform" data-lucide="chevron-down"></svg>
+                </button>
+                <div id="direct-reports-list" class="hidden mt-2 space-y-1 pl-4 border-l-2 border-neutral-200"></div>
+              </div>
+            </div>
+          </div>
+          <!-- Skeleton -->
+          <div id="org-info-skeleton" class="animate-pulse space-y-3">
+            <div>
+              <div class="h-3 w-20 bg-neutral-200 rounded mb-1"></div>
+              <div class="h-4 w-32 bg-neutral-200 rounded"></div>
+            </div>
+            <div>
+              <div class="h-3 w-24 bg-neutral-200 rounded mb-1"></div>
+              <div class="h-4 w-20 bg-neutral-200 rounded"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Skills & Assessments Tab -->
+    <div id="tab-skills" class="tab-content hidden">
+      <div class="space-y-6">
+        <!-- Mapped Skills Section -->
+        <div>
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="text-lg font-semibold text-neutral-950">Mapped Skills</h3>
+            <button id="refresh-skills" class="inline-flex items-center text-sm text-neutral-500 hover:text-neutral-700" aria-label="Refresh Skills">
+              <svg class="w-4 h-4 mr-1" data-lucide="refresh-cw"></svg>
+              Refresh
+            </button>
+          </div>
+          
+          <!-- Skills Table -->
+          <div class="overflow-x-auto">
+            <table class="w-full text-sm leading-5" id="skills-table">
+              <thead class="bg-neutral-50 text-neutral-700">
+                <tr>
+                  <th class="text-left font-semibold px-3 py-3 border-b border-neutral-200">Skill</th>
+                  <th class="text-left font-semibold px-3 py-3 border-b border-neutral-200">Category</th>
+                  <th class="text-left font-semibold px-3 py-3 border-b border-neutral-200">Latest Score</th>
+                  <th class="text-left font-semibold px-3 py-3 border-b border-neutral-200">Benchmark</th>
+                  <th class="text-left font-semibold px-3 py-3 border-b border-neutral-200">Gap</th>
+                  <th class="text-left font-semibold px-3 py-3 border-b border-neutral-200">TNI Status</th>
+                </tr>
+              </thead>
+              <tbody id="skills-table-body" class="divide-y divide-neutral-200">
+                <!-- Skills data will be populated here -->
+              </tbody>
+            </table>
+            
+            <!-- Skills Skeleton -->
+            <div id="skills-skeleton" class="divide-y divide-neutral-200">
+              <div class="animate-pulse py-3">
+                <div class="grid grid-cols-6 gap-3 px-3">
+                  <div class="h-4 bg-neutral-200 rounded col-span-2"></div>
+                  <div class="h-4 bg-neutral-200 rounded"></div>
+                  <div class="h-4 bg-neutral-200 rounded"></div>
+                  <div class="h-4 bg-neutral-200 rounded"></div>
+                  <div class="h-4 bg-neutral-200 rounded"></div>
+                </div>
+              </div>
+              <div class="animate-pulse py-3">
+                <div class="grid grid-cols-6 gap-3 px-3">
+                  <div class="h-4 bg-neutral-200 rounded col-span-2"></div>
+                  <div class="h-4 bg-neutral-200 rounded"></div>
+                  <div class="h-4 bg-neutral-200 rounded"></div>
+                  <div class="h-4 bg-neutral-200 rounded"></div>
+                  <div class="h-4 bg-neutral-200 rounded"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Assessment History -->
+        <div>
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="text-lg font-semibold text-neutral-950">Assessment History</h3>
+            <button id="refresh-assessments" class="inline-flex items-center text-sm text-neutral-500 hover:text-neutral-700" aria-label="Refresh Assessments">
+              <svg class="w-4 h-4 mr-1" data-lucide="refresh-cw"></svg>
+              Refresh
+            </button>
+          </div>
+          
+          <!-- Assessment History Table -->
+          <div class="overflow-x-auto">
+            <table class="w-full text-sm leading-5" id="assessments-table">
+              <thead class="bg-neutral-50 text-neutral-700">
+                <tr>
+                  <th class="text-left font-semibold px-3 py-3 border-b border-neutral-200">Skill</th>
+                  <th class="text-left font-semibold px-3 py-3 border-b border-neutral-200">Score</th>
+                  <th class="text-left font-semibold px-3 py-3 border-b border-neutral-200">Benchmark</th>
+                  <th class="text-left font-semibold px-3 py-3 border-b border-neutral-200">Assessed By</th>
+                  <th class="text-left font-semibold px-3 py-3 border-b border-neutral-200">Date</th>
+                  <th class="text-left font-semibold px-3 py-3 border-b border-neutral-200">Cycle</th>
+                  <th class="text-left font-semibold px-3 py-3 border-b border-neutral-200">Comments</th>
+                </tr>
+              </thead>
+              <tbody id="assessments-table-body" class="divide-y divide-neutral-200">
+                <!-- Assessment data will be populated here -->
+              </tbody>
+            </table>
+            
+            <!-- Assessment Skeleton -->
+            <div id="assessments-skeleton" class="divide-y divide-neutral-200">
+              <div class="animate-pulse py-3">
+                <div class="grid grid-cols-7 gap-3 px-3">
+                  <div class="h-4 bg-neutral-200 rounded"></div>
+                  <div class="h-4 bg-neutral-200 rounded"></div>
+                  <div class="h-4 bg-neutral-200 rounded"></div>
+                  <div class="h-4 bg-neutral-200 rounded"></div>
+                  <div class="h-4 bg-neutral-200 rounded"></div>
+                  <div class="h-4 bg-neutral-200 rounded"></div>
+                  <div class="h-4 bg-neutral-200 rounded col-span-1"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Training Tab -->
+    <div id="tab-training" class="tab-content hidden">
+      <div class="space-y-6">
+        <!-- Assigned Training Sessions -->
+        <div>
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="text-lg font-semibold text-neutral-950">Assigned Training Sessions</h3>
+            <button id="refresh-training" class="inline-flex items-center text-sm text-neutral-500 hover:text-neutral-700" aria-label="Refresh Training">
+              <svg class="w-4 h-4 mr-1" data-lucide="refresh-cw"></svg>
+              Refresh
+            </button>
+          </div>
+          
+          <div class="overflow-x-auto">
+            <table class="w-full text-sm leading-5" id="training-table">
+              <thead class="bg-neutral-50 text-neutral-700">
+                <tr>
+                  <th class="text-left font-semibold px-3 py-3 border-b border-neutral-200">Skill</th>
+                  <th class="text-left font-semibold px-3 py-3 border-b border-neutral-200">Scheduled Date</th>
+                  <th class="text-left font-semibold px-3 py-3 border-b border-neutral-200">Mode</th>
+                  <th class="text-left font-semibold px-3 py-3 border-b border-neutral-200">Trainer</th>
+                  <th class="text-left font-semibold px-3 py-3 border-b border-neutral-200">Status</th>
+                  <th class="text-left font-semibold px-3 py-3 border-b border-neutral-200">Attendance</th>
+                </tr>
+              </thead>
+              <tbody id="training-table-body" class="divide-y divide-neutral-200">
+                <!-- Training data will be populated here -->
+              </tbody>
+            </table>
+            
+            <!-- Training Skeleton -->
+            <div id="training-skeleton" class="divide-y divide-neutral-200">
+              <div class="animate-pulse py-3">
+                <div class="grid grid-cols-6 gap-3 px-3">
+                  <div class="h-4 bg-neutral-200 rounded"></div>
+                  <div class="h-4 bg-neutral-200 rounded"></div>
+                  <div class="h-4 bg-neutral-200 rounded"></div>
+                  <div class="h-4 bg-neutral-200 rounded"></div>
+                  <div class="h-4 bg-neutral-200 rounded"></div>
+                  <div class="h-4 bg-neutral-200 rounded"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Training Needs -->
+        <div>
+          <h3 class="text-lg font-semibold text-neutral-950 mb-4">Training Needs</h3>
+          <div class="overflow-x-auto">
+            <table class="w-full text-sm leading-5" id="tni-table">
+              <thead class="bg-neutral-50 text-neutral-700">
+                <tr>
+                  <th class="text-left font-semibold px-3 py-3 border-b border-neutral-200">Skill</th>
+                  <th class="text-left font-semibold px-3 py-3 border-b border-neutral-200">Gap</th>
+                  <th class="text-left font-semibold px-3 py-3 border-b border-neutral-200">Criticality Weight</th>
+                  <th class="text-left font-semibold px-3 py-3 border-b border-neutral-200">Current Score</th>
+                  <th class="text-left font-semibold px-3 py-3 border-b border-neutral-200">Benchmark</th>
+                  <th class="text-left font-semibold px-3 py-3 border-b border-neutral-200">Status</th>
+                </tr>
+              </thead>
+              <tbody id="tni-table-body" class="divide-y divide-neutral-200">
+                <!-- TNI data will be populated here -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Disputes Tab -->
+    <div id="tab-disputes" class="tab-content hidden">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="text-lg font-semibold text-neutral-950">Disputes Raised</h3>
+        <button id="refresh-disputes" class="inline-flex items-center text-sm text-neutral-500 hover:text-neutral-700" aria-label="Refresh Disputes">
+          <svg class="w-4 h-4 mr-1" data-lucide="refresh-cw"></svg>
+          Refresh
+        </button>
+      </div>
+      
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm leading-5" id="disputes-table">
+          <thead class="bg-neutral-50 text-neutral-700">
+            <tr>
+              <th class="text-left font-semibold px-3 py-3 border-b border-neutral-200">Submission Date</th>
+              <th class="text-left font-semibold px-3 py-3 border-b border-neutral-200">Assessment Cycle</th>
+              <th class="text-left font-semibold px-3 py-3 border-b border-neutral-200">Disputed Skills</th>
+              <th class="text-left font-semibold px-3 py-3 border-b border-neutral-200">Status</th>
+              <th class="text-left font-semibold px-3 py-3 border-b border-neutral-200">Resolution Date</th>
+              <th class="text-left font-semibold px-3 py-3 border-b border-neutral-200">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="disputes-table-body" class="divide-y divide-neutral-200">
+            <!-- Disputes data will be populated here -->
+          </tbody>
+        </table>
+        
+        <!-- Disputes Skeleton -->
+        <div id="disputes-skeleton" class="divide-y divide-neutral-200">
+          <div class="animate-pulse py-3">
+            <div class="grid grid-cols-6 gap-3 px-3">
+              <div class="h-4 bg-neutral-200 rounded"></div>
+              <div class="h-4 bg-neutral-200 rounded"></div>
+              <div class="h-4 bg-neutral-200 rounded"></div>
+              <div class="h-4 bg-neutral-200 rounded"></div>
+              <div class="h-4 bg-neutral-200 rounded"></div>
+              <div class="h-4 bg-neutral-200 rounded"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Deactivate Employee Modal -->
+<div id="deactivate-modal" class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+  <div class="bg-white rounded-lg border border-neutral-200 shadow-lg max-w-md w-full p-6">
+    <div class="flex items-center gap-3 mb-4">
+      <div class="w-10 h-10 bg-danger-100 rounded-full flex items-center justify-center">
+        <svg class="w-5 h-5 text-danger-600" data-lucide="alert-triangle"></svg>
+      </div>
+      <div>
+        <h3 class="text-lg font-semibold text-neutral-950">Deactivate Employee</h3>
+        <p class="text-sm text-neutral-700">This action cannot be undone</p>
+      </div>
+    </div>
+    
+    <div class="mb-6">
+      <div class="bg-neutral-50 border border-neutral-200 rounded-md p-4 space-y-2">
+        <div class="flex justify-between">
+          <span class="text-sm text-neutral-600">Employee:</span>
+          <span id="modal-employee-name" class="text-sm font-medium text-neutral-900">--</span>
+        </div>
+        <div class="flex justify-between">
+          <span class="text-sm text-neutral-600">Direct Reports:</span>
+          <span id="modal-direct-reports" class="text-sm font-medium text-neutral-900">--</span>
+        </div>
+        <div class="flex justify-between">
+          <span class="text-sm text-neutral-600">Pending Assessments:</span>
+          <span id="modal-pending-assessments" class="text-sm font-medium text-neutral-900">--</span>
+        </div>
+      </div>
+    </div>
+    
+    <div class="flex justify-end gap-3">
+      <button id="modal-cancel" class="inline-flex items-center justify-center h-11 px-4 rounded-md border border-neutral-200 bg-white text-neutral-900 hover:bg-neutral-50 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2">
+        Cancel
+      </button>
+      <button id="modal-confirm" class="inline-flex items-center justify-center h-11 px-4 rounded-md bg-danger-600 hover:bg-danger-700 text-white focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2">
+        Deactivate Employee
+      </button>
+    </div>
+  </div>
+</div>
+
+        </main>
+    </div>
+
+    <!-- Required: JavaScript -->
+    <script type="module" data-tiramai="web-gen">
+        import { showToast, showLoader, hideLoader, env } from "./scripts/main.js";
+        import { auth, db, storage } from "./scripts/firebase.js";
+        import { onAuthStateChanged, getAuth, signOut } from 'https://www.gstatic.com/firebasejs/10.12.4/firebase-auth.js';
+        import { doc, getDoc } from 'https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js';
+
+        // Initialize Lucide icons
+        lucide.createIcons();
+
+        // Mobile menu toggle
+        const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+        const sidebar = document.getElementById('sidebar');
+        const mobileOverlay = document.getElementById('mobileOverlay');
+
+        mobileMenuToggle?.addEventListener('click', () => {
+            sidebar.classList.toggle('-translate-x-full');
+            mobileOverlay.classList.toggle('hidden');
+        });
+
+        mobileOverlay?.addEventListener('click', () => {
+            sidebar.classList.add('-translate-x-full');
+            mobileOverlay.classList.add('hidden');
+        });
+
+        // Navigation group toggles
+        document.querySelectorAll('.nav-group-toggle').forEach(toggle => {
+            toggle.addEventListener('click', (e) => {
+                e.preventDefault();
+                const children = toggle.nextElementSibling;
+                const icon = toggle.querySelector('svg:last-child');
+                
+                children.classList.toggle('hidden');
+                icon.classList.toggle('rotate-90');
+            });
+        });
+
+        // User profile dropdown
+        const userProfileToggle = document.getElementById('userProfileToggle');
+        const userProfileDropdown = document.getElementById('userProfileDropdown');
+
+        userProfileToggle?.addEventListener('click', () => {
+            userProfileDropdown.classList.toggle('hidden');
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!userProfileToggle?.contains(e.target) && !userProfileDropdown?.contains(e.target)) {
+                userProfileDropdown?.classList.add('hidden');
+            }
+        });
+
+        // Sign out functionality
+        document.getElementById('signOutButton')?.addEventListener('click', async () => {
+            try {
+                await signOut(auth);
+                window.location.href = 'auth.html';
+            } catch (error) {
+                console.error('Sign out error:', error);
+                showToast('Failed to sign out', 'error');
+            }
+        });
+
+        // Auth state management
+        onAuthStateChanged(auth, async (user) => {
+            if (!user) {
+                window.location.href = 'auth.html';
+                return;
+            }
+
+            // Load user profile data
+            try {
+                const userDoc = await getDoc(doc(db, 'users', user.uid));
+                const userData = userDoc.exists() ? userDoc.data() : null;
+
+                // Update UI with user data
+                const displayName = userData?.firstName && userData?.lastName 
+                    ? `${userData.firstName} ${userData.lastName}`
+                    : user.displayName || 'John Doe';
+                
+                const email = user.email || 'johndoe@example.com';
+                const initials = displayName.split(' ').map(n => n[0]).join('').toUpperCase();
+
+                document.getElementById('userDisplayName').textContent = displayName;
+                document.getElementById('userEmail').textContent = email;
+                document.getElementById('userInitials').textContent = initials;
+
+            } catch (error) {
+                console.error('Error loading user data:', error);
+                // Fallback to default values
+                document.getElementById('userDisplayName').textContent = 'John Doe';
+                document.getElementById('userEmail').textContent = user.email || 'johndoe@example.com';
+                document.getElementById('userInitials').textContent = 'JD';
+            }
+        });
+
+        // Set active navigation item based on current page
+        function setActiveNavItem() {
+            const currentPath = window.location.pathname;
+            const navItems = document.querySelectorAll('.nav-item');
+            
+            navItems.forEach(item => {
+                const href = item.getAttribute('href');
+                if (href && currentPath.includes(href.split('?')[0])) {
+                    item.classList.add('bg-accent-gold-50', 'text-brand-primary-600', 'border-l-2', 'border-brand-primary-600');
+                    item.classList.remove('text-neutral-700', 'text-neutral-600');
+                    
+                    // Expand parent group if needed
+                    const parentGroup = item.closest('.nav-group');
+                    if (parentGroup) {
+                        const children = parentGroup.querySelector('.nav-group-children');
+                        const icon = parentGroup.querySelector('.nav-group-toggle svg:last-child');
+                        children?.classList.remove('hidden');
+                        icon?.classList.add('rotate-90');
+                    }
+                }
+            });
+        }
+
+        // Initialize active nav state
+        setActiveNavItem();
+    </script>
+
+    
+<script id="data-script" type="module" data-tiramai="web-gen">
+// Imports
+import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.12.4/firebase-auth.js';
+import {
+  collection, getDocs, doc, getDoc, query, where, orderBy, limit, updateDoc,
+  getCountFromServer, Timestamp
+} from "https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js";
+import { auth, getDb } from "./scripts/firebase.js";
+import { showToast, showLoader, hideLoader } from "./scripts/main.js";
+
+const db = getDb();
+
+// Get employee ID from URL params
+const urlParams = new URLSearchParams(window.location.search);
+const employeeId = urlParams.get('employeeId');
+
+if (!employeeId) {
+  showToast('Employee ID is required', 'error');
+  window.location.href = 'employees_list.html';
+}
+
+// State
+let currentEmployee = null;
+let currentTab = 'profile';
+let directReports = [];
+let skillMappings = [];
+let assessments = [];
+let trainingSessions = [];
+let trainingNeeds = [];
+let disputes = [];
+
+// Tab management
+function funSwitchTab(tabName) {
+  currentTab = tabName;
+  
+  // Update tab buttons
+  document.querySelectorAll('.tab-button').forEach(btn => {
+    const isActive = btn.dataset.tab === tabName;
+    btn.className = `tab-button whitespace-nowrap py-3 px-6 text-sm font-medium border-b-2 ${
+      isActive 
+        ? 'border-brand-primary-600 text-brand-primary-600'
+        : 'border-transparent text-neutral-500 hover:text-neutral-700 hover:border-neutral-300'
+    }`;
+  });
+  
+  // Update tab content
+  document.querySelectorAll('.tab-content').forEach(content => {
+    content.classList.toggle('hidden', !content.id.includes(tabName));
+  });
+  
+  // Load tab data if not already loaded
+  if (tabName === 'skills' && skillMappings.length === 0) {
+    funLoadSkillsAndAssessments();
+  } else if (tabName === 'training' && trainingSessions.length === 0) {
+    funLoadTrainingData();
+  } else if (tabName === 'disputes' && disputes.length === 0) {
+    funLoadDisputes();
+  }
+}
+
+// Format date helper
+function formatDate(dateString) {
+  if (!dateString) return 'N/A';
+  try {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', { 
+      year: 'numeric', 
+      month: 'short', 
+      day: 'numeric' 
+    });
+  } catch (error) {
+    return 'N/A';
+  }
+}
+
+// Abortable fetch pattern
+let currentAbort;
+async function funFetchData(buildQuery) {
+  if (currentAbort) currentAbort.abort();
+  currentAbort = new AbortController();
+  const signal = currentAbort.signal;
+
+  try {
+    const q = buildQuery();
+    const snapshot = await getDocs(q);
+    if (signal.aborted) return [];
+    return snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+  } catch (err) {
+    if (signal.aborted) return [];
+    console.error('Fetch error:', err);
+    showToast(err?.message || "Failed to load data");
+    return [];
+  }
+}
+
+// Load employee data
+async function funLoadEmployee() {
+  try {
+    const employeeDoc = await getDoc(doc(db, 'users', employeeId));
+    
+    if (!employeeDoc.exists()) {
+      showToast('Employee not found', 'error');
+      window.location.href = 'employees_list.html';
+      return;
+    }
+    
+    currentEmployee = { id: employeeDoc.id, ...employeeDoc.data() };
+    
+    // Load related data
+    await Promise.all([
+      funLoadDepartment(),
+      funLoadTeamLead(),
+      funLoadDirectReports()
+    ]);
+    
+    funRenderEmployeeHeader();
+    funRenderProfileTab();
+    
+  } catch (error) {
+    console.error('Error loading employee:', error);
+    showToast('Failed to load employee data', 'error');
+  }
+}
+
+// Load department info
+async function funLoadDepartment() {
+  if (!currentEmployee?.departmentId) return;
+  
+  try {
+    const deptDoc = await getDoc(doc(db, 'departments', currentEmployee.departmentId));
+    if (deptDoc.exists()) {
+      currentEmployee.departmentName = deptDoc.data().name;
+    }
+  } catch (error) {
+    console.error('Error loading department:', error);
+  }
+}
+
+// Load team lead info
+async function funLoadTeamLead() {
+  if (!currentEmployee?.teamLeadId) return;
+  
+  try {
+    const leadDoc = await getDoc(doc(db, 'users', currentEmployee.teamLeadId));
+    if (leadDoc.exists()) {
+      const leadData = leadDoc.data();
+      currentEmployee.teamLeadName = `${leadData.firstName || ''} ${leadData.lastName || ''}`.trim();
+    }
+  } catch (error) {
+    console.error('Error loading team lead:', error);
+  }
+}
+
+// Load direct reports
+async function funLoadDirectReports() {
+  try {
+    const reports = await funFetchData(() => 
+      query(
+        collection(db, 'users'),
+        where('teamLeadId', '==', employeeId),
+        where('employeeStatus', '==', 'active'),
+        orderBy('firstName'),
+        limit(20)
+      )
+    );
+    directReports = reports;
+  } catch (error) {
+    console.error('Error loading direct reports:', error);
+    directReports = [];
+  }
+}
+
+// Load skills and assessments
+async function funLoadSkillsAndAssessments() {
+  document.getElementById('skills-skeleton').classList.remove('hidden');
+  document.getElementById('assessments-skeleton').classList.remove('hidden');
+  document.getElementById('skills-table').classList.add('hidden');
+  document.getElementById('assessments-table').classList.add('hidden');
+  
+  try {
+    // Load skill mappings
+    const mappings = await funFetchData(() => 
+      query(
+        collection(db, 'skillMappings'),
+        where('employeeId', '==', employeeId),
+        where('status', '==', 'active')
+      )
+    );
+    
+    // Load skills data for mappings
+    const skillIds = mappings.map(m => m.skillId);
+    const skillsData = await Promise.all(
+      skillIds.map(async skillId => {
+        try {
+          const skillDoc = await getDoc(doc(db, 'skills', skillId));
+          if (skillDoc.exists()) {
+            const skill = skillDoc.data();
+            // Load category
+            const catDoc = await getDoc(doc(db, 'skillCategories', skill.categoryId));
+            skill.categoryName = catDoc.exists() ? catDoc.data().categoryName : 'N/A';
+            return { id: skillDoc.id, ...skill };
+          }
+          return null;
+        } catch (error) {
+          console.error('Error loading skill:', error);
+          return null;
+        }
+      })
+    );
+    
+    // Load assessments
+    const allAssessments = await funFetchData(() => 
+      query(
+        collection(db, 'assessments'),
+        where('employeeId', '==', employeeId),
+        where('status', '==', 'active'),
+        orderBy('assessmentTimestamp', 'desc'),
+        limit(50)
+      )
+    );
+    
+    // Load assessment cycle names and assessor names
+    const assessmentsWithDetails = await Promise.all(
+      allAssessments.map(async assessment => {
+        try {
+          const [cycleDoc, assessorDoc, skillDoc] = await Promise.all([
+            getDoc(doc(db, 'assessmentCycles', assessment.assessmentCycleId)),
+            getDoc(doc(db, 'users', assessment.assessedByEmployeeId)),
+            getDoc(doc(db, 'skills', assessment.skillId))
+          ]);
+          
+          return {
+            ...assessment,
+            cycleName: cycleDoc.exists() ? cycleDoc.data().cycleName : 'N/A',
+            assessorName: assessorDoc.exists() ? 
+              `${assessorDoc.data().firstName || ''} ${assessorDoc.data().lastName || ''}`.trim() : 'N/A',
+            skillName: skillDoc.exists() ? skillDoc.data().name : 'N/A'
+          };
+        } catch (error) {
+          console.error('Error loading assessment details:', error);
+          return assessment;
+        }
+      })
+    );
+    
+    assessments = assessmentsWithDetails;
+    
+    // Combine skills with latest assessments
+    skillMappings = mappings.map(mapping => {
+      const skill = skillsData.find(s => s && s.id === mapping.skillId);
+      if (!skill) return null;
+      
+      // Find latest assessment for this skill
+      const latestAssessment = assessments.find(a => a.skillId === mapping.skillId);
+      
+      return {
+        ...mapping,
+        skillName: skill.name,
+        categoryName: skill.categoryName,
+        latestScore: latestAssessment?.score || null,
+        benchmark: latestAssessment?.benchmarkAtTimeOfAssessment || null,
+        gap: latestAssessment ? 
+          (latestAssessment.benchmarkAtTimeOfAssessment - latestAssessment.score) : null,
+        tniStatus: latestAssessment?.tniFlag ? 'Training Required' : 'Competent'
+      };
+    }).filter(Boolean);
+    
+    funRenderSkillsTable();
+    funRenderAssessmentsTable();
+    
+  } catch (error) {
+    console.error('Error loading skills and assessments:', error);
+    showToast('Failed to load skills data', 'error');
+  } finally {
+    document.getElementById('skills-skeleton').classList.add('hidden');
+    document.getElementById('assessments-skeleton').classList.add('hidden');
+    document.getElementById('skills-table').classList.remove('hidden');
+    document.getElementById('assessments-table').classList.remove('hidden');
+  }
+}
+
+// Load training data
+async function funLoadTrainingData() {
+  document.getElementById('training-skeleton').classList.remove('hidden');
+  document.getElementById('training-table').classList.add('hidden');
+  
+  try {
+    // Load training sessions where employee is assigned
+    const allSessions = await funFetchData(() => 
+      query(collection(db, 'trainingSessions'), orderBy('scheduledDate', 'desc'))
+    );
+    
+    // Filter sessions where this employee is assigned
+    const employeeSessions = allSessions.filter(session => 
+      session.assignedEmployees && 
+      session.assignedEmployees.some(emp => emp.employeeId === employeeId)
+    );
+    
+    // Load session details
+    const sessionsWithDetails = await Promise.all(
+      employeeSessions.map(async session => {
+        try {
+          const skillDoc = await getDoc(doc(db, 'skills', session.skillId));
+          const skillName = skillDoc.exists() ? skillDoc.data().name : 'N/A';
+          
+          let trainerName = 'N/A';
+          if (session.trainerType === 'internal') {
+            const trainerDoc = await getDoc(doc(db, 'users', session.trainerId));
+            trainerName = trainerDoc.exists() ? 
+              `${trainerDoc.data().firstName || ''} ${trainerDoc.data().lastName || ''}`.trim() : 'N/A';
+          } else {
+            const trainerDoc = await getDoc(doc(db, 'externalTrainers', session.trainerId));
+            trainerName = trainerDoc.exists() ? trainerDoc.data().name : 'N/A';
+          }
+          
+          // Get employee assignment details
+          const employeeAssignment = session.assignedEmployees.find(emp => emp.employeeId === employeeId);
+          
+          return {
+            ...session,
+            skillName,
+            trainerName,
+            attendanceStatus: employeeAssignment?.attendanceStatus || 'pending'
+          };
+        } catch (error) {
+          console.error('Error loading session details:', error);
+          return session;
+        }
+      })
+    );
+    
+    trainingSessions = sessionsWithDetails;
+    
+    // Load training needs
+    const needs = await funFetchData(() => 
+      query(
+        collection(db, 'trainingNeeds'),
+        where('employeeId', '==', employeeId),
+        where('tniStatus', '==', 'trainingRequired')
+      )
+    );
+    
+    // Load skill names for training needs
+    const needsWithSkills = await Promise.all(
+      needs.map(async need => {
+        try {
+          const skillDoc = await getDoc(doc(db, 'skills', need.skillId));
+          return {
+            ...need,
+            skillName: skillDoc.exists() ? skillDoc.data().name : 'N/A'
+          };
+        } catch (error) {
+          console.error('Error loading skill for training need:', error);
+          return need;
+        }
+      })
+    );
+    
+    trainingNeeds = needsWithSkills;
+    
+    funRenderTrainingTable();
+    funRenderTrainingNeedsTable();
+    
+  } catch (error) {
+    console.error('Error loading training data:', error);
+    showToast('Failed to load training data', 'error');
+  } finally {
+    document.getElementById('training-skeleton').classList.add('hidden');
+    document.getElementById('training-table').classList.remove('hidden');
+  }
+}
+
+// Load disputes
+async function funLoadDisputes() {
+  document.getElementById('disputes-skeleton').classList.remove('hidden');
+  document.getElementById('disputes-table').classList.add('hidden');
+  
+  try {
+    const employeeDisputes = await funFetchData(() => 
+      query(
+        collection(db, 'disputes'),
+        where('employeeId', '==', employeeId),
+        orderBy('submissionDate', 'desc')
+      )
+    );
+    
+    // Load cycle names for disputes
+    const disputesWithDetails = await Promise.all(
+      employeeDisputes.map(async dispute => {
+        try {
+          const cycleDoc = await getDoc(doc(db, 'assessmentCycles', dispute.assessmentCycleId));
+          return {
+            ...dispute,
+            cycleName: cycleDoc.exists() ? cycleDoc.data().cycleName : 'N/A'
+          };
+        } catch (error) {
+          console.error('Error loading cycle for dispute:', error);
+          return dispute;
+        }
+      })
+    );
+    
+    disputes = disputesWithDetails;
+    funRenderDisputesTable();
+    
+  } catch (error) {
+    console.error('Error loading disputes:', error);
+    showToast('Failed to load disputes data', 'error');
+  } finally {
+    document.getElementById('disputes-skeleton').classList.add('hidden');
+    document.getElementById('disputes-table').classList.remove('hidden');
+  }
+}
+
+// Render functions
+function funRenderEmployeeHeader() {
+  if (!currentEmployee) return;
+  
+  const initials = `${currentEmployee.firstName?.[0] || ''}${currentEmployee.lastName?.[0] || ''}`.toUpperCase();
+  const fullName = `${currentEmployee.firstName || ''} ${currentEmployee.lastName || ''}`.trim();
+  
+  document.getElementById('employee-initials').textContent = initials;
+  document.getElementById('employee-name').textContent = fullName;
+  document.getElementById('employee-job-title').textContent = currentEmployee.jobTitle || 'N/A';
+  
+  // Status badge
+  const statusBadge = document.getElementById('employee-status-badge');
+  const isActive = currentEmployee.employeeStatus === 'active';
+  statusBadge.textContent = isActive ? 'Active' : 'Inactive';
+  statusBadge.className = `inline-flex items-center px-2 py-1 text-xs rounded-full ${
+    isActive ? 'bg-success-600 text-white' : 'bg-neutral-500 text-white'
+  }`;
+  
+  // Role badge
+  const roleBadge = document.getElementById('employee-role-badge');
+  const roleText = currentEmployee.systemRole === 'systemAdmin' ? 'System Admin' : 
+                   currentEmployee.role === 'teamLead' ? 'Team Lead' : 'Employee';
+  roleBadge.textContent = roleText;
+  
+  document.getElementById('employee-header-skeleton').classList.add('hidden');
+  document.getElementById('employee-header').classList.remove('hidden');
+}
+
+function funRenderProfileTab() {
+  if (!currentEmployee) return;
+  
+  document.getElementById('profile-employee-id').textContent = currentEmployee.employeeId || 'N/A';
+  document.getElementById('profile-email').textContent = currentEmployee.email || 'N/A';
+  
+  const deptElement = document.getElementById('profile-department');
+  deptElement.textContent = currentEmployee.departmentName || 'N/A';
+  if (currentEmployee.departmentId) {
+    deptElement.onclick = () => window.location.href = `employees_list.html?departmentId=${currentEmployee.departmentId}`;
+  }
+  
+  const teamLeadElement = document.getElementById('org-team-lead');
+  teamLeadElement.textContent = currentEmployee.teamLeadName || 'N/A';
+  if (currentEmployee.teamLeadId) {
+    teamLeadElement.onclick = () => window.location.href = `employee_detail.html?employeeId=${currentEmployee.teamLeadId}`;
+  }
+  
+  // Direct reports
+  const reportsCount = document.getElementById('direct-reports-count');
+  reportsCount.textContent = `${directReports.length} employees`;
+  
+  if (directReports.length > 0) {
+    const reportsList = document.getElementById('direct-reports-list');
+    reportsList.innerHTML = directReports.map(report => `
+      <div class="py-1">
+        <a href="employee_detail.html?employeeId=${report.id}" 
+           class="text-sm text-brand-primary-600 hover:text-brand-primary-700 underline">
+          ${report.firstName || ''} ${report.lastName || ''}
+        </a>
+      </div>
+    `).join('');
+  }
+  
+  document.getElementById('profile-info-skeleton').classList.add('hidden');
+  document.getElementById('profile-info').classList.remove('hidden');
+  document.getElementById('org-info-skeleton').classList.add('hidden');
+  document.getElementById('org-info').classList.remove('hidden');
+}
+
+function funRenderSkillsTable() {
+  const tbody = document.getElementById('skills-table-body');
+  
+  if (skillMappings.length === 0) {
+    tbody.innerHTML = `
+      <tr>
+        <td colspan="6" class="px-3 py-8 text-center text-neutral-500">
+          No mapped skills found
+        </td>
+      </tr>
+    `;
+    return;
+  }
+  
+  tbody.innerHTML = skillMappings.map(mapping => {
+    const gapClass = mapping.gap > 0 ? 'text-danger-600' : 
+                     mapping.gap === 0 ? 'text-neutral-700' : 'text-success-600';
+    const tniClass = mapping.tniStatus === 'Training Required' ? 'bg-warning-600' : 'bg-success-600';
+    
+    return `
+      <tr class="hover:bg-neutral-50">
+        <td class="px-3 py-3">
+          <a href="skill_detail.html?skillId=${mapping.skillId}" 
+             class="text-brand-primary-600 hover:text-brand-primary-700 underline">
+            ${mapping.skillName}
+          </a>
+        </td>
+        <td class="px-3 py-3 text-neutral-700">${mapping.categoryName}</td>
+        <td class="px-3 py-3 text-neutral-700">${mapping.latestScore || 'N/A'}</td>
+        <td class="px-3 py-3 text-neutral-700">${mapping.benchmark || 'N/A'}</td>
+        <td class="px-3 py-3 ${gapClass} font-medium">${mapping.gap !== null ? mapping.gap : 'N/A'}</td>
+        <td class="px-3 py-3">
+          <span class="inline-flex items-center px-2 py-1 text-xs rounded-full ${tniClass} text-white">
+            ${mapping.tniStatus}
+          </span>
+        </td>
+      </tr>
+    `;
+  }).join('');
+}
+
+function funRenderAssessmentsTable() {
+  const tbody = document.getElementById('assessments-table-body');
+  
+  if (assessments.length === 0) {
+    tbody.innerHTML = `
+      <tr>
+        <td colspan="7" class="px-3 py-8 text-center text-neutral-500">
+          No assessments found
+        </td>
+      </tr>
+    `;
+    return;
+  }
+  
+  tbody.innerHTML = assessments.map(assessment => `
+    <tr class="hover:bg-neutral-50">
+      <td class="px-3 py-3">
+        <a href="skill_detail.html?skillId=${assessment.skillId}" 
+           class="text-brand-primary-600 hover:text-brand-primary-700 underline">
+          ${assessment.skillName}
+        </a>
+      </td>
+      <td class="px-3 py-3 text-neutral-700">${assessment.score}</td>
+      <td class="px-3 py-3 text-neutral-700">${assessment.benchmarkAtTimeOfAssessment}</td>
+      <td class="px-3 py-3 text-neutral-700">${assessment.assessorName}</td>
+      <td class="px-3 py-3 text-neutral-700">${formatDate(assessment.assessmentTimestamp)}</td>
+      <td class="px-3 py-3 text-neutral-700">${assessment.cycleName}</td>
+      <td class="px-3 py-3 text-neutral-700">${assessment.comments || 'N/A'}</td>
+    </tr>
+  `).join('');
+}
+
+function funRenderTrainingTable() {
+  const tbody = document.getElementById('training-table-body');
+  
+  if (trainingSessions.length === 0) {
+    tbody.innerHTML = `
+      <tr>
+        <td colspan="6" class="px-3 py-8 text-center text-neutral-500">
+          No training sessions assigned
+        </td>
+      </tr>
+    `;
+    return;
+  }
+  
+  tbody.innerHTML = trainingSessions.map(session => {
+    const statusClass = session.status === 'completed' ? 'bg-success-600' :
+                       session.status === 'cancelled' ? 'bg-danger-600' : 'bg-info-600';
+    const attendanceClass = session.attendanceStatus === 'attended' ? 'bg-success-600' :
+                           session.attendanceStatus === 'absent' ? 'bg-danger-600' : 'bg-neutral-500';
+    
+    return `
+      <tr class="hover:bg-neutral-50">
+        <td class="px-3 py-3">
+          <a href="training_session_detail.html?sessionId=${session.id}" 
+             class="text-brand-primary-600 hover:text-brand-primary-700 underline">
+            ${session.skillName}
+          </a>
+        </td>
+        <td class="px-3 py-3 text-neutral-700">${formatDate(session.scheduledDate)}</td>
+        <td class="px-3 py-3 text-neutral-700 capitalize">${session.mode}</td>
+        <td class="px-3 py-3 text-neutral-700">${session.trainerName}</td>
+        <td class="px-3 py-3">
+          <span class="inline-flex items-center px-2 py-1 text-xs rounded-full ${statusClass} text-white capitalize">
+            ${session.status}
+          </span>
+        </td>
+        <td class="px-3 py-3">
+          <span class="inline-flex items-center px-2 py-1 text-xs rounded-full ${attendanceClass} text-white capitalize">
+            ${session.attendanceStatus}
+          </span>
+        </td>
+      </tr>
+    `;
+  }).join('');
+}
+
+function funRenderTrainingNeedsTable() {
+  const tbody = document.getElementById('tni-table-body');
+  
+  if (trainingNeeds.length === 0) {
+    tbody.innerHTML = `
+      <tr>
+        <td colspan="6" class="px-3 py-8 text-center text-neutral-500">
+          No training needs identified
+        </td>
+      </tr>
+    `;
+    return;
+  }
+  
+  tbody.innerHTML = trainingNeeds.map(need => `
+    <tr class="hover:bg-neutral-50">
+      <td class="px-3 py-3">
+        <a href="skill_detail.html?skillId=${need.skillId}" 
+           class="text-brand-primary-600 hover:text-brand-primary-700 underline">
+          ${need.skillName}
+        </a>
+      </td>
+      <td class="px-3 py-3 text-danger-600 font-medium">${need.gap}</td>
+      <td class="px-3 py-3 text-neutral-700">${need.criticalityWeight}</td>
+      <td class="px-3 py-3 text-neutral-700">${need.employeeScore}</td>
+      <td class="px-3 py-3 text-neutral-700">${need.benchmarkScore}</td>
+      <td class="px-3 py-3">
+        <span class="inline-flex items-center px-2 py-1 text-xs rounded-full bg-warning-600 text-white">
+          Training Required
+        </span>
+      </td>
+    </tr>
+  `).join('');
+}
+
+function funRenderDisputesTable() {
+  const tbody = document.getElementById('disputes-table-body');
+  
+  if (disputes.length === 0) {
+    tbody.innerHTML = `
+      <tr>
+        <td colspan="6" class="px-3 py-8 text-center text-neutral-500">
+          No disputes found
+        </td>
+      </tr>
+    `;
+    return;
+  }
+  
+  tbody.innerHTML = disputes.map(dispute => {
+    const statusClass = dispute.status === 'resolved' ? 'bg-success-600' : 'bg-warning-600';
+    const disputedSkillsText = dispute.disputedSkills?.length ? 
+      `${dispute.disputedSkills.length} skills` : 'N/A';
+    
+    return `
+      <tr class="hover:bg-neutral-50">
+        <td class="px-3 py-3 text-neutral-700">${formatDate(dispute.submissionDate)}</td>
+        <td class="px-3 py-3 text-neutral-700">${dispute.cycleName}</td>
+        <td class="px-3 py-3 text-neutral-700">${disputedSkillsText}</td>
+        <td class="px-3 py-3">
+          <span class="inline-flex items-center px-2 py-1 text-xs rounded-full ${statusClass} text-white capitalize">
+            ${dispute.status}
+          </span>
+        </td>
+        <td class="px-3 py-3 text-neutral-700">${formatDate(dispute.resolutionTimestamp)}</td>
+        <td class="px-3 py-3">
+          <a href="dispute_detail.html?disputeId=${dispute.id}" 
+             class="text-brand-primary-600 hover:text-brand-primary-700 underline text-sm">
+            View Details
+          </a>
+        </td>
+      </tr>
+    `;
+  }).join('');
+}
+
+// Modal functions
+function funShowDeactivateModal() {
+  if (!currentEmployee) return;
+  
+  document.getElementById('modal-employee-name').textContent = 
+    `${currentEmployee.firstName || ''} ${currentEmployee.lastName || ''}`.trim();
+  document.getElementById('modal-direct-reports').textContent = directReports.length.toString();
+  document.getElementById('modal-pending-assessments').textContent = '0'; // Would need to calculate this
+  
+  document.getElementById('deactivate-modal').classList.remove('hidden');
+}
+
+function funHideDeactivateModal() {
+  document.getElementById('deactivate-modal').classList.add('hidden');
+}
+
+async function funDeactivateEmployee() {
+  if (!currentEmployee) return;
+  
+  try {
+    showLoader();
+    
+    await updateDoc(doc(db, 'users', employeeId), {
+      employeeStatus: 'inactive',
+      modifiedTimestamp: new Date().toISOString(),
+      modifiedBy: auth.currentUser?.uid || 'system'
+    });
+    
+    showToast('Employee deactivated successfully', 'success');
+    funHideDeactivateModal();
+    
+    // Refresh employee data
+    await funLoadEmployee();
+    
+  } catch (error) {
+    console.error('Error deactivating employee:', error);
+    showToast('Failed to deactivate employee', 'error');
+  } finally {
+    hideLoader();
+  }
+}
+
+// Navigation functions
+function funNavigateBack() {
+  window.location.href = 'employees_list.html';
+}
+
+function funNavigateEdit() {
+  if (!currentEmployee) return;
+  window.location.href = `employee_upsert.html?mode=edit&employeeId=${employeeId}`;
+}
+
+function funNavigateDepartment() {
+  if (!currentEmployee?.departmentId) return;
+  window.location.href = `employees_list.html?departmentId=${currentEmployee.departmentId}`;
+}
+
+// Event listeners
+document.addEventListener('DOMContentLoaded', () => {
+  // Tab buttons
+  document.querySelectorAll('.tab-button').forEach(button => {
+    button.addEventListener('click', () => funSwitchTab(button.dataset.tab));
+  });
+  
+  // Navigation buttons
+  document.getElementById('btn-back')?.addEventListener('click', funNavigateBack);
+  document.getElementById('btn-edit')?.addEventListener('click', funNavigateEdit);
+  document.getElementById('btn-deactivate')?.addEventListener('click', funShowDeactivateModal);
+  
+  // Modal buttons
+  document.getElementById('modal-cancel')?.addEventListener('click', funHideDeactivateModal);
+  document.getElementById('modal-confirm')?.addEventListener('click', funDeactivateEmployee);
+  
+  // Refresh buttons
+  document.getElementById('refresh-skills')?.addEventListener('click', () => {
+    skillMappings = [];
+    assessments = [];
+    funLoadSkillsAndAssessments();
+  });
+  document.getElementById('refresh-training')?.addEventListener('click', () => {
+    trainingSessions = [];
+    trainingNeeds = [];
+    funLoadTrainingData();
+  });
+  document.getElementById('refresh-disputes')?.addEventListener('click', () => {
+    disputes = [];
+    funLoadDisputes();
+  });
+  document.getElementById('refresh-assessments')?.addEventListener('click', () => {
+    assessments = [];
+    funLoadSkillsAndAssessments();
+  });
+  
+  // Direct reports toggle
+  document.getElementById('direct-reports-toggle')?.addEventListener('click', () => {
+    const list = document.getElementById('direct-reports-list');
+    const icon = document.querySelector('#direct-reports-toggle svg');
+    list.classList.toggle('hidden');
+    icon.classList.toggle('rotate-180');
+  });
+  
+  // Close modal on backdrop click
+  document.getElementById('deactivate-modal')?.addEventListener('click', (e) => {
+    if (e.target.id === 'deactivate-modal') {
+      funHideDeactivateModal();
+    }
+  });
+  
+  // ESC key to close modal
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      funHideDeactivateModal();
+    }
+  });
+});
+
+// Auth check and initialization
+onAuthStateChanged(auth, user => {
+  if (!user) {
+    window.location.href = "auth.html?redirect=" + encodeURIComponent(location.pathname + location.search);
+    return;
+  }
+  
+  // Initialize page
+  funLoadEmployee();
+});
+
+// Initialize Lucide icons
+lucide.createIcons();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,1398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SkillBridge</title>
+
+    <!-- Required: Main JS Script -->
+    <script type="module" src="scripts/main.js" data-tiramai="web-gen"></script>
+
+    <!-- Required: TailwindCSS -->
+    <script src="./lib/tailwindcss/tailwindcss.js" fetchpriority="high" data-tiramai="web-gen"></script>
+
+    <!-- Required: Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest" data-tiramai="web-gen"></script>
+
+    <!-- Required: Favicon -->
+    <link rel="icon" href="assets/imgs/logo.ico" type="image/x-icon" data-tiramai="web-gen"/>
+
+    <!-- ECharts Support (for charts/graphs) -->
+    <script defer src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js" data-tiramai="web-gen"></script>
+
+    <!-- Markdown Support (for content rendering) -->
+    <script defer src="https://cdn.jsdelivr.net/npm/marked/marked.min.js" data-tiramai="web-gen"></script>
+
+    <!-- Tailwind Config -->
+    <script data-tiramai="web-gen">
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              brand: {
+                'primary-600': '#1B2A44',
+                'primary-700': '#14233A',
+                'primary-800': '#0E1A2B',
+              },
+              accent: {
+                'gold-50': '#FFF7E6',
+                'gold-500': '#C59D42',
+                'gold-600': '#A97D22',
+              },
+              success: { '600': '#16A34A' },
+              warning: { '600': '#D97706' },
+              danger: { '600': '#DC2626' },
+              info: { '600': '#2563EB' },
+              heat: {
+                green: '#16A34A',
+                amber: '#F59E0B',
+                red: '#DC2626'
+              },
+              neutral: {
+                '50': '#F8FAFC',
+                '200': '#E2E8F0',
+                '500': '#64748B',
+                '700': '#334155',
+                '900': '#111827',
+                '950': '#0B1220',
+              }
+            }
+          }
+        }
+      }
+    </script>
+</head>
+<body class="bg-neutral-50 min-h-screen text-neutral-900">
+    <!-- Top-Nav -->
+    <header class="fixed top-0 left-0 right-0 bg-brand-primary-800 border-b border-neutral-200 flex items-center justify-between px-6 py-4 z-30 h-16">
+        <div class="flex items-center gap-4">
+            <button id="mobile-menu-toggle" class="md:hidden text-white hover:text-accent-gold-500 transition-colors">
+                <i data-lucide="menu" class="w-6 h-6"></i>
+            </button>
+            <div class="flex items-center gap-3">
+                <div class="w-8 h-8 flex-shrink-0">
+                    <svg width="32" height="32" viewBox="0 0 400 400" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="84" y="116" width="56" height="168" rx="8" fill="#1E40AF"/>
+                        <rect x="176" y="84" width="56" height="200" rx="8" fill="#059669"/>
+                        <rect x="268" y="156" width="48" height="128" rx="8" fill="#1E40AF"/>
+                        <rect x="114" y="180" width="172" height="20" rx="10" fill="#F59E0B"/>
+                    </svg>
+                </div>
+                <span class="text-xl font-semibold text-white">SkillBridge</span>
+            </div>
+        </div>
+        <div class="flex items-center gap-4">
+            <div class="relative">
+                <button id="user-profile-btn" class="flex items-center gap-2 text-white hover:text-accent-gold-500 transition-colors">
+                    <div id="user-avatar" class="w-8 h-8 bg-accent-gold-500 rounded-full flex items-center justify-center text-neutral-900 text-sm font-medium">
+                        U
+                    </div>
+                    <span id="user-name" class="hidden sm:block text-sm">Loading...</span>
+                    <i data-lucide="chevron-down" class="w-4 h-4"></i>
+                </button>
+                
+                <!-- User Profile Dropdown -->
+                <div id="user-profile-dropdown" class="absolute right-0 mt-2 w-64 bg-white rounded-md shadow-lg border border-neutral-200 py-2 hidden z-40">
+                    <div class="px-4 py-3 border-b border-neutral-200">
+                        <p id="dropdown-user-name" class="text-sm font-medium text-neutral-900">Loading...</p>
+                        <p id="dropdown-user-email" class="text-xs text-neutral-500">loading@example.com</p>
+                    </div>
+                    <button id="sign-out-btn" class="w-full px-4 py-2 text-left text-sm text-neutral-700 hover:bg-neutral-50 flex items-center gap-2">
+                        <i data-lucide="log-out" class="w-4 h-4"></i>
+                        Sign out
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="flex pt-16">
+        <!-- Side-Nav -->
+        <aside id="sidebar" class="w-64 bg-white border-r border-neutral-200 h-screen sticky top-16 overflow-y-auto transform -translate-x-full md:translate-x-0 transition-transform duration-200 ease-in-out z-20">
+            <nav class="p-4 space-y-2">
+                <!-- Team Dashboard -->
+                <a href="team_dashboard.html" class="nav-link flex items-center gap-3 px-3 py-2 text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-700 rounded-md transition-colors" data-page="team_dashboard">
+                    <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
+                    <span>Team Dashboard</span>
+                </a>
+
+                <!-- My Team with collapsible children -->
+                <div class="nav-group">
+                    <button class="nav-group-toggle w-full flex items-center justify-between px-3 py-2 text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-700 rounded-md transition-colors">
+                        <div class="flex items-center gap-3">
+                            <i data-lucide="users" class="w-5 h-5"></i>
+                            <span>My Team</span>
+                        </div>
+                        <i data-lucide="chevron-right" class="w-4 h-4 transform transition-transform nav-group-chevron"></i>
+                    </button>
+                    <div class="nav-group-content ml-8 mt-1 space-y-1 hidden">
+                        <a href="my_team.html" class="nav-link block px-3 py-2 text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-700 rounded-md transition-colors" data-page="my_team">
+                            Team Overview
+                        </a>
+                        <div class="px-3 py-2 text-xs text-neutral-500 cursor-not-allowed hover:text-neutral-400" title="Coming Soon">
+                            <div class="flex items-center gap-2">
+                                <i data-lucide="user" class="w-4 h-4"></i>
+                                <span>Employee Profile</span>
+                            </div>
+                        </div>
+                        <div class="px-3 py-2 text-xs text-neutral-500 cursor-not-allowed hover:text-neutral-400" title="Coming Soon">
+                            <div class="flex items-center gap-2">
+                                <i data-lucide="clipboard" class="w-4 h-4"></i>
+                                <span>Skill Mappings</span>
+                            </div>
+                        </div>
+                        <div class="px-3 py-2 text-xs text-neutral-500 cursor-not-allowed hover:text-neutral-400" title="Coming Soon">
+                            <div class="flex items-center gap-2">
+                                <i data-lucide="circle-plus" class="w-4 h-4"></i>
+                                <span>Add Skills</span>
+                            </div>
+                        </div>
+                        <div class="px-3 py-2 text-xs text-neutral-500 cursor-not-allowed hover:text-neutral-400" title="Coming Soon">
+                            <div class="flex items-center gap-2">
+                                <i data-lucide="check-square" class="w-4 h-4"></i>
+                                <span>Assess Skills</span>
+                            </div>
+                        </div>
+                        <div class="px-3 py-2 text-xs text-neutral-500 cursor-not-allowed hover:text-neutral-400" title="Coming Soon">
+                            <div class="flex items-center gap-2">
+                                <i data-lucide="history" class="w-4 h-4"></i>
+                                <span>Assessment History</span>
+                            </div>
+                        </div>
+                        <div class="px-3 py-2 text-xs text-neutral-500 cursor-not-allowed hover:text-neutral-400" title="Coming Soon">
+                            <div class="flex items-center gap-2">
+                                <i data-lucide="trending-up" class="w-4 h-4"></i>
+                                <span>Growth Tracking</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Team Skill Gap Analysis with children -->
+                <div class="nav-group">
+                    <button class="nav-group-toggle w-full flex items-center justify-between px-3 py-2 text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-700 rounded-md transition-colors">
+                        <div class="flex items-center gap-3">
+                            <i data-lucide="grid" class="w-5 h-5"></i>
+                            <span>Skill Gap Analysis</span>
+                        </div>
+                        <i data-lucide="chevron-right" class="w-4 h-4 transform transition-transform nav-group-chevron"></i>
+                    </button>
+                    <div class="nav-group-content ml-8 mt-1 space-y-1 hidden">
+                        <div class="px-3 py-2 text-xs text-neutral-500 cursor-not-allowed hover:text-neutral-400" title="Coming Soon">
+                            <div class="flex items-center gap-2">
+                                <i data-lucide="grid" class="w-4 h-4"></i>
+                                <span>Team Gaps Overview</span>
+                            </div>
+                        </div>
+                        <a href="skill_trend_analysis.html" class="nav-link block px-3 py-2 text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-700 rounded-md transition-colors" data-page="skill_trend_analysis">
+                            <div class="flex items-center gap-2">
+                                <i data-lucide="trending-up" class="w-4 h-4"></i>
+                                <span>Skill Trends</span>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Training Impact Analysis -->
+                <div class="px-3 py-2 text-sm text-neutral-500 cursor-not-allowed hover:text-neutral-400" title="Coming Soon">
+                    <div class="flex items-center gap-3">
+                        <i data-lucide="bar-chart-2" class="w-5 h-5"></i>
+                        <span>Training Impact</span>
+                    </div>
+                </div>
+            </nav>
+
+            <!-- Footer -->
+            <div class="absolute bottom-20 w-full text-center text-sm text-neutral-500 bg-white rounded px-4 py-2">
+                Made with ❤️ by TiramAi
+            </div>
+        </aside>
+
+        <!-- Mobile Overlay -->
+        <div id="mobile-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-10 hidden md:hidden"></div>
+
+        <!-- Main Content -->
+        <main id="pageContent" class="flex-1 p-6 overflow-y-auto">
+            
+<!-- Training Impact Analysis Page -->
+<div class="space-y-6">
+    <!-- Page Header -->
+    <div class="bg-white border border-neutral-200 rounded-md p-6 shadow-sm">
+        <h1 class="text-2xl leading-8 font-bold text-neutral-950 mb-2">Training Impact Analysis</h1>
+        <p class="text-sm leading-5 text-neutral-700">Correlate completed trainings with score improvements and TNI clearance across the team.</p>
+    </div>
+
+    <!-- Summary Cards -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="bg-white border border-neutral-200 rounded-md p-4 shadow-sm">
+            <div class="flex items-center gap-3 mb-2">
+                <div class="w-8 h-8 rounded-full bg-accent-gold-50 flex items-center justify-center">
+                    <i data-lucide="graduation-cap" class="w-5 h-5 text-accent-gold-600"></i>
+                </div>
+                <h3 class="text-base leading-6 font-semibold text-neutral-950">Training Sessions</h3>
+            </div>
+            <div id="training-sessions-skeleton" class="space-y-2">
+                <div class="h-6 bg-neutral-200 rounded animate-pulse"></div>
+                <div class="h-4 bg-neutral-200 rounded animate-pulse w-3/4"></div>
+            </div>
+            <div id="training-sessions-content" class="hidden">
+                <p class="text-2xl font-bold text-neutral-950" id="training-sessions-count">0</p>
+                <p class="text-xs text-neutral-500">sessions with team attendance</p>
+            </div>
+        </div>
+
+        <div class="bg-white border border-neutral-200 rounded-md p-4 shadow-sm">
+            <div class="flex items-center gap-3 mb-2">
+                <div class="w-8 h-8 rounded-full bg-info-600 bg-opacity-10 flex items-center justify-center">
+                    <i data-lucide="users" class="w-5 h-5 text-info-600"></i>
+                </div>
+                <h3 class="text-base leading-6 font-semibold text-neutral-950">Team Members Trained</h3>
+            </div>
+            <div id="members-trained-skeleton" class="space-y-2">
+                <div class="h-6 bg-neutral-200 rounded animate-pulse"></div>
+                <div class="h-4 bg-neutral-200 rounded animate-pulse w-3/4"></div>
+            </div>
+            <div id="members-trained-content" class="hidden">
+                <p class="text-2xl font-bold text-neutral-950" id="members-trained-count">0</p>
+                <p class="text-xs text-neutral-500">unique employees</p>
+            </div>
+        </div>
+
+        <div class="bg-white border border-neutral-200 rounded-md p-4 shadow-sm">
+            <div class="flex items-center gap-3 mb-2">
+                <div class="w-8 h-8 rounded-full bg-success-600 bg-opacity-10 flex items-center justify-center">
+                    <i data-lucide="trending-up" class="w-5 h-5 text-success-600"></i>
+                </div>
+                <h3 class="text-base leading-6 font-semibold text-neutral-950">Average Improvement</h3>
+            </div>
+            <div id="avg-improvement-skeleton" class="space-y-2">
+                <div class="h-6 bg-neutral-200 rounded animate-pulse"></div>
+                <div class="h-4 bg-neutral-200 rounded animate-pulse w-3/4"></div>
+            </div>
+            <div id="avg-improvement-content" class="hidden">
+                <p class="text-2xl font-bold text-neutral-950" id="avg-improvement-value">0.0</p>
+                <p class="text-xs text-neutral-500">post minus pre score</p>
+            </div>
+        </div>
+
+        <div class="bg-white border border-neutral-200 rounded-md p-4 shadow-sm">
+            <div class="flex items-center gap-3 mb-2">
+                <div class="w-8 h-8 rounded-full bg-warning-600 bg-opacity-10 flex items-center justify-center">
+                    <i data-lucide="check-circle" class="w-5 h-5 text-warning-600"></i>
+                </div>
+                <h3 class="text-base leading-6 font-semibold text-neutral-950">TNI Clearance Rate</h3>
+            </div>
+            <div id="tni-clearance-skeleton" class="space-y-2">
+                <div class="h-6 bg-neutral-200 rounded animate-pulse"></div>
+                <div class="h-4 bg-neutral-200 rounded animate-pulse w-3/4"></div>
+            </div>
+            <div id="tni-clearance-content" class="hidden">
+                <p class="text-2xl font-bold text-neutral-950" id="tni-clearance-rate">0%</p>
+                <p class="text-xs text-neutral-500">pre TNI → post cleared</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="bg-white border border-neutral-200 rounded-md p-4 shadow-sm">
+        <div class="flex flex-wrap gap-4">
+            <div class="flex-1 min-w-48">
+                <label class="block text-sm font-medium text-neutral-900 mb-1">Skill</label>
+                <select id="skill-filter" class="w-full border border-neutral-200 rounded-sm px-3 py-2 bg-white text-sm leading-5 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2">
+                    <option value="">All Skills</option>
+                </select>
+            </div>
+
+            <div class="flex-1 min-w-48">
+                <label class="block text-sm font-medium text-neutral-900 mb-1">Training Date Range</label>
+                <div class="flex gap-2">
+                    <input type="date" id="from-date" class="flex-1 border border-neutral-200 rounded-sm px-3 py-2 text-sm leading-5 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2">
+                    <input type="date" id="to-date" class="flex-1 border border-neutral-200 rounded-sm px-3 py-2 text-sm leading-5 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2">
+                </div>
+            </div>
+
+            <div class="flex-1 min-w-48">
+                <label class="block text-sm font-medium text-neutral-900 mb-1">Show</label>
+                <div class="flex gap-4 pt-2">
+                    <label class="flex items-center gap-2 text-sm">
+                        <input type="radio" name="improvement-filter" value="all" checked class="text-accent-gold-600 focus:ring-accent-gold-600">
+                        <span>All</span>
+                    </label>
+                    <label class="flex items-center gap-2 text-sm">
+                        <input type="radio" name="improvement-filter" value="with-improvement" class="text-accent-gold-600 focus:ring-accent-gold-600">
+                        <span>With Improvement</span>
+                    </label>
+                    <label class="flex items-center gap-2 text-sm">
+                        <input type="radio" name="improvement-filter" value="no-improvement" class="text-accent-gold-600 focus:ring-accent-gold-600">
+                        <span>No Improvement</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="flex items-end">
+                <button id="refresh-data" class="inline-flex items-center gap-2 px-4 py-2 bg-brand-primary-600 hover:bg-brand-primary-700 text-white rounded-md text-sm font-medium focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2">
+                    <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+                    Refresh
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Data Table -->
+    <div class="bg-white border border-neutral-200 rounded-md shadow-sm">
+        <div class="px-4 py-3 border-b border-neutral-200 flex items-center justify-between">
+            <h2 class="text-base leading-6 font-semibold text-neutral-950">Training Impact Details</h2>
+            <div class="text-sm text-neutral-500">
+                Page <span id="current-page">1</span> of <span id="total-pages">1</span>
+            </div>
+        </div>
+
+        <!-- Table Skeleton -->
+        <div id="table-skeleton" class="p-4">
+            <div class="space-y-3">
+                <div class="grid grid-cols-7 gap-4">
+                    <div class="h-4 bg-neutral-200 rounded animate-pulse"></div>
+                    <div class="h-4 bg-neutral-200 rounded animate-pulse"></div>
+                    <div class="h-4 bg-neutral-200 rounded animate-pulse"></div>
+                    <div class="h-4 bg-neutral-200 rounded animate-pulse"></div>
+                    <div class="h-4 bg-neutral-200 rounded animate-pulse"></div>
+                    <div class="h-4 bg-neutral-200 rounded animate-pulse"></div>
+                    <div class="h-4 bg-neutral-200 rounded animate-pulse"></div>
+                </div>
+                <div class="grid grid-cols-7 gap-4">
+                    <div class="h-4 bg-neutral-200 rounded animate-pulse w-3/4"></div>
+                    <div class="h-4 bg-neutral-200 rounded animate-pulse w-1/2"></div>
+                    <div class="h-4 bg-neutral-200 rounded animate-pulse w-2/3"></div>
+                    <div class="h-4 bg-neutral-200 rounded animate-pulse w-1/3"></div>
+                    <div class="h-4 bg-neutral-200 rounded animate-pulse w-1/2"></div>
+                    <div class="h-4 bg-neutral-200 rounded animate-pulse w-1/4"></div>
+                    <div class="h-4 bg-neutral-200 rounded animate-pulse w-1/3"></div>
+                </div>
+                <div class="grid grid-cols-7 gap-4">
+                    <div class="h-4 bg-neutral-200 rounded animate-pulse w-2/3"></div>
+                    <div class="h-4 bg-neutral-200 rounded animate-pulse w-3/4"></div>
+                    <div class="h-4 bg-neutral-200 rounded animate-pulse w-1/2"></div>
+                    <div class="h-4 bg-neutral-200 rounded animate-pulse w-2/3"></div>
+                    <div class="h-4 bg-neutral-200 rounded animate-pulse w-1/3"></div>
+                    <div class="h-4 bg-neutral-200 rounded animate-pulse w-1/2"></div>
+                    <div class="h-4 bg-neutral-200 rounded animate-pulse w-1/4"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Table Content -->
+        <div id="table-container" class="hidden overflow-x-auto">
+            <table class="w-full text-sm leading-5">
+                <thead class="bg-neutral-50 text-neutral-700">
+                    <tr>
+                        <th class="text-left font-semibold px-4 py-3 border-b border-neutral-200">Employee Name</th>
+                        <th class="text-left font-semibold px-4 py-3 border-b border-neutral-200">Skill</th>
+                        <th class="text-left font-semibold px-4 py-3 border-b border-neutral-200">Training Date</th>
+                        <th class="text-center font-semibold px-4 py-3 border-b border-neutral-200">Pre-Training Score</th>
+                        <th class="text-center font-semibold px-4 py-3 border-b border-neutral-200">Post-Training Score</th>
+                        <th class="text-center font-semibold px-4 py-3 border-b border-neutral-200">Improvement</th>
+                        <th class="text-center font-semibold px-4 py-3 border-b border-neutral-200">TNI Cleared</th>
+                    </tr>
+                </thead>
+                <tbody id="training-impact-table" class="divide-y divide-neutral-200">
+                    <!-- Table rows will be populated by JavaScript -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Empty State -->
+        <div id="empty-state" class="hidden p-8 text-center">
+            <div class="w-16 h-16 mx-auto bg-neutral-100 rounded-full flex items-center justify-center mb-4">
+                <i data-lucide="graduation-cap" class="w-8 h-8 text-neutral-400"></i>
+            </div>
+            <h3 class="text-base font-semibold text-neutral-900 mb-2">No training impact data found</h3>
+            <p class="text-sm text-neutral-500">Try adjusting your filters or check back after training sessions are completed.</p>
+        </div>
+
+        <!-- Pagination -->
+        <div id="pagination" class="hidden px-4 py-3 border-t border-neutral-200 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+                <button id="prev-page" class="px-3 py-1 border border-neutral-200 rounded text-sm hover:bg-neutral-50 disabled:opacity-50 disabled:cursor-not-allowed">
+                    Previous
+                </button>
+                <button id="next-page" class="px-3 py-1 border border-neutral-200 rounded text-sm hover:bg-neutral-50 disabled:opacity-50 disabled:cursor-not-allowed">
+                    Next
+                </button>
+            </div>
+            <div class="text-sm text-neutral-500">
+                Showing <span id="showing-start">0</span>-<span id="showing-end">0</span> of <span id="total-records">0</span> records
+            </div>
+        </div>
+    </div>
+
+    <!-- Recommendations -->
+    <div class="bg-white border border-neutral-200 rounded-md p-6 shadow-sm">
+        <h2 class="text-base leading-6 font-semibold text-neutral-950 mb-4">Recommendations</h2>
+        
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div>
+                <h3 class="text-sm font-medium text-neutral-900 mb-3">Top Skills by Improvement</h3>
+                <div id="top-skills-skeleton" class="space-y-2">
+                    <div class="flex justify-between items-center">
+                        <div class="h-4 bg-neutral-200 rounded animate-pulse w-1/2"></div>
+                        <div class="h-4 bg-neutral-200 rounded animate-pulse w-1/4"></div>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <div class="h-4 bg-neutral-200 rounded animate-pulse w-2/3"></div>
+                        <div class="h-4 bg-neutral-200 rounded animate-pulse w-1/4"></div>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <div class="h-4 bg-neutral-200 rounded animate-pulse w-1/3"></div>
+                        <div class="h-4 bg-neutral-200 rounded animate-pulse w-1/4"></div>
+                    </div>
+                </div>
+                <div id="top-skills-content" class="hidden space-y-2">
+                    <!-- Will be populated by JavaScript -->
+                </div>
+            </div>
+
+            <div>
+                <h3 class="text-sm font-medium text-neutral-900 mb-3">Pending Reassessments</h3>
+                <div id="pending-reassessments-skeleton" class="space-y-2">
+                    <div class="flex justify-between items-center">
+                        <div class="h-4 bg-neutral-200 rounded animate-pulse w-2/3"></div>
+                        <div class="h-4 bg-neutral-200 rounded animate-pulse w-1/4"></div>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <div class="h-4 bg-neutral-200 rounded animate-pulse w-1/2"></div>
+                        <div class="h-4 bg-neutral-200 rounded animate-pulse w-1/4"></div>
+                    </div>
+                </div>
+                <div id="pending-reassessments-content" class="hidden">
+                    <!-- Will be populated by JavaScript -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Training Session Detail Modal -->
+<div id="session-detail-modal" class="fixed inset-0 z-50 hidden">
+    <div class="fixed inset-0 bg-black/50 backdrop-blur-sm"></div>
+    <div class="fixed inset-0 flex items-center justify-center p-4">
+        <div class="bg-white rounded-lg shadow-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div class="flex items-center justify-between p-6 border-b border-neutral-200">
+                <h2 class="text-xl leading-7 font-semibold text-neutral-950">Training Session Details</h2>
+                <button id="close-session-modal" class="text-neutral-400 hover:text-neutral-600 transition-colors">
+                    <i data-lucide="x" class="w-6 h-6"></i>
+                </button>
+            </div>
+            
+            <div class="p-6 space-y-6">
+                <!-- Session Info -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-neutral-700 mb-1">Skill</label>
+                        <p id="modal-skill-name" class="text-sm text-neutral-900">-</p>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-neutral-700 mb-1">Mode</label>
+                        <p id="modal-mode" class="text-sm text-neutral-900">-</p>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-neutral-700 mb-1">Scheduled Date</label>
+                        <p id="modal-scheduled-date" class="text-sm text-neutral-900">-</p>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-neutral-700 mb-1">End Date</label>
+                        <p id="modal-end-date" class="text-sm text-neutral-900">-</p>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-neutral-700 mb-1">Trainer</label>
+                        <p id="modal-trainer-name" class="text-sm text-neutral-900">-</p>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-neutral-700 mb-1">Capacity</label>
+                        <p id="modal-capacity" class="text-sm text-neutral-900">-</p>
+                    </div>
+                </div>
+
+                <!-- Attendance Summary -->
+                <div>
+                    <h3 class="text-base font-semibold text-neutral-950 mb-3">Attendance Summary</h3>
+                    <p id="modal-attendance-summary" class="text-sm text-neutral-700 mb-4">-</p>
+                    
+                    <div class="border border-neutral-200 rounded-md">
+                        <div class="bg-neutral-50 px-3 py-2 border-b border-neutral-200">
+                            <h4 class="text-sm font-medium text-neutral-900">Attendee List</h4>
+                        </div>
+                        <div id="modal-attendee-list" class="divide-y divide-neutral-200">
+                            <!-- Attendee list will be populated by JavaScript -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Feedback -->
+                <div>
+                    <h3 class="text-base font-semibold text-neutral-950 mb-3">Training Feedback</h3>
+                    <div id="modal-feedback-content">
+                        <div class="flex items-center gap-2 mb-2">
+                            <span class="text-sm text-neutral-700">Average Rating:</span>
+                            <span id="modal-avg-rating" class="font-medium text-neutral-900">-</span>
+                        </div>
+                        <div>
+                            <span class="text-sm text-neutral-700 block mb-2">Sample Comments:</span>
+                            <div id="modal-sample-comments" class="space-y-2">
+                                <!-- Comments will be populated by JavaScript -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+        </main>
+    </div>
+
+    <!-- Required: JavaScript -->
+    <script type="module" data-tiramai="web-gen">
+        import { showToast, showLoader, hideLoader, env } from "./scripts/main.js";
+        import { auth, db, storage } from "./scripts/firebase.js";
+        import { onAuthStateChanged, getAuth, signOut } from 'https://www.gstatic.com/firebasejs/10.12.4/firebase-auth.js';
+        import { doc, getDoc } from 'https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js';
+
+        // Initialize Lucide icons
+        lucide.createIcons();
+
+        // Get current page name from URL
+        function getCurrentPage() {
+            const path = window.location.pathname;
+            const filename = path.split('/').pop();
+            return filename.replace('.html', '') || 'team_dashboard';
+        }
+
+        // Set active navigation state
+        function setActiveNavigation() {
+            const currentPage = getCurrentPage();
+            const navLinks = document.querySelectorAll('.nav-link');
+            
+            navLinks.forEach(link => {
+                const pageName = link.getAttribute('data-page');
+                if (pageName === currentPage) {
+                    link.classList.add('bg-accent-gold-50', 'text-brand-primary-700', 'border-l-2', 'border-accent-gold-500');
+                    link.classList.remove('text-neutral-700');
+                } else {
+                    link.classList.remove('bg-accent-gold-50', 'text-brand-primary-700', 'border-l-2', 'border-accent-gold-500');
+                    link.classList.add('text-neutral-700');
+                }
+            });
+        }
+
+        // Initialize user profile and auth
+        async function initializeUser() {
+            onAuthStateChanged(auth, async (user) => {
+                if (!user) {
+                    window.location.href = 'auth.html';
+                    return;
+                }
+
+                try {
+                    // Try to get user data from Firestore
+                    const userDoc = await getDoc(doc(db, 'users', user.uid));
+                    let userData = null;
+                    
+                    if (userDoc.exists()) {
+                        userData = userDoc.data();
+                    }
+
+                    // Set user display data (with fallbacks)
+                    const firstName = userData?.firstName || user.displayName?.split(' ')[0] || 'User';
+                    const lastName = userData?.lastName || user.displayName?.split(' ')[1] || '';
+                    const email = userData?.email || user.email || 'johndoe@example.com';
+                    const fullName = `${firstName} ${lastName}`.trim();
+
+                    // Update UI elements
+                    const userAvatar = document.getElementById('user-avatar');
+                    const userName = document.getElementById('user-name');
+                    const dropdownUserName = document.getElementById('dropdown-user-name');
+                    const dropdownUserEmail = document.getElementById('dropdown-user-email');
+
+                    if (userAvatar) userAvatar.textContent = firstName.charAt(0).toUpperCase();
+                    if (userName) userName.textContent = fullName || email.split('@')[0];
+                    if (dropdownUserName) dropdownUserName.textContent = fullName || email.split('@')[0];
+                    if (dropdownUserEmail) dropdownUserEmail.textContent = email;
+
+                } catch (error) {
+                    console.error('Error fetching user data:', error);
+                    // Fallback to auth data
+                    const fallbackName = user.displayName || user.email.split('@')[0];
+                    document.getElementById('user-name').textContent = fallbackName;
+                    document.getElementById('dropdown-user-name').textContent = fallbackName;
+                    document.getElementById('dropdown-user-email').textContent = user.email;
+                }
+            });
+        }
+
+        // Toggle user profile dropdown
+        function initializeUserProfileDropdown() {
+            const profileBtn = document.getElementById('user-profile-btn');
+            const dropdown = document.getElementById('user-profile-dropdown');
+            const signOutBtn = document.getElementById('sign-out-btn');
+
+            profileBtn?.addEventListener('click', (e) => {
+                e.stopPropagation();
+                dropdown.classList.toggle('hidden');
+            });
+
+            // Close dropdown when clicking outside
+            document.addEventListener('click', (e) => {
+                if (!dropdown.contains(e.target) && !profileBtn.contains(e.target)) {
+                    dropdown.classList.add('hidden');
+                }
+            });
+
+            // Handle sign out
+            signOutBtn?.addEventListener('click', async () => {
+                try {
+                    await signOut(auth);
+                    window.location.href = 'auth.html';
+                } catch (error) {
+                    console.error('Sign out error:', error);
+                    showToast('Error signing out', 'error');
+                }
+            });
+        }
+
+        // Initialize mobile navigation
+        function initializeMobileNav() {
+            const mobileToggle = document.getElementById('mobile-menu-toggle');
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('mobile-overlay');
+
+            mobileToggle?.addEventListener('click', () => {
+                sidebar.classList.toggle('-translate-x-full');
+                overlay.classList.toggle('hidden');
+            });
+
+            overlay?.addEventListener('click', () => {
+                sidebar.classList.add('-translate-x-full');
+                overlay.classList.add('hidden');
+            });
+
+            // Close mobile nav on nav link click
+            const navLinks = document.querySelectorAll('.nav-link');
+            navLinks.forEach(link => {
+                link.addEventListener('click', () => {
+                    sidebar.classList.add('-translate-x-full');
+                    overlay.classList.add('hidden');
+                });
+            });
+        }
+
+        // Initialize collapsible navigation groups
+        function initializeNavGroups() {
+            const navGroupToggles = document.querySelectorAll('.nav-group-toggle');
+            
+            navGroupToggles.forEach(toggle => {
+                toggle.addEventListener('click', () => {
+                    const content = toggle.nextElementSibling;
+                    const chevron = toggle.querySelector('.nav-group-chevron');
+                    
+                    content.classList.toggle('hidden');
+                    chevron.classList.toggle('rotate-90');
+                });
+            });
+        }
+
+        // Initialize everything on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            initializeUser();
+            initializeUserProfileDropdown();
+            initializeMobileNav();
+            initializeNavGroups();
+            setActiveNavigation();
+        });
+    </script>
+
+    
+<script id="training-impact-script" type="module" data-tiramai="web-gen">
+import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.12.4/firebase-auth.js';
+import { 
+    collection, getDocs, query, where, orderBy, limit, startAfter, 
+    getCountFromServer, doc, getDoc
+} from 'https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js';
+import { auth, getDb } from "./scripts/firebase.js";
+import { showToast, showLoader, hideLoader } from "./scripts/main.js";
+
+const db = getDb();
+let currentUser = null;
+let currentPage = 1;
+const pageSize = 25;
+let lastDoc = null;
+let totalRecords = 0;
+let currentAbort = null;
+
+// State management
+let teamData = {
+    trainingSessions: [],
+    employees: [],
+    skills: [],
+    assessments: [],
+    trainingFeedback: []
+};
+
+let filteredData = [];
+
+// Initialize the page
+onAuthStateChanged(auth, (user) => {
+    if (!user) {
+        location.href = "auth.html?redirect=" + encodeURIComponent(location.pathname);
+        return;
+    }
+    currentUser = user;
+    funInitialLoad();
+});
+
+// Initialize page load
+async function funInitialLoad() {
+    try {
+        await Promise.all([
+            funLoadTeamData(),
+            funLoadSkillsForFilter()
+        ]);
+        
+        funCalculateSummaryCards();
+        funLoadTrainingImpactTable();
+        funGenerateRecommendations();
+        
+    } catch (error) {
+        console.error("Error loading initial data:", error);
+        showToast("Failed to load training impact data", "error");
+    }
+}
+
+// Load team data
+async function funLoadTeamData() {
+    if (currentAbort) currentAbort.abort();
+    currentAbort = new AbortController();
+    
+    try {
+        // Get team members
+        const teamQuery = query(
+            collection(db, 'users'),
+            where('teamLeadId', '==', currentUser.uid),
+            where('employeeStatus', '==', 'active')
+        );
+        const teamSnapshot = await getDocs(teamQuery);
+        teamData.employees = teamSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        
+        if (teamData.employees.length === 0) {
+            funShowEmptyState();
+            return;
+        }
+        
+        const employeeIds = teamData.employees.map(emp => emp.id);
+        
+        // Get training sessions with team attendance
+        const sessionsQuery = query(
+            collection(db, 'trainingSessions'),
+            where('status', '==', 'completed')
+        );
+        const sessionsSnapshot = await getDocs(sessionsQuery);
+        
+        teamData.trainingSessions = sessionsSnapshot.docs
+            .map(doc => ({ id: doc.id, ...doc.data() }))
+            .filter(session => {
+                return session.assignedEmployees?.some(emp => 
+                    employeeIds.includes(emp.employeeId) && 
+                    emp.attendanceStatus === 'attended'
+                );
+            });
+        
+        // Get skills
+        const skillsQuery = query(collection(db, 'skills'), where('status', '==', 'active'));
+        const skillsSnapshot = await getDocs(skillsQuery);
+        teamData.skills = skillsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        
+        // Get assessments for team members
+        if (employeeIds.length > 0) {
+            const assessmentsQuery = query(
+                collection(db, 'assessments'),
+                where('employeeId', 'in', employeeIds.slice(0, 10)), // Firestore 'in' limit
+                where('status', '==', 'active'),
+                orderBy('assessmentTimestamp', 'desc')
+            );
+            const assessmentsSnapshot = await getDocs(assessmentsQuery);
+            teamData.assessments = assessmentsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        }
+        
+        // Get training feedback
+        if (teamData.trainingSessions.length > 0) {
+            const sessionIds = teamData.trainingSessions.map(s => s.id);
+            const feedbackQuery = query(
+                collection(db, 'trainingFeedback'),
+                where('sessionId', 'in', sessionIds.slice(0, 10)) // Firestore 'in' limit
+            );
+            const feedbackSnapshot = await getDocs(feedbackQuery);
+            teamData.trainingFeedback = feedbackSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        }
+        
+    } catch (error) {
+        console.error("Error loading team data:", error);
+        throw error;
+    }
+}
+
+// Load skills for filter dropdown
+async function funLoadSkillsForFilter() {
+    try {
+        const skillFilter = document.getElementById('skill-filter');
+        skillFilter.innerHTML = '<option value="">All Skills</option>';
+        
+        // Get skills that have training sessions
+        const sessionSkillIds = [...new Set(teamData.trainingSessions.map(s => s.skillId))];
+        const relevantSkills = teamData.skills.filter(skill => sessionSkillIds.includes(skill.id));
+        
+        relevantSkills.forEach(skill => {
+            const option = document.createElement('option');
+            option.value = skill.id;
+            option.textContent = skill.name || 'N/A';
+            skillFilter.appendChild(option);
+        });
+        
+    } catch (error) {
+        console.error("Error loading skills for filter:", error);
+    }
+}
+
+// Calculate and display summary cards
+async function funCalculateSummaryCards() {
+    try {
+        // Hide skeletons and show content
+        ['training-sessions', 'members-trained', 'avg-improvement', 'tni-clearance'].forEach(id => {
+            document.getElementById(`${id}-skeleton`)?.classList.add('hidden');
+            document.getElementById(`${id}-content`)?.classList.remove('hidden');
+        });
+        
+        // Training sessions count
+        const trainingSessionsCount = teamData.trainingSessions.length;
+        document.getElementById('training-sessions-count').textContent = trainingSessionsCount.toString();
+        
+        // Calculate impact data for all team training records
+        const impactData = funCalculateImpactData();
+        
+        // Unique team members trained
+        const uniqueTrainedMembers = new Set(impactData.map(record => record.employeeId)).size;
+        document.getElementById('members-trained-count').textContent = uniqueTrainedMembers.toString();
+        
+        // Average improvement
+        const improvementsWithValues = impactData.filter(record => 
+            record.preScore !== null && record.postScore !== null
+        );
+        const avgImprovement = improvementsWithValues.length > 0 
+            ? improvementsWithValues.reduce((sum, record) => sum + record.improvement, 0) / improvementsWithValues.length
+            : 0;
+        document.getElementById('avg-improvement-value').textContent = avgImprovement.toFixed(1);
+        
+        // TNI Clearance Rate
+        const tniClearances = impactData.filter(record => record.tniCleared === 'Yes');
+        const totalWithTNI = impactData.filter(record => record.tniCleared !== 'N/A');
+        const clearanceRate = totalWithTNI.length > 0 
+            ? (tniClearances.length / totalWithTNI.length) * 100 
+            : 0;
+        document.getElementById('tni-clearance-rate').textContent = `${clearanceRate.toFixed(0)}%`;
+        
+    } catch (error) {
+        console.error("Error calculating summary cards:", error);
+    }
+}
+
+// Calculate impact data for all training records
+function funCalculateImpactData() {
+    const impactRecords = [];
+    
+    teamData.trainingSessions.forEach(session => {
+        const skill = teamData.skills.find(s => s.id === session.skillId);
+        
+        session.assignedEmployees?.forEach(assignment => {
+            if (assignment.attendanceStatus === 'attended') {
+                const employee = teamData.employees.find(emp => emp.id === assignment.employeeId);
+                
+                if (!employee) return;
+                
+                // Find pre-training assessment (latest before training start)
+                const preAssessments = teamData.assessments.filter(assessment => 
+                    assessment.employeeId === assignment.employeeId &&
+                    assessment.skillId === session.skillId &&
+                    new Date(assessment.assessmentTimestamp) < new Date(session.scheduledDate)
+                );
+                const preAssessment = preAssessments.sort((a, b) => 
+                    new Date(b.assessmentTimestamp) - new Date(a.assessmentTimestamp)
+                )[0];
+                
+                // Find post-training assessment (first after training end)
+                const postAssessments = teamData.assessments.filter(assessment => 
+                    assessment.employeeId === assignment.employeeId &&
+                    assessment.skillId === session.skillId &&
+                    new Date(assessment.assessmentTimestamp) > new Date(session.endDate)
+                );
+                const postAssessment = postAssessments.sort((a, b) => 
+                    new Date(a.assessmentTimestamp) - new Date(b.assessmentTimestamp)
+                )[0];
+                
+                const preScore = preAssessment?.score || null;
+                const postScore = postAssessment?.score || null;
+                const improvement = (preScore !== null && postScore !== null) ? postScore - preScore : null;
+                
+                let tniCleared = 'N/A';
+                if (preAssessment?.tniFlag === true && postAssessment?.tniFlag === false) {
+                    tniCleared = 'Yes';
+                } else if (preAssessment?.tniFlag === true && postAssessment) {
+                    tniCleared = 'No';
+                }
+                
+                impactRecords.push({
+                    employeeId: assignment.employeeId,
+                    employeeName: `${employee.firstName || ''} ${employee.lastName || ''}`.trim() || 'N/A',
+                    skillId: session.skillId,
+                    skillName: skill?.name || 'N/A',
+                    sessionId: session.id,
+                    trainingDate: session.scheduledDate,
+                    preScore,
+                    postScore,
+                    improvement,
+                    tniCleared,
+                    hasPostAssessment: !!postAssessment
+                });
+            }
+        });
+    });
+    
+    return impactRecords;
+}
+
+// Load and display training impact table
+async function funLoadTrainingImpactTable() {
+    try {
+        // Calculate all impact data
+        const allImpactData = funCalculateImpactData();
+        
+        // Apply filters
+        filteredData = funApplyFilters(allImpactData);
+        
+        // Update total records
+        totalRecords = filteredData.length;
+        
+        // Calculate pagination
+        const totalPages = Math.ceil(totalRecords / pageSize);
+        const startIndex = (currentPage - 1) * pageSize;
+        const endIndex = Math.min(startIndex + pageSize, totalRecords);
+        
+        // Get current page data
+        const pageData = filteredData.slice(startIndex, endIndex);
+        
+        // Hide skeleton and show table
+        document.getElementById('table-skeleton')?.classList.add('hidden');
+        
+        if (pageData.length === 0) {
+            funShowEmptyState();
+            return;
+        }
+        
+        document.getElementById('table-container')?.classList.remove('hidden');
+        document.getElementById('pagination')?.classList.remove('hidden');
+        
+        // Populate table
+        const tbody = document.getElementById('training-impact-table');
+        tbody.innerHTML = '';
+        
+        pageData.forEach(record => {
+            const row = funCreateTableRow(record);
+            tbody.appendChild(row);
+        });
+        
+        // Update pagination info
+        document.getElementById('current-page').textContent = currentPage.toString();
+        document.getElementById('total-pages').textContent = totalPages.toString();
+        document.getElementById('showing-start').textContent = (startIndex + 1).toString();
+        document.getElementById('showing-end').textContent = endIndex.toString();
+        document.getElementById('total-records').textContent = totalRecords.toString();
+        
+        // Update pagination buttons
+        document.getElementById('prev-page').disabled = currentPage <= 1;
+        document.getElementById('next-page').disabled = currentPage >= totalPages;
+        
+    } catch (error) {
+        console.error("Error loading training impact table:", error);
+        showToast("Failed to load training impact data", "error");
+    }
+}
+
+// Apply filters to impact data
+function funApplyFilters(data) {
+    let filtered = [...data];
+    
+    // Skill filter
+    const skillFilter = document.getElementById('skill-filter').value;
+    if (skillFilter) {
+        filtered = filtered.filter(record => record.skillId === skillFilter);
+    }
+    
+    // Date range filter
+    const fromDate = document.getElementById('from-date').value;
+    const toDate = document.getElementById('to-date').value;
+    if (fromDate) {
+        filtered = filtered.filter(record => record.trainingDate >= fromDate);
+    }
+    if (toDate) {
+        filtered = filtered.filter(record => record.trainingDate <= toDate);
+    }
+    
+    // Improvement filter
+    const improvementFilter = document.querySelector('input[name="improvement-filter"]:checked').value;
+    if (improvementFilter === 'with-improvement') {
+        filtered = filtered.filter(record => record.improvement && record.improvement > 0);
+    } else if (improvementFilter === 'no-improvement') {
+        filtered = filtered.filter(record => 
+            record.improvement === null || record.improvement <= 0
+        );
+    }
+    
+    return filtered;
+}
+
+// Create table row
+function funCreateTableRow(record) {
+    const row = document.createElement('tr');
+    row.className = 'hover:bg-neutral-50 focus-within:bg-neutral-50 cursor-pointer';
+    row.onclick = () => funShowSessionDetails(record.sessionId);
+    
+    const formatDate = (dateStr) => {
+        if (!dateStr) return 'N/A';
+        try {
+            return new Date(dateStr).toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric'
+            });
+        } catch {
+            return 'N/A';
+        }
+    };
+    
+    const formatScore = (score) => score !== null ? score.toString() : 'N/A';
+    
+    const formatImprovement = (improvement) => {
+        if (improvement === null) return 'N/A';
+        const sign = improvement > 0 ? '+' : '';
+        let colorClass = 'text-neutral-900';
+        if (improvement > 0) colorClass = 'text-success-600';
+        else if (improvement < 0) colorClass = 'text-danger-600';
+        
+        return `<span class="${colorClass}">${sign}${improvement}</span>`;
+    };
+    
+    const formatTNICleared = (status) => {
+        let colorClass = 'text-neutral-900';
+        let bgClass = 'bg-neutral-100';
+        
+        if (status === 'Yes') {
+            colorClass = 'text-success-600';
+            bgClass = 'bg-success-100';
+        } else if (status === 'No') {
+            colorClass = 'text-danger-600';
+            bgClass = 'bg-danger-100';
+        }
+        
+        return `<span class="inline-flex px-2 py-1 text-xs rounded-full ${bgClass} ${colorClass}">${status}</span>`;
+    };
+    
+    const postScoreDisplay = record.postScore !== null 
+        ? formatScore(record.postScore)
+        : '<span class="text-warning-600 text-xs">Pending Reassessment</span>';
+    
+    row.innerHTML = `
+        <td class="px-4 py-3">
+            <div class="font-medium text-neutral-900 hover:text-brand-primary-700 cursor-pointer" 
+                 onclick="event.stopPropagation(); window.location.href='employee_profile.html?employeeId=${record.employeeId}'">
+                ${record.employeeName}
+            </div>
+        </td>
+        <td class="px-4 py-3 text-neutral-700">${record.skillName}</td>
+        <td class="px-4 py-3 text-neutral-700">${formatDate(record.trainingDate)}</td>
+        <td class="px-4 py-3 text-center text-neutral-700">${formatScore(record.preScore)}</td>
+        <td class="px-4 py-3 text-center text-neutral-700">${postScoreDisplay}</td>
+        <td class="px-4 py-3 text-center">${formatImprovement(record.improvement)}</td>
+        <td class="px-4 py-3 text-center">${formatTNICleared(record.tniCleared)}</td>
+    `;
+    
+    return row;
+}
+
+// Show empty state
+function funShowEmptyState() {
+    document.getElementById('table-skeleton')?.classList.add('hidden');
+    document.getElementById('table-container')?.classList.add('hidden');
+    document.getElementById('pagination')?.classList.add('hidden');
+    document.getElementById('empty-state')?.classList.remove('hidden');
+}
+
+// Show session details modal
+async function funShowSessionDetails(sessionId) {
+    try {
+        const session = teamData.trainingSessions.find(s => s.id === sessionId);
+        if (!session) return;
+        
+        const skill = teamData.skills.find(s => s.id === session.skillId);
+        
+        // Get trainer info
+        let trainerName = 'N/A';
+        if (session.trainerType === 'internal') {
+            try {
+                const trainerDoc = await getDoc(doc(db, 'users', session.trainerId));
+                if (trainerDoc.exists()) {
+                    const trainer = trainerDoc.data();
+                    trainerName = `${trainer.firstName || ''} ${trainer.lastName || ''}`.trim();
+                }
+            } catch (error) {
+                console.error("Error loading trainer:", error);
+            }
+        } else if (session.trainerType === 'external') {
+            try {
+                const trainerDoc = await getDoc(doc(db, 'externalTrainers', session.trainerId));
+                if (trainerDoc.exists()) {
+                    trainerName = trainerDoc.data().name || 'N/A';
+                }
+            } catch (error) {
+                console.error("Error loading external trainer:", error);
+            }
+        }
+        
+        // Populate modal
+        document.getElementById('modal-skill-name').textContent = skill?.name || 'N/A';
+        document.getElementById('modal-mode').textContent = session.mode || 'N/A';
+        document.getElementById('modal-scheduled-date').textContent = session.scheduledDate ? 
+            new Date(session.scheduledDate).toLocaleDateString('en-US', { 
+                year: 'numeric', month: 'long', day: 'numeric' 
+            }) : 'N/A';
+        document.getElementById('modal-end-date').textContent = session.endDate ? 
+            new Date(session.endDate).toLocaleDateString('en-US', { 
+                year: 'numeric', month: 'long', day: 'numeric' 
+            }) : 'N/A';
+        document.getElementById('modal-trainer-name').textContent = trainerName;
+        document.getElementById('modal-capacity').textContent = session.capacity?.toString() || 'N/A';
+        
+        // Attendance summary
+        const assignedCount = session.assignedEmployees?.length || 0;
+        const attendedCount = session.assignedEmployees?.filter(emp => 
+            emp.attendanceStatus === 'attended'
+        ).length || 0;
+        document.getElementById('modal-attendance-summary').textContent = 
+            `${attendedCount} of ${assignedCount} attended`;
+        
+        // Attendee list
+        const attendeeList = document.getElementById('modal-attendee-list');
+        attendeeList.innerHTML = '';
+        
+        session.assignedEmployees?.forEach(assignment => {
+            const employee = teamData.employees.find(emp => emp.id === assignment.employeeId);
+            const name = employee ? `${employee.firstName || ''} ${employee.lastName || ''}`.trim() : 'N/A';
+            const status = assignment.attendanceStatus || 'unknown';
+            
+            const statusColor = status === 'attended' ? 'text-success-600' : 
+                               status === 'absent' ? 'text-danger-600' : 'text-neutral-500';
+            
+            const attendeeRow = document.createElement('div');
+            attendeeRow.className = 'flex justify-between items-center px-3 py-2';
+            attendeeRow.innerHTML = `
+                <span class="text-sm text-neutral-900">${name}</span>
+                <span class="text-xs ${statusColor} capitalize">${status}</span>
+            `;
+            attendeeList.appendChild(attendeeRow);
+        });
+        
+        // Training feedback
+        const sessionFeedback = teamData.trainingFeedback.filter(f => f.sessionId === sessionId);
+        if (sessionFeedback.length > 0) {
+            const avgRating = sessionFeedback.reduce((sum, f) => sum + (f.rating || 0), 0) / sessionFeedback.length;
+            document.getElementById('modal-avg-rating').textContent = `${avgRating.toFixed(1)}/5`;
+            
+            const commentsContainer = document.getElementById('modal-sample-comments');
+            commentsContainer.innerHTML = '';
+            
+            const commentsWithText = sessionFeedback.filter(f => f.comments && f.comments.trim());
+            const sampleComments = commentsWithText.slice(0, 3);
+            
+            if (sampleComments.length > 0) {
+                sampleComments.forEach(feedback => {
+                    const commentDiv = document.createElement('div');
+                    commentDiv.className = 'p-2 bg-neutral-50 rounded text-xs text-neutral-700';
+                    commentDiv.textContent = feedback.comments;
+                    commentsContainer.appendChild(commentDiv);
+                });
+            } else {
+                commentsContainer.innerHTML = '<p class="text-xs text-neutral-500">No comments available</p>';
+            }
+        } else {
+            document.getElementById('modal-avg-rating').textContent = 'N/A';
+            document.getElementById('modal-sample-comments').innerHTML = 
+                '<p class="text-xs text-neutral-500">No feedback available</p>';
+        }
+        
+        // Show modal
+        document.getElementById('session-detail-modal').classList.remove('hidden');
+        
+    } catch (error) {
+        console.error("Error showing session details:", error);
+        showToast("Failed to load session details", "error");
+    }
+}
+
+// Generate recommendations
+async function funGenerateRecommendations() {
+    try {
+        // Hide skeletons and show content
+        document.getElementById('top-skills-skeleton')?.classList.add('hidden');
+        document.getElementById('pending-reassessments-skeleton')?.classList.add('hidden');
+        document.getElementById('top-skills-content')?.classList.remove('hidden');
+        document.getElementById('pending-reassessments-content')?.classList.remove('hidden');
+        
+        const impactData = funCalculateImpactData();
+        
+        // Top skills by improvement
+        const skillImprovements = {};
+        impactData.forEach(record => {
+            if (record.improvement !== null) {
+                if (!skillImprovements[record.skillId]) {
+                    skillImprovements[record.skillId] = {
+                        skillName: record.skillName,
+                        totalImprovement: 0,
+                        count: 0
+                    };
+                }
+                skillImprovements[record.skillId].totalImprovement += record.improvement;
+                skillImprovements[record.skillId].count += 1;
+            }
+        });
+        
+        const topSkills = Object.values(skillImprovements)
+            .map(skill => ({
+                ...skill,
+                avgImprovement: skill.totalImprovement / skill.count
+            }))
+            .sort((a, b) => b.avgImprovement - a.avgImprovement)
+            .slice(0, 5);
+        
+        const topSkillsContent = document.getElementById('top-skills-content');
+        topSkillsContent.innerHTML = '';
+        
+        if (topSkills.length > 0) {
+            topSkills.forEach(skill => {
+                const skillRow = document.createElement('div');
+                skillRow.className = 'flex justify-between items-center text-sm';
+                skillRow.innerHTML = `
+                    <span class="text-neutral-900">${skill.skillName}</span>
+                    <span class="font-medium text-success-600">+${skill.avgImprovement.toFixed(1)}</span>
+                `;
+                topSkillsContent.appendChild(skillRow);
+            });
+        } else {
+            topSkillsContent.innerHTML = '<p class="text-sm text-neutral-500">No improvement data available</p>';
+        }
+        
+        // Pending reassessments
+        const pendingReassessments = {};
+        impactData.forEach(record => {
+            if (!record.hasPostAssessment) {
+                if (!pendingReassessments[record.skillId]) {
+                    pendingReassessments[record.skillId] = {
+                        skillName: record.skillName,
+                        count: 0
+                    };
+                }
+                pendingReassessments[record.skillId].count += 1;
+            }
+        });
+        
+        const pendingSkills = Object.values(pendingReassessments)
+            .sort((a, b) => b.count - a.count)
+            .slice(0, 5);
+        
+        const pendingContent = document.getElementById('pending-reassessments-content');
+        
+        if (pendingSkills.length > 0) {
+            pendingContent.innerHTML = '';
+            pendingSkills.forEach(skill => {
+                const skillRow = document.createElement('div');
+                skillRow.className = 'flex justify-between items-center text-sm';
+                skillRow.innerHTML = `
+                    <span class="text-neutral-900">${skill.skillName}</span>
+                    <span class="font-medium text-warning-600">${skill.count} pending</span>
+                `;
+                pendingContent.appendChild(skillRow);
+            });
+        } else {
+            pendingContent.innerHTML = '<p class="text-sm text-neutral-500">No pending reassessments</p>';
+        }
+        
+    } catch (error) {
+        console.error("Error generating recommendations:", error);
+    }
+}
+
+// Event listeners
+document.addEventListener('DOMContentLoaded', () => {
+    // Filter change handlers
+    ['skill-filter', 'from-date', 'to-date'].forEach(id => {
+        document.getElementById(id)?.addEventListener('change', () => {
+            currentPage = 1;
+            funLoadTrainingImpactTable();
+        });
+    });
+    
+    document.querySelectorAll('input[name="improvement-filter"]').forEach(input => {
+        input.addEventListener('change', () => {
+            currentPage = 1;
+            funLoadTrainingImpactTable();
+        });
+    });
+    
+    // Refresh button
+    document.getElementById('refresh-data')?.addEventListener('click', () => {
+        funInitialLoad();
+    });
+    
+    // Pagination
+    document.getElementById('prev-page')?.addEventListener('click', () => {
+        if (currentPage > 1) {
+            currentPage--;
+            funLoadTrainingImpactTable();
+        }
+    });
+    
+    document.getElementById('next-page')?.addEventListener('click', () => {
+        const totalPages = Math.ceil(totalRecords / pageSize);
+        if (currentPage < totalPages) {
+            currentPage++;
+            funLoadTrainingImpactTable();
+        }
+    });
+    
+    // Modal close
+    document.getElementById('close-session-modal')?.addEventListener('click', () => {
+        document.getElementById('session-detail-modal')?.classList.add('hidden');
+    });
+    
+    // Close modal on backdrop click
+    document.getElementById('session-detail-modal')?.addEventListener('click', (e) => {
+        if (e.target.id === 'session-detail-modal') {
+            document.getElementById('session-detail-modal')?.classList.add('hidden');
+        }
+    });
+    
+    // Initialize Lucide icons
+    if (typeof lucide !== 'undefined') {
+        lucide.createIcons();
+    }
+});
+</script>
+
+</body>
+</html>

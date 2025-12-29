@@ -1,0 +1,1075 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SkillBridge</title>
+
+    <!-- Required: Main JS Script -->
+    <script type="module" src="scripts/main.js" data-tiramai="web-gen"></script>
+
+    <!-- Required: TailwindCSS -->
+    <script src="./lib/tailwindcss/tailwindcss.js" fetchpriority="high" data-tiramai="web-gen"></script>
+
+    <!-- Required: Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest" data-tiramai="web-gen"></script>
+
+    <!-- Required: Favicon -->
+    <link rel="icon" href="assets/imgs/logo.ico" type="image/x-icon" data-tiramai="web-gen"/>
+
+    <!-- ECharts Support (for charts/graphs) -->
+    <script defer src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js" data-tiramai="web-gen"></script>
+
+    <!-- Markdown Support (for content rendering) -->
+    <script defer src="https://cdn.jsdelivr.net/npm/marked/marked.min.js" data-tiramai="web-gen"></script>
+
+    <!-- Custom Tailwind Config -->
+    <script data-tiramai="web-gen">
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'brand-primary-600': '#1B2A44',
+                        'brand-primary-700': '#14233A',
+                        'brand-primary-800': '#0E1A2B',
+                        'accent-gold-50': '#FFF7E6',
+                        'accent-gold-500': '#C59D42',
+                        'accent-gold-600': '#A97D22',
+                        'success-600': '#16A34A',
+                        'warning-600': '#D97706',
+                        'danger-600': '#DC2626',
+                        'info-600': '#2563EB',
+                        'heat-green': '#16A34A',
+                        'heat-amber': '#F59E0B',
+                        'heat-red': '#DC2626',
+                        'neutral-50': '#F8FAFC',
+                        'neutral-200': '#E2E8F0',
+                        'neutral-500': '#64748B',
+                        'neutral-700': '#334155',
+                        'neutral-900': '#111827',
+                        'neutral-950': '#0B1220',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-neutral-50 min-h-screen text-neutral-900 text-sm leading-5">
+    <!-- Top Navigation -->
+    <header class="fixed top-0 left-0 right-0 bg-brand-primary-800 border-b border-neutral-200 flex items-center justify-between px-6 py-4 z-30 h-16">
+        <div class="flex items-center gap-4">
+            <svg width="32" height="32" viewBox="0 0 400 400" fill="none" xmlns="http://www.w3.org/2000/svg" class="h-8 w-8">
+                <rect x="84" y="116" width="56" height="168" rx="8" fill="#1E40AF"/>
+                <rect x="176" y="84" width="56" height="200" rx="8" fill="#059669"/>
+                <rect x="268" y="156" width="48" height="128" rx="8" fill="#1E40AF"/>
+                <rect x="114" y="180" width="172" height="20" rx="10" fill="#F59E0B"/>
+            </svg>
+            <span class="text-xl leading-7 font-semibold text-white">SkillBridge</span>
+        </div>
+        
+        <!-- Mobile Menu Button -->
+        <button id="mobile-menu-btn" class="md:hidden text-white hover:bg-brand-primary-700 p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2">
+            <i data-lucide="menu" class="w-5 h-5"></i>
+        </button>
+
+        <div class="hidden md:flex items-center gap-4">
+            <!-- User Profile Dropdown -->
+            <div class="relative">
+                <button id="user-profile-btn" class="flex items-center gap-2 text-white hover:bg-brand-primary-700 px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2">
+                    <div id="user-avatar" class="w-8 h-8 bg-accent-gold-500 rounded-full flex items-center justify-center text-brand-primary-800 font-semibold text-xs">
+                        JD
+                    </div>
+                    <span id="user-name" class="text-sm">John Doe</span>
+                    <i data-lucide="chevron-down" class="w-4 h-4"></i>
+                </button>
+                
+                <!-- Dropdown Menu -->
+                <div id="user-dropdown" class="hidden absolute right-0 mt-2 w-48 bg-white border border-neutral-200 rounded-md shadow-lg z-50">
+                    <div class="px-4 py-3 border-b border-neutral-200">
+                        <p class="text-sm font-medium text-neutral-900" id="dropdown-user-name">John Doe</p>
+                        <p class="text-xs text-neutral-500" id="dropdown-user-email">johndoe@example.com</p>
+                    </div>
+                    <div class="py-1">
+                        <button id="sign-out-btn" class="block w-full text-left px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50 focus:outline-none focus:bg-neutral-50">
+                            <i data-lucide="log-out" class="w-4 h-4 inline mr-2"></i>
+                            Sign Out
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="flex pt-16">
+        <!-- Side Navigation -->
+        <aside id="sidebar" class="fixed md:static inset-y-0 left-0 z-20 w-64 bg-white border-r border-neutral-200 transform -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out pt-16 md:pt-0 overflow-y-auto" style="height: calc(100vh - 4rem);">
+            <nav class="p-4 space-y-1">
+                <!-- Employee Dashboard -->
+                <a href="employee_dashboard.html" class="nav-link flex items-center gap-3 px-3 py-2 text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-700 rounded-md group" data-page="employee_dashboard">
+                    <i data-lucide="layout-dashboard" class="w-5 h-5 text-neutral-500 group-hover:text-brand-primary-700"></i>
+                    <span class="font-medium">Employee Dashboard</span>
+                </a>
+
+                <!-- My Skills with Children -->
+                <div class="space-y-1">
+                    <a href="my_skills.html" class="nav-link flex items-center gap-3 px-3 py-2 text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-700 rounded-md group" data-page="my_skills">
+                        <i data-lucide="list" class="w-5 h-5 text-neutral-500 group-hover:text-brand-primary-700"></i>
+                        <span class="font-medium">My Skills</span>
+                    </a>
+                </div>
+
+                <!-- My Training Sessions with Children -->
+                <div class="space-y-1">
+                    <a href="my_training_sessions.html" class="nav-link flex items-center gap-3 px-3 py-2 text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-700 rounded-md group" data-page="my_training_sessions">
+                        <i data-lucide="calendar" class="w-5 h-5 text-neutral-500 group-hover:text-brand-primary-700"></i>
+                        <span class="font-medium">My Training Sessions</span>
+                    </a>
+                </div>
+
+                <!-- My Disputes with Children -->
+                <div class="space-y-1">
+                    <button class="nav-group-btn flex items-center justify-between w-full px-3 py-2 text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-700 rounded-md group" data-group="disputes">
+                        <div class="flex items-center gap-3">
+                            <i data-lucide="flag" class="w-5 h-5 text-neutral-500 group-hover:text-brand-primary-700"></i>
+                            <span class="font-medium">My Disputes</span>
+                        </div>
+                        <i data-lucide="chevron-down" class="w-4 h-4 text-neutral-500 group-hover:text-brand-primary-700 transition-transform duration-200"></i>
+                    </button>
+                    <div class="nav-group-children ml-8 space-y-1 hidden" data-group-target="disputes">
+                        <a href="my_disputes.html" class="nav-link flex items-center gap-3 px-3 py-2 text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-700 rounded-md text-xs" data-page="my_disputes">
+                            <i data-lucide="flag" class="w-4 h-4"></i>
+                            <span>View Disputes</span>
+                        </a>
+                        <a href="raise_dispute.html" class="nav-link flex items-center gap-3 px-3 py-2 text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-700 rounded-md text-xs" data-page="raise_dispute">
+                            <i data-lucide="plus-circle" class="w-4 h-4"></i>
+                            <span>Raise Dispute</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- My Profile -->
+                <a href="my_profile.html" class="nav-link flex items-center gap-3 px-3 py-2 text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-700 rounded-md group" data-page="my_profile">
+                    <i data-lucide="user" class="w-5 h-5 text-neutral-500 group-hover:text-brand-primary-700"></i>
+                    <span class="font-medium">My Profile</span>
+                </a>
+            </nav>
+
+            <!-- Footer -->
+            <div class="absolute bottom-4 left-0 right-0 text-center text-xs text-neutral-500 bg-white px-4">
+                Made with ❤️ by TiramAi
+            </div>
+        </aside>
+
+        <!-- Mobile Overlay -->
+        <div id="mobile-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-10 hidden md:hidden"></div>
+
+        <!-- Main Content -->
+        <main id="pageContent" class="flex-1 p-6 overflow-y-auto min-h-screen">
+            
+<!-- Page Header with Breadcrumbs -->
+<div class="flex flex-col gap-6">
+  <!-- Breadcrumbs -->
+  <nav aria-label="Breadcrumb" class="flex items-center gap-2 text-sm">
+    <a href="javascript:void(0)" onclick="funNavigateToEmployeeDashboard()" class="text-neutral-500 hover:text-brand-primary-700 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2 rounded-sm">
+      Dashboard
+    </a>
+    <i data-lucide="chevron-right" class="w-4 h-4 text-neutral-400"></i>
+    <a href="javascript:void(0)" onclick="funNavigateToMyDisputes()" class="text-neutral-500 hover:text-brand-primary-700 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2 rounded-sm">
+      My Disputes
+    </a>
+    <i data-lucide="chevron-right" class="w-4 h-4 text-neutral-400"></i>
+    <span class="text-neutral-900 font-medium">Dispute Detail</span>
+  </nav>
+
+  <!-- Header with Status -->
+  <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+    <div class="flex items-center gap-4">
+      <button onclick="funNavigateToMyDisputes()" class="inline-flex items-center gap-2 text-neutral-600 hover:text-brand-primary-700 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2 rounded-sm" aria-label="Back to My Disputes">
+        <i data-lucide="arrow-left" class="w-5 h-5"></i>
+        <span class="font-medium">Back</span>
+      </button>
+      <div class="border-l border-neutral-200 h-6"></div>
+      <div class="flex items-center gap-3">
+        <h1 class="text-2xl leading-8 font-bold text-neutral-950">Dispute Detail</h1>
+        <span id="dispute-status-badge" class="inline-flex items-center px-3 py-1 text-xs rounded-full bg-warning-600 text-white">
+          Open
+        </span>
+      </div>
+    </div>
+    
+    <button id="refresh-btn" class="inline-flex items-center gap-2 text-sm text-neutral-500 hover:text-neutral-700 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2 rounded-sm" aria-label="Refresh dispute data">
+      <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+      <span>Refresh</span>
+    </button>
+  </div>
+
+  <!-- Main Content Grid -->
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <!-- Main Content (Left Column) -->
+    <div class="lg:col-span-2 space-y-6">
+      
+      <!-- Dispute Info Card -->
+      <div class="bg-white border border-neutral-200 rounded-md p-4 md:p-6 shadow-sm">
+        <h2 class="text-xl leading-7 font-semibold mb-4">Dispute Information</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <dt class="text-xs font-medium text-neutral-700 uppercase tracking-wide">Dispute ID</dt>
+            <dd id="dispute-short-id" class="mt-1 text-sm text-neutral-900 font-medium">N/A</dd>
+          </div>
+          <div>
+            <dt class="text-xs font-medium text-neutral-700 uppercase tracking-wide">Assessment Cycle</dt>
+            <dd id="cycle-name" class="mt-1 text-sm text-neutral-900">N/A</dd>
+          </div>
+          <div>
+            <dt class="text-xs font-medium text-neutral-700 uppercase tracking-wide">Submitted On</dt>
+            <dd id="submission-date" class="mt-1 text-sm text-neutral-900">N/A</dd>
+          </div>
+          <div>
+            <dt class="text-xs font-medium text-neutral-700 uppercase tracking-wide">Status</dt>
+            <dd id="dispute-status" class="mt-1 text-sm text-neutral-900">N/A</dd>
+          </div>
+          <div id="resolution-date-container" class="hidden">
+            <dt class="text-xs font-medium text-neutral-700 uppercase tracking-wide">Resolved On</dt>
+            <dd id="resolution-date" class="mt-1 text-sm text-neutral-900">N/A</dd>
+          </div>
+          <div id="resolved-by-container" class="hidden">
+            <dt class="text-xs font-medium text-neutral-700 uppercase tracking-wide">Resolved By</dt>
+            <dd id="resolved-by" class="mt-1 text-sm text-neutral-900">N/A</dd>
+          </div>
+        </div>
+      </div>
+
+      <!-- Disputed Skills -->
+      <div class="bg-white border border-neutral-200 rounded-md p-4 md:p-6 shadow-sm">
+        <h2 class="text-xl leading-7 font-semibold mb-4">Disputed Skills</h2>
+        <div id="disputed-skills-container" class="space-y-4">
+          <!-- Skeleton placeholders -->
+          <div class="border border-neutral-200 rounded-md p-4 animate-pulse">
+            <div class="h-4 bg-neutral-200 rounded w-3/4 mb-2"></div>
+            <div class="h-3 bg-neutral-200 rounded w-1/2 mb-2"></div>
+            <div class="h-3 bg-neutral-200 rounded w-2/3"></div>
+          </div>
+          <div class="border border-neutral-200 rounded-md p-4 animate-pulse">
+            <div class="h-4 bg-neutral-200 rounded w-3/4 mb-2"></div>
+            <div class="h-3 bg-neutral-200 rounded w-1/2 mb-2"></div>
+            <div class="h-3 bg-neutral-200 rounded w-2/3"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Overall Reason -->
+      <div class="bg-white border border-neutral-200 rounded-md p-4 md:p-6 shadow-sm">
+        <h2 class="text-xl leading-7 font-semibold mb-4">Overall Reason</h2>
+        <div id="overall-reason-container" class="prose prose-sm max-w-none">
+          <div class="animate-pulse">
+            <div class="h-3 bg-neutral-200 rounded w-full mb-2"></div>
+            <div class="h-3 bg-neutral-200 rounded w-full mb-2"></div>
+            <div class="h-3 bg-neutral-200 rounded w-3/4"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Admin Resolution (if resolved) -->
+      <div id="admin-resolution-section" class="hidden bg-white border border-neutral-200 rounded-md p-4 md:p-6 shadow-sm">
+        <h2 class="text-xl leading-7 font-semibold mb-4">Admin Resolution</h2>
+        <div class="space-y-4">
+          <div>
+            <dt class="text-xs font-medium text-neutral-700 uppercase tracking-wide">Action Taken</dt>
+            <dd id="resolution-action" class="mt-1 text-sm text-neutral-900">N/A</dd>
+          </div>
+          <div id="resolution-notes-container" class="hidden">
+            <dt class="text-xs font-medium text-neutral-700 uppercase tracking-wide">Resolution Notes</dt>
+            <dd id="resolution-notes" class="mt-1 text-sm text-neutral-900">N/A</dd>
+          </div>
+          <div id="rejection-reason-container" class="hidden">
+            <dt class="text-xs font-medium text-neutral-700 uppercase tracking-wide">Rejection Reason</dt>
+            <dd id="rejection-reason" class="mt-1 text-sm text-neutral-900">N/A</dd>
+          </div>
+        </div>
+      </div>
+
+      <!-- Response Actions (if resolved and no employee response) -->
+      <div id="response-actions-section" class="hidden bg-white border border-neutral-200 rounded-md p-4 md:p-6 shadow-sm">
+        <h2 class="text-xl leading-7 font-semibold mb-4">Your Response</h2>
+        <p class="text-sm text-neutral-700 mb-4">
+          Please review the admin resolution and provide your response.
+        </p>
+        <div class="flex flex-col sm:flex-row gap-3">
+          <button id="agree-btn" class="inline-flex items-center justify-center h-11 px-6 rounded-md bg-success-600 hover:bg-green-700 text-white font-medium focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed">
+            <i data-lucide="check" class="w-5 h-5 mr-2"></i>
+            I Agree
+          </button>
+          <button id="disagree-btn" class="inline-flex items-center justify-center h-11 px-6 rounded-md bg-danger-600 hover:bg-red-700 text-white font-medium focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed">
+            <i data-lucide="x" class="w-5 h-5 mr-2"></i>
+            I Disagree
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Audit Trail Sidebar -->
+    <div class="space-y-6">
+      <div class="bg-white border border-neutral-200 rounded-md p-4 md:p-6 shadow-sm">
+        <h2 class="text-xl leading-7 font-semibold mb-4">Audit Trail</h2>
+        <div id="audit-trail-container" class="space-y-3">
+          <!-- Skeleton placeholders -->
+          <div class="animate-pulse">
+            <div class="flex items-start gap-3">
+              <div class="w-2 h-2 rounded-full bg-neutral-200 mt-2"></div>
+              <div class="flex-1">
+                <div class="h-3 bg-neutral-200 rounded w-3/4 mb-1"></div>
+                <div class="h-3 bg-neutral-200 rounded w-1/2"></div>
+              </div>
+            </div>
+          </div>
+          <div class="animate-pulse">
+            <div class="flex items-start gap-3">
+              <div class="w-2 h-2 rounded-full bg-neutral-200 mt-2"></div>
+              <div class="flex-1">
+                <div class="h-3 bg-neutral-200 rounded w-3/4 mb-1"></div>
+                <div class="h-3 bg-neutral-200 rounded w-1/2"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Disagree Confirmation Modal -->
+<div id="disagree-modal" class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+  <div class="bg-white rounded-lg shadow-lg w-full max-w-md" role="dialog" aria-labelledby="modal-title" aria-describedby="modal-description">
+    <div class="p-6">
+      <div class="flex items-center gap-3 mb-4">
+        <div class="flex-shrink-0 w-10 h-10 bg-danger-600 rounded-full flex items-center justify-center">
+          <i data-lucide="alert-triangle" class="w-5 h-5 text-white"></i>
+        </div>
+        <div>
+          <h3 id="modal-title" class="text-base leading-6 font-semibold text-neutral-950">Disagree with Resolution?</h3>
+        </div>
+      </div>
+      
+      <div class="mb-6">
+        <p id="modal-description" class="text-sm text-neutral-700">
+          Are you sure you want to disagree with this resolution? This will reopen the dispute and escalate it back to the admin for further review.
+        </p>
+      </div>
+      
+      <div class="flex flex-col sm:flex-row gap-3 sm:justify-end">
+        <button id="modal-cancel-btn" class="inline-flex items-center justify-center h-11 px-4 rounded-md border border-neutral-200 bg-white text-neutral-900 hover:bg-neutral-50 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2">
+          Cancel
+        </button>
+        <button id="modal-confirm-btn" class="inline-flex items-center justify-center h-11 px-4 rounded-md bg-danger-600 hover:bg-red-700 text-white font-medium focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed">
+          Yes, Disagree
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+        </main>
+    </div>
+
+    <!-- Required: JavaScript -->
+    <script type="module" data-tiramai="web-gen">
+        import { showToast, showLoader, hideLoader, env } from "./scripts/main.js";
+        import { auth, db, storage } from "./scripts/firebase.js";
+        import { onAuthStateChanged, getAuth, signOut } from 'https://www.gstatic.com/firebasejs/10.12.4/firebase-auth.js';
+        import { doc, getDoc } from 'https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js';
+
+        // Initialize Lucide icons
+        lucide.createIcons();
+
+        // Mobile menu functionality
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const sidebar = document.getElementById('sidebar');
+        const mobileOverlay = document.getElementById('mobile-overlay');
+
+        function toggleMobileMenu() {
+            sidebar.classList.toggle('-translate-x-full');
+            mobileOverlay.classList.toggle('hidden');
+        }
+
+        mobileMenuBtn?.addEventListener('click', toggleMobileMenu);
+        mobileOverlay?.addEventListener('click', toggleMobileMenu);
+
+        // Navigation group toggle functionality
+        document.querySelectorAll('.nav-group-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const groupName = btn.getAttribute('data-group');
+                const children = document.querySelector(`[data-group-target="${groupName}"]`);
+                const chevron = btn.querySelector('[data-lucide="chevron-down"]');
+                
+                children?.classList.toggle('hidden');
+                chevron?.classList.toggle('rotate-180');
+            });
+        });
+
+        // User profile dropdown
+        const userProfileBtn = document.getElementById('user-profile-btn');
+        const userDropdown = document.getElementById('user-dropdown');
+
+        userProfileBtn?.addEventListener('click', (e) => {
+            e.stopPropagation();
+            userDropdown?.classList.toggle('hidden');
+        });
+
+        document.addEventListener('click', (e) => {
+            if (!userProfileBtn?.contains(e.target)) {
+                userDropdown?.classList.add('hidden');
+            }
+        });
+
+        // Active navigation highlighting
+        function updateActiveNav() {
+            const currentPage = window.location.pathname.split('/').pop()?.replace('.html', '') || 'employee_dashboard';
+            
+            document.querySelectorAll('.nav-link').forEach(link => {
+                const page = link.getAttribute('data-page');
+                if (page === currentPage) {
+                    link.classList.add('bg-accent-gold-50', 'text-brand-primary-700', 'border-l-4', 'border-accent-gold-500');
+                    link.classList.remove('text-neutral-700', 'text-neutral-600');
+                } else {
+                    link.classList.remove('bg-accent-gold-50', 'text-brand-primary-700', 'border-l-4', 'border-accent-gold-500');
+                }
+            });
+        }
+
+        // Auth state management
+        let currentUser = null;
+
+        function updateUserProfile(user, userData = null) {
+            const userAvatar = document.getElementById('user-avatar');
+            const userName = document.getElementById('user-name');
+            const dropdownUserName = document.getElementById('dropdown-user-name');
+            const dropdownUserEmail = document.getElementById('dropdown-user-email');
+
+            if (userData) {
+                const displayName = `${userData.firstName || ''} ${userData.lastName || ''}`.trim() || 'User';
+                const initials = displayName.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
+                
+                userAvatar.textContent = initials;
+                userName.textContent = displayName;
+                dropdownUserName.textContent = displayName;
+                dropdownUserEmail.textContent = userData.email || user.email;
+            } else {
+                // Fallback to auth data
+                const displayName = user.displayName || user.email.split('@')[0];
+                const initials = displayName.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
+                
+                userAvatar.textContent = initials;
+                userName.textContent = displayName;
+                dropdownUserName.textContent = displayName;
+                dropdownUserEmail.textContent = user.email;
+            }
+        }
+
+        async function loadUserData(user) {
+            try {
+                const userDocRef = doc(db, 'users', user.uid);
+                const userDoc = await getDoc(userDocRef);
+                
+                if (userDoc.exists()) {
+                    return userDoc.data();
+                } else {
+                    // Fallback data
+                    return {
+                        firstName: 'John',
+                        lastName: 'Doe',
+                        email: user.email
+                    };
+                }
+            } catch (error) {
+                console.error('Error loading user data:', error);
+                return null;
+            }
+        }
+
+        // Sign out functionality
+        document.getElementById('sign-out-btn')?.addEventListener('click', async () => {
+            try {
+                showLoader();
+                await signOut(auth);
+                showToast('Signed out successfully', 'success');
+                window.location.href = 'auth.html';
+            } catch (error) {
+                console.error('Sign out error:', error);
+                showToast('Error signing out', 'error');
+            } finally {
+                hideLoader();
+            }
+        });
+
+        // Initialize auth state listener
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                currentUser = user;
+                const userData = await loadUserData(user);
+                updateUserProfile(user, userData);
+                updateActiveNav();
+            } else {
+                window.location.href = 'auth.html';
+            }
+        });
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', () => {
+            updateActiveNav();
+        });
+    </script>
+
+    
+<script id="dispute-detail-script" type="module" data-tiramai="web-gen">
+import { 
+  collection, 
+  doc, 
+  getDoc, 
+  getDocs,
+  updateDoc,
+  query, 
+  where, 
+  orderBy, 
+  limit,
+  arrayUnion,
+  Timestamp 
+} from 'https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js';
+import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.12.4/firebase-auth.js';
+import { auth, getDb } from "./scripts/firebase.js";
+import { showToast, showLoader, hideLoader } from "./scripts/main.js";
+
+const db = getDb();
+let currentUser = null;
+let disputeData = null;
+let currentAbort;
+
+// Get dispute ID from URL parameters
+function getDisputeIdFromUrl() {
+  const urlParams = new URLSearchParams(window.location.search);
+  return urlParams.get('disputeId');
+}
+
+// Navigation functions
+function funNavigateToEmployeeDashboard() {
+  window.location.href = 'employee_dashboard.html';
+}
+
+function funNavigateToMyDisputes() {
+  window.location.href = 'my_disputes.html';
+}
+
+// Abortable data fetching
+async function funFetchDisputeData(disputeId) {
+  if (currentAbort) currentAbort.abort();
+  currentAbort = new AbortController();
+  const signal = currentAbort.signal;
+
+  try {
+    showLoader();
+    
+    // Fetch dispute document
+    const disputeRef = doc(db, 'disputes', disputeId);
+    const disputeSnap = await getDoc(disputeRef);
+    
+    if (signal.aborted) return null;
+    
+    if (!disputeSnap.exists()) {
+      showToast('Dispute not found', 'error');
+      return null;
+    }
+    
+    const dispute = { id: disputeSnap.id, ...disputeSnap.data() };
+    
+    // Check if user owns this dispute
+    if (dispute.employeeId !== currentUser.uid) {
+      showToast('You do not have permission to view this dispute', 'error');
+      funNavigateToMyDisputes();
+      return null;
+    }
+    
+    // Fetch related data
+    const [cycleSnap, skillsData, assessmentsData, adminData] = await Promise.all([
+      getDoc(doc(db, 'assessmentCycles', dispute.assessmentCycleId)),
+      funFetchSkillsData(dispute.disputedSkills || []),
+      funFetchCurrentScores(dispute.disputedSkills || []),
+      dispute.resolvedByAdminId ? getDoc(doc(db, 'users', dispute.resolvedByAdminId)) : Promise.resolve(null)
+    ]);
+    
+    if (signal.aborted) return null;
+    
+    return {
+      dispute,
+      cycle: cycleSnap.exists() ? cycleSnap.data() : null,
+      skills: skillsData,
+      currentScores: assessmentsData,
+      admin: adminData && adminData.exists() ? adminData.data() : null
+    };
+    
+  } catch (error) {
+    if (signal.aborted) return null;
+    console.error('Error fetching dispute data:', error);
+    showToast(error?.message || 'Failed to load dispute data', 'error');
+    return null;
+  } finally {
+    hideLoader();
+  }
+}
+
+// Fetch skills data
+async function funFetchSkillsData(disputedSkills) {
+  if (!disputedSkills || disputedSkills.length === 0) return {};
+  
+  const skillsMap = {};
+  
+  for (const disputedSkill of disputedSkills) {
+    if (disputedSkill?.skillId) {
+      try {
+        const skillRef = doc(db, 'skills', disputedSkill.skillId);
+        const skillSnap = await getDoc(skillRef);
+        
+        if (skillSnap.exists()) {
+          skillsMap[disputedSkill.skillId] = skillSnap.data();
+        }
+      } catch (error) {
+        console.error(`Error fetching skill ${disputedSkill.skillId}:`, error);
+      }
+    }
+  }
+  
+  return skillsMap;
+}
+
+// Fetch current assessment scores
+async function funFetchCurrentScores(disputedSkills) {
+  if (!disputedSkills || disputedSkills.length === 0) return {};
+  
+  const currentScores = {};
+  
+  for (const disputedSkill of disputedSkills) {
+    if (disputedSkill?.skillId) {
+      try {
+        const q = query(
+          collection(db, 'assessments'),
+          where('employeeId', '==', currentUser.uid),
+          where('skillId', '==', disputedSkill.skillId),
+          orderBy('assessmentTimestamp', 'desc'),
+          limit(1)
+        );
+        
+        const snapshot = await getDocs(q);
+        
+        if (!snapshot.empty) {
+          const latestAssessment = snapshot.docs[0].data();
+          currentScores[disputedSkill.skillId] = latestAssessment.score;
+        }
+      } catch (error) {
+        console.error(`Error fetching current score for skill ${disputedSkill.skillId}:`, error);
+      }
+    }
+  }
+  
+  return currentScores;
+}
+
+// Render dispute data
+function funRenderDisputeData(data) {
+  if (!data) return;
+  
+  const { dispute, cycle, skills, currentScores, admin } = data;
+  
+  // Basic info
+  const shortId = dispute.id ? dispute.id.slice(-8) : 'N/A';
+  document.getElementById('dispute-short-id').textContent = shortId;
+  document.getElementById('cycle-name').textContent = cycle?.cycleName || 'N/A';
+  
+  // Dates
+  if (dispute.submissionDate) {
+    const submissionDate = new Date(dispute.submissionDate);
+    document.getElementById('submission-date').textContent = submissionDate.toLocaleDateString('en-US', { 
+      year: 'numeric', 
+      month: 'short', 
+      day: 'numeric' 
+    });
+  }
+  
+  // Status
+  const statusBadge = document.getElementById('dispute-status-badge');
+  const statusText = document.getElementById('dispute-status');
+  
+  if (dispute.status === 'resolved') {
+    statusBadge.className = 'inline-flex items-center px-3 py-1 text-xs rounded-full bg-success-600 text-white';
+    statusBadge.textContent = 'Resolved';
+    statusText.textContent = 'Resolved';
+    
+    // Show resolution info
+    if (dispute.resolutionTimestamp) {
+      const resolutionDate = new Date(dispute.resolutionTimestamp);
+      document.getElementById('resolution-date').textContent = resolutionDate.toLocaleDateString('en-US', { 
+        year: 'numeric', 
+        month: 'short', 
+        day: 'numeric' 
+      });
+      document.getElementById('resolution-date-container').classList.remove('hidden');
+    }
+    
+    if (admin) {
+      const adminName = `${admin.firstName || ''} ${admin.lastName || ''}`.trim() || 'N/A';
+      document.getElementById('resolved-by').textContent = adminName;
+      document.getElementById('resolved-by-container').classList.remove('hidden');
+    }
+  } else {
+    statusBadge.className = 'inline-flex items-center px-3 py-1 text-xs rounded-full bg-warning-600 text-white';
+    statusBadge.textContent = 'Open';
+    statusText.textContent = 'Open';
+  }
+  
+  // Disputed skills
+  funRenderDisputedSkills(dispute.disputedSkills || [], skills, currentScores);
+  
+  // Overall reason
+  const reasonContainer = document.getElementById('overall-reason-container');
+  reasonContainer.innerHTML = `<p class="text-sm text-neutral-900">${dispute.reason || 'No reason provided.'}</p>`;
+  
+  // Admin resolution section
+  if (dispute.status === 'resolved') {
+    funRenderAdminResolution(dispute);
+    
+    // Check if needs response
+    const hasResponded = funCheckHasResponded(dispute);
+    if (!hasResponded) {
+      document.getElementById('response-actions-section').classList.remove('hidden');
+    }
+  }
+  
+  // Audit trail
+  funRenderAuditTrail(dispute.auditTrail || []);
+  
+  // Store data globally
+  disputeData = data;
+}
+
+// Render disputed skills
+function funRenderDisputedSkills(disputedSkills, skills, currentScores) {
+  const container = document.getElementById('disputed-skills-container');
+  
+  if (!disputedSkills || disputedSkills.length === 0) {
+    container.innerHTML = '<p class="text-sm text-neutral-500">No disputed skills found.</p>';
+    return;
+  }
+  
+  const skillsHtml = disputedSkills.map(disputedSkill => {
+    const skill = skills[disputedSkill.skillId] || {};
+    const currentScore = currentScores[disputedSkill.skillId];
+    const originalScore = disputedSkill.originalScore;
+    const benchmark = disputedSkill.benchmark || 'N/A';
+    
+    // Determine gap color
+    let gapColor = 'bg-neutral-200';
+    if (typeof originalScore === 'number' && typeof benchmark === 'number') {
+      const gap = benchmark - originalScore;
+      if (gap >= 3) gapColor = 'bg-heat-red';
+      else if (gap >= 1) gapColor = 'bg-heat-amber';
+      else gapColor = 'bg-heat-green';
+    }
+    
+    const scoreChanged = currentScore !== undefined && currentScore !== originalScore;
+    
+    return `
+      <div class="border border-neutral-200 rounded-md p-4">
+        <div class="flex items-start justify-between mb-3">
+          <h3 class="text-base leading-6 font-semibold text-neutral-950">${skill.name || 'Unknown Skill'}</h3>
+          <span class="w-4 h-4 rounded-full ${gapColor}" title="Performance Gap"></span>
+        </div>
+        
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-3">
+          <div>
+            <dt class="text-xs font-medium text-neutral-700 uppercase tracking-wide">Original Score</dt>
+            <dd class="text-sm font-medium text-neutral-900">${originalScore || 'N/A'}</dd>
+          </div>
+          ${scoreChanged ? `
+            <div>
+              <dt class="text-xs font-medium text-neutral-700 uppercase tracking-wide">Current Score</dt>
+              <dd class="text-sm font-medium text-success-600">${currentScore}</dd>
+            </div>
+          ` : ''}
+          <div>
+            <dt class="text-xs font-medium text-neutral-700 uppercase tracking-wide">Benchmark</dt>
+            <dd class="text-sm font-medium text-neutral-900">${benchmark}</dd>
+          </div>
+        </div>
+        
+        ${disputedSkill.reason ? `
+          <div>
+            <dt class="text-xs font-medium text-neutral-700 uppercase tracking-wide mb-1">Your Reason</dt>
+            <dd class="text-sm text-neutral-900">${disputedSkill.reason}</dd>
+          </div>
+        ` : ''}
+      </div>
+    `;
+  }).join('');
+  
+  container.innerHTML = skillsHtml;
+}
+
+// Render admin resolution
+function funRenderAdminResolution(dispute) {
+  const section = document.getElementById('admin-resolution-section');
+  section.classList.remove('hidden');
+  
+  // Action taken
+  const actionMap = {
+    'editRating': 'Edit Rating',
+    'dismiss': 'Dismiss Dispute'
+  };
+  const actionText = actionMap[dispute.resolutionAction] || dispute.resolutionAction || 'N/A';
+  document.getElementById('resolution-action').textContent = actionText;
+  
+  // Resolution notes
+  if (dispute.resolutionNotes) {
+    document.getElementById('resolution-notes').textContent = dispute.resolutionNotes;
+    document.getElementById('resolution-notes-container').classList.remove('hidden');
+  }
+  
+  // Rejection reason (for dismissed disputes)
+  if (dispute.rejectionReason) {
+    document.getElementById('rejection-reason').textContent = dispute.rejectionReason;
+    document.getElementById('rejection-reason-container').classList.remove('hidden');
+  }
+}
+
+// Check if employee has responded to resolution
+function funCheckHasResponded(dispute) {
+  if (!dispute.auditTrail || !dispute.resolutionTimestamp) return false;
+  
+  const resolutionTime = new Date(dispute.resolutionTimestamp).getTime();
+  
+  return dispute.auditTrail.some(entry => 
+    entry.actorType === 'employee' && 
+    ['agreed', 'disagreed'].includes(entry.action) &&
+    entry.timestamp &&
+    new Date(entry.timestamp).getTime() >= resolutionTime
+  );
+}
+
+// Render audit trail
+function funRenderAuditTrail(auditTrail) {
+  const container = document.getElementById('audit-trail-container');
+  
+  if (!auditTrail || auditTrail.length === 0) {
+    container.innerHTML = '<p class="text-xs text-neutral-500">No audit trail available.</p>';
+    return;
+  }
+  
+  // Sort by timestamp (most recent first)
+  const sortedTrail = [...auditTrail].sort((a, b) => {
+    const timeA = a.timestamp ? new Date(a.timestamp).getTime() : 0;
+    const timeB = b.timestamp ? new Date(b.timestamp).getTime() : 0;
+    return timeB - timeA;
+  });
+  
+  const trailHtml = sortedTrail.map((entry, index) => {
+    const isFirst = index === 0;
+    const timestamp = entry.timestamp ? new Date(entry.timestamp).toLocaleDateString('en-US', { 
+      month: 'short', 
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    }) : 'N/A';
+    
+    // Action color
+    let dotColor = 'bg-neutral-400';
+    if (entry.action === 'submitted') dotColor = 'bg-info-600';
+    else if (entry.action === 'resolved') dotColor = 'bg-success-600';
+    else if (entry.action === 'agreed') dotColor = 'bg-success-600';
+    else if (entry.action === 'disagreed') dotColor = 'bg-danger-600';
+    
+    // Actor label
+    let actorLabel = entry.actorType || 'Unknown';
+    if (entry.actorType === 'employee') actorLabel = 'You';
+    else if (entry.actorType === 'admin') actorLabel = 'Admin';
+    
+    return `
+      <div class="flex items-start gap-3 ${isFirst ? '' : 'pt-3'}">
+        <div class="flex flex-col items-center">
+          <div class="w-2 h-2 rounded-full ${dotColor}"></div>
+          ${!isFirst ? '<div class="w-px h-6 bg-neutral-200 mt-1"></div>' : ''}
+        </div>
+        <div class="flex-1 min-w-0">
+          <p class="text-xs font-medium text-neutral-900">
+            ${entry.details || `${actorLabel} ${entry.action}`}
+          </p>
+          <p class="text-xs text-neutral-500">${timestamp}</p>
+        </div>
+      </div>
+    `;
+  }).join('');
+  
+  container.innerHTML = trailHtml;
+}
+
+// Handle agree action
+async function funHandleAgree() {
+  if (!disputeData || !currentUser) return;
+  
+  try {
+    showLoader();
+    
+    const now = new Date().toISOString();
+    const auditEntry = {
+      action: 'agreed',
+      actorId: currentUser.uid,
+      actorType: 'employee',
+      timestamp: now,
+      details: 'Employee agreed with resolution'
+    };
+    
+    const disputeRef = doc(db, 'disputes', disputeData.dispute.id);
+    await updateDoc(disputeRef, {
+      auditTrail: arrayUnion(auditEntry)
+    });
+    
+    showToast('Response recorded successfully', 'success');
+    
+    // Hide response section
+    document.getElementById('response-actions-section').classList.add('hidden');
+    
+    // Refresh audit trail
+    await funInitialLoad();
+    
+  } catch (error) {
+    console.error('Error recording agreement:', error);
+    showToast(error?.message || 'Failed to record response', 'error');
+  } finally {
+    hideLoader();
+  }
+}
+
+// Handle disagree action
+async function funHandleDisagree() {
+  // Show confirmation modal
+  const modal = document.getElementById('disagree-modal');
+  modal.classList.remove('hidden');
+  
+  // Focus trap
+  const confirmBtn = document.getElementById('modal-confirm-btn');
+  confirmBtn.focus();
+}
+
+// Handle modal confirmation
+async function funConfirmDisagree() {
+  if (!disputeData || !currentUser) return;
+  
+  try {
+    showLoader();
+    
+    const now = new Date().toISOString();
+    const auditEntry = {
+      action: 'disagreed',
+      actorId: currentUser.uid,
+      actorType: 'employee',
+      timestamp: now,
+      details: 'Employee disagreed with resolution - dispute reopened'
+    };
+    
+    const disputeRef = doc(db, 'disputes', disputeData.dispute.id);
+    await updateDoc(disputeRef, {
+      status: 'open',
+      auditTrail: arrayUnion(auditEntry)
+    });
+    
+    showToast('Dispute has been reopened for further review', 'success');
+    
+    // Hide modal and response section
+    document.getElementById('disagree-modal').classList.add('hidden');
+    document.getElementById('response-actions-section').classList.add('hidden');
+    
+    // Refresh data
+    await funInitialLoad();
+    
+  } catch (error) {
+    console.error('Error disagreeing with resolution:', error);
+    showToast(error?.message || 'Failed to record response', 'error');
+  } finally {
+    hideLoader();
+  }
+}
+
+// Initial load function
+async function funInitialLoad(force = false) {
+  const disputeId = getDisputeIdFromUrl();
+  
+  if (!disputeId) {
+    showToast('No dispute ID provided', 'error');
+    funNavigateToMyDisputes();
+    return;
+  }
+  
+  if (!currentUser) {
+    showToast('Please sign in to continue', 'error');
+    return;
+  }
+  
+  const data = await funFetchDisputeData(disputeId);
+  if (data) {
+    funRenderDisputeData(data);
+  }
+}
+
+// Event listeners
+document.addEventListener('DOMContentLoaded', () => {
+  // Refresh button
+  document.getElementById('refresh-btn')?.addEventListener('click', () => funInitialLoad(true));
+  
+  // Response buttons
+  document.getElementById('agree-btn')?.addEventListener('click', funHandleAgree);
+  document.getElementById('disagree-btn')?.addEventListener('click', funHandleDisagree);
+  
+  // Modal events
+  const modal = document.getElementById('disagree-modal');
+  const cancelBtn = document.getElementById('modal-cancel-btn');
+  const confirmBtn = document.getElementById('modal-confirm-btn');
+  
+  // Close modal on cancel
+  cancelBtn?.addEventListener('click', () => {
+    modal.classList.add('hidden');
+  });
+  
+  // Close modal on backdrop click
+  modal?.addEventListener('click', (e) => {
+    if (e.target === modal) {
+      modal.classList.add('hidden');
+    }
+  });
+  
+  // Close modal on escape key
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && !modal.classList.contains('hidden')) {
+      modal.classList.add('hidden');
+    }
+  });
+  
+  // Confirm disagree
+  confirmBtn?.addEventListener('click', funConfirmDisagree);
+  
+  // Initialize icons
+  lucide.createIcons();
+});
+
+// Auth state management
+onAuthStateChanged(auth, (user) => {
+  if (user) {
+    currentUser = user;
+    funInitialLoad();
+  } else {
+    const redirect = encodeURIComponent(window.location.pathname + window.location.search);
+    window.location.href = `auth.html?redirect=${redirect}`;
+  }
+});
+
+// Expose navigation functions globally
+window.funNavigateToEmployeeDashboard = funNavigateToEmployeeDashboard;
+window.funNavigateToMyDisputes = funNavigateToMyDisputes;
+</script>
+
+</body>
+</html>

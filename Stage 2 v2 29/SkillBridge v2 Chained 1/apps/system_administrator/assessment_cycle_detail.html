@@ -1,0 +1,1231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SkillBridge</title>
+
+    <!-- Required: Main JS Script -->
+    <script type="module" src="scripts/main.js" data-tiramai="web-gen"></script>
+
+    <!-- Required: TailwindCSS -->
+    <script src="./lib/tailwindcss/tailwindcss.js" fetchpriority="high" data-tiramai="web-gen"></script>
+
+    <!-- Required: Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest" data-tiramai="web-gen"></script>
+
+    <!-- Required: Favicon -->
+    <link rel="icon" href="assets/imgs/logo.ico" type="image/x-icon" data-tiramai="web-gen"/>
+
+    <!-- ECharts Support (for charts/graphs) -->
+    <script defer src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js" data-tiramai="web-gen"></script>
+
+    <!-- Markdown Support (for content rendering) -->
+    <script defer src="https://cdn.jsdelivr.net/npm/marked/marked.min.js" data-tiramai="web-gen"></script>
+
+    <!-- Tailwind Config Extension -->
+    <script data-tiramai="web-gen">
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            'primary-600': '#1B2A44',
+                            'primary-700': '#14233A',
+                            'primary-800': '#0E1A2B',
+                        },
+                        accent: {
+                            'gold-50': '#FFF7E6',
+                            'gold-500': '#C59D42',
+                            'gold-600': '#A97D22',
+                        },
+                        success: { '600': '#16A34A' },
+                        warning: { '600': '#D97706' },
+                        danger: { '600': '#DC2626' },
+                        info: { '600': '#2563EB' },
+                        heat: {
+                            green: '#16A34A',
+                            amber: '#F59E0B',
+                            red: '#DC2626'
+                        },
+                        neutral: {
+                            '50': '#F8FAFC',
+                            '200': '#E2E8F0',
+                            '500': '#64748B',
+                            '700': '#334155',
+                            '900': '#111827',
+                            '950': '#0B1220',
+                        }
+                    },
+                    fontSize: {
+                        'xs': ['12px', '16px'],
+                        'sm': ['14px', '20px'],
+                        'base': ['16px', '24px'],
+                        'xl': ['20px', '28px'],
+                        '2xl': ['24px', '32px'],
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-neutral-50 min-h-screen text-neutral-900">
+    <!-- Top Navigation -->
+    <header class="fixed top-0 left-0 right-0 bg-brand-primary-800 border-b border-neutral-200 flex items-center justify-between px-6 py-4 z-30 h-16">
+        <div class="flex items-center gap-4">
+            <!-- Mobile menu toggle -->
+            <button id="mobileMenuToggle" class="md:hidden text-white p-2" aria-label="Toggle menu">
+                <svg class="w-5 h-5" data-lucide="menu"></svg>
+            </button>
+            <!-- Logo -->
+            <div class="flex items-center gap-3">
+                <svg width="32" height="32" viewBox="0 0 400 400" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="84" y="116" width="56" height="168" rx="8" fill="#1E40AF"/>
+                    <rect x="176" y="84" width="56" height="200" rx="8" fill="#059669"/>
+                    <rect x="268" y="156" width="48" height="128" rx="8" fill="#1E40AF"/>
+                    <rect x="114" y="180" width="172" height="20" rx="10" fill="#F59E0B"/>
+                </svg>
+                <span class="text-xl font-semibold text-white">SkillBridge</span>
+            </div>
+        </div>
+        <div class="flex items-center gap-4">
+            <!-- User Profile Dropdown -->
+            <div class="relative" id="userProfileContainer">
+                <button id="userProfileToggle" class="flex items-center gap-2 text-white hover:text-accent-gold-500 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2 focus:ring-offset-brand-primary-800 rounded-md p-2">
+                    <div class="w-8 h-8 bg-accent-gold-500 rounded-full flex items-center justify-center">
+                        <span id="userInitials" class="text-sm font-semibold text-white">JD</span>
+                    </div>
+                    <svg class="w-4 h-4" data-lucide="chevron-down"></svg>
+                </button>
+                <!-- Dropdown Menu -->
+                <div id="userProfileDropdown" class="hidden absolute right-0 mt-2 w-64 bg-white rounded-md shadow-lg border border-neutral-200 py-2 z-50">
+                    <div class="px-4 py-3 border-b border-neutral-200">
+                        <p id="userDisplayName" class="text-sm font-semibold text-neutral-900">John Doe</p>
+                        <p id="userEmail" class="text-xs text-neutral-500">johndoe@example.com</p>
+                        <p class="text-xs text-accent-gold-600 font-medium">System Administrator</p>
+                    </div>
+                    <button id="signOutButton" class="w-full text-left px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50 flex items-center gap-2">
+                        <svg class="w-4 h-4" data-lucide="log-out"></svg>
+                        Sign Out
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="flex pt-16">
+        <!-- Side Navigation -->
+        <aside id="sidebar" class="fixed md:sticky top-16 left-0 w-64 bg-white border-r border-neutral-200 h-[calc(100vh-4rem)] overflow-y-auto z-20 transform -translate-x-full md:translate-x-0 transition-transform duration-200">
+            <nav class="p-4 space-y-1">
+                <!-- Admin Dashboard -->
+                <a href="dashboard.html" id="nav-dashboard" class="nav-item flex items-center gap-3 px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                    <svg class="w-5 h-5" data-lucide="layout-dashboard"></svg>
+                    <span>Admin Dashboard</span>
+                </a>
+
+                <!-- Employees with Children -->
+                <div class="nav-group">
+                    <button class="nav-group-toggle flex items-center justify-between w-full px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                        <div class="flex items-center gap-3">
+                            <svg class="w-5 h-5" data-lucide="users"></svg>
+                            <span>Employees</span>
+                        </div>
+                        <svg class="w-4 h-4 transform transition-transform" data-lucide="chevron-right"></svg>
+                    </button>
+                    <div class="nav-group-children hidden ml-8 space-y-1 mt-1">
+                        <a href="employees_list.html" class="nav-item block px-3 py-2 rounded-md text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-600">Employee Directory</a>
+                        <a href="employee_upsert.html?mode=create" class="nav-item block px-3 py-2 rounded-md text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-600">Add Employee</a>
+                    </div>
+                </div>
+
+                <!-- Departments -->
+                <a href="departments_list.html" id="nav-departments" class="nav-item flex items-center gap-3 px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                    <svg class="w-5 h-5" data-lucide="building"></svg>
+                    <span>Departments</span>
+                </a>
+
+                <!-- Skill Categories -->
+                <a href="skill_categories_list.html" id="nav-skill-categories" class="nav-item flex items-center gap-3 px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                    <svg class="w-5 h-5" data-lucide="layers"></svg>
+                    <span>Skill Categories</span>
+                </a>
+
+                <!-- Criticality Levels -->
+                <a href="skill_criticalities_list.html" id="nav-criticalities" class="nav-item flex items-center gap-3 px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                    <svg class="w-5 h-5" data-lucide="sliders"></svg>
+                    <span>Criticality Levels</span>
+                </a>
+
+                <!-- Skills with Children -->
+                <div class="nav-group">
+                    <button class="nav-group-toggle flex items-center justify-between w-full px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                        <div class="flex items-center gap-3">
+                            <svg class="w-5 h-5" data-lucide="book"></svg>
+                            <span>Skills</span>
+                        </div>
+                        <svg class="w-4 h-4 transform transition-transform" data-lucide="chevron-right"></svg>
+                    </button>
+                    <div class="nav-group-children hidden ml-8 space-y-1 mt-1">
+                        <a href="skills_list.html" class="nav-item block px-3 py-2 rounded-md text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-600">Skills Directory</a>
+                        <a href="skill_upsert.html?mode=create" class="nav-item block px-3 py-2 rounded-md text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-600">Add Skill</a>
+                    </div>
+                </div>
+
+                <!-- Assessment Cycles with Children -->
+                <div class="nav-group">
+                    <button class="nav-group-toggle flex items-center justify-between w-full px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                        <div class="flex items-center gap-3">
+                            <svg class="w-5 h-5" data-lucide="calendar"></svg>
+                            <span>Assessment Cycles</span>
+                        </div>
+                        <svg class="w-4 h-4 transform transition-transform" data-lucide="chevron-right"></svg>
+                    </button>
+                    <div class="nav-group-children hidden ml-8 space-y-1 mt-1">
+                        <a href="assessment_cycles_list.html" class="nav-item block px-3 py-2 rounded-md text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-600">Cycles Directory</a>
+                        <a href="assessment_cycle_upsert.html?mode=create" class="nav-item block px-3 py-2 rounded-md text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-600">Create Cycle</a>
+                    </div>
+                </div>
+
+                <!-- Trainer Pool with Children -->
+                <div class="nav-group">
+                    <button class="nav-group-toggle flex items-center justify-between w-full px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                        <div class="flex items-center gap-3">
+                            <svg class="w-5 h-5" data-lucide="users"></svg>
+                            <span>Trainer Pool</span>
+                        </div>
+                        <svg class="w-4 h-4 transform transition-transform" data-lucide="chevron-right"></svg>
+                    </button>
+                    <div class="nav-group-children hidden ml-8 space-y-1 mt-1">
+                        <a href="trainers_list.html" class="nav-item block px-3 py-2 rounded-md text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-600">Trainer Directory</a>
+                        <a href="external_trainer_upsert.html?mode=create" class="nav-item block px-3 py-2 rounded-md text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-600">Add External Trainer</a>
+                    </div>
+                </div>
+
+                <!-- Training Sessions with Children -->
+                <div class="nav-group">
+                    <button class="nav-group-toggle flex items-center justify-between w-full px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                        <div class="flex items-center gap-3">
+                            <svg class="w-5 h-5" data-lucide="calendar"></svg>
+                            <span>Training Sessions</span>
+                        </div>
+                        <svg class="w-4 h-4 transform transition-transform" data-lucide="chevron-right"></svg>
+                    </button>
+                    <div class="nav-group-children hidden ml-8 space-y-1 mt-1">
+                        <a href="training_sessions_list.html" class="nav-item block px-3 py-2 rounded-md text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-600">Sessions Calendar</a>
+                        <a href="training_session_upsert.html?mode=create" class="nav-item block px-3 py-2 rounded-md text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-600">Create Session</a>
+                    </div>
+                </div>
+
+                <!-- Disputes -->
+                <a href="disputes_list.html" id="nav-disputes" class="nav-item flex items-center gap-3 px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                    <svg class="w-5 h-5" data-lucide="alert-circle"></svg>
+                    <span>Disputes</span>
+                </a>
+
+                <!-- Analytics Section -->
+                <div class="border-t border-neutral-200 pt-4 mt-4">
+                    <h4 class="px-3 text-xs font-semibold text-neutral-500 uppercase tracking-wider mb-2">Analytics</h4>
+                    
+                    <a href="analytics_skill_gap_heatmap.html" class="nav-item flex items-center gap-3 px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                        <svg class="w-5 h-5" data-lucide="grid"></svg>
+                        <span>Skill Gap Heatmap</span>
+                    </a>
+
+                    <a href="analytics_tni_dashboard.html" class="nav-item flex items-center gap-3 px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                        <svg class="w-5 h-5" data-lucide="bar-chart-2"></svg>
+                        <span>TNI Dashboard</span>
+                    </a>
+
+                    <a href="analytics_training_forecast.html" class="nav-item flex items-center gap-3 px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                        <svg class="w-5 h-5" data-lucide="trending-up"></svg>
+                        <span>Training Forecast</span>
+                    </a>
+
+                    <a href="analytics_assessment_completion.html" class="nav-item flex items-center gap-3 px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                        <svg class="w-5 h-5" data-lucide="pie-chart"></svg>
+                        <span>Assessment Completion</span>
+                    </a>
+
+                    <a href="analytics_dispute_metrics.html" class="nav-item flex items-center gap-3 px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                        <svg class="w-5 h-5" data-lucide="bar-chart"></svg>
+                        <span>Dispute Analytics</span>
+                    </a>
+                </div>
+            </nav>
+            
+            <!-- Footer -->
+            <div class="absolute bottom-4 w-full text-center text-xs text-neutral-500 bg-white px-4">
+                Made with ❤️ by TiramAi
+            </div>
+        </aside>
+
+        <!-- Mobile Overlay -->
+        <div id="mobileOverlay" class="hidden fixed inset-0 bg-black bg-opacity-50 z-10 md:hidden"></div>
+
+        <!-- Main Content -->
+        <main id="pageContent" class="flex-1 p-6 overflow-y-auto">
+            
+<!-- Page Header -->
+<div class="mb-6">
+  <div class="flex items-center gap-2 mb-2">
+    <button onclick="funNavigateBack()" class="inline-flex items-center text-sm text-neutral-600 hover:text-brand-primary-600 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 rounded-sm">
+      <svg class="w-4 h-4 mr-1" data-lucide="arrow-left"></svg>
+      Back to Cycles
+    </button>
+  </div>
+  <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+    <div>
+      <h1 class="text-2xl leading-8 font-bold text-neutral-950">Assessment Cycle Details</h1>
+      <p class="text-sm leading-5 text-neutral-700 mt-1">Cycle configuration, active status, completion progress, and department breakdown</p>
+    </div>
+    <div id="cycleActions" class="flex items-center gap-3">
+      <!-- Actions will be populated based on cycle status -->
+    </div>
+  </div>
+</div>
+
+<!-- Loading State -->
+<div id="loadingState" class="space-y-6">
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <!-- Configuration Skeleton -->
+    <div class="bg-white border border-neutral-200 rounded-md p-6 shadow-sm">
+      <div class="h-6 bg-neutral-200 rounded w-32 mb-4 animate-pulse"></div>
+      <div class="space-y-3">
+        <div class="h-4 bg-neutral-200 rounded w-3/4 animate-pulse"></div>
+        <div class="h-4 bg-neutral-200 rounded w-1/2 animate-pulse"></div>
+        <div class="h-4 bg-neutral-200 rounded w-2/3 animate-pulse"></div>
+      </div>
+    </div>
+    
+    <!-- Progress Skeleton -->
+    <div class="bg-white border border-neutral-200 rounded-md p-6 shadow-sm">
+      <div class="h-6 bg-neutral-200 rounded w-24 mb-4 animate-pulse"></div>
+      <div class="flex items-center justify-center mb-4">
+        <div class="w-32 h-32 bg-neutral-200 rounded-full animate-pulse"></div>
+      </div>
+      <div class="space-y-2">
+        <div class="h-4 bg-neutral-200 rounded w-full animate-pulse"></div>
+        <div class="h-4 bg-neutral-200 rounded w-3/4 animate-pulse"></div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Department Table Skeleton -->
+  <div class="bg-white border border-neutral-200 rounded-md shadow-sm">
+    <div class="p-6 border-b border-neutral-200">
+      <div class="h-6 bg-neutral-200 rounded w-48 animate-pulse"></div>
+    </div>
+    <div class="p-6">
+      <div class="space-y-3">
+        <div class="h-4 bg-neutral-200 rounded w-full animate-pulse"></div>
+        <div class="h-4 bg-neutral-200 rounded w-full animate-pulse"></div>
+        <div class="h-4 bg-neutral-200 rounded w-full animate-pulse"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Main Content -->
+<div id="mainContent" class="hidden space-y-6">
+  <!-- Two Column Layout -->
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    
+    <!-- Configuration Card -->
+    <div class="bg-white border border-neutral-200 rounded-md p-6 shadow-sm">
+      <h2 class="text-xl leading-7 font-semibold text-neutral-950 mb-4">Configuration</h2>
+      <div class="space-y-4">
+        <div>
+          <dt class="text-sm font-medium text-neutral-700">Cycle Name</dt>
+          <dd id="cycleName" class="text-sm text-neutral-900 mt-1">-</dd>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <dt class="text-sm font-medium text-neutral-700">Start Date</dt>
+            <dd id="startDate" class="text-sm text-neutral-900 mt-1">-</dd>
+          </div>
+          <div>
+            <dt class="text-sm font-medium text-neutral-700">End Date</dt>
+            <dd id="endDate" class="text-sm text-neutral-900 mt-1">-</dd>
+          </div>
+        </div>
+        
+        <div>
+          <dt class="text-sm font-medium text-neutral-700">Duration</dt>
+          <dd id="duration" class="text-sm text-neutral-900 mt-1">-</dd>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <dt class="text-sm font-medium text-neutral-700">Notification Window</dt>
+            <dd id="notificationWindow" class="text-sm text-neutral-900 mt-1">-</dd>
+          </div>
+          <div>
+            <dt class="text-sm font-medium text-neutral-700">Reassessment Delay</dt>
+            <dd id="reassessmentDelay" class="text-sm text-neutral-900 mt-1">-</dd>
+          </div>
+        </div>
+        
+        <div>
+          <dt class="text-sm font-medium text-neutral-700">Mandatory Comment Threshold</dt>
+          <dd id="commentThreshold" class="text-sm text-neutral-900 mt-1">-</dd>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Progress Card -->
+    <div class="bg-white border border-neutral-200 rounded-md p-6 shadow-sm">
+      <h2 class="text-xl leading-7 font-semibold text-neutral-950 mb-4">Progress</h2>
+      
+      <!-- Progress Circle -->
+      <div class="flex items-center justify-center mb-6">
+        <div class="relative w-32 h-32">
+          <svg class="w-32 h-32 transform -rotate-90" viewBox="0 0 36 36">
+            <path class="text-neutral-200" stroke="currentColor" stroke-width="2" fill="transparent" d="M18 2.5 A15.5 15.5 0 1 1 18 33.5 A15.5 15.5 0 1 1 18 2.5"></path>
+            <path id="progressCircle" class="text-accent-gold-500 transition-all duration-300" stroke="currentColor" stroke-width="2" fill="transparent" stroke-dasharray="0, 100" d="M18 2.5 A15.5 15.5 0 1 1 18 33.5 A15.5 15.5 0 1 1 18 2.5"></path>
+          </svg>
+          <div class="absolute inset-0 flex items-center justify-center">
+            <div class="text-center">
+              <div id="completionPercentage" class="text-2xl font-bold text-neutral-950">0%</div>
+              <div class="text-xs text-neutral-600">Complete</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Progress Stats -->
+      <div class="space-y-3">
+        <div class="flex justify-between items-center">
+          <span class="text-sm text-neutral-700">Total Employees</span>
+          <span id="totalEmployees" class="text-sm font-medium text-neutral-900">-</span>
+        </div>
+        <div class="flex justify-between items-center">
+          <span class="text-sm text-neutral-700">Expected Assessments</span>
+          <span id="expectedAssessments" class="text-sm font-medium text-neutral-900">-</span>
+        </div>
+        <div class="flex justify-between items-center">
+          <span class="text-sm text-neutral-700">Completed</span>
+          <span id="completedAssessments" class="text-sm font-medium text-success-600">-</span>
+        </div>
+        <div class="flex justify-between items-center">
+          <span class="text-sm text-neutral-700">Remaining</span>
+          <span id="remainingAssessments" class="text-sm font-medium text-warning-600">-</span>
+        </div>
+        <div class="border-t border-neutral-200 pt-3">
+          <div class="flex justify-between items-center">
+            <span class="text-sm text-neutral-700">Time Status</span>
+            <span id="timeStatus" class="text-sm font-medium">-</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Department Breakdown Table -->
+  <div class="bg-white border border-neutral-200 rounded-md shadow-sm">
+    <div class="p-6 border-b border-neutral-200 flex items-center justify-between">
+      <h2 class="text-xl leading-7 font-semibold text-neutral-950">Department Breakdown</h2>
+      <button onclick="funRefreshDepartments()" class="inline-flex items-center text-sm text-neutral-500 hover:text-neutral-700" aria-label="Refresh">
+        <svg class="w-4 h-4 mr-1" data-lucide="refresh-cw"></svg>
+        Refresh
+      </button>
+    </div>
+    
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm leading-5">
+        <thead class="bg-neutral-50 text-neutral-700">
+          <tr>
+            <th class="text-left font-semibold px-6 py-3 border-b border-neutral-200">Department</th>
+            <th class="text-left font-semibold px-6 py-3 border-b border-neutral-200">Employees</th>
+            <th class="text-left font-semibold px-6 py-3 border-b border-neutral-200">Expected</th>
+            <th class="text-left font-semibold px-6 py-3 border-b border-neutral-200">Completed</th>
+            <th class="text-left font-semibold px-6 py-3 border-b border-neutral-200">Completion %</th>
+            <th class="text-left font-semibold px-6 py-3 border-b border-neutral-200">Status</th>
+          </tr>
+        </thead>
+        <tbody id="departmentTableBody" class="divide-y divide-neutral-200">
+          <!-- Table rows will be populated by JavaScript -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- Set Active Modal -->
+<div id="setActiveModal" class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+  <div class="bg-white rounded-lg shadow-lg w-full max-w-md">
+    <div class="p-6 border-b border-neutral-200">
+      <h3 class="text-base font-semibold text-neutral-950">Set Active Cycle</h3>
+    </div>
+    <div class="p-6">
+      <p class="text-sm text-neutral-700 mb-4">
+        Are you sure you want to set "<span id="setActiveCycleName" class="font-medium"></span>" as the active assessment cycle?
+      </p>
+      <p class="text-sm text-neutral-600">
+        This will deactivate any currently active cycle and make this cycle available for assessments.
+      </p>
+    </div>
+    <div class="flex items-center justify-end gap-3 px-6 py-4 bg-neutral-50 rounded-b-lg">
+      <button onclick="funCloseSetActiveModal()" class="px-4 py-2 text-sm font-medium text-neutral-700 bg-white border border-neutral-200 rounded-md hover:bg-neutral-50 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2">
+        Cancel
+      </button>
+      <button onclick="funConfirmSetActive()" class="px-4 py-2 text-sm font-medium text-white bg-brand-primary-600 rounded-md hover:bg-brand-primary-700 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2">
+        Set Active
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Close Cycle Modal -->
+<div id="closeCycleModal" class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+  <div class="bg-white rounded-lg shadow-lg w-full max-w-md">
+    <div class="p-6 border-b border-neutral-200">
+      <h3 class="text-base font-semibold text-neutral-950">Close Assessment Cycle</h3>
+    </div>
+    <div class="p-6">
+      <p class="text-sm text-neutral-700 mb-4">
+        Are you sure you want to close "<span id="closeCycleName" class="font-medium"></span>"?
+      </p>
+      <div class="bg-warning-50 border border-warning-200 rounded-md p-3 mb-4">
+        <div class="flex">
+          <svg class="w-5 h-5 text-warning-600 mr-2 flex-shrink-0 mt-0.5" data-lucide="alert-triangle"></svg>
+          <div class="text-sm text-warning-800">
+            <p class="font-medium">This action cannot be undone.</p>
+            <p class="mt-1">All assessments in this cycle will be locked and no further modifications will be possible.</p>
+            <p class="mt-1">Total assessments to be locked: <span id="assessmentCount" class="font-medium">-</span></p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="flex items-center justify-end gap-3 px-6 py-4 bg-neutral-50 rounded-b-lg">
+      <button onclick="funCloseCloseCycleModal()" class="px-4 py-2 text-sm font-medium text-neutral-700 bg-white border border-neutral-200 rounded-md hover:bg-neutral-50 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2">
+        Cancel
+      </button>
+      <button onclick="funConfirmCloseCycle()" class="px-4 py-2 text-sm font-medium text-white bg-danger-600 rounded-md hover:bg-danger-700 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2">
+        Close Cycle
+      </button>
+    </div>
+  </div>
+</div>
+
+        </main>
+    </div>
+
+    <!-- Required: JavaScript -->
+    <script type="module" data-tiramai="web-gen">
+        import { showToast, showLoader, hideLoader, env } from "./scripts/main.js";
+        import { auth, db, storage } from "./scripts/firebase.js";
+        import { onAuthStateChanged, getAuth, signOut } from 'https://www.gstatic.com/firebasejs/10.12.4/firebase-auth.js';
+        import { doc, getDoc } from 'https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js';
+
+        // Initialize Lucide icons
+        lucide.createIcons();
+
+        // Mobile menu toggle
+        const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+        const sidebar = document.getElementById('sidebar');
+        const mobileOverlay = document.getElementById('mobileOverlay');
+
+        mobileMenuToggle?.addEventListener('click', () => {
+            sidebar.classList.toggle('-translate-x-full');
+            mobileOverlay.classList.toggle('hidden');
+        });
+
+        mobileOverlay?.addEventListener('click', () => {
+            sidebar.classList.add('-translate-x-full');
+            mobileOverlay.classList.add('hidden');
+        });
+
+        // Navigation group toggles
+        document.querySelectorAll('.nav-group-toggle').forEach(toggle => {
+            toggle.addEventListener('click', (e) => {
+                e.preventDefault();
+                const children = toggle.nextElementSibling;
+                const icon = toggle.querySelector('svg:last-child');
+                
+                children.classList.toggle('hidden');
+                icon.classList.toggle('rotate-90');
+            });
+        });
+
+        // User profile dropdown
+        const userProfileToggle = document.getElementById('userProfileToggle');
+        const userProfileDropdown = document.getElementById('userProfileDropdown');
+
+        userProfileToggle?.addEventListener('click', () => {
+            userProfileDropdown.classList.toggle('hidden');
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!userProfileToggle?.contains(e.target) && !userProfileDropdown?.contains(e.target)) {
+                userProfileDropdown?.classList.add('hidden');
+            }
+        });
+
+        // Sign out functionality
+        document.getElementById('signOutButton')?.addEventListener('click', async () => {
+            try {
+                await signOut(auth);
+                window.location.href = 'auth.html';
+            } catch (error) {
+                console.error('Sign out error:', error);
+                showToast('Failed to sign out', 'error');
+            }
+        });
+
+        // Auth state management
+        onAuthStateChanged(auth, async (user) => {
+            if (!user) {
+                window.location.href = 'auth.html';
+                return;
+            }
+
+            // Load user profile data
+            try {
+                const userDoc = await getDoc(doc(db, 'users', user.uid));
+                const userData = userDoc.exists() ? userDoc.data() : null;
+
+                // Update UI with user data
+                const displayName = userData?.firstName && userData?.lastName 
+                    ? `${userData.firstName} ${userData.lastName}`
+                    : user.displayName || 'John Doe';
+                
+                const email = user.email || 'johndoe@example.com';
+                const initials = displayName.split(' ').map(n => n[0]).join('').toUpperCase();
+
+                document.getElementById('userDisplayName').textContent = displayName;
+                document.getElementById('userEmail').textContent = email;
+                document.getElementById('userInitials').textContent = initials;
+
+            } catch (error) {
+                console.error('Error loading user data:', error);
+                // Fallback to default values
+                document.getElementById('userDisplayName').textContent = 'John Doe';
+                document.getElementById('userEmail').textContent = user.email || 'johndoe@example.com';
+                document.getElementById('userInitials').textContent = 'JD';
+            }
+        });
+
+        // Set active navigation item based on current page
+        function setActiveNavItem() {
+            const currentPath = window.location.pathname;
+            const navItems = document.querySelectorAll('.nav-item');
+            
+            navItems.forEach(item => {
+                const href = item.getAttribute('href');
+                if (href && currentPath.includes(href.split('?')[0])) {
+                    item.classList.add('bg-accent-gold-50', 'text-brand-primary-600', 'border-l-2', 'border-brand-primary-600');
+                    item.classList.remove('text-neutral-700', 'text-neutral-600');
+                    
+                    // Expand parent group if needed
+                    const parentGroup = item.closest('.nav-group');
+                    if (parentGroup) {
+                        const children = parentGroup.querySelector('.nav-group-children');
+                        const icon = parentGroup.querySelector('.nav-group-toggle svg:last-child');
+                        children?.classList.remove('hidden');
+                        icon?.classList.add('rotate-90');
+                    }
+                }
+            });
+        }
+
+        // Initialize active nav state
+        setActiveNavItem();
+    </script>
+
+    
+<script id="data-script" type="module" data-tiramai="web-gen">
+  import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.12.4/firebase-auth.js';
+  import {
+    collection, getDocs, doc, getDoc, updateDoc, query, where, orderBy,
+    getCountFromServer, writeBatch, Timestamp
+  } from 'https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js';
+  import { auth, getDb } from "./scripts/firebase.js";
+  import { showToast, showLoader, hideLoader } from "./scripts/main.js";
+  
+  const db = getDb();
+  
+  // Global variables
+  let currentCycleId = null;
+  let currentCycle = null;
+  let currentAbort;
+  let departmentStats = [];
+  
+  // Utility function for abort control
+  function createAbortableRead() {
+    if (currentAbort) currentAbort.abort();
+    currentAbort = new AbortController();
+    return currentAbort.signal;
+  }
+  
+  // Date formatting helper
+  function formatDate(dateString) {
+    if (!dateString) return "N/A";
+    try {
+      const date = new Date(dateString);
+      return date.toLocaleDateString('en-US', { 
+        year: 'numeric', 
+        month: 'long', 
+        day: 'numeric' 
+      });
+    } catch {
+      return "N/A";
+    }
+  }
+  
+  // Calculate days between dates
+  function calculateDays(startDate, endDate) {
+    if (!startDate || !endDate) return 0;
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+    const diffTime = Math.abs(end - start);
+    return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  }
+  
+  // Calculate remaining days
+  function calculateRemainingDays(endDate) {
+    if (!endDate) return 0;
+    const today = new Date();
+    const end = new Date(endDate);
+    const diffTime = end - today;
+    return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  }
+  
+  // Get department status based on completion percentage
+  function getDepartmentStatus(completionPercentage, daysRemaining) {
+    if (completionPercentage === 100) return 'Complete';
+    if (daysRemaining < 0) return 'Critical';
+    if (daysRemaining <= 3) return 'At Risk';
+    return 'On Track';
+  }
+  
+  // Get status badge HTML
+  function getStatusBadge(status) {
+    const statusConfig = {
+      'Complete': 'bg-success-600 text-white',
+      'On Track': 'bg-success-600 text-white',
+      'At Risk': 'bg-warning-600 text-white',
+      'Critical': 'bg-danger-600 text-white'
+    };
+    
+    const classes = statusConfig[status] || 'bg-neutral-500 text-white';
+    return `<span class="inline-flex items-center px-2 py-1 text-xs rounded-full ${classes}">${status}</span>`;
+  }
+  
+  // Load cycle details
+  async function funLoadCycleDetails(force = false) {
+    const signal = createAbortableRead();
+    
+    try {
+      const cycleDoc = await getDoc(doc(db, 'assessmentCycles', currentCycleId));
+      if (signal.aborted) return;
+      
+      if (!cycleDoc.exists()) {
+        showToast('Assessment cycle not found', 'error');
+        return;
+      }
+      
+      currentCycle = { id: cycleDoc.id, ...cycleDoc.data() };
+      
+      // Update configuration display
+      document.getElementById('cycleName').textContent = currentCycle.cycleName || 'N/A';
+      document.getElementById('startDate').textContent = formatDate(currentCycle.startDate);
+      document.getElementById('endDate').textContent = formatDate(currentCycle.endDate);
+      
+      const duration = calculateDays(currentCycle.startDate, currentCycle.endDate);
+      document.getElementById('duration').textContent = `${duration} days`;
+      
+      document.getElementById('notificationWindow').textContent = 
+        `${currentCycle.notificationWindowDays || 7} days`;
+      document.getElementById('reassessmentDelay').textContent = 
+        `${currentCycle.reassessmentDelayDays || 14} days`;
+      document.getElementById('commentThreshold').textContent = 
+        `Score below ${currentCycle.mandatoryCommentThreshold || 7}`;
+      
+      // Calculate time status
+      const remainingDays = calculateRemainingDays(currentCycle.endDate);
+      const timeStatusElement = document.getElementById('timeStatus');
+      
+      if (remainingDays > 0) {
+        timeStatusElement.textContent = `${remainingDays} days remaining`;
+        timeStatusElement.className = 'text-sm font-medium text-success-600';
+      } else if (remainingDays === 0) {
+        timeStatusElement.textContent = 'Ends today';
+        timeStatusElement.className = 'text-sm font-medium text-warning-600';
+      } else {
+        timeStatusElement.textContent = `Ended ${Math.abs(remainingDays)} days ago`;
+        timeStatusElement.className = 'text-sm font-medium text-danger-600';
+      }
+      
+      // Update action buttons
+      funUpdateActionButtons();
+      
+    } catch (error) {
+      if (signal.aborted) return;
+      console.error('Error loading cycle details:', error);
+      showToast('Failed to load cycle details', 'error');
+    }
+  }
+  
+  // Load progress data
+  async function funLoadProgressData() {
+    const signal = createAbortableRead();
+    
+    try {
+      // Get count of active employees
+      const activeEmployeesQuery = query(
+        collection(db, 'users'),
+        where('employeeStatus', '==', 'active')
+      );
+      const employeeCountSnap = await getCountFromServer(activeEmployeesQuery);
+      if (signal.aborted) return;
+      
+      const totalEmployees = employeeCountSnap.data().count;
+      
+      // Get count of skill mappings (expected assessments)
+      const skillMappingsQuery = query(
+        collection(db, 'skillMappings'),
+        where('status', '==', 'active')
+      );
+      const mappingsCountSnap = await getCountFromServer(skillMappingsQuery);
+      if (signal.aborted) return;
+      
+      const expectedAssessments = mappingsCountSnap.data().count;
+      
+      // Get count of completed assessments for this cycle
+      const completedAssessmentsQuery = query(
+        collection(db, 'assessments'),
+        where('assessmentCycleId', '==', currentCycleId),
+        where('status', '==', 'active')
+      );
+      const completedCountSnap = await getCountFromServer(completedAssessmentsQuery);
+      if (signal.aborted) return;
+      
+      const completedAssessments = completedCountSnap.data().count;
+      const remainingAssessments = Math.max(0, expectedAssessments - completedAssessments);
+      const completionPercentage = expectedAssessments > 0 
+        ? Math.round((completedAssessments / expectedAssessments) * 100) 
+        : 0;
+      
+      // Update progress display
+      document.getElementById('totalEmployees').textContent = totalEmployees.toLocaleString();
+      document.getElementById('expectedAssessments').textContent = expectedAssessments.toLocaleString();
+      document.getElementById('completedAssessments').textContent = completedAssessments.toLocaleString();
+      document.getElementById('remainingAssessments').textContent = remainingAssessments.toLocaleString();
+      document.getElementById('completionPercentage').textContent = `${completionPercentage}%`;
+      
+      // Update progress circle
+      const progressCircle = document.getElementById('progressCircle');
+      const circumference = 2 * Math.PI * 15.5; // radius = 15.5
+      const progress = (completionPercentage / 100) * circumference;
+      progressCircle.style.strokeDasharray = `${progress}, ${circumference}`;
+      
+    } catch (error) {
+      if (signal.aborted) return;
+      console.error('Error loading progress data:', error);
+      showToast('Failed to load progress data', 'error');
+    }
+  }
+  
+  // Load department breakdown
+  async function funLoadDepartmentBreakdown(force = false) {
+    const signal = createAbortableRead();
+    
+    try {
+      showLoader();
+      
+      // Get all active departments
+      const departmentsSnap = await getDocs(query(
+        collection(db, 'departments'),
+        where('status', '==', 'active'),
+        orderBy('name')
+      ));
+      if (signal.aborted) return;
+      
+      const departments = departmentsSnap.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      }));
+      
+      departmentStats = [];
+      
+      for (const dept of departments) {
+        // Get active employees in this department
+        const employeesQuery = query(
+          collection(db, 'users'),
+          where('departmentId', '==', dept.id),
+          where('employeeStatus', '==', 'active')
+        );
+        const employeeCountSnap = await getCountFromServer(employeesQuery);
+        if (signal.aborted) return;
+        
+        const employeeCount = employeeCountSnap.data().count;
+        
+        // Get skill mappings for employees in this department
+        const employeesSnap = await getDocs(employeesQuery);
+        if (signal.aborted) return;
+        
+        const employeeIds = employeesSnap.docs.map(doc => doc.id);
+        
+        if (employeeIds.length === 0) {
+          departmentStats.push({
+            departmentId: dept.id,
+            departmentName: dept.name,
+            employeeCount: 0,
+            expectedAssessments: 0,
+            completedAssessments: 0,
+            completionPercentage: 0,
+            status: 'Complete'
+          });
+          continue;
+        }
+        
+        // Get expected assessments (skill mappings) for these employees
+        let expectedAssessments = 0;
+        for (const employeeId of employeeIds) {
+          const mappingsQuery = query(
+            collection(db, 'skillMappings'),
+            where('employeeId', '==', employeeId),
+            where('status', '==', 'active')
+          );
+          const mappingsCountSnap = await getCountFromServer(mappingsQuery);
+          if (signal.aborted) return;
+          
+          expectedAssessments += mappingsCountSnap.data().count;
+        }
+        
+        // Get completed assessments for this department in current cycle
+        let completedAssessments = 0;
+        for (const employeeId of employeeIds) {
+          const assessmentsQuery = query(
+            collection(db, 'assessments'),
+            where('employeeId', '==', employeeId),
+            where('assessmentCycleId', '==', currentCycleId),
+            where('status', '==', 'active')
+          );
+          const assessmentsCountSnap = await getCountFromServer(assessmentsQuery);
+          if (signal.aborted) return;
+          
+          completedAssessments += assessmentsCountSnap.data().count;
+        }
+        
+        const completionPercentage = expectedAssessments > 0 
+          ? Math.round((completedAssessments / expectedAssessments) * 100) 
+          : 100;
+        
+        const remainingDays = calculateRemainingDays(currentCycle?.endDate);
+        const status = getDepartmentStatus(completionPercentage, remainingDays);
+        
+        departmentStats.push({
+          departmentId: dept.id,
+          departmentName: dept.name,
+          employeeCount,
+          expectedAssessments,
+          completedAssessments,
+          completionPercentage,
+          status
+        });
+      }
+      
+      funRenderDepartmentTable();
+      
+    } catch (error) {
+      if (signal.aborted) return;
+      console.error('Error loading department breakdown:', error);
+      showToast('Failed to load department breakdown', 'error');
+    } finally {
+      hideLoader();
+    }
+  }
+  
+  // Render department table
+  function funRenderDepartmentTable() {
+    const tbody = document.getElementById('departmentTableBody');
+    
+    if (departmentStats.length === 0) {
+      tbody.innerHTML = `
+        <tr>
+          <td colspan="6" class="px-6 py-8 text-center text-neutral-500">
+            No departments found
+          </td>
+        </tr>
+      `;
+      return;
+    }
+    
+    tbody.innerHTML = departmentStats.map(dept => `
+      <tr class="hover:bg-neutral-50 cursor-pointer" onclick="funNavigateToDepartment('${dept.departmentId}')">
+        <td class="px-6 py-4 font-medium text-neutral-900">${dept.departmentName}</td>
+        <td class="px-6 py-4 text-neutral-700">${dept.employeeCount}</td>
+        <td class="px-6 py-4 text-neutral-700">${dept.expectedAssessments}</td>
+        <td class="px-6 py-4 text-success-600 font-medium">${dept.completedAssessments}</td>
+        <td class="px-6 py-4">
+          <div class="flex items-center">
+            <div class="w-16 h-2 bg-neutral-200 rounded-full mr-3">
+              <div class="h-full bg-accent-gold-500 rounded-full transition-all duration-300" 
+                   style="width: ${dept.completionPercentage}%"></div>
+            </div>
+            <span class="text-sm font-medium text-neutral-700">${dept.completionPercentage}%</span>
+          </div>
+        </td>
+        <td class="px-6 py-4">${getStatusBadge(dept.status)}</td>
+      </tr>
+    `).join('');
+  }
+  
+  // Update action buttons based on cycle status
+  function funUpdateActionButtons() {
+    const actionsContainer = document.getElementById('cycleActions');
+    const now = new Date();
+    const startDate = new Date(currentCycle.startDate);
+    const endDate = new Date(currentCycle.endDate);
+    
+    let actions = [];
+    
+    // Edit button (if not started)
+    if (now < startDate && currentCycle.status === 'active') {
+      actions.push(`
+        <button onclick="funNavigateToEdit()" 
+                class="inline-flex items-center px-4 py-2 text-sm font-medium text-neutral-700 bg-white border border-neutral-200 rounded-md hover:bg-neutral-50 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2">
+          <svg class="w-4 h-4 mr-2" data-lucide="edit"></svg>
+          Edit
+        </button>
+      `);
+    }
+    
+    // Set Active button (if not closed and not currently active)
+    if (currentCycle.status === 'active' && !currentCycle.isActiveCycle) {
+      actions.push(`
+        <button onclick="funOpenSetActiveModal()" 
+                class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-brand-primary-600 rounded-md hover:bg-brand-primary-700 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2">
+          <svg class="w-4 h-4 mr-2" data-lucide="play"></svg>
+          Set Active
+        </button>
+      `);
+    }
+    
+    // Close Cycle button (if active and end date passed)
+    if (currentCycle.status === 'active' && now > endDate) {
+      actions.push(`
+        <button onclick="funOpenCloseCycleModal()" 
+                class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-danger-600 rounded-md hover:bg-danger-700 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2">
+          <svg class="w-4 h-4 mr-2" data-lucide="lock"></svg>
+          Close Cycle
+        </button>
+      `);
+    }
+    
+    actionsContainer.innerHTML = actions.join('');
+    
+    // Re-initialize Lucide icons
+    lucide.createIcons();
+  }
+  
+  // Navigation functions
+  window.funNavigateBack = () => {
+    window.location.href = 'assessment_cycles_list.html';
+  };
+  
+  window.funNavigateToEdit = () => {
+    window.location.href = `assessment_cycle_upsert.html?mode=edit&cycleId=${currentCycleId}`;
+  };
+  
+  window.funNavigateToDepartment = (departmentId) => {
+    window.location.href = `analytics_assessment_completion.html?cycleId=${currentCycleId}&departmentId=${departmentId}`;
+  };
+  
+  // Modal functions
+  window.funOpenSetActiveModal = () => {
+    document.getElementById('setActiveCycleName').textContent = currentCycle.cycleName;
+    document.getElementById('setActiveModal').classList.remove('hidden');
+  };
+  
+  window.funCloseSetActiveModal = () => {
+    document.getElementById('setActiveModal').classList.add('hidden');
+  };
+  
+  window.funOpenCloseCycleModal = async () => {
+    try {
+      showLoader();
+      
+      // Get count of assessments in this cycle
+      const assessmentsQuery = query(
+        collection(db, 'assessments'),
+        where('assessmentCycleId', '==', currentCycleId),
+        where('status', '==', 'active')
+      );
+      const assessmentCountSnap = await getCountFromServer(assessmentsQuery);
+      const assessmentCount = assessmentCountSnap.data().count;
+      
+      document.getElementById('closeCycleName').textContent = currentCycle.cycleName;
+      document.getElementById('assessmentCount').textContent = assessmentCount.toLocaleString();
+      document.getElementById('closeCycleModal').classList.remove('hidden');
+      
+    } catch (error) {
+      console.error('Error loading assessment count:', error);
+      showToast('Failed to load assessment count', 'error');
+    } finally {
+      hideLoader();
+    }
+  };
+  
+  window.funCloseCloseCycleModal = () => {
+    document.getElementById('closeCycleModal').classList.add('hidden');
+  };
+  
+  // Confirm actions
+  window.funConfirmSetActive = async () => {
+    try {
+      showLoader();
+      
+      const batch = writeBatch(db);
+      
+      // First, deactivate any currently active cycle
+      const activeCyclesQuery = query(
+        collection(db, 'assessmentCycles'),
+        where('isActiveCycle', '==', true)
+      );
+      const activeCyclesSnap = await getDocs(activeCyclesQuery);
+      
+      activeCyclesSnap.docs.forEach(cycleDoc => {
+        batch.update(doc(db, 'assessmentCycles', cycleDoc.id), {
+          isActiveCycle: false,
+          modifiedTimestamp: new Date().toISOString()
+        });
+      });
+      
+      // Set current cycle as active
+      batch.update(doc(db, 'assessmentCycles', currentCycleId), {
+        isActiveCycle: true,
+        modifiedTimestamp: new Date().toISOString()
+      });
+      
+      await batch.commit();
+      
+      showToast('Assessment cycle set as active successfully', 'success');
+      funCloseSetActiveModal();
+      
+      // Reload data
+      await funInitialLoad(true);
+      
+    } catch (error) {
+      console.error('Error setting cycle as active:', error);
+      showToast('Failed to set cycle as active', 'error');
+    } finally {
+      hideLoader();
+    }
+  };
+  
+  window.funConfirmCloseCycle = async () => {
+    try {
+      showLoader();
+      
+      const batch = writeBatch(db);
+      
+      // Update cycle status to closed
+      batch.update(doc(db, 'assessmentCycles', currentCycleId), {
+        status: 'closed',
+        modifiedTimestamp: new Date().toISOString()
+      });
+      
+      // Lock all assessments in this cycle
+      const assessmentsQuery = query(
+        collection(db, 'assessments'),
+        where('assessmentCycleId', '==', currentCycleId),
+        where('status', '==', 'active')
+      );
+      const assessmentsSnap = await getDocs(assessmentsQuery);
+      
+      assessmentsSnap.docs.forEach(assessmentDoc => {
+        batch.update(doc(db, 'assessments', assessmentDoc.id), {
+          isLocked: true,
+          modifiedTimestamp: new Date().toISOString()
+        });
+      });
+      
+      await batch.commit();
+      
+      showToast('Assessment cycle closed successfully', 'success');
+      funCloseCloseCycleModal();
+      
+      // Reload data
+      await funInitialLoad(true);
+      
+    } catch (error) {
+      console.error('Error closing cycle:', error);
+      showToast('Failed to close cycle', 'error');
+    } finally {
+      hideLoader();
+    }
+  };
+  
+  // Refresh department data
+  window.funRefreshDepartments = () => {
+    funLoadDepartmentBreakdown(true);
+  };
+  
+  // Initialize page
+  async function funInitialLoad(force = false) {
+    const urlParams = new URLSearchParams(window.location.search);
+    currentCycleId = urlParams.get('cycleId');
+    
+    if (!currentCycleId) {
+      showToast('Cycle ID is required', 'error');
+      window.location.href = 'assessment_cycles_list.html';
+      return;
+    }
+    
+    document.getElementById('loadingState').classList.remove('hidden');
+    document.getElementById('mainContent').classList.add('hidden');
+    
+    try {
+      await Promise.all([
+        funLoadCycleDetails(force),
+        funLoadProgressData(),
+        funLoadDepartmentBreakdown(force)
+      ]);
+      
+      document.getElementById('loadingState').classList.add('hidden');
+      document.getElementById('mainContent').classList.remove('hidden');
+      
+    } catch (error) {
+      console.error('Error during initial load:', error);
+      showToast('Failed to load page data', 'error');
+    }
+  }
+  
+  // Modal backdrop clicks
+  document.getElementById('setActiveModal').addEventListener('click', (e) => {
+    if (e.target === e.currentTarget) funCloseSetActiveModal();
+  });
+  
+  document.getElementById('closeCycleModal').addEventListener('click', (e) => {
+    if (e.target === e.currentTarget) funCloseCloseCycleModal();
+  });
+  
+  // ESC key handling
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      funCloseSetActiveModal();
+      funCloseCloseCycleModal();
+    }
+  });
+  
+  // Auth state management
+  onAuthStateChanged(auth, user => {
+    if (!user) {
+      window.location.href = "auth.html?redirect=" + encodeURIComponent(window.location.pathname);
+      return;
+    }
+    
+    // Initialize page when user is authenticated
+    funInitialLoad();
+  });
+  
+  // Initialize Lucide icons
+  lucide.createIcons();
+</script>
+
+</body>
+</html>

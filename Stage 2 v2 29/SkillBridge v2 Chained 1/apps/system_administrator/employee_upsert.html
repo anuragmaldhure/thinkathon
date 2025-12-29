@@ -1,0 +1,1277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SkillBridge</title>
+
+    <!-- Required: Main JS Script -->
+    <script type="module" src="scripts/main.js" data-tiramai="web-gen"></script>
+
+    <!-- Required: TailwindCSS -->
+    <script src="./lib/tailwindcss/tailwindcss.js" fetchpriority="high" data-tiramai="web-gen"></script>
+
+    <!-- Required: Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest" data-tiramai="web-gen"></script>
+
+    <!-- Required: Favicon -->
+    <link rel="icon" href="assets/imgs/logo.ico" type="image/x-icon" data-tiramai="web-gen"/>
+
+    <!-- ECharts Support (for charts/graphs) -->
+    <script defer src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js" data-tiramai="web-gen"></script>
+
+    <!-- Markdown Support (for content rendering) -->
+    <script defer src="https://cdn.jsdelivr.net/npm/marked/marked.min.js" data-tiramai="web-gen"></script>
+
+    <!-- Tailwind Config Extension -->
+    <script data-tiramai="web-gen">
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            'primary-600': '#1B2A44',
+                            'primary-700': '#14233A',
+                            'primary-800': '#0E1A2B',
+                        },
+                        accent: {
+                            'gold-50': '#FFF7E6',
+                            'gold-500': '#C59D42',
+                            'gold-600': '#A97D22',
+                        },
+                        success: { '600': '#16A34A' },
+                        warning: { '600': '#D97706' },
+                        danger: { '600': '#DC2626' },
+                        info: { '600': '#2563EB' },
+                        heat: {
+                            green: '#16A34A',
+                            amber: '#F59E0B',
+                            red: '#DC2626'
+                        },
+                        neutral: {
+                            '50': '#F8FAFC',
+                            '200': '#E2E8F0',
+                            '500': '#64748B',
+                            '700': '#334155',
+                            '900': '#111827',
+                            '950': '#0B1220',
+                        }
+                    },
+                    fontSize: {
+                        'xs': ['12px', '16px'],
+                        'sm': ['14px', '20px'],
+                        'base': ['16px', '24px'],
+                        'xl': ['20px', '28px'],
+                        '2xl': ['24px', '32px'],
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-neutral-50 min-h-screen text-neutral-900">
+    <!-- Top Navigation -->
+    <header class="fixed top-0 left-0 right-0 bg-brand-primary-800 border-b border-neutral-200 flex items-center justify-between px-6 py-4 z-30 h-16">
+        <div class="flex items-center gap-4">
+            <!-- Mobile menu toggle -->
+            <button id="mobileMenuToggle" class="md:hidden text-white p-2" aria-label="Toggle menu">
+                <svg class="w-5 h-5" data-lucide="menu"></svg>
+            </button>
+            <!-- Logo -->
+            <div class="flex items-center gap-3">
+                <svg width="32" height="32" viewBox="0 0 400 400" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="84" y="116" width="56" height="168" rx="8" fill="#1E40AF"/>
+                    <rect x="176" y="84" width="56" height="200" rx="8" fill="#059669"/>
+                    <rect x="268" y="156" width="48" height="128" rx="8" fill="#1E40AF"/>
+                    <rect x="114" y="180" width="172" height="20" rx="10" fill="#F59E0B"/>
+                </svg>
+                <span class="text-xl font-semibold text-white">SkillBridge</span>
+            </div>
+        </div>
+        <div class="flex items-center gap-4">
+            <!-- User Profile Dropdown -->
+            <div class="relative" id="userProfileContainer">
+                <button id="userProfileToggle" class="flex items-center gap-2 text-white hover:text-accent-gold-500 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2 focus:ring-offset-brand-primary-800 rounded-md p-2">
+                    <div class="w-8 h-8 bg-accent-gold-500 rounded-full flex items-center justify-center">
+                        <span id="userInitials" class="text-sm font-semibold text-white">JD</span>
+                    </div>
+                    <svg class="w-4 h-4" data-lucide="chevron-down"></svg>
+                </button>
+                <!-- Dropdown Menu -->
+                <div id="userProfileDropdown" class="hidden absolute right-0 mt-2 w-64 bg-white rounded-md shadow-lg border border-neutral-200 py-2 z-50">
+                    <div class="px-4 py-3 border-b border-neutral-200">
+                        <p id="userDisplayName" class="text-sm font-semibold text-neutral-900">John Doe</p>
+                        <p id="userEmail" class="text-xs text-neutral-500">johndoe@example.com</p>
+                        <p class="text-xs text-accent-gold-600 font-medium">System Administrator</p>
+                    </div>
+                    <button id="signOutButton" class="w-full text-left px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50 flex items-center gap-2">
+                        <svg class="w-4 h-4" data-lucide="log-out"></svg>
+                        Sign Out
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="flex pt-16">
+        <!-- Side Navigation -->
+        <aside id="sidebar" class="fixed md:sticky top-16 left-0 w-64 bg-white border-r border-neutral-200 h-[calc(100vh-4rem)] overflow-y-auto z-20 transform -translate-x-full md:translate-x-0 transition-transform duration-200">
+            <nav class="p-4 space-y-1">
+                <!-- Admin Dashboard -->
+                <a href="dashboard.html" id="nav-dashboard" class="nav-item flex items-center gap-3 px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                    <svg class="w-5 h-5" data-lucide="layout-dashboard"></svg>
+                    <span>Admin Dashboard</span>
+                </a>
+
+                <!-- Employees with Children -->
+                <div class="nav-group">
+                    <button class="nav-group-toggle flex items-center justify-between w-full px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                        <div class="flex items-center gap-3">
+                            <svg class="w-5 h-5" data-lucide="users"></svg>
+                            <span>Employees</span>
+                        </div>
+                        <svg class="w-4 h-4 transform transition-transform" data-lucide="chevron-right"></svg>
+                    </button>
+                    <div class="nav-group-children hidden ml-8 space-y-1 mt-1">
+                        <a href="employees_list.html" class="nav-item block px-3 py-2 rounded-md text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-600">Employee Directory</a>
+                        <a href="employee_upsert.html?mode=create" class="nav-item block px-3 py-2 rounded-md text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-600">Add Employee</a>
+                    </div>
+                </div>
+
+                <!-- Departments -->
+                <a href="departments_list.html" id="nav-departments" class="nav-item flex items-center gap-3 px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                    <svg class="w-5 h-5" data-lucide="building"></svg>
+                    <span>Departments</span>
+                </a>
+
+                <!-- Skill Categories -->
+                <a href="skill_categories_list.html" id="nav-skill-categories" class="nav-item flex items-center gap-3 px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                    <svg class="w-5 h-5" data-lucide="layers"></svg>
+                    <span>Skill Categories</span>
+                </a>
+
+                <!-- Criticality Levels -->
+                <a href="skill_criticalities_list.html" id="nav-criticalities" class="nav-item flex items-center gap-3 px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                    <svg class="w-5 h-5" data-lucide="sliders"></svg>
+                    <span>Criticality Levels</span>
+                </a>
+
+                <!-- Skills with Children -->
+                <div class="nav-group">
+                    <button class="nav-group-toggle flex items-center justify-between w-full px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                        <div class="flex items-center gap-3">
+                            <svg class="w-5 h-5" data-lucide="book"></svg>
+                            <span>Skills</span>
+                        </div>
+                        <svg class="w-4 h-4 transform transition-transform" data-lucide="chevron-right"></svg>
+                    </button>
+                    <div class="nav-group-children hidden ml-8 space-y-1 mt-1">
+                        <a href="skills_list.html" class="nav-item block px-3 py-2 rounded-md text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-600">Skills Directory</a>
+                        <a href="skill_upsert.html?mode=create" class="nav-item block px-3 py-2 rounded-md text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-600">Add Skill</a>
+                    </div>
+                </div>
+
+                <!-- Assessment Cycles with Children -->
+                <div class="nav-group">
+                    <button class="nav-group-toggle flex items-center justify-between w-full px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                        <div class="flex items-center gap-3">
+                            <svg class="w-5 h-5" data-lucide="calendar"></svg>
+                            <span>Assessment Cycles</span>
+                        </div>
+                        <svg class="w-4 h-4 transform transition-transform" data-lucide="chevron-right"></svg>
+                    </button>
+                    <div class="nav-group-children hidden ml-8 space-y-1 mt-1">
+                        <a href="assessment_cycles_list.html" class="nav-item block px-3 py-2 rounded-md text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-600">Cycles Directory</a>
+                        <a href="assessment_cycle_upsert.html?mode=create" class="nav-item block px-3 py-2 rounded-md text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-600">Create Cycle</a>
+                    </div>
+                </div>
+
+                <!-- Trainer Pool with Children -->
+                <div class="nav-group">
+                    <button class="nav-group-toggle flex items-center justify-between w-full px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                        <div class="flex items-center gap-3">
+                            <svg class="w-5 h-5" data-lucide="users"></svg>
+                            <span>Trainer Pool</span>
+                        </div>
+                        <svg class="w-4 h-4 transform transition-transform" data-lucide="chevron-right"></svg>
+                    </button>
+                    <div class="nav-group-children hidden ml-8 space-y-1 mt-1">
+                        <a href="trainers_list.html" class="nav-item block px-3 py-2 rounded-md text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-600">Trainer Directory</a>
+                        <a href="external_trainer_upsert.html?mode=create" class="nav-item block px-3 py-2 rounded-md text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-600">Add External Trainer</a>
+                    </div>
+                </div>
+
+                <!-- Training Sessions with Children -->
+                <div class="nav-group">
+                    <button class="nav-group-toggle flex items-center justify-between w-full px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                        <div class="flex items-center gap-3">
+                            <svg class="w-5 h-5" data-lucide="calendar"></svg>
+                            <span>Training Sessions</span>
+                        </div>
+                        <svg class="w-4 h-4 transform transition-transform" data-lucide="chevron-right"></svg>
+                    </button>
+                    <div class="nav-group-children hidden ml-8 space-y-1 mt-1">
+                        <a href="training_sessions_list.html" class="nav-item block px-3 py-2 rounded-md text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-600">Sessions Calendar</a>
+                        <a href="training_session_upsert.html?mode=create" class="nav-item block px-3 py-2 rounded-md text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-600">Create Session</a>
+                    </div>
+                </div>
+
+                <!-- Disputes -->
+                <a href="disputes_list.html" id="nav-disputes" class="nav-item flex items-center gap-3 px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                    <svg class="w-5 h-5" data-lucide="alert-circle"></svg>
+                    <span>Disputes</span>
+                </a>
+
+                <!-- Analytics Section -->
+                <div class="border-t border-neutral-200 pt-4 mt-4">
+                    <h4 class="px-3 text-xs font-semibold text-neutral-500 uppercase tracking-wider mb-2">Analytics</h4>
+                    
+                    <a href="analytics_skill_gap_heatmap.html" class="nav-item flex items-center gap-3 px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                        <svg class="w-5 h-5" data-lucide="grid"></svg>
+                        <span>Skill Gap Heatmap</span>
+                    </a>
+
+                    <a href="analytics_tni_dashboard.html" class="nav-item flex items-center gap-3 px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                        <svg class="w-5 h-5" data-lucide="bar-chart-2"></svg>
+                        <span>TNI Dashboard</span>
+                    </a>
+
+                    <a href="analytics_training_forecast.html" class="nav-item flex items-center gap-3 px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                        <svg class="w-5 h-5" data-lucide="trending-up"></svg>
+                        <span>Training Forecast</span>
+                    </a>
+
+                    <a href="analytics_assessment_completion.html" class="nav-item flex items-center gap-3 px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                        <svg class="w-5 h-5" data-lucide="pie-chart"></svg>
+                        <span>Assessment Completion</span>
+                    </a>
+
+                    <a href="analytics_dispute_metrics.html" class="nav-item flex items-center gap-3 px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                        <svg class="w-5 h-5" data-lucide="bar-chart"></svg>
+                        <span>Dispute Analytics</span>
+                    </a>
+                </div>
+            </nav>
+            
+            <!-- Footer -->
+            <div class="absolute bottom-4 w-full text-center text-xs text-neutral-500 bg-white px-4">
+                Made with ❤️ by TiramAi
+            </div>
+        </aside>
+
+        <!-- Mobile Overlay -->
+        <div id="mobileOverlay" class="hidden fixed inset-0 bg-black bg-opacity-50 z-10 md:hidden"></div>
+
+        <!-- Main Content -->
+        <main id="pageContent" class="flex-1 p-6 overflow-y-auto">
+            
+<!-- Employee Upsert Form -->
+<div class="container mx-auto max-w-4xl">
+  <!-- Header -->
+  <div class="mb-6">
+    <div class="flex items-center justify-between">
+      <div>
+        <h1 id="pageTitle" class="text-2xl leading-8 font-bold text-neutral-950 mb-1">Create Employee</h1>
+        <p class="text-sm leading-5 text-neutral-700">Add a new employee to the system with hierarchy and role controls</p>
+      </div>
+      <button 
+        id="btnCancel" 
+        class="inline-flex items-center gap-2 h-11 px-4 rounded-md border border-neutral-200 bg-white text-neutral-900 hover:bg-neutral-50 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2"
+      >
+        <svg class="w-5 h-5" data-lucide="arrow-left"></svg>
+        Back to Directory
+      </button>
+    </div>
+  </div>
+
+  <!-- Form -->
+  <form id="employeeForm" class="space-y-6">
+    <!-- Personal Information Section -->
+    <div class="bg-white border border-neutral-200 rounded-md p-4 md:p-6 shadow-sm">
+      <h3 class="text-base leading-6 font-semibold mb-4 text-neutral-950">Personal Information</h3>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <!-- Employee ID -->
+        <div>
+          <label for="employeeId" class="block text-sm font-medium text-neutral-900 mb-1">Employee ID <span class="text-danger-600">*</span></label>
+          <input 
+            type="text" 
+            id="employeeId" 
+            name="employeeId" 
+            required 
+            maxlength="50"
+            class="w-full border border-neutral-200 rounded-sm px-3 py-2 bg-white text-sm leading-5 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2" 
+            placeholder="Enter unique employee ID"
+          />
+          <p class="mt-1 text-xs text-neutral-500">Company-specific employee identifier</p>
+          <div id="employeeIdError" class="mt-1 text-xs text-danger-600 hidden"></div>
+        </div>
+
+        <!-- First Name -->
+        <div>
+          <label for="firstName" class="block text-sm font-medium text-neutral-900 mb-1">First Name <span class="text-danger-600">*</span></label>
+          <input 
+            type="text" 
+            id="firstName" 
+            name="firstName" 
+            required 
+            maxlength="100"
+            class="w-full border border-neutral-200 rounded-sm px-3 py-2 bg-white text-sm leading-5 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2" 
+            placeholder="Enter first name"
+          />
+          <div id="firstNameError" class="mt-1 text-xs text-danger-600 hidden"></div>
+        </div>
+
+        <!-- Last Name -->
+        <div>
+          <label for="lastName" class="block text-sm font-medium text-neutral-900 mb-1">Last Name <span class="text-danger-600">*</span></label>
+          <input 
+            type="text" 
+            id="lastName" 
+            name="lastName" 
+            required 
+            maxlength="100"
+            class="w-full border border-neutral-200 rounded-sm px-3 py-2 bg-white text-sm leading-5 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2" 
+            placeholder="Enter last name"
+          />
+          <div id="lastNameError" class="mt-1 text-xs text-danger-600 hidden"></div>
+        </div>
+
+        <!-- Email -->
+        <div>
+          <label for="email" class="block text-sm font-medium text-neutral-900 mb-1">Email <span class="text-danger-600">*</span></label>
+          <input 
+            type="email" 
+            id="email" 
+            name="email" 
+            required 
+            class="w-full border border-neutral-200 rounded-sm px-3 py-2 bg-white text-sm leading-5 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2" 
+            placeholder="Enter email address"
+          />
+          <div id="emailError" class="mt-1 text-xs text-danger-600 hidden"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Professional Information Section -->
+    <div class="bg-white border border-neutral-200 rounded-md p-4 md:p-6 shadow-sm">
+      <h3 class="text-base leading-6 font-semibold mb-4 text-neutral-950">Professional Information</h3>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <!-- Job Title -->
+        <div>
+          <label for="jobTitle" class="block text-sm font-medium text-neutral-900 mb-1">Job Title <span class="text-danger-600">*</span></label>
+          <input 
+            type="text" 
+            id="jobTitle" 
+            name="jobTitle" 
+            required 
+            class="w-full border border-neutral-200 rounded-sm px-3 py-2 bg-white text-sm leading-5 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2" 
+            placeholder="Enter job title"
+          />
+          <div id="jobTitleError" class="mt-1 text-xs text-danger-600 hidden"></div>
+        </div>
+
+        <!-- Department -->
+        <div>
+          <label for="departmentId" class="block text-sm font-medium text-neutral-900 mb-1">Department <span class="text-danger-600">*</span></label>
+          <select 
+            id="departmentId" 
+            name="departmentId" 
+            required 
+            class="w-full border border-neutral-200 rounded-sm px-3 py-2 bg-white text-sm leading-5 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2"
+          >
+            <option value="">Select a department</option>
+          </select>
+          <div id="departmentIdError" class="mt-1 text-xs text-danger-600 hidden"></div>
+        </div>
+
+        <!-- Team Lead -->
+        <div class="md:col-span-2">
+          <label for="teamLeadId" class="block text-sm font-medium text-neutral-900 mb-1">Team Lead <span class="text-neutral-500">(Optional)</span></label>
+          <select 
+            id="teamLeadId" 
+            name="teamLeadId" 
+            class="w-full border border-neutral-200 rounded-sm px-3 py-2 bg-white text-sm leading-5 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2"
+          >
+            <option value="">No team lead assigned</option>
+          </select>
+          <p class="mt-1 text-xs text-neutral-500">Select an active employee to be the team lead</p>
+          <div id="teamLeadIdError" class="mt-1 text-xs text-danger-600 hidden"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- System Settings Section -->
+    <div class="bg-white border border-neutral-200 rounded-md p-4 md:p-6 shadow-sm">
+      <h3 class="text-base leading-6 font-semibold mb-4 text-neutral-950">System Settings</h3>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <!-- Employee Status -->
+        <div>
+          <label for="employeeStatus" class="block text-sm font-medium text-neutral-900 mb-1">Employee Status <span class="text-danger-600">*</span></label>
+          <select 
+            id="employeeStatus" 
+            name="employeeStatus" 
+            required 
+            class="w-full border border-neutral-200 rounded-sm px-3 py-2 bg-white text-sm leading-5 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2"
+          >
+            <option value="active">Active</option>
+            <option value="inactive">Inactive</option>
+          </select>
+          <p class="mt-1 text-xs text-neutral-500">Employment status for filtering</p>
+        </div>
+
+        <!-- System Role -->
+        <div>
+          <label for="systemRole" class="block text-sm font-medium text-neutral-900 mb-1">System Role <span class="text-danger-600">*</span></label>
+          <select 
+            id="systemRole" 
+            name="systemRole" 
+            required 
+            class="w-full border border-neutral-200 rounded-sm px-3 py-2 bg-white text-sm leading-5 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2"
+          >
+            <option value="employee">Employee</option>
+            <option value="systemAdmin">System Administrator</option>
+          </select>
+          <p class="mt-1 text-xs text-neutral-500">Administrative privileges level</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="flex flex-col-reverse sm:flex-row gap-3 sm:justify-end">
+      <button 
+        type="button" 
+        id="btnCancelForm" 
+        class="inline-flex items-center justify-center h-11 px-4 rounded-md border border-neutral-200 bg-white text-neutral-900 hover:bg-neutral-50 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2"
+      >
+        Cancel
+      </button>
+      <button 
+        type="submit" 
+        id="btnSave" 
+        class="inline-flex items-center justify-center h-11 px-6 rounded-md bg-brand-primary-600 hover:bg-brand-primary-700 text-white focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
+      >
+        <svg class="w-5 h-5 mr-2" data-lucide="save"></svg>
+        <span id="saveButtonText">Create Employee</span>
+      </button>
+    </div>
+  </form>
+
+  <!-- Loading Skeleton (hidden by default) -->
+  <div id="loadingSkeleton" class="hidden space-y-6">
+    <div class="bg-white border border-neutral-200 rounded-md p-4 md:p-6 shadow-sm">
+      <div class="h-6 bg-neutral-200 rounded w-1/4 mb-4 animate-pulse"></div>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <div class="h-4 bg-neutral-200 rounded w-1/3 mb-2 animate-pulse"></div>
+          <div class="h-10 bg-neutral-200 rounded animate-pulse"></div>
+        </div>
+        <div>
+          <div class="h-4 bg-neutral-200 rounded w-1/3 mb-2 animate-pulse"></div>
+          <div class="h-10 bg-neutral-200 rounded animate-pulse"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Team Lead Change Confirmation Modal -->
+<div id="teamLeadChangeModal" class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+  <div class="bg-white rounded-lg shadow-lg max-w-lg w-full max-h-[90vh] overflow-y-auto" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="p-6">
+      <!-- Modal Header -->
+      <div class="flex items-center justify-between mb-4">
+        <h3 id="modal-title" class="text-xl leading-7 font-semibold text-neutral-950">Confirm Team Lead Change</h3>
+        <button id="closeModal" class="text-neutral-500 hover:text-neutral-700 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2 rounded-md p-1" aria-label="Close modal">
+          <svg class="w-6 h-6" data-lucide="x"></svg>
+        </button>
+      </div>
+
+      <!-- Modal Content -->
+      <div class="space-y-4">
+        <div class="p-4 bg-warning-50 border border-warning-200 rounded-md">
+          <div class="flex items-start gap-3">
+            <svg class="w-5 h-5 text-warning-600 mt-0.5 flex-shrink-0" data-lucide="alert-triangle"></svg>
+            <div>
+              <h4 class="text-sm font-medium text-warning-800 mb-1">Impact Warning</h4>
+              <p class="text-sm text-warning-700">
+                Changing the team lead will close <span id="pendingAssessmentCount" class="font-semibold">0</span> pending assessment(s) for this employee.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <h4 class="text-sm font-medium text-neutral-900 mb-2">Pending Assessments to be Closed:</h4>
+          <div id="pendingAssessmentsList" class="max-h-32 overflow-y-auto bg-neutral-50 border border-neutral-200 rounded-md p-3">
+            <!-- Will be populated dynamically -->
+          </div>
+        </div>
+
+        <p class="text-sm text-neutral-600">
+          These assessments will be marked as inactive and cannot be completed. This action cannot be undone.
+        </p>
+      </div>
+
+      <!-- Modal Actions -->
+      <div class="flex flex-col-reverse sm:flex-row gap-3 sm:justify-end mt-6">
+        <button 
+          id="cancelTeamLeadChange" 
+          type="button" 
+          class="inline-flex items-center justify-center h-11 px-4 rounded-md border border-neutral-200 bg-white text-neutral-900 hover:bg-neutral-50 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2"
+        >
+          Cancel
+        </button>
+        <button 
+          id="confirmTeamLeadChange" 
+          type="button" 
+          class="inline-flex items-center justify-center h-11 px-6 rounded-md bg-warning-600 hover:bg-warning-700 text-white focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2"
+        >
+          <svg class="w-5 h-5 mr-2" data-lucide="check"></svg>
+          Confirm Change
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+        </main>
+    </div>
+
+    <!-- Required: JavaScript -->
+    <script type="module" data-tiramai="web-gen">
+        import { showToast, showLoader, hideLoader, env } from "./scripts/main.js";
+        import { auth, db, storage } from "./scripts/firebase.js";
+        import { onAuthStateChanged, getAuth, signOut } from 'https://www.gstatic.com/firebasejs/10.12.4/firebase-auth.js';
+        import { doc, getDoc } from 'https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js';
+
+        // Initialize Lucide icons
+        lucide.createIcons();
+
+        // Mobile menu toggle
+        const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+        const sidebar = document.getElementById('sidebar');
+        const mobileOverlay = document.getElementById('mobileOverlay');
+
+        mobileMenuToggle?.addEventListener('click', () => {
+            sidebar.classList.toggle('-translate-x-full');
+            mobileOverlay.classList.toggle('hidden');
+        });
+
+        mobileOverlay?.addEventListener('click', () => {
+            sidebar.classList.add('-translate-x-full');
+            mobileOverlay.classList.add('hidden');
+        });
+
+        // Navigation group toggles
+        document.querySelectorAll('.nav-group-toggle').forEach(toggle => {
+            toggle.addEventListener('click', (e) => {
+                e.preventDefault();
+                const children = toggle.nextElementSibling;
+                const icon = toggle.querySelector('svg:last-child');
+                
+                children.classList.toggle('hidden');
+                icon.classList.toggle('rotate-90');
+            });
+        });
+
+        // User profile dropdown
+        const userProfileToggle = document.getElementById('userProfileToggle');
+        const userProfileDropdown = document.getElementById('userProfileDropdown');
+
+        userProfileToggle?.addEventListener('click', () => {
+            userProfileDropdown.classList.toggle('hidden');
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!userProfileToggle?.contains(e.target) && !userProfileDropdown?.contains(e.target)) {
+                userProfileDropdown?.classList.add('hidden');
+            }
+        });
+
+        // Sign out functionality
+        document.getElementById('signOutButton')?.addEventListener('click', async () => {
+            try {
+                await signOut(auth);
+                window.location.href = 'auth.html';
+            } catch (error) {
+                console.error('Sign out error:', error);
+                showToast('Failed to sign out', 'error');
+            }
+        });
+
+        // Auth state management
+        onAuthStateChanged(auth, async (user) => {
+            if (!user) {
+                window.location.href = 'auth.html';
+                return;
+            }
+
+            // Load user profile data
+            try {
+                const userDoc = await getDoc(doc(db, 'users', user.uid));
+                const userData = userDoc.exists() ? userDoc.data() : null;
+
+                // Update UI with user data
+                const displayName = userData?.firstName && userData?.lastName 
+                    ? `${userData.firstName} ${userData.lastName}`
+                    : user.displayName || 'John Doe';
+                
+                const email = user.email || 'johndoe@example.com';
+                const initials = displayName.split(' ').map(n => n[0]).join('').toUpperCase();
+
+                document.getElementById('userDisplayName').textContent = displayName;
+                document.getElementById('userEmail').textContent = email;
+                document.getElementById('userInitials').textContent = initials;
+
+            } catch (error) {
+                console.error('Error loading user data:', error);
+                // Fallback to default values
+                document.getElementById('userDisplayName').textContent = 'John Doe';
+                document.getElementById('userEmail').textContent = user.email || 'johndoe@example.com';
+                document.getElementById('userInitials').textContent = 'JD';
+            }
+        });
+
+        // Set active navigation item based on current page
+        function setActiveNavItem() {
+            const currentPath = window.location.pathname;
+            const navItems = document.querySelectorAll('.nav-item');
+            
+            navItems.forEach(item => {
+                const href = item.getAttribute('href');
+                if (href && currentPath.includes(href.split('?')[0])) {
+                    item.classList.add('bg-accent-gold-50', 'text-brand-primary-600', 'border-l-2', 'border-brand-primary-600');
+                    item.classList.remove('text-neutral-700', 'text-neutral-600');
+                    
+                    // Expand parent group if needed
+                    const parentGroup = item.closest('.nav-group');
+                    if (parentGroup) {
+                        const children = parentGroup.querySelector('.nav-group-children');
+                        const icon = parentGroup.querySelector('.nav-group-toggle svg:last-child');
+                        children?.classList.remove('hidden');
+                        icon?.classList.add('rotate-90');
+                    }
+                }
+            });
+        }
+
+        // Initialize active nav state
+        setActiveNavItem();
+    </script>
+
+    
+<script id="data-script" type="module" data-tiramai="web-gen">
+  import { 
+    collection, getDocs, setDoc, addDoc, doc, getDoc, updateDoc, deleteDoc, writeBatch,
+    query, where, orderBy, limit, startAfter, endBefore, onSnapshot, Timestamp,
+    getCountFromServer, enableIndexedDbPersistence
+  } from 'https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js';
+  import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.12.4/firebase-auth.js';
+  import { auth, getDb } from "./scripts/firebase.js";
+  import { showToast, showLoader, hideLoader, env } from "./scripts/main.js";
+
+  const db = getDb();
+
+  // State
+  let currentMode = 'create'; // 'create' or 'edit'
+  let currentEmployeeId = null;
+  let departments = [];
+  let teamLeads = [];
+  let currentEmployee = null;
+  let pendingAssessments = [];
+  let originalTeamLeadId = null;
+  
+  // Auth check and redirect
+  onAuthStateChanged(auth, user => {
+    if (!user) {
+      location.href = "auth.html?redirect=" + encodeURIComponent(location.pathname + location.search);
+    }
+  });
+
+  // Initialize page
+  document.addEventListener('DOMContentLoaded', async () => {
+    lucide.createIcons();
+    
+    // Parse URL parameters
+    const urlParams = new URLSearchParams(window.location.search);
+    currentMode = urlParams.get('mode') || 'create';
+    currentEmployeeId = urlParams.get('employeeId');
+
+    // Validate parameters
+    if (currentMode === 'edit' && !currentEmployeeId) {
+      showToast('Employee ID is required for edit mode', 'error');
+      location.href = 'employees_list.html';
+      return;
+    }
+
+    // Set page title based on mode
+    const pageTitle = document.getElementById('pageTitle');
+    const saveButtonText = document.getElementById('saveButtonText');
+    
+    if (currentMode === 'edit') {
+      pageTitle.textContent = 'Edit Employee';
+      saveButtonText.textContent = 'Update Employee';
+      document.querySelector('p').textContent = 'Update employee information with hierarchy and role controls';
+    }
+
+    await funInitialLoad();
+  });
+
+  // Initial data loading with skeleton
+  async function funInitialLoad() {
+    const skeleton = document.getElementById('loadingSkeleton');
+    const form = document.getElementById('employeeForm');
+    
+    try {
+      skeleton.classList.remove('hidden');
+      form.classList.add('hidden');
+
+      // Load dependencies concurrently
+      await Promise.all([
+        funLoadDepartments(),
+        funLoadTeamLeads(),
+        currentMode === 'edit' ? funLoadEmployee() : Promise.resolve()
+      ]);
+
+      // Populate form if editing
+      if (currentMode === 'edit' && currentEmployee) {
+        funPopulateForm();
+      }
+
+    } catch (error) {
+      console.error('Error during initial load:', error);
+      showToast(error?.message || 'Failed to load page data', 'error');
+    } finally {
+      skeleton.classList.add('hidden');
+      form.classList.remove('hidden');
+    }
+  }
+
+  // Load departments
+  async function funLoadDepartments() {
+    try {
+      const q = query(
+        collection(db, 'departments'),
+        where('status', '==', 'active'),
+        orderBy('name')
+      );
+      
+      const snapshot = await getDocs(q);
+      departments = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      }));
+
+      const select = document.getElementById('departmentId');
+      select.innerHTML = '<option value="">Select a department</option>';
+      
+      departments.forEach(dept => {
+        const option = document.createElement('option');
+        option.value = dept.id;
+        option.textContent = dept.name || 'N/A';
+        select.appendChild(option);
+      });
+
+    } catch (error) {
+      console.error('Error loading departments:', error);
+      showToast('Failed to load departments', 'error');
+    }
+  }
+
+  // Load team leads (active employees excluding self and direct reports)
+  async function funLoadTeamLeads() {
+    try {
+      const q = query(
+        collection(db, 'users'),
+        where('employeeStatus', '==', 'active'),
+        orderBy('firstName')
+      );
+      
+      const snapshot = await getDocs(q);
+      let allUsers = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      }));
+
+      // Filter out self and direct reports if editing
+      if (currentMode === 'edit' && currentEmployeeId) {
+        // Exclude self
+        allUsers = allUsers.filter(user => user.id !== currentEmployeeId);
+        
+        // Exclude direct reports (those who have this employee as team lead)
+        allUsers = allUsers.filter(user => user.teamLeadId !== currentEmployeeId);
+      }
+
+      teamLeads = allUsers;
+
+      const select = document.getElementById('teamLeadId');
+      select.innerHTML = '<option value="">No team lead assigned</option>';
+      
+      teamLeads.forEach(user => {
+        const option = document.createElement('option');
+        option.value = user.id;
+        const displayName = `${user.firstName || 'N/A'} ${user.lastName || ''} (${user.employeeId || 'N/A'})`;
+        option.textContent = displayName;
+        select.appendChild(option);
+      });
+
+    } catch (error) {
+      console.error('Error loading team leads:', error);
+      showToast('Failed to load team leads', 'error');
+    }
+  }
+
+  // Load employee for editing
+  async function funLoadEmployee() {
+    if (!currentEmployeeId) return;
+
+    try {
+      const docRef = doc(db, 'users', currentEmployeeId);
+      const docSnap = await getDoc(docRef);
+      
+      if (!docSnap.exists()) {
+        throw new Error('Employee not found');
+      }
+      
+      currentEmployee = { id: docSnap.id, ...docSnap.data() };
+      originalTeamLeadId = currentEmployee.teamLeadId || null;
+
+    } catch (error) {
+      console.error('Error loading employee:', error);
+      showToast('Failed to load employee data', 'error');
+      location.href = 'employees_list.html';
+    }
+  }
+
+  // Populate form with current employee data
+  function funPopulateForm() {
+    if (!currentEmployee) return;
+
+    const form = document.getElementById('employeeForm');
+    const elements = form.elements;
+
+    // Populate form fields
+    elements.employeeId.value = currentEmployee.employeeId || '';
+    elements.firstName.value = currentEmployee.firstName || '';
+    elements.lastName.value = currentEmployee.lastName || '';
+    elements.email.value = currentEmployee.email || '';
+    elements.jobTitle.value = currentEmployee.jobTitle || '';
+    elements.departmentId.value = currentEmployee.departmentId || '';
+    elements.teamLeadId.value = currentEmployee.teamLeadId || '';
+    elements.employeeStatus.value = currentEmployee.employeeStatus || 'active';
+    elements.systemRole.value = currentEmployee.systemRole || 'employee';
+  }
+
+  // Check for active cycle and pending assessments
+  async function funCheckActiveCycleAndPendingAssessments(employeeId) {
+    try {
+      // Check if there's an active assessment cycle
+      const cycleQuery = query(
+        collection(db, 'assessmentCycles'),
+        where('isActiveCycle', '==', true),
+        where('status', '==', 'active'),
+        limit(1)
+      );
+      
+      const cycleSnapshot = await getDocs(cycleQuery);
+      if (cycleSnapshot.empty) {
+        return []; // No active cycle, no pending assessments
+      }
+
+      // Get pending assessments for this employee
+      const assessmentQuery = query(
+        collection(db, 'assessments'),
+        where('employeeId', '==', employeeId),
+        where('isLocked', '==', false),
+        where('status', '==', 'active')
+      );
+
+      const assessmentSnapshot = await getDocs(assessmentQuery);
+      return assessmentSnapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      }));
+
+    } catch (error) {
+      console.error('Error checking pending assessments:', error);
+      return [];
+    }
+  }
+
+  // Show team lead change confirmation modal
+  async function funShowTeamLeadChangeModal(assessments) {
+    const modal = document.getElementById('teamLeadChangeModal');
+    const countSpan = document.getElementById('pendingAssessmentCount');
+    const listDiv = document.getElementById('pendingAssessmentsList');
+
+    countSpan.textContent = assessments.length;
+
+    // Build list of pending assessments
+    listDiv.innerHTML = '';
+    if (assessments.length === 0) {
+      listDiv.innerHTML = '<p class="text-sm text-neutral-500">No pending assessments found</p>';
+    } else {
+      const list = document.createElement('ul');
+      list.className = 'space-y-2';
+      
+      for (const assessment of assessments) {
+        try {
+          // Get skill name for display
+          const skillDoc = await getDoc(doc(db, 'skills', assessment.skillId));
+          const skillName = skillDoc.exists() ? skillDoc.data().name : 'Unknown Skill';
+          
+          const listItem = document.createElement('li');
+          listItem.className = 'text-sm text-neutral-700';
+          listItem.innerHTML = `
+            <div class="flex items-center gap-2">
+              <span class="h-2 w-2 rounded-full bg-warning-600"></span>
+              <span class="font-medium">${skillName}</span>
+              <span class="text-neutral-500">- Score: ${assessment.score || 'Not scored'}</span>
+            </div>
+          `;
+          list.appendChild(listItem);
+        } catch (error) {
+          console.error('Error loading skill for assessment:', error);
+        }
+      }
+      
+      listDiv.appendChild(list);
+    }
+
+    modal.classList.remove('hidden');
+    
+    // Focus management
+    const firstButton = modal.querySelector('button');
+    firstButton?.focus();
+  }
+
+  // Close team lead change modal
+  function funCloseTeamLeadChangeModal() {
+    const modal = document.getElementById('teamLeadChangeModal');
+    modal.classList.add('hidden');
+    
+    // Reset team lead selection to original value
+    const teamLeadSelect = document.getElementById('teamLeadId');
+    teamLeadSelect.value = originalTeamLeadId || '';
+  }
+
+  // Handle team lead change
+  document.getElementById('teamLeadId').addEventListener('change', async (e) => {
+    const newTeamLeadId = e.target.value;
+    const oldTeamLeadId = originalTeamLeadId;
+
+    // Only check if editing and team lead actually changed
+    if (currentMode === 'edit' && newTeamLeadId !== oldTeamLeadId && currentEmployeeId) {
+      const assessments = await funCheckActiveCycleAndPendingAssessments(currentEmployeeId);
+      
+      if (assessments.length > 0) {
+        pendingAssessments = assessments;
+        await funShowTeamLeadChangeModal(assessments);
+      }
+    }
+  });
+
+  // Modal event handlers
+  document.getElementById('closeModal').addEventListener('click', funCloseTeamLeadChangeModal);
+  document.getElementById('cancelTeamLeadChange').addEventListener('click', funCloseTeamLeadChangeModal);
+
+  // Confirm team lead change
+  document.getElementById('confirmTeamLeadChange').addEventListener('click', async () => {
+    try {
+      showLoader();
+      
+      // Close pending assessments by setting status to 'inactive'
+      if (pendingAssessments.length > 0) {
+        const batch = writeBatch(db);
+        
+        pendingAssessments.forEach(assessment => {
+          const assessmentRef = doc(db, 'assessments', assessment.id);
+          batch.update(assessmentRef, {
+            status: 'inactive',
+            modifiedTimestamp: new Date().toISOString(),
+            modifiedBy: auth.currentUser?.uid || 'system'
+          });
+        });
+        
+        await batch.commit();
+        showToast(`${pendingAssessments.length} pending assessment(s) closed`, 'success');
+      }
+      
+      // Update original team lead ID to prevent further warnings
+      originalTeamLeadId = document.getElementById('teamLeadId').value;
+      
+      // Close modal
+      const modal = document.getElementById('teamLeadChangeModal');
+      modal.classList.add('hidden');
+      
+    } catch (error) {
+      console.error('Error closing pending assessments:', error);
+      showToast('Failed to close pending assessments', 'error');
+    } finally {
+      hideLoader();
+    }
+  });
+
+  // Form validation
+  function funValidateForm(formData) {
+    const errors = {};
+
+    // Required fields
+    if (!formData.employeeId?.trim()) {
+      errors.employeeId = 'Employee ID is required';
+    }
+    if (!formData.firstName?.trim()) {
+      errors.firstName = 'First name is required';
+    }
+    if (!formData.lastName?.trim()) {
+      errors.lastName = 'Last name is required';
+    }
+    if (!formData.email?.trim()) {
+      errors.email = 'Email is required';
+    }
+    if (!formData.jobTitle?.trim()) {
+      errors.jobTitle = 'Job title is required';
+    }
+    if (!formData.departmentId?.trim()) {
+      errors.departmentId = 'Department is required';
+    }
+    
+    // Email validation
+    if (formData.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email.trim())) {
+      errors.email = 'Please enter a valid email address';
+    }
+
+    return errors;
+  }
+
+  // Display validation errors
+  function funDisplayValidationErrors(errors) {
+    // Clear all previous errors
+    document.querySelectorAll('[id$="Error"]').forEach(el => {
+      el.classList.add('hidden');
+      el.textContent = '';
+    });
+
+    // Remove error styling from inputs
+    document.querySelectorAll('input, select').forEach(input => {
+      input.classList.remove('border-danger-600', 'focus:ring-danger-600');
+      input.classList.add('border-neutral-200', 'focus:ring-accent-gold-600');
+    });
+
+    // Display new errors
+    Object.entries(errors).forEach(([field, message]) => {
+      const errorEl = document.getElementById(`${field}Error`);
+      const inputEl = document.getElementById(field);
+      
+      if (errorEl) {
+        errorEl.textContent = message;
+        errorEl.classList.remove('hidden');
+      }
+      
+      if (inputEl) {
+        inputEl.classList.remove('border-neutral-200', 'focus:ring-accent-gold-600');
+        inputEl.classList.add('border-danger-600', 'focus:ring-danger-600');
+      }
+    });
+
+    // Focus first error field
+    const firstErrorField = Object.keys(errors)[0];
+    if (firstErrorField) {
+      const firstInput = document.getElementById(firstErrorField);
+      firstInput?.focus();
+    }
+  }
+
+  // Check if employee ID is unique (only for create mode or when changing ID in edit mode)
+  async function funCheckEmployeeIdUnique(employeeId, excludeDocId = null) {
+    try {
+      const q = query(
+        collection(db, 'users'),
+        where('employeeId', '==', employeeId.trim())
+      );
+      
+      const snapshot = await getDocs(q);
+      const existingDocs = snapshot.docs.filter(doc => doc.id !== excludeDocId);
+      return existingDocs.length === 0;
+      
+    } catch (error) {
+      console.error('Error checking employee ID uniqueness:', error);
+      return false;
+    }
+  }
+
+  // Check if email is unique (only for create mode or when changing email in edit mode)
+  async function funCheckEmailUnique(email, excludeDocId = null) {
+    try {
+      const q = query(
+        collection(db, 'users'),
+        where('email', '==', email.trim().toLowerCase())
+      );
+      
+      const snapshot = await getDocs(q);
+      const existingDocs = snapshot.docs.filter(doc => doc.id !== excludeDocId);
+      return existingDocs.length === 0;
+      
+    } catch (error) {
+      console.error('Error checking email uniqueness:', error);
+      return false;
+    }
+  }
+
+  // Form submission
+  document.getElementById('employeeForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    try {
+      showLoader();
+
+      const formData = new FormData(e.target);
+      const data = Object.fromEntries(formData.entries());
+
+      // Basic validation
+      const errors = funValidateForm(data);
+      if (Object.keys(errors).length > 0) {
+        funDisplayValidationErrors(errors);
+        return;
+      }
+
+      // Check uniqueness constraints
+      const isEmployeeIdUnique = await funCheckEmployeeIdUnique(
+        data.employeeId, 
+        currentMode === 'edit' ? currentEmployeeId : null
+      );
+      
+      const isEmailUnique = await funCheckEmailUnique(
+        data.email,
+        currentMode === 'edit' ? currentEmployeeId : null
+      );
+
+      if (!isEmployeeIdUnique) {
+        errors.employeeId = 'Employee ID already exists';
+      }
+      if (!isEmailUnique) {
+        errors.email = 'Email address already exists';
+      }
+
+      if (Object.keys(errors).length > 0) {
+        funDisplayValidationErrors(errors);
+        return;
+      }
+
+      // Prepare employee data
+      const timestamp = new Date().toISOString();
+      const userId = auth.currentUser?.uid || 'system';
+
+      const employeeData = {
+        employeeId: data.employeeId.trim(),
+        firstName: data.firstName.trim(),
+        lastName: data.lastName.trim(),
+        email: data.email.trim().toLowerCase(),
+        jobTitle: data.jobTitle.trim(),
+        departmentId: data.departmentId,
+        teamLeadId: data.teamLeadId || null,
+        employeeStatus: data.employeeStatus,
+        systemRole: data.systemRole,
+        modifiedTimestamp: timestamp,
+        modifiedBy: userId
+      };
+
+      let savedEmployeeId;
+
+      if (currentMode === 'create') {
+        // Generate unique ID for new employee
+        const docRef = doc(collection(db, 'users'));
+        savedEmployeeId = docRef.id;
+        
+        employeeData.id = savedEmployeeId;
+        employeeData.uid = ''; // Will be populated when user signs up
+        employeeData.role = 'employee'; // Default role for navigation
+        employeeData.createdTimestamp = timestamp;
+        employeeData.createdBy = userId;
+        
+        await setDoc(docRef, employeeData);
+        showToast('Employee created successfully', 'success');
+        
+      } else {
+        // Update existing employee
+        savedEmployeeId = currentEmployeeId;
+        const docRef = doc(db, 'users', currentEmployeeId);
+        await updateDoc(docRef, employeeData);
+        showToast('Employee updated successfully', 'success');
+      }
+
+      // Navigate to employee detail page
+      setTimeout(() => {
+        location.href = `/employee_detail.html?employeeId=${savedEmployeeId}`;
+      }, 1000);
+
+    } catch (error) {
+      console.error('Error saving employee:', error);
+      showToast(error?.message || 'Failed to save employee', 'error');
+    } finally {
+      hideLoader();
+    }
+  });
+
+  // Cancel buttons
+  document.getElementById('btnCancel').addEventListener('click', () => {
+    location.href = 'employees_list.html';
+  });
+
+  document.getElementById('btnCancelForm').addEventListener('click', () => {
+    location.href = 'employees_list.html';
+  });
+
+  // Real-time validation for employee ID and email
+  document.getElementById('employeeId').addEventListener('input', (e) => {
+    const errorEl = document.getElementById('employeeIdError');
+    if (errorEl && !errorEl.classList.contains('hidden')) {
+      errorEl.classList.add('hidden');
+      e.target.classList.remove('border-danger-600', 'focus:ring-danger-600');
+      e.target.classList.add('border-neutral-200', 'focus:ring-accent-gold-600');
+    }
+  });
+
+  document.getElementById('email').addEventListener('input', (e) => {
+    const errorEl = document.getElementById('emailError');
+    if (errorEl && !errorEl.classList.contains('hidden')) {
+      errorEl.classList.add('hidden');
+      e.target.classList.remove('border-danger-600', 'focus:ring-danger-600');
+      e.target.classList.add('border-neutral-200', 'focus:ring-accent-gold-600');
+    }
+  });
+
+  // Clear validation errors on input
+  document.querySelectorAll('input, select').forEach(input => {
+    input.addEventListener('input', (e) => {
+      const fieldName = e.target.name;
+      const errorEl = document.getElementById(`${fieldName}Error`);
+      if (errorEl && !errorEl.classList.contains('hidden')) {
+        errorEl.classList.add('hidden');
+        e.target.classList.remove('border-danger-600', 'focus:ring-danger-600');
+        e.target.classList.add('border-neutral-200', 'focus:ring-accent-gold-600');
+      }
+    });
+  });
+
+  // ESC key to close modal
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      const modal = document.getElementById('teamLeadChangeModal');
+      if (!modal.classList.contains('hidden')) {
+        funCloseTeamLeadChangeModal();
+      }
+    }
+  });
+
+  // Click outside modal to close
+  document.getElementById('teamLeadChangeModal').addEventListener('click', (e) => {
+    if (e.target.id === 'teamLeadChangeModal') {
+      funCloseTeamLeadChangeModal();
+    }
+  });
+</script>
+
+</body>
+</html>

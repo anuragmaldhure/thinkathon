@@ -1,0 +1,1219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SkillBridge</title>
+
+    <!-- Required: Main JS Script -->
+    <script type="module" src="scripts/main.js" data-tiramai="web-gen"></script>
+
+    <!-- Required: TailwindCSS -->
+    <script src="./lib/tailwindcss/tailwindcss.js" fetchpriority="high" data-tiramai="web-gen"></script>
+
+    <!-- Required: Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest" data-tiramai="web-gen"></script>
+
+    <!-- Required: Favicon -->
+    <link rel="icon" href="assets/imgs/logo.ico" type="image/x-icon" data-tiramai="web-gen"/>
+
+    <!-- ECharts Support (for charts/graphs) -->
+    <script defer src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js" data-tiramai="web-gen"></script>
+
+    <!-- Markdown Support (for content rendering) -->
+    <script defer src="https://cdn.jsdelivr.net/npm/marked/marked.min.js" data-tiramai="web-gen"></script>
+
+    <!-- Tailwind Config Extension -->
+    <script data-tiramai="web-gen">
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            'primary-600': '#1B2A44',
+                            'primary-700': '#14233A',
+                            'primary-800': '#0E1A2B',
+                        },
+                        accent: {
+                            'gold-50': '#FFF7E6',
+                            'gold-500': '#C59D42',
+                            'gold-600': '#A97D22',
+                        },
+                        success: { '600': '#16A34A' },
+                        warning: { '600': '#D97706' },
+                        danger: { '600': '#DC2626' },
+                        info: { '600': '#2563EB' },
+                        heat: {
+                            green: '#16A34A',
+                            amber: '#F59E0B',
+                            red: '#DC2626'
+                        },
+                        neutral: {
+                            '50': '#F8FAFC',
+                            '200': '#E2E8F0',
+                            '500': '#64748B',
+                            '700': '#334155',
+                            '900': '#111827',
+                            '950': '#0B1220',
+                        }
+                    },
+                    fontSize: {
+                        'xs': ['12px', '16px'],
+                        'sm': ['14px', '20px'],
+                        'base': ['16px', '24px'],
+                        'xl': ['20px', '28px'],
+                        '2xl': ['24px', '32px'],
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-neutral-50 min-h-screen text-neutral-900">
+    <!-- Top Navigation -->
+    <header class="fixed top-0 left-0 right-0 bg-brand-primary-800 border-b border-neutral-200 flex items-center justify-between px-6 py-4 z-30 h-16">
+        <div class="flex items-center gap-4">
+            <!-- Mobile menu toggle -->
+            <button id="mobileMenuToggle" class="md:hidden text-white p-2" aria-label="Toggle menu">
+                <svg class="w-5 h-5" data-lucide="menu"></svg>
+            </button>
+            <!-- Logo -->
+            <div class="flex items-center gap-3">
+                <svg width="32" height="32" viewBox="0 0 400 400" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="84" y="116" width="56" height="168" rx="8" fill="#1E40AF"/>
+                    <rect x="176" y="84" width="56" height="200" rx="8" fill="#059669"/>
+                    <rect x="268" y="156" width="48" height="128" rx="8" fill="#1E40AF"/>
+                    <rect x="114" y="180" width="172" height="20" rx="10" fill="#F59E0B"/>
+                </svg>
+                <span class="text-xl font-semibold text-white">SkillBridge</span>
+            </div>
+        </div>
+        <div class="flex items-center gap-4">
+            <!-- User Profile Dropdown -->
+            <div class="relative" id="userProfileContainer">
+                <button id="userProfileToggle" class="flex items-center gap-2 text-white hover:text-accent-gold-500 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2 focus:ring-offset-brand-primary-800 rounded-md p-2">
+                    <div class="w-8 h-8 bg-accent-gold-500 rounded-full flex items-center justify-center">
+                        <span id="userInitials" class="text-sm font-semibold text-white">JD</span>
+                    </div>
+                    <svg class="w-4 h-4" data-lucide="chevron-down"></svg>
+                </button>
+                <!-- Dropdown Menu -->
+                <div id="userProfileDropdown" class="hidden absolute right-0 mt-2 w-64 bg-white rounded-md shadow-lg border border-neutral-200 py-2 z-50">
+                    <div class="px-4 py-3 border-b border-neutral-200">
+                        <p id="userDisplayName" class="text-sm font-semibold text-neutral-900">John Doe</p>
+                        <p id="userEmail" class="text-xs text-neutral-500">johndoe@example.com</p>
+                        <p class="text-xs text-accent-gold-600 font-medium">System Administrator</p>
+                    </div>
+                    <button id="signOutButton" class="w-full text-left px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50 flex items-center gap-2">
+                        <svg class="w-4 h-4" data-lucide="log-out"></svg>
+                        Sign Out
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="flex pt-16">
+        <!-- Side Navigation -->
+        <aside id="sidebar" class="fixed md:sticky top-16 left-0 w-64 bg-white border-r border-neutral-200 h-[calc(100vh-4rem)] overflow-y-auto z-20 transform -translate-x-full md:translate-x-0 transition-transform duration-200">
+            <nav class="p-4 space-y-1">
+                <!-- Admin Dashboard -->
+                <a href="dashboard.html" id="nav-dashboard" class="nav-item flex items-center gap-3 px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                    <svg class="w-5 h-5" data-lucide="layout-dashboard"></svg>
+                    <span>Admin Dashboard</span>
+                </a>
+
+                <!-- Employees with Children -->
+                <div class="nav-group">
+                    <button class="nav-group-toggle flex items-center justify-between w-full px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                        <div class="flex items-center gap-3">
+                            <svg class="w-5 h-5" data-lucide="users"></svg>
+                            <span>Employees</span>
+                        </div>
+                        <svg class="w-4 h-4 transform transition-transform" data-lucide="chevron-right"></svg>
+                    </button>
+                    <div class="nav-group-children hidden ml-8 space-y-1 mt-1">
+                        <a href="employees_list.html" class="nav-item block px-3 py-2 rounded-md text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-600">Employee Directory</a>
+                        <a href="employee_upsert.html?mode=create" class="nav-item block px-3 py-2 rounded-md text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-600">Add Employee</a>
+                    </div>
+                </div>
+
+                <!-- Departments -->
+                <a href="departments_list.html" id="nav-departments" class="nav-item flex items-center gap-3 px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                    <svg class="w-5 h-5" data-lucide="building"></svg>
+                    <span>Departments</span>
+                </a>
+
+                <!-- Skill Categories -->
+                <a href="skill_categories_list.html" id="nav-skill-categories" class="nav-item flex items-center gap-3 px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                    <svg class="w-5 h-5" data-lucide="layers"></svg>
+                    <span>Skill Categories</span>
+                </a>
+
+                <!-- Criticality Levels -->
+                <a href="skill_criticalities_list.html" id="nav-criticalities" class="nav-item flex items-center gap-3 px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                    <svg class="w-5 h-5" data-lucide="sliders"></svg>
+                    <span>Criticality Levels</span>
+                </a>
+
+                <!-- Skills with Children -->
+                <div class="nav-group">
+                    <button class="nav-group-toggle flex items-center justify-between w-full px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                        <div class="flex items-center gap-3">
+                            <svg class="w-5 h-5" data-lucide="book"></svg>
+                            <span>Skills</span>
+                        </div>
+                        <svg class="w-4 h-4 transform transition-transform" data-lucide="chevron-right"></svg>
+                    </button>
+                    <div class="nav-group-children hidden ml-8 space-y-1 mt-1">
+                        <a href="skills_list.html" class="nav-item block px-3 py-2 rounded-md text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-600">Skills Directory</a>
+                        <a href="skill_upsert.html?mode=create" class="nav-item block px-3 py-2 rounded-md text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-600">Add Skill</a>
+                    </div>
+                </div>
+
+                <!-- Assessment Cycles with Children -->
+                <div class="nav-group">
+                    <button class="nav-group-toggle flex items-center justify-between w-full px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                        <div class="flex items-center gap-3">
+                            <svg class="w-5 h-5" data-lucide="calendar"></svg>
+                            <span>Assessment Cycles</span>
+                        </div>
+                        <svg class="w-4 h-4 transform transition-transform" data-lucide="chevron-right"></svg>
+                    </button>
+                    <div class="nav-group-children hidden ml-8 space-y-1 mt-1">
+                        <a href="assessment_cycles_list.html" class="nav-item block px-3 py-2 rounded-md text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-600">Cycles Directory</a>
+                        <a href="assessment_cycle_upsert.html?mode=create" class="nav-item block px-3 py-2 rounded-md text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-600">Create Cycle</a>
+                    </div>
+                </div>
+
+                <!-- Trainer Pool with Children -->
+                <div class="nav-group">
+                    <button class="nav-group-toggle flex items-center justify-between w-full px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                        <div class="flex items-center gap-3">
+                            <svg class="w-5 h-5" data-lucide="users"></svg>
+                            <span>Trainer Pool</span>
+                        </div>
+                        <svg class="w-4 h-4 transform transition-transform" data-lucide="chevron-right"></svg>
+                    </button>
+                    <div class="nav-group-children hidden ml-8 space-y-1 mt-1">
+                        <a href="trainers_list.html" class="nav-item block px-3 py-2 rounded-md text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-600">Trainer Directory</a>
+                        <a href="external_trainer_upsert.html?mode=create" class="nav-item block px-3 py-2 rounded-md text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-600">Add External Trainer</a>
+                    </div>
+                </div>
+
+                <!-- Training Sessions with Children -->
+                <div class="nav-group">
+                    <button class="nav-group-toggle flex items-center justify-between w-full px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                        <div class="flex items-center gap-3">
+                            <svg class="w-5 h-5" data-lucide="calendar"></svg>
+                            <span>Training Sessions</span>
+                        </div>
+                        <svg class="w-4 h-4 transform transition-transform" data-lucide="chevron-right"></svg>
+                    </button>
+                    <div class="nav-group-children hidden ml-8 space-y-1 mt-1">
+                        <a href="training_sessions_list.html" class="nav-item block px-3 py-2 rounded-md text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-600">Sessions Calendar</a>
+                        <a href="training_session_upsert.html?mode=create" class="nav-item block px-3 py-2 rounded-md text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-600">Create Session</a>
+                    </div>
+                </div>
+
+                <!-- Disputes -->
+                <a href="disputes_list.html" id="nav-disputes" class="nav-item flex items-center gap-3 px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                    <svg class="w-5 h-5" data-lucide="alert-circle"></svg>
+                    <span>Disputes</span>
+                </a>
+
+                <!-- Analytics Section -->
+                <div class="border-t border-neutral-200 pt-4 mt-4">
+                    <h4 class="px-3 text-xs font-semibold text-neutral-500 uppercase tracking-wider mb-2">Analytics</h4>
+                    
+                    <a href="analytics_skill_gap_heatmap.html" class="nav-item flex items-center gap-3 px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                        <svg class="w-5 h-5" data-lucide="grid"></svg>
+                        <span>Skill Gap Heatmap</span>
+                    </a>
+
+                    <a href="analytics_tni_dashboard.html" class="nav-item flex items-center gap-3 px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                        <svg class="w-5 h-5" data-lucide="bar-chart-2"></svg>
+                        <span>TNI Dashboard</span>
+                    </a>
+
+                    <a href="analytics_training_forecast.html" class="nav-item flex items-center gap-3 px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                        <svg class="w-5 h-5" data-lucide="trending-up"></svg>
+                        <span>Training Forecast</span>
+                    </a>
+
+                    <a href="analytics_assessment_completion.html" class="nav-item flex items-center gap-3 px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                        <svg class="w-5 h-5" data-lucide="pie-chart"></svg>
+                        <span>Assessment Completion</span>
+                    </a>
+
+                    <a href="analytics_dispute_metrics.html" class="nav-item flex items-center gap-3 px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                        <svg class="w-5 h-5" data-lucide="bar-chart"></svg>
+                        <span>Dispute Analytics</span>
+                    </a>
+                </div>
+            </nav>
+            
+            <!-- Footer -->
+            <div class="absolute bottom-4 w-full text-center text-xs text-neutral-500 bg-white px-4">
+                Made with ❤️ by TiramAi
+            </div>
+        </aside>
+
+        <!-- Mobile Overlay -->
+        <div id="mobileOverlay" class="hidden fixed inset-0 bg-black bg-opacity-50 z-10 md:hidden"></div>
+
+        <!-- Main Content -->
+        <main id="pageContent" class="flex-1 p-6 overflow-y-auto">
+            
+<!-- Page Header -->
+<div class="flex flex-col space-y-6">
+  <!-- Header with Add Button -->
+  <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+    <div>
+      <h1 class="text-2xl leading-8 font-bold text-neutral-950">Skill Categories</h1>
+      <p class="text-sm leading-5 text-neutral-700">Manage skill categories used for classifying skills</p>
+    </div>
+    <button id="btn-add-category" class="inline-flex items-center justify-center gap-2 h-11 px-4 rounded-md bg-brand-primary-600 hover:bg-brand-primary-700 text-white focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2">
+      <svg class="w-5 h-5" data-lucide="plus"></svg>
+      Add Category
+    </button>
+  </div>
+
+  <!-- Filters -->
+  <div class="bg-white rounded-md border border-neutral-200 p-4 shadow-sm">
+    <div class="flex flex-col md:flex-row gap-4">
+      <!-- Search -->
+      <div class="flex-1">
+        <label for="search-input" class="block text-sm font-medium text-neutral-900 mb-1">Search Categories</label>
+        <div class="relative">
+          <input 
+            type="text" 
+            id="search-input" 
+            placeholder="Search by category name..."
+            class="w-full border border-neutral-200 rounded-sm px-3 py-2 pr-10 bg-white text-sm leading-5 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2"
+          />
+          <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+            <svg class="w-4 h-4 text-neutral-500" data-lucide="search"></svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- Status Filter -->
+      <div class="w-full md:w-48">
+        <label for="status-filter" class="block text-sm font-medium text-neutral-900 mb-1">Status</label>
+        <select id="status-filter" class="w-full border border-neutral-200 rounded-sm px-3 py-2 bg-white text-sm leading-5 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2">
+          <option value="active">Active</option>
+          <option value="inactive">Inactive</option>
+          <option value="all">All</option>
+        </select>
+      </div>
+
+      <!-- Refresh Button -->
+      <div class="flex items-end">
+        <button id="btn-refresh" class="inline-flex items-center gap-2 h-11 px-3 rounded-md border border-neutral-200 bg-white text-neutral-700 hover:bg-neutral-50 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2" aria-label="Refresh data">
+          <svg class="w-4 h-4" data-lucide="refresh-cw"></svg>
+          Refresh
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Data Grid -->
+  <div class="bg-white rounded-md border border-neutral-200 shadow-sm overflow-hidden">
+    <!-- Loading Skeleton -->
+    <div id="loading-skeleton" class="block">
+      <div class="px-4 py-3 bg-neutral-50 border-b border-neutral-200">
+        <div class="h-4 bg-neutral-200 rounded w-32"></div>
+      </div>
+      <div class="divide-y divide-neutral-200">
+        <div class="px-4 py-3 flex items-center justify-between">
+          <div class="space-y-2 flex-1">
+            <div class="h-4 bg-neutral-200 rounded w-48"></div>
+            <div class="h-3 bg-neutral-200 rounded w-24"></div>
+          </div>
+          <div class="flex items-center gap-4">
+            <div class="h-6 bg-neutral-200 rounded w-16"></div>
+            <div class="h-8 bg-neutral-200 rounded w-20"></div>
+          </div>
+        </div>
+        <div class="px-4 py-3 flex items-center justify-between">
+          <div class="space-y-2 flex-1">
+            <div class="h-4 bg-neutral-200 rounded w-40"></div>
+            <div class="h-3 bg-neutral-200 rounded w-28"></div>
+          </div>
+          <div class="flex items-center gap-4">
+            <div class="h-6 bg-neutral-200 rounded w-16"></div>
+            <div class="h-8 bg-neutral-200 rounded w-20"></div>
+          </div>
+        </div>
+        <div class="px-4 py-3 flex items-center justify-between">
+          <div class="space-y-2 flex-1">
+            <div class="h-4 bg-neutral-200 rounded w-36"></div>
+            <div class="h-3 bg-neutral-200 rounded w-32"></div>
+          </div>
+          <div class="flex items-center gap-4">
+            <div class="h-6 bg-neutral-200 rounded w-16"></div>
+            <div class="h-8 bg-neutral-200 rounded w-20"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Table -->
+    <div id="table-container" class="hidden">
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm leading-5">
+          <thead class="bg-neutral-50 text-neutral-700">
+            <tr>
+              <th class="text-left font-semibold px-4 py-3 border-b border-neutral-200 cursor-pointer hover:bg-neutral-100" data-sort="categoryName">
+                <div class="flex items-center gap-2">
+                  Category Name
+                  <svg class="w-4 h-4 text-neutral-500" data-lucide="arrow-up-down"></svg>
+                </div>
+              </th>
+              <th class="text-left font-semibold px-4 py-3 border-b border-neutral-200 cursor-pointer hover:bg-neutral-100" data-sort="status">
+                <div class="flex items-center gap-2">
+                  Status
+                  <svg class="w-4 h-4 text-neutral-500" data-lucide="arrow-up-down"></svg>
+                </div>
+              </th>
+              <th class="text-left font-semibold px-4 py-3 border-b border-neutral-200">Skills Count</th>
+              <th class="text-left font-semibold px-4 py-3 border-b border-neutral-200 cursor-pointer hover:bg-neutral-100" data-sort="createdTimestamp">
+                <div class="flex items-center gap-2">
+                  Created Date
+                  <svg class="w-4 h-4 text-neutral-500" data-lucide="arrow-up-down"></svg>
+                </div>
+              </th>
+              <th class="text-right font-semibold px-4 py-3 border-b border-neutral-200">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="table-body" class="divide-y divide-neutral-200">
+            <!-- Table rows will be populated dynamically -->
+          </tbody>
+        </table>
+      </div>
+
+      <!-- No Data State -->
+      <div id="no-data-state" class="hidden text-center py-8">
+        <svg class="w-12 h-12 mx-auto text-neutral-400 mb-4" data-lucide="folder-x"></svg>
+        <h3 class="text-base leading-6 font-semibold text-neutral-900 mb-1">No categories found</h3>
+        <p class="text-sm leading-5 text-neutral-500">No skill categories match your current filters.</p>
+      </div>
+    </div>
+
+    <!-- Pagination -->
+    <div id="pagination-container" class="hidden px-4 py-3 bg-neutral-50 border-t border-neutral-200 flex items-center justify-between">
+      <div class="text-sm text-neutral-700">
+        Showing <span id="pagination-info">0</span> results
+      </div>
+      <div class="flex items-center gap-2">
+        <button id="btn-prev-page" class="inline-flex items-center gap-1 px-3 py-1 rounded-md border border-neutral-200 bg-white text-neutral-700 hover:bg-neutral-50 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+          <svg class="w-4 h-4" data-lucide="chevron-left"></svg>
+          Previous
+        </button>
+        <span id="page-info" class="text-sm text-neutral-700">Page 1</span>
+        <button id="btn-next-page" class="inline-flex items-center gap-1 px-3 py-1 rounded-md border border-neutral-200 bg-white text-neutral-700 hover:bg-neutral-50 disabled:opacity-50 disabled:cursor-not-allowed">
+          Next
+          <svg class="w-4 h-4" data-lucide="chevron-right"></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Add Category Modal -->
+<div id="add-category-modal" class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+  <div class="bg-white rounded-lg border border-neutral-200 shadow-lg w-full max-w-md">
+    <div class="px-6 py-4 border-b border-neutral-200">
+      <h2 class="text-xl leading-7 font-semibold text-neutral-950">Add Skill Category</h2>
+    </div>
+    <form id="add-category-form" class="px-6 py-4 space-y-4">
+      <div>
+        <label for="add-category-name" class="block text-sm font-medium text-neutral-900 mb-1">Category Name <span class="text-danger-600">*</span></label>
+        <input 
+          type="text" 
+          id="add-category-name" 
+          name="categoryName"
+          required
+          maxlength="200"
+          placeholder="Enter category name..."
+          class="w-full border border-neutral-200 rounded-sm px-3 py-2 bg-white text-sm leading-5 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2"
+        />
+        <p class="mt-1 text-xs text-neutral-500">Must be unique among active categories</p>
+        <div id="add-category-name-error" class="hidden mt-1 text-xs text-danger-600"></div>
+      </div>
+    </form>
+    <div class="px-6 py-4 border-t border-neutral-200 flex items-center justify-end gap-3">
+      <button type="button" id="btn-cancel-add" class="inline-flex items-center h-11 px-4 rounded-md border border-neutral-200 bg-white text-neutral-900 hover:bg-neutral-50 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2">
+        Cancel
+      </button>
+      <button type="submit" form="add-category-form" id="btn-save-add" class="inline-flex items-center h-11 px-4 rounded-md bg-brand-primary-600 hover:bg-brand-primary-700 text-white focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2">
+        Add Category
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Edit Category Modal -->
+<div id="edit-category-modal" class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+  <div class="bg-white rounded-lg border border-neutral-200 shadow-lg w-full max-w-md">
+    <div class="px-6 py-4 border-b border-neutral-200">
+      <h2 class="text-xl leading-7 font-semibold text-neutral-950">Edit Skill Category</h2>
+    </div>
+    <form id="edit-category-form" class="px-6 py-4 space-y-4">
+      <div>
+        <label for="edit-category-name" class="block text-sm font-medium text-neutral-900 mb-1">Category Name <span class="text-danger-600">*</span></label>
+        <input 
+          type="text" 
+          id="edit-category-name" 
+          name="categoryName"
+          required
+          maxlength="200"
+          placeholder="Enter category name..."
+          class="w-full border border-neutral-200 rounded-sm px-3 py-2 bg-white text-sm leading-5 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2"
+        />
+        <div id="edit-category-name-error" class="hidden mt-1 text-xs text-danger-600"></div>
+      </div>
+      
+      <div>
+        <label for="edit-category-status" class="block text-sm font-medium text-neutral-900 mb-1">Status <span class="text-danger-600">*</span></label>
+        <select id="edit-category-status" name="status" required class="w-full border border-neutral-200 rounded-sm px-3 py-2 bg-white text-sm leading-5 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2">
+          <option value="active">Active</option>
+          <option value="inactive">Inactive</option>
+        </select>
+        <div id="edit-status-warning" class="hidden mt-2 p-3 bg-warning-50 border border-warning-200 rounded-sm">
+          <div class="flex items-start gap-2">
+            <svg class="w-4 h-4 text-warning-600 mt-0.5 flex-shrink-0" data-lucide="alert-triangle"></svg>
+            <div class="text-xs text-warning-800">
+              <p class="font-medium">Warning: Active skills found</p>
+              <p>Setting this category to inactive may affect <span id="active-skills-count">0</span> active skill(s) that use this category.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+    <div class="px-6 py-4 border-t border-neutral-200 flex items-center justify-end gap-3">
+      <button type="button" id="btn-cancel-edit" class="inline-flex items-center h-11 px-4 rounded-md border border-neutral-200 bg-white text-neutral-900 hover:bg-neutral-50 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2">
+        Cancel
+      </button>
+      <button type="submit" form="edit-category-form" id="btn-save-edit" class="inline-flex items-center h-11 px-4 rounded-md bg-brand-primary-600 hover:bg-brand-primary-700 text-white focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2">
+        Save Changes
+      </button>
+    </div>
+  </div>
+</div>
+
+        </main>
+    </div>
+
+    <!-- Required: JavaScript -->
+    <script type="module" data-tiramai="web-gen">
+        import { showToast, showLoader, hideLoader, env } from "./scripts/main.js";
+        import { auth, db, storage } from "./scripts/firebase.js";
+        import { onAuthStateChanged, getAuth, signOut } from 'https://www.gstatic.com/firebasejs/10.12.4/firebase-auth.js';
+        import { doc, getDoc } from 'https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js';
+
+        // Initialize Lucide icons
+        lucide.createIcons();
+
+        // Mobile menu toggle
+        const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+        const sidebar = document.getElementById('sidebar');
+        const mobileOverlay = document.getElementById('mobileOverlay');
+
+        mobileMenuToggle?.addEventListener('click', () => {
+            sidebar.classList.toggle('-translate-x-full');
+            mobileOverlay.classList.toggle('hidden');
+        });
+
+        mobileOverlay?.addEventListener('click', () => {
+            sidebar.classList.add('-translate-x-full');
+            mobileOverlay.classList.add('hidden');
+        });
+
+        // Navigation group toggles
+        document.querySelectorAll('.nav-group-toggle').forEach(toggle => {
+            toggle.addEventListener('click', (e) => {
+                e.preventDefault();
+                const children = toggle.nextElementSibling;
+                const icon = toggle.querySelector('svg:last-child');
+                
+                children.classList.toggle('hidden');
+                icon.classList.toggle('rotate-90');
+            });
+        });
+
+        // User profile dropdown
+        const userProfileToggle = document.getElementById('userProfileToggle');
+        const userProfileDropdown = document.getElementById('userProfileDropdown');
+
+        userProfileToggle?.addEventListener('click', () => {
+            userProfileDropdown.classList.toggle('hidden');
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!userProfileToggle?.contains(e.target) && !userProfileDropdown?.contains(e.target)) {
+                userProfileDropdown?.classList.add('hidden');
+            }
+        });
+
+        // Sign out functionality
+        document.getElementById('signOutButton')?.addEventListener('click', async () => {
+            try {
+                await signOut(auth);
+                window.location.href = 'auth.html';
+            } catch (error) {
+                console.error('Sign out error:', error);
+                showToast('Failed to sign out', 'error');
+            }
+        });
+
+        // Auth state management
+        onAuthStateChanged(auth, async (user) => {
+            if (!user) {
+                window.location.href = 'auth.html';
+                return;
+            }
+
+            // Load user profile data
+            try {
+                const userDoc = await getDoc(doc(db, 'users', user.uid));
+                const userData = userDoc.exists() ? userDoc.data() : null;
+
+                // Update UI with user data
+                const displayName = userData?.firstName && userData?.lastName 
+                    ? `${userData.firstName} ${userData.lastName}`
+                    : user.displayName || 'John Doe';
+                
+                const email = user.email || 'johndoe@example.com';
+                const initials = displayName.split(' ').map(n => n[0]).join('').toUpperCase();
+
+                document.getElementById('userDisplayName').textContent = displayName;
+                document.getElementById('userEmail').textContent = email;
+                document.getElementById('userInitials').textContent = initials;
+
+            } catch (error) {
+                console.error('Error loading user data:', error);
+                // Fallback to default values
+                document.getElementById('userDisplayName').textContent = 'John Doe';
+                document.getElementById('userEmail').textContent = user.email || 'johndoe@example.com';
+                document.getElementById('userInitials').textContent = 'JD';
+            }
+        });
+
+        // Set active navigation item based on current page
+        function setActiveNavItem() {
+            const currentPath = window.location.pathname;
+            const navItems = document.querySelectorAll('.nav-item');
+            
+            navItems.forEach(item => {
+                const href = item.getAttribute('href');
+                if (href && currentPath.includes(href.split('?')[0])) {
+                    item.classList.add('bg-accent-gold-50', 'text-brand-primary-600', 'border-l-2', 'border-brand-primary-600');
+                    item.classList.remove('text-neutral-700', 'text-neutral-600');
+                    
+                    // Expand parent group if needed
+                    const parentGroup = item.closest('.nav-group');
+                    if (parentGroup) {
+                        const children = parentGroup.querySelector('.nav-group-children');
+                        const icon = parentGroup.querySelector('.nav-group-toggle svg:last-child');
+                        children?.classList.remove('hidden');
+                        icon?.classList.add('rotate-90');
+                    }
+                }
+            });
+        }
+
+        // Initialize active nav state
+        setActiveNavItem();
+    </script>
+
+    
+<script id="data-script" type="module" data-tiramai="web-gen">
+  import {
+    collection, getDocs, setDoc, addDoc, doc, getDoc, updateDoc, deleteDoc,
+    query, where, orderBy, limit, startAfter, endBefore, Timestamp,
+    getCountFromServer
+  } from 'https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js';
+  import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.12.4/firebase-auth.js';
+  import { auth, getDb } from "./scripts/firebase.js";
+  import { showToast, showLoader, hideLoader } from "./scripts/main.js";
+
+  const db = getDb();
+
+  // Auth check
+  onAuthStateChanged(auth, user => {
+    if (!user) location.href = "auth.html?redirect=" + encodeURIComponent(location.pathname);
+  });
+
+  // State management
+  let categories = [];
+  let filteredCategories = [];
+  let sortColumn = 'categoryName';
+  let sortDirection = 'asc';
+  let currentPage = 1;
+  const itemsPerPage = 10;
+  let editingCategoryId = null;
+
+  // DOM elements
+  const loadingSkeleton = document.getElementById('loading-skeleton');
+  const tableContainer = document.getElementById('table-container');
+  const tableBody = document.getElementById('table-body');
+  const noDataState = document.getElementById('no-data-state');
+  const paginationContainer = document.getElementById('pagination-container');
+  const searchInput = document.getElementById('search-input');
+  const statusFilter = document.getElementById('status-filter');
+  
+  // Modal elements
+  const addModal = document.getElementById('add-category-modal');
+  const editModal = document.getElementById('edit-category-modal');
+  const addForm = document.getElementById('add-category-form');
+  const editForm = document.getElementById('edit-category-form');
+
+  // Utility functions
+  const yieldToFrame = () => new Promise(r => requestAnimationFrame(() => r()));
+
+  function formatDate(isoString) {
+    if (!isoString) return 'N/A';
+    try {
+      const date = new Date(isoString);
+      return date.toLocaleDateString('en-US', { 
+        month: 'short', 
+        day: 'numeric', 
+        year: 'numeric' 
+      });
+    } catch (error) {
+      return 'N/A';
+    }
+  }
+
+  function debounce(func, delay) {
+    let timeoutId;
+    return (...args) => {
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(() => func.apply(this, args), delay);
+    };
+  }
+
+  function validateCategoryName(name, excludeId = null) {
+    if (!name || name.trim().length === 0) {
+      return 'Category name is required';
+    }
+    if (name.trim().length > 200) {
+      return 'Category name must be 200 characters or less';
+    }
+
+    // Check uniqueness among active categories
+    const duplicate = categories.find(cat => 
+      cat.categoryName?.toLowerCase().trim() === name.toLowerCase().trim() && 
+      cat.status === 'active' && 
+      cat.id !== excludeId
+    );
+    
+    if (duplicate) {
+      return 'Category name must be unique among active categories';
+    }
+    
+    return null;
+  }
+
+  // Data fetching functions
+  async function funLoadCategories() {
+    try {
+      const q = query(
+        collection(db, 'skillCategories'),
+        orderBy('categoryName')
+      );
+      const snapshot = await getDocs(q);
+      
+      categories = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      }));
+
+      // Fetch skills count for each category
+      await funLoadSkillsCounts();
+      
+      funApplyFilters();
+      funRenderTable();
+      
+    } catch (error) {
+      console.error('Error loading categories:', error);
+      showToast(error?.message || 'Failed to load categories');
+    }
+  }
+
+  async function funLoadSkillsCounts() {
+    try {
+      for (const category of categories) {
+        if (category.id) {
+          try {
+            const q = query(
+              collection(db, 'skills'),
+              where('categoryId', '==', category.id),
+              where('status', '==', 'active')
+            );
+            const countSnapshot = await getCountFromServer(q);
+            category.skillsCount = countSnapshot.data().count;
+          } catch (error) {
+            console.error(`Error counting skills for category ${category.id}:`, error);
+            category.skillsCount = 0;
+          }
+        } else {
+          category.skillsCount = 0;
+        }
+        
+        // Yield to avoid blocking
+        if (categories.indexOf(category) % 5 === 0) {
+          await yieldToFrame();
+        }
+      }
+    } catch (error) {
+      console.error('Error loading skills counts:', error);
+      // Continue with zero counts
+      categories.forEach(cat => cat.skillsCount = cat.skillsCount || 0);
+    }
+  }
+
+  function funApplyFilters() {
+    const searchTerm = searchInput.value.toLowerCase().trim();
+    const statusValue = statusFilter.value;
+
+    filteredCategories = categories.filter(category => {
+      // Search filter
+      const matchesSearch = !searchTerm || 
+        (category.categoryName && category.categoryName.toLowerCase().includes(searchTerm));
+
+      // Status filter
+      const matchesStatus = statusValue === 'all' || category.status === statusValue;
+
+      return matchesSearch && matchesStatus;
+    });
+
+    funSortCategories();
+    currentPage = 1; // Reset to first page
+    funRenderTable();
+  }
+
+  function funSortCategories() {
+    filteredCategories.sort((a, b) => {
+      let aValue = a[sortColumn];
+      let bValue = b[sortColumn];
+
+      // Handle null/undefined values
+      if (aValue === null || aValue === undefined) aValue = '';
+      if (bValue === null || bValue === undefined) bValue = '';
+
+      // Special handling for dates
+      if (sortColumn === 'createdTimestamp') {
+        aValue = aValue ? new Date(aValue) : new Date(0);
+        bValue = bValue ? new Date(bValue) : new Date(0);
+      }
+
+      // Special handling for numbers
+      if (sortColumn === 'skillsCount') {
+        aValue = Number(aValue) || 0;
+        bValue = Number(bValue) || 0;
+      }
+
+      // String comparison for other fields
+      if (typeof aValue === 'string') {
+        aValue = aValue.toLowerCase();
+      }
+      if (typeof bValue === 'string') {
+        bValue = bValue.toLowerCase();
+      }
+
+      const comparison = aValue < bValue ? -1 : aValue > bValue ? 1 : 0;
+      return sortDirection === 'asc' ? comparison : -comparison;
+    });
+  }
+
+  function funGetPageData() {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    return filteredCategories.slice(startIndex, endIndex);
+  }
+
+  async function funRenderTable() {
+    await yieldToFrame(); // Yield before rendering
+    
+    const pageData = funGetPageData();
+    const totalItems = filteredCategories.length;
+    const totalPages = Math.ceil(totalItems / itemsPerPage);
+
+    // Hide loading, show table
+    loadingSkeleton.classList.add('hidden');
+    tableContainer.classList.remove('hidden');
+
+    if (pageData.length === 0) {
+      tableBody.innerHTML = '';
+      noDataState.classList.remove('hidden');
+      paginationContainer.classList.add('hidden');
+      return;
+    }
+
+    noDataState.classList.add('hidden');
+    paginationContainer.classList.remove('hidden');
+
+    // Render table rows
+    tableBody.innerHTML = pageData.map(category => `
+      <tr class="hover:bg-neutral-50 focus-within:bg-neutral-50">
+        <td class="px-4 py-3">
+          <div class="font-medium text-neutral-900">${category.categoryName || 'N/A'}</div>
+        </td>
+        <td class="px-4 py-3">
+          <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
+            category.status === 'active' 
+              ? 'bg-success-600 text-white' 
+              : 'bg-neutral-500 text-white'
+          }">
+            ${category.status === 'active' ? 'Active' : 'Inactive'}
+          </span>
+        </td>
+        <td class="px-4 py-3 text-neutral-700">
+          ${category.skillsCount || 0}
+        </td>
+        <td class="px-4 py-3 text-neutral-700">
+          ${formatDate(category.createdTimestamp)}
+        </td>
+        <td class="px-4 py-3">
+          <div class="flex items-center justify-end gap-2">
+            <button 
+              class="inline-flex items-center gap-1 px-2 py-1 rounded-md border border-neutral-200 bg-white text-neutral-700 hover:bg-neutral-50 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2"
+              onclick="funOpenEditModal('${category.id}')"
+              title="Edit category"
+            >
+              <svg class="w-4 h-4" data-lucide="edit"></svg>
+              Edit
+            </button>
+            ${category.status === 'active' ? `
+              <button 
+                class="inline-flex items-center gap-1 px-2 py-1 rounded-md border border-neutral-200 bg-white text-neutral-700 hover:bg-neutral-50 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2"
+                onclick="funDeactivateCategory('${category.id}')"
+                title="Deactivate category"
+              >
+                <svg class="w-4 h-4" data-lucide="x"></svg>
+                Deactivate
+              </button>
+            ` : ''}
+          </div>
+        </td>
+      </tr>
+    `).join('');
+
+    // Update pagination
+    const startItem = totalItems === 0 ? 0 : (currentPage - 1) * itemsPerPage + 1;
+    const endItem = Math.min(currentPage * itemsPerPage, totalItems);
+    
+    document.getElementById('pagination-info').textContent = 
+      `${startItem}-${endItem} of ${totalItems}`;
+    document.getElementById('page-info').textContent = 
+      `Page ${currentPage} of ${totalPages}`;
+    
+    document.getElementById('btn-prev-page').disabled = currentPage <= 1;
+    document.getElementById('btn-next-page').disabled = currentPage >= totalPages;
+
+    // Re-initialize Lucide icons
+    lucide.createIcons();
+  }
+
+  // Modal functions
+  function funOpenAddModal() {
+    addForm.reset();
+    document.getElementById('add-category-name-error').classList.add('hidden');
+    addModal.classList.remove('hidden');
+    document.getElementById('add-category-name').focus();
+  }
+
+  function funCloseAddModal() {
+    addModal.classList.add('hidden');
+  }
+
+  async function funOpenEditModal(categoryId) {
+    try {
+      const category = categories.find(c => c.id === categoryId);
+      if (!category) {
+        showToast('Category not found');
+        return;
+      }
+
+      editingCategoryId = categoryId;
+      
+      // Populate form
+      document.getElementById('edit-category-name').value = category.categoryName || '';
+      document.getElementById('edit-category-status').value = category.status || 'active';
+      
+      // Check for active skills and show warning
+      const activeSkillsCount = category.skillsCount || 0;
+      const statusWarning = document.getElementById('edit-status-warning');
+      const activeSkillsCountSpan = document.getElementById('active-skills-count');
+      
+      activeSkillsCountSpan.textContent = activeSkillsCount;
+      
+      if (activeSkillsCount > 0) {
+        statusWarning.classList.remove('hidden');
+      } else {
+        statusWarning.classList.add('hidden');
+      }
+      
+      // Clear errors
+      document.getElementById('edit-category-name-error').classList.add('hidden');
+      
+      editModal.classList.remove('hidden');
+      document.getElementById('edit-category-name').focus();
+      
+    } catch (error) {
+      console.error('Error opening edit modal:', error);
+      showToast('Error loading category details');
+    }
+  }
+
+  function funCloseEditModal() {
+    editModal.classList.add('hidden');
+    editingCategoryId = null;
+  }
+
+  // CRUD operations
+  async function funAddCategory(categoryName) {
+    try {
+      const trimmedName = categoryName.trim();
+      const validation = validateCategoryName(trimmedName);
+      
+      if (validation) {
+        const errorEl = document.getElementById('add-category-name-error');
+        errorEl.textContent = validation;
+        errorEl.classList.remove('hidden');
+        return false;
+      }
+
+      const newCategory = {
+        categoryName: trimmedName,
+        status: 'active',
+        createdTimestamp: new Date().toISOString(),
+        modifiedTimestamp: new Date().toISOString()
+      };
+
+      await addDoc(collection(db, 'skillCategories'), newCategory);
+      
+      showToast('Category added successfully');
+      funCloseAddModal();
+      await funLoadCategories();
+      return true;
+      
+    } catch (error) {
+      console.error('Error adding category:', error);
+      showToast(error?.message || 'Failed to add category');
+      return false;
+    }
+  }
+
+  async function funUpdateCategory(categoryId, categoryName, status) {
+    try {
+      const trimmedName = categoryName.trim();
+      const validation = validateCategoryName(trimmedName, categoryId);
+      
+      if (validation) {
+        const errorEl = document.getElementById('edit-category-name-error');
+        errorEl.textContent = validation;
+        errorEl.classList.remove('hidden');
+        return false;
+      }
+
+      const updates = {
+        categoryName: trimmedName,
+        status,
+        modifiedTimestamp: new Date().toISOString()
+      };
+
+      await updateDoc(doc(db, 'skillCategories', categoryId), updates);
+      
+      showToast('Category updated successfully');
+      funCloseEditModal();
+      await funLoadCategories();
+      return true;
+      
+    } catch (error) {
+      console.error('Error updating category:', error);
+      showToast(error?.message || 'Failed to update category');
+      return false;
+    }
+  }
+
+  async function funDeactivateCategory(categoryId) {
+    try {
+      const category = categories.find(c => c.id === categoryId);
+      if (!category) {
+        showToast('Category not found');
+        return;
+      }
+
+      const confirmed = confirm(
+        `Are you sure you want to deactivate "${category.categoryName}"?\n\n` +
+        (category.skillsCount > 0 
+          ? `This category has ${category.skillsCount} active skill(s) associated with it.`
+          : 'This action can be reversed by editing the category later.')
+      );
+
+      if (!confirmed) return;
+
+      await updateDoc(doc(db, 'skillCategories', categoryId), {
+        status: 'inactive',
+        modifiedTimestamp: new Date().toISOString()
+      });
+      
+      showToast('Category deactivated successfully');
+      await funLoadCategories();
+      
+    } catch (error) {
+      console.error('Error deactivating category:', error);
+      showToast(error?.message || 'Failed to deactivate category');
+    }
+  }
+
+  // Event listeners
+  document.getElementById('btn-add-category').addEventListener('click', funOpenAddModal);
+  document.getElementById('btn-cancel-add').addEventListener('click', funCloseAddModal);
+  document.getElementById('btn-cancel-edit').addEventListener('click', funCloseEditModal);
+  document.getElementById('btn-refresh').addEventListener('click', () => funLoadCategories());
+
+  // Search and filter
+  searchInput.addEventListener('input', debounce(funApplyFilters, 300));
+  statusFilter.addEventListener('change', funApplyFilters);
+
+  // Sorting
+  document.querySelectorAll('th[data-sort]').forEach(header => {
+    header.addEventListener('click', () => {
+      const newSortColumn = header.dataset.sort;
+      if (sortColumn === newSortColumn) {
+        sortDirection = sortDirection === 'asc' ? 'desc' : 'asc';
+      } else {
+        sortColumn = newSortColumn;
+        sortDirection = 'asc';
+      }
+      
+      funApplyFilters(); // This will trigger sorting and re-render
+    });
+  });
+
+  // Pagination
+  document.getElementById('btn-prev-page').addEventListener('click', () => {
+    if (currentPage > 1) {
+      currentPage--;
+      funRenderTable();
+    }
+  });
+
+  document.getElementById('btn-next-page').addEventListener('click', () => {
+    const totalPages = Math.ceil(filteredCategories.length / itemsPerPage);
+    if (currentPage < totalPages) {
+      currentPage++;
+      funRenderTable();
+    }
+  });
+
+  // Form submissions
+  addForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const formData = new FormData(addForm);
+    const categoryName = formData.get('categoryName');
+    
+    const submitBtn = document.getElementById('btn-save-add');
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Adding...';
+    
+    try {
+      await funAddCategory(categoryName);
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Add Category';
+    }
+  });
+
+  editForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (!editingCategoryId) return;
+    
+    const formData = new FormData(editForm);
+    const categoryName = formData.get('categoryName');
+    const status = formData.get('status');
+    
+    const submitBtn = document.getElementById('btn-save-edit');
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Saving...';
+    
+    try {
+      await funUpdateCategory(editingCategoryId, categoryName, status);
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Save Changes';
+    }
+  });
+
+  // Modal backdrop clicks
+  addModal.addEventListener('click', (e) => {
+    if (e.target === addModal) funCloseAddModal();
+  });
+
+  editModal.addEventListener('click', (e) => {
+    if (e.target === editModal) funCloseEditModal();
+  });
+
+  // ESC key to close modals
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      if (!addModal.classList.contains('hidden')) funCloseAddModal();
+      if (!editModal.classList.contains('hidden')) funCloseEditModal();
+    }
+  });
+
+  // Real-time validation for add form
+  document.getElementById('add-category-name').addEventListener('input', (e) => {
+    const validation = validateCategoryName(e.target.value);
+    const errorEl = document.getElementById('add-category-name-error');
+    
+    if (validation) {
+      errorEl.textContent = validation;
+      errorEl.classList.remove('hidden');
+    } else {
+      errorEl.classList.add('hidden');
+    }
+  });
+
+  // Real-time validation for edit form
+  document.getElementById('edit-category-name').addEventListener('input', (e) => {
+    const validation = validateCategoryName(e.target.value, editingCategoryId);
+    const errorEl = document.getElementById('edit-category-name-error');
+    
+    if (validation) {
+      errorEl.textContent = validation;
+      errorEl.classList.remove('hidden');
+    } else {
+      errorEl.classList.add('hidden');
+    }
+  });
+
+  // Status change warning in edit form
+  document.getElementById('edit-category-status').addEventListener('change', (e) => {
+    const statusWarning = document.getElementById('edit-status-warning');
+    const activeSkillsCount = parseInt(document.getElementById('active-skills-count').textContent) || 0;
+    
+    if (e.target.value === 'inactive' && activeSkillsCount > 0) {
+      statusWarning.classList.remove('hidden');
+    } else {
+      statusWarning.classList.add('hidden');
+    }
+  });
+
+  // Global functions for onclick handlers
+  window.funOpenEditModal = funOpenEditModal;
+  window.funDeactivateCategory = funDeactivateCategory;
+
+  // Initialize
+  lucide.createIcons();
+  funLoadCategories();
+</script>
+
+</body>
+</html>
