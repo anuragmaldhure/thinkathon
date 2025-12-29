@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -15,7 +16,7 @@
     <script src="https://unpkg.com/lucide@latest" data-tiramai="web-gen"></script>
 
     <!-- Required: Favicon -->
-    <link rel="icon" href="assets/imgs/logo.ico" type="image/x-icon" data-tiramai="web-gen"/>
+    <link rel="icon" href="assets/imgs/logo.ico" type="image/x-icon" data-tiramai="web-gen" />
 
     <!-- ECharts Support (for charts/graphs) -->
     <script defer src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js" data-tiramai="web-gen"></script>
@@ -69,9 +70,11 @@
         }
     </script>
 </head>
+
 <body class="bg-neutral-50 min-h-screen text-neutral-900">
     <!-- Top Navigation -->
-    <header class="fixed top-0 left-0 right-0 bg-brand-primary-800 border-b border-neutral-200 flex items-center justify-between px-6 py-4 z-30 h-16">
+    <header
+        class="fixed top-0 left-0 right-0 bg-brand-primary-800 border-b border-neutral-200 flex items-center justify-between px-6 py-4 z-30 h-16">
         <div class="flex items-center gap-4">
             <!-- Mobile menu toggle -->
             <button id="mobileMenuToggle" class="md:hidden text-white p-2" aria-label="Toggle menu">
@@ -80,10 +83,10 @@
             <!-- Logo -->
             <div class="flex items-center gap-3">
                 <svg width="32" height="32" viewBox="0 0 400 400" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <rect x="84" y="116" width="56" height="168" rx="8" fill="#1E40AF"/>
-                    <rect x="176" y="84" width="56" height="200" rx="8" fill="#059669"/>
-                    <rect x="268" y="156" width="48" height="128" rx="8" fill="#1E40AF"/>
-                    <rect x="114" y="180" width="172" height="20" rx="10" fill="#F59E0B"/>
+                    <rect x="84" y="116" width="56" height="168" rx="8" fill="#1E40AF" />
+                    <rect x="176" y="84" width="56" height="200" rx="8" fill="#059669" />
+                    <rect x="268" y="156" width="48" height="128" rx="8" fill="#1E40AF" />
+                    <rect x="114" y="180" width="172" height="20" rx="10" fill="#F59E0B" />
                 </svg>
                 <span class="text-xl font-semibold text-white">SkillBridge</span>
             </div>
@@ -91,20 +94,23 @@
         <div class="flex items-center gap-4">
             <!-- User Profile Dropdown -->
             <div class="relative" id="userProfileContainer">
-                <button id="userProfileToggle" class="flex items-center gap-2 text-white hover:text-accent-gold-500 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2 focus:ring-offset-brand-primary-800 rounded-md p-2">
+                <button id="userProfileToggle"
+                    class="flex items-center gap-2 text-white hover:text-accent-gold-500 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2 focus:ring-offset-brand-primary-800 rounded-md p-2">
                     <div class="w-8 h-8 bg-accent-gold-500 rounded-full flex items-center justify-center">
                         <span id="userInitials" class="text-sm font-semibold text-white">JD</span>
                     </div>
                     <svg class="w-4 h-4" data-lucide="chevron-down"></svg>
                 </button>
                 <!-- Dropdown Menu -->
-                <div id="userProfileDropdown" class="hidden absolute right-0 mt-2 w-64 bg-white rounded-md shadow-lg border border-neutral-200 py-2 z-50">
+                <div id="userProfileDropdown"
+                    class="hidden absolute right-0 mt-2 w-64 bg-white rounded-md shadow-lg border border-neutral-200 py-2 z-50">
                     <div class="px-4 py-3 border-b border-neutral-200">
                         <p id="userDisplayName" class="text-sm font-semibold text-neutral-900">John Doe</p>
                         <p id="userEmail" class="text-xs text-neutral-500">johndoe@example.com</p>
                         <p class="text-xs text-accent-gold-600 font-medium">System Administrator</p>
                     </div>
-                    <button id="signOutButton" class="w-full text-left px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50 flex items-center gap-2">
+                    <button id="signOutButton"
+                        class="w-full text-left px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50 flex items-center gap-2">
                         <svg class="w-4 h-4" data-lucide="log-out"></svg>
                         Sign Out
                     </button>
@@ -115,17 +121,20 @@
 
     <div class="flex pt-16">
         <!-- Side Navigation -->
-        <aside id="sidebar" class="fixed md:sticky top-16 left-0 w-64 bg-white border-r border-neutral-200 h-[calc(100vh-4rem)] overflow-y-auto z-20 transform -translate-x-full md:translate-x-0 transition-transform duration-200">
+        <aside id="sidebar"
+            class="fixed md:sticky top-16 left-0 w-64 bg-white border-r border-neutral-200 h-[calc(100vh-4rem)] overflow-y-auto z-20 transform -translate-x-full md:translate-x-0 transition-transform duration-200">
             <nav class="p-4 space-y-1">
                 <!-- Admin Dashboard -->
-                <a href="dashboard.html" id="nav-dashboard" class="nav-item flex items-center gap-3 px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                <a href="dashboard.html" id="nav-dashboard"
+                    class="nav-item flex items-center gap-3 px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
                     <svg class="w-5 h-5" data-lucide="layout-dashboard"></svg>
                     <span>Admin Dashboard</span>
                 </a>
 
                 <!-- Employees with Children -->
                 <div class="nav-group">
-                    <button class="nav-group-toggle flex items-center justify-between w-full px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                    <button
+                        class="nav-group-toggle flex items-center justify-between w-full px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
                         <div class="flex items-center gap-3">
                             <svg class="w-5 h-5" data-lucide="users"></svg>
                             <span>Employees</span>
@@ -133,32 +142,40 @@
                         <svg class="w-4 h-4 transform transition-transform" data-lucide="chevron-right"></svg>
                     </button>
                     <div class="nav-group-children hidden ml-8 space-y-1 mt-1">
-                        <a href="employees_list.html" class="nav-item block px-3 py-2 rounded-md text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-600">Employee Directory</a>
-                        <a href="employee_upsert.html?mode=create" class="nav-item block px-3 py-2 rounded-md text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-600">Add Employee</a>
+                        <a href="employees_list.html"
+                            class="nav-item block px-3 py-2 rounded-md text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-600">Employee
+                            Directory</a>
+                        <a href="employee_upsert.html?mode=create"
+                            class="nav-item block px-3 py-2 rounded-md text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-600">Add
+                            Employee</a>
                     </div>
                 </div>
 
                 <!-- Departments -->
-                <a href="departments_list.html" id="nav-departments" class="nav-item flex items-center gap-3 px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                <a href="departments_list.html" id="nav-departments"
+                    class="nav-item flex items-center gap-3 px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
                     <svg class="w-5 h-5" data-lucide="building"></svg>
                     <span>Departments</span>
                 </a>
 
                 <!-- Skill Categories -->
-                <a href="skill_categories_list.html" id="nav-skill-categories" class="nav-item flex items-center gap-3 px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                <a href="skill_categories_list.html" id="nav-skill-categories"
+                    class="nav-item flex items-center gap-3 px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
                     <svg class="w-5 h-5" data-lucide="layers"></svg>
                     <span>Skill Categories</span>
                 </a>
 
                 <!-- Criticality Levels -->
-                <a href="skill_criticalities_list.html" id="nav-criticalities" class="nav-item flex items-center gap-3 px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                <a href="skill_criticalities_list.html" id="nav-criticalities"
+                    class="nav-item flex items-center gap-3 px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
                     <svg class="w-5 h-5" data-lucide="sliders"></svg>
                     <span>Criticality Levels</span>
                 </a>
 
                 <!-- Skills with Children -->
                 <div class="nav-group">
-                    <button class="nav-group-toggle flex items-center justify-between w-full px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                    <button
+                        class="nav-group-toggle flex items-center justify-between w-full px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
                         <div class="flex items-center gap-3">
                             <svg class="w-5 h-5" data-lucide="book"></svg>
                             <span>Skills</span>
@@ -166,14 +183,19 @@
                         <svg class="w-4 h-4 transform transition-transform" data-lucide="chevron-right"></svg>
                     </button>
                     <div class="nav-group-children hidden ml-8 space-y-1 mt-1">
-                        <a href="skills_list.html" class="nav-item block px-3 py-2 rounded-md text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-600">Skills Directory</a>
-                        <a href="skill_upsert.html?mode=create" class="nav-item block px-3 py-2 rounded-md text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-600">Add Skill</a>
+                        <a href="skills_list.html"
+                            class="nav-item block px-3 py-2 rounded-md text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-600">Skills
+                            Directory</a>
+                        <a href="skill_upsert.html?mode=create"
+                            class="nav-item block px-3 py-2 rounded-md text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-600">Add
+                            Skill</a>
                     </div>
                 </div>
 
                 <!-- Assessment Cycles with Children -->
                 <div class="nav-group">
-                    <button class="nav-group-toggle flex items-center justify-between w-full px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                    <button
+                        class="nav-group-toggle flex items-center justify-between w-full px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
                         <div class="flex items-center gap-3">
                             <svg class="w-5 h-5" data-lucide="calendar"></svg>
                             <span>Assessment Cycles</span>
@@ -181,14 +203,19 @@
                         <svg class="w-4 h-4 transform transition-transform" data-lucide="chevron-right"></svg>
                     </button>
                     <div class="nav-group-children hidden ml-8 space-y-1 mt-1">
-                        <a href="assessment_cycles_list.html" class="nav-item block px-3 py-2 rounded-md text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-600">Cycles Directory</a>
-                        <a href="assessment_cycle_upsert.html?mode=create" class="nav-item block px-3 py-2 rounded-md text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-600">Create Cycle</a>
+                        <a href="assessment_cycles_list.html"
+                            class="nav-item block px-3 py-2 rounded-md text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-600">Cycles
+                            Directory</a>
+                        <a href="assessment_cycle_upsert.html?mode=create"
+                            class="nav-item block px-3 py-2 rounded-md text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-600">Create
+                            Cycle</a>
                     </div>
                 </div>
 
                 <!-- Trainer Pool with Children -->
                 <div class="nav-group">
-                    <button class="nav-group-toggle flex items-center justify-between w-full px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                    <button
+                        class="nav-group-toggle flex items-center justify-between w-full px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
                         <div class="flex items-center gap-3">
                             <svg class="w-5 h-5" data-lucide="users"></svg>
                             <span>Trainer Pool</span>
@@ -196,14 +223,19 @@
                         <svg class="w-4 h-4 transform transition-transform" data-lucide="chevron-right"></svg>
                     </button>
                     <div class="nav-group-children hidden ml-8 space-y-1 mt-1">
-                        <a href="trainers_list.html" class="nav-item block px-3 py-2 rounded-md text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-600">Trainer Directory</a>
-                        <a href="external_trainer_upsert.html?mode=create" class="nav-item block px-3 py-2 rounded-md text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-600">Add External Trainer</a>
+                        <a href="trainers_list.html"
+                            class="nav-item block px-3 py-2 rounded-md text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-600">Trainer
+                            Directory</a>
+                        <a href="external_trainer_upsert.html?mode=create"
+                            class="nav-item block px-3 py-2 rounded-md text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-600">Add
+                            External Trainer</a>
                     </div>
                 </div>
 
                 <!-- Training Sessions with Children -->
                 <div class="nav-group">
-                    <button class="nav-group-toggle flex items-center justify-between w-full px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                    <button
+                        class="nav-group-toggle flex items-center justify-between w-full px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
                         <div class="flex items-center gap-3">
                             <svg class="w-5 h-5" data-lucide="calendar"></svg>
                             <span>Training Sessions</span>
@@ -211,13 +243,18 @@
                         <svg class="w-4 h-4 transform transition-transform" data-lucide="chevron-right"></svg>
                     </button>
                     <div class="nav-group-children hidden ml-8 space-y-1 mt-1">
-                        <a href="training_sessions_list.html" class="nav-item block px-3 py-2 rounded-md text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-600">Sessions Calendar</a>
-                        <a href="training_session_upsert.html?mode=create" class="nav-item block px-3 py-2 rounded-md text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-600">Create Session</a>
+                        <a href="training_sessions_list.html"
+                            class="nav-item block px-3 py-2 rounded-md text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-600">Sessions
+                            Calendar</a>
+                        <a href="training_session_upsert.html?mode=create"
+                            class="nav-item block px-3 py-2 rounded-md text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-600">Create
+                            Session</a>
                     </div>
                 </div>
 
                 <!-- Disputes -->
-                <a href="disputes_list.html" id="nav-disputes" class="nav-item flex items-center gap-3 px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                <a href="disputes_list.html" id="nav-disputes"
+                    class="nav-item flex items-center gap-3 px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
                     <svg class="w-5 h-5" data-lucide="alert-circle"></svg>
                     <span>Disputes</span>
                 </a>
@@ -225,34 +262,39 @@
                 <!-- Analytics Section -->
                 <div class="border-t border-neutral-200 pt-4 mt-4">
                     <h4 class="px-3 text-xs font-semibold text-neutral-500 uppercase tracking-wider mb-2">Analytics</h4>
-                    
-                    <a href="analytics_skill_gap_heatmap.html" class="nav-item flex items-center gap-3 px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+
+                    <a href="analytics_skill_gap_heatmap.html"
+                        class="nav-item flex items-center gap-3 px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
                         <svg class="w-5 h-5" data-lucide="grid"></svg>
                         <span>Skill Gap Heatmap</span>
                     </a>
 
-                    <a href="analytics_tni_dashboard.html" class="nav-item flex items-center gap-3 px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                    <a href="analytics_tni_dashboard.html"
+                        class="nav-item flex items-center gap-3 px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
                         <svg class="w-5 h-5" data-lucide="bar-chart-2"></svg>
                         <span>TNI Dashboard</span>
                     </a>
 
-                    <a href="analytics_training_forecast.html" class="nav-item flex items-center gap-3 px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                    <a href="analytics_training_forecast.html"
+                        class="nav-item flex items-center gap-3 px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
                         <svg class="w-5 h-5" data-lucide="trending-up"></svg>
                         <span>Training Forecast</span>
                     </a>
 
-                    <a href="analytics_assessment_completion.html" class="nav-item flex items-center gap-3 px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                    <a href="analytics_assessment_completion.html"
+                        class="nav-item flex items-center gap-3 px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
                         <svg class="w-5 h-5" data-lucide="pie-chart"></svg>
                         <span>Assessment Completion</span>
                     </a>
 
-                    <a href="analytics_dispute_metrics.html" class="nav-item flex items-center gap-3 px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
+                    <a href="analytics_dispute_metrics.html"
+                        class="nav-item flex items-center gap-3 px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-600">
                         <svg class="w-5 h-5" data-lucide="bar-chart"></svg>
                         <span>Dispute Analytics</span>
                     </a>
                 </div>
             </nav>
-            
+
             <!-- Footer -->
             <div class="absolute bottom-4 w-full text-center text-xs text-neutral-500 bg-white px-4">
                 Made with ❤️ by TiramAi
@@ -264,326 +306,312 @@
 
         <!-- Main Content -->
         <main id="pageContent" class="flex-1 p-6 overflow-y-auto">
-            
-<!-- Criticality Levels Management Page -->
-<div class="max-w-7xl mx-auto space-y-6">
-  <!-- Header Section -->
-  <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-    <div>
-      <h1 class="text-2xl leading-8 font-bold text-neutral-950">Criticality Levels</h1>
-      <p class="text-sm leading-5 text-neutral-700 mt-1">Manage skill criticality levels and weights used in prioritization</p>
-    </div>
-    <button 
-      id="btn-add-criticality" 
-      class="inline-flex items-center justify-center gap-2 h-11 px-4 rounded-md bg-brand-primary-600 hover:bg-brand-primary-700 text-white focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
-    >
-      <svg class="w-5 h-5" data-lucide="plus"></svg>
-      Add Criticality Level
-    </button>
-  </div>
 
-  <!-- Filters Section -->
-  <div class="bg-white border border-neutral-200 rounded-md p-4 shadow-sm">
-    <div class="flex flex-col md:flex-row gap-4">
-      <!-- Status Filter -->
-      <div class="flex-1 max-w-xs">
-        <label class="block text-sm font-medium text-neutral-900 mb-1">Status</label>
-        <select id="filter-status" class="w-full border border-neutral-200 rounded-sm px-3 py-2 bg-white text-sm leading-5 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2">
-          <option value="active">Active</option>
-          <option value="inactive">Inactive</option>
-          <option value="">All</option>
-        </select>
-      </div>
+            <!-- Criticality Levels Management Page -->
+            <div class="max-w-7xl mx-auto space-y-6">
+                <!-- Header Section -->
+                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                    <div>
+                        <h1 class="text-2xl leading-8 font-bold text-neutral-950">Criticality Levels</h1>
+                        <p class="text-sm leading-5 text-neutral-700 mt-1">Manage skill criticality levels and weights
+                            used in prioritization</p>
+                    </div>
+                    <button id="btn-add-criticality"
+                        class="inline-flex items-center justify-center gap-2 h-11 px-4 rounded-md bg-brand-primary-600 hover:bg-brand-primary-700 text-white focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed">
+                        <svg class="w-5 h-5" data-lucide="plus"></svg>
+                        Add Criticality Level
+                    </button>
+                </div>
 
-      <!-- Search Filter -->
-      <div class="flex-1">
-        <label class="block text-sm font-medium text-neutral-900 mb-1">Search by Name</label>
-        <div class="relative">
-          <input 
-            type="text" 
-            id="search-input" 
-            placeholder="Search criticality levels..."
-            class="w-full border border-neutral-200 rounded-sm px-3 py-2 pl-10 bg-white text-sm leading-5 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2"
-          />
-          <svg class="w-5 h-5 absolute left-3 top-2.5 text-neutral-500" data-lucide="search"></svg>
-        </div>
-      </div>
+                <!-- Filters Section -->
+                <div class="bg-white border border-neutral-200 rounded-md p-4 shadow-sm">
+                    <div class="flex flex-col md:flex-row gap-4">
+                        <!-- Status Filter -->
+                        <div class="flex-1 max-w-xs">
+                            <label class="block text-sm font-medium text-neutral-900 mb-1">Status</label>
+                            <select id="filter-status"
+                                class="w-full border border-neutral-200 rounded-sm px-3 py-2 bg-white text-sm leading-5 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2">
+                                <option value="active">Active</option>
+                                <option value="inactive">Inactive</option>
+                                <option value="">All</option>
+                            </select>
+                        </div>
 
-      <!-- Refresh Button -->
-      <div class="flex items-end">
-        <button 
-          id="btn-refresh"
-          class="inline-flex items-center gap-2 h-11 px-4 rounded-md border border-neutral-200 bg-white text-neutral-900 hover:bg-neutral-50 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2" 
-          aria-label="Refresh data"
-        >
-          <svg class="w-5 h-5" data-lucide="refresh-cw"></svg>
-          Refresh
-        </button>
-      </div>
-    </div>
-  </div>
+                        <!-- Search Filter -->
+                        <div class="flex-1">
+                            <label class="block text-sm font-medium text-neutral-900 mb-1">Search by Name</label>
+                            <div class="relative">
+                                <input type="text" id="search-input" placeholder="Search criticality levels..."
+                                    class="w-full border border-neutral-200 rounded-sm px-3 py-2 pl-10 bg-white text-sm leading-5 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2" />
+                                <svg class="w-5 h-5 absolute left-3 top-2.5 text-neutral-500"
+                                    data-lucide="search"></svg>
+                            </div>
+                        </div>
 
-  <!-- Data Table Section -->
-  <div class="bg-white border border-neutral-200 rounded-md shadow-sm overflow-hidden">
-    <!-- Table Header with Loading State -->
-    <div id="table-loading" class="hidden p-8 text-center">
-      <div class="inline-flex items-center gap-2 text-sm text-neutral-500">
-        <svg class="w-5 h-5 animate-spin" data-lucide="loader-2"></svg>
-        Loading criticality levels...
-      </div>
-    </div>
+                        <!-- Refresh Button -->
+                        <div class="flex items-end">
+                            <button id="btn-refresh"
+                                class="inline-flex items-center gap-2 h-11 px-4 rounded-md border border-neutral-200 bg-white text-neutral-900 hover:bg-neutral-50 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2"
+                                aria-label="Refresh data">
+                                <svg class="w-5 h-5" data-lucide="refresh-cw"></svg>
+                                Refresh
+                            </button>
+                        </div>
+                    </div>
+                </div>
 
-    <!-- Skeleton Loading -->
-    <div id="skeleton-loading" class="hidden">
-      <div class="animate-pulse">
-        <div class="bg-neutral-50 px-6 py-3 border-b border-neutral-200">
-          <div class="flex justify-between items-center">
-            <div class="h-4 bg-neutral-200 rounded w-32"></div>
-            <div class="h-4 bg-neutral-200 rounded w-24"></div>
-          </div>
-        </div>
-        <div class="divide-y divide-neutral-200">
-          <div class="px-6 py-4 space-y-2" v-for="i in 5">
-            <div class="flex justify-between items-center">
-              <div class="space-y-1 flex-1">
-                <div class="h-4 bg-neutral-200 rounded w-3/4"></div>
-                <div class="h-3 bg-neutral-200 rounded w-1/2"></div>
-              </div>
-              <div class="flex gap-2">
-                <div class="h-6 bg-neutral-200 rounded w-12"></div>
-                <div class="h-6 bg-neutral-200 rounded w-16"></div>
-              </div>
+                <!-- Data Table Section -->
+                <div class="bg-white border border-neutral-200 rounded-md shadow-sm overflow-hidden">
+                    <!-- Table Header with Loading State -->
+                    <div id="table-loading" class="hidden p-8 text-center">
+                        <div class="inline-flex items-center gap-2 text-sm text-neutral-500">
+                            <svg class="w-5 h-5 animate-spin" data-lucide="loader-2"></svg>
+                            Loading criticality levels...
+                        </div>
+                    </div>
+
+                    <!-- Skeleton Loading -->
+                    <div id="skeleton-loading" class="hidden">
+                        <div class="animate-pulse">
+                            <div class="bg-neutral-50 px-6 py-3 border-b border-neutral-200">
+                                <div class="flex justify-between items-center">
+                                    <div class="h-4 bg-neutral-200 rounded w-32"></div>
+                                    <div class="h-4 bg-neutral-200 rounded w-24"></div>
+                                </div>
+                            </div>
+                            <div class="divide-y divide-neutral-200">
+                                <div class="px-6 py-4 space-y-2" v-for="i in 5">
+                                    <div class="flex justify-between items-center">
+                                        <div class="space-y-1 flex-1">
+                                            <div class="h-4 bg-neutral-200 rounded w-3/4"></div>
+                                            <div class="h-3 bg-neutral-200 rounded w-1/2"></div>
+                                        </div>
+                                        <div class="flex gap-2">
+                                            <div class="h-6 bg-neutral-200 rounded w-12"></div>
+                                            <div class="h-6 bg-neutral-200 rounded w-16"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Actual Data Table -->
+                    <div id="data-table" class="hidden">
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-sm leading-5">
+                                <thead class="bg-neutral-50 text-neutral-700">
+                                    <tr>
+                                        <th class="text-left font-semibold px-6 py-3 border-b border-neutral-200 cursor-pointer hover:bg-neutral-100"
+                                            data-sort="criticalityName">
+                                            <div class="flex items-center gap-2">
+                                                <span>Criticality Name</span>
+                                                <svg class="w-4 h-4 text-neutral-400"
+                                                    data-lucide="chevrons-up-down"></svg>
+                                            </div>
+                                        </th>
+                                        <th class="text-left font-semibold px-6 py-3 border-b border-neutral-200 cursor-pointer hover:bg-neutral-100"
+                                            data-sort="weight">
+                                            <div class="flex items-center gap-2">
+                                                <span>Weight</span>
+                                                <svg class="w-4 h-4 text-neutral-400"
+                                                    data-lucide="chevrons-up-down"></svg>
+                                                <span class="inline-flex items-center cursor-help"
+                                                    title="Higher weights indicate greater priority in skill gap analysis and training needs identification">
+                                                    <svg class="w-4 h-4 text-neutral-400"
+                                                        data-lucide="help-circle"></svg>
+                                                </span>
+                                            </div>
+                                        </th>
+                                        <th class="text-left font-semibold px-6 py-3 border-b border-neutral-200 cursor-pointer hover:bg-neutral-100"
+                                            data-sort="status">
+                                            <div class="flex items-center gap-2">
+                                                <span>Status</span>
+                                                <svg class="w-4 h-4 text-neutral-400"
+                                                    data-lucide="chevrons-up-down"></svg>
+                                            </div>
+                                        </th>
+                                        <th class="text-left font-semibold px-6 py-3 border-b border-neutral-200 cursor-pointer hover:bg-neutral-100"
+                                            data-sort="skillsCount">
+                                            <div class="flex items-center gap-2">
+                                                <span>Skills Count</span>
+                                                <svg class="w-4 h-4 text-neutral-400"
+                                                    data-lucide="chevrons-up-down"></svg>
+                                            </div>
+                                        </th>
+                                        <th class="text-left font-semibold px-6 py-3 border-b border-neutral-200 cursor-pointer hover:bg-neutral-100"
+                                            data-sort="createdTimestamp">
+                                            <div class="flex items-center gap-2">
+                                                <span>Created Date</span>
+                                                <svg class="w-4 h-4 text-neutral-400"
+                                                    data-lucide="chevrons-up-down"></svg>
+                                            </div>
+                                        </th>
+                                        <th class="text-right font-semibold px-6 py-3 border-b border-neutral-200">
+                                            Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="table-body" class="divide-y divide-neutral-200">
+                                    <!-- Dynamic content -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Empty State -->
+                    <div id="empty-state" class="hidden p-8 text-center">
+                        <div class="flex flex-col items-center gap-4">
+                            <svg class="w-12 h-12 text-neutral-400" data-lucide="sliders"></svg>
+                            <div>
+                                <h3 class="text-base font-semibold text-neutral-900">No criticality levels found</h3>
+                                <p class="text-sm text-neutral-500 mt-1">Get started by creating your first criticality
+                                    level.</p>
+                            </div>
+                            <button id="btn-add-from-empty"
+                                class="inline-flex items-center gap-2 px-4 py-2 rounded-md bg-brand-primary-600 hover:bg-brand-primary-700 text-white focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2">
+                                <svg class="w-4 h-4" data-lucide="plus"></svg>
+                                Add Criticality Level
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Pagination -->
+                    <div id="pagination-container" class="hidden bg-neutral-50 px-6 py-3 border-t border-neutral-200">
+                        <div class="flex items-center justify-between">
+                            <div class="text-sm text-neutral-700">
+                                Showing <span id="pagination-start">0</span> to <span id="pagination-end">0</span> of
+                                <span id="pagination-total">0</span> results
+                            </div>
+                            <div class="flex gap-2">
+                                <button id="btn-prev-page"
+                                    class="inline-flex items-center px-3 py-2 rounded-md border border-neutral-200 bg-white text-sm text-neutral-700 hover:bg-neutral-50 disabled:opacity-50 disabled:cursor-not-allowed">
+                                    <svg class="w-4 h-4" data-lucide="chevron-left"></svg>
+                                    Previous
+                                </button>
+                                <button id="btn-next-page"
+                                    class="inline-flex items-center px-3 py-2 rounded-md border border-neutral-200 bg-white text-sm text-neutral-700 hover:bg-neutral-50 disabled:opacity-50 disabled:cursor-not-allowed">
+                                    Next
+                                    <svg class="w-4 h-4" data-lucide="chevron-right"></svg>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-          </div>
-        </div>
-      </div>
-    </div>
 
-    <!-- Actual Data Table -->
-    <div id="data-table" class="hidden">
-      <div class="overflow-x-auto">
-        <table class="w-full text-sm leading-5">
-          <thead class="bg-neutral-50 text-neutral-700">
-            <tr>
-              <th class="text-left font-semibold px-6 py-3 border-b border-neutral-200 cursor-pointer hover:bg-neutral-100" data-sort="criticalityName">
-                <div class="flex items-center gap-2">
-                  <span>Criticality Name</span>
-                  <svg class="w-4 h-4 text-neutral-400" data-lucide="chevrons-up-down"></svg>
+            <!-- Add Criticality Modal -->
+            <div id="modal-add-criticality"
+                class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+                <div class="bg-white rounded-lg shadow-lg max-w-md w-full">
+                    <div class="flex items-center justify-between p-6 border-b border-neutral-200">
+                        <h3 class="text-base leading-6 font-semibold text-neutral-950">Add Criticality Level</h3>
+                        <button id="btn-close-add-modal"
+                            class="text-neutral-400 hover:text-neutral-600 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 rounded-md p-1">
+                            <svg class="w-5 h-5" data-lucide="x"></svg>
+                        </button>
+                    </div>
+                    <form id="form-add-criticality" class="p-6 space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-neutral-900 mb-1">Criticality Name <span
+                                    class="text-danger-600">*</span></label>
+                            <input type="text" id="add-criticality-name" name="criticalityName" required maxlength="100"
+                                placeholder="e.g., Critical, High, Medium, Low"
+                                class="w-full border border-neutral-200 rounded-sm px-3 py-2 text-sm leading-5 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2" />
+                            <p class="mt-1 text-xs text-neutral-500">Must be unique among active criticality levels</p>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-neutral-900 mb-1">Weight <span
+                                    class="text-danger-600">*</span></label>
+                            <input type="number" id="add-weight" name="weight" required min="0.1" max="10" step="0.1"
+                                placeholder="1.0"
+                                class="w-full border border-neutral-200 rounded-sm px-3 py-2 text-sm leading-5 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2" />
+                            <p class="mt-1 text-xs text-neutral-500">Numeric weight for TNI prioritization (0.1 - 10)
+                            </p>
+                        </div>
+
+                        <div class="flex gap-3 pt-4">
+                            <button type="submit"
+                                class="flex-1 inline-flex items-center justify-center h-11 px-4 rounded-md bg-brand-primary-600 hover:bg-brand-primary-700 text-white focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed">
+                                <svg class="w-5 h-5 mr-2" data-lucide="save"></svg>
+                                Save Criticality Level
+                            </button>
+                            <button type="button" id="btn-cancel-add"
+                                class="px-4 py-2 rounded-md border border-neutral-200 bg-white text-neutral-900 hover:bg-neutral-50 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2">
+                                Cancel
+                            </button>
+                        </div>
+                    </form>
                 </div>
-              </th>
-              <th class="text-left font-semibold px-6 py-3 border-b border-neutral-200 cursor-pointer hover:bg-neutral-100" data-sort="weight">
-                <div class="flex items-center gap-2">
-                  <span>Weight</span>
-                  <svg class="w-4 h-4 text-neutral-400" data-lucide="chevrons-up-down"></svg>
-                  <span class="inline-flex items-center cursor-help" title="Higher weights indicate greater priority in skill gap analysis and training needs identification">
-                    <svg class="w-4 h-4 text-neutral-400" data-lucide="help-circle"></svg>
-                  </span>
+            </div>
+
+            <!-- Edit Criticality Modal -->
+            <div id="modal-edit-criticality"
+                class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+                <div class="bg-white rounded-lg shadow-lg max-w-md w-full">
+                    <div class="flex items-center justify-between p-6 border-b border-neutral-200">
+                        <h3 class="text-base leading-6 font-semibold text-neutral-950">Edit Criticality Level</h3>
+                        <button id="btn-close-edit-modal"
+                            class="text-neutral-400 hover:text-neutral-600 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 rounded-md p-1">
+                            <svg class="w-5 h-5" data-lucide="x"></svg>
+                        </button>
+                    </div>
+                    <form id="form-edit-criticality" class="p-6 space-y-4">
+                        <!-- Warning for active skills -->
+                        <div id="edit-warning" class="hidden bg-warning-50 border border-warning-200 rounded-md p-3">
+                            <div class="flex gap-3">
+                                <svg class="w-5 h-5 text-warning-600 flex-shrink-0 mt-0.5"
+                                    data-lucide="alert-triangle"></svg>
+                                <div class="text-sm">
+                                    <p class="font-medium text-warning-800">Active Skills Warning</p>
+                                    <p class="text-warning-700 mt-1">This criticality level is currently used by <span
+                                            id="active-skills-count">0</span> active skills. Changes will affect their
+                                        priority calculations.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-neutral-900 mb-1">Criticality Name <span
+                                    class="text-danger-600">*</span></label>
+                            <input type="text" id="edit-criticality-name" name="criticalityName" required
+                                maxlength="100"
+                                class="w-full border border-neutral-200 rounded-sm px-3 py-2 text-sm leading-5 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2" />
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-neutral-900 mb-1">Weight <span
+                                    class="text-danger-600">*</span></label>
+                            <input type="number" id="edit-weight" name="weight" required min="0.1" max="10" step="0.1"
+                                class="w-full border border-neutral-200 rounded-sm px-3 py-2 text-sm leading-5 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2" />
+                            <p class="mt-1 text-xs text-neutral-500">Numeric weight for TNI prioritization (0.1 - 10)
+                            </p>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-neutral-900 mb-1">Status <span
+                                    class="text-danger-600">*</span></label>
+                            <select id="edit-status" name="status" required
+                                class="w-full border border-neutral-200 rounded-sm px-3 py-2 bg-white text-sm leading-5 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2">
+                                <option value="active">Active</option>
+                                <option value="inactive">Inactive</option>
+                            </select>
+                        </div>
+
+                        <div class="flex gap-3 pt-4">
+                            <button type="submit"
+                                class="flex-1 inline-flex items-center justify-center h-11 px-4 rounded-md bg-brand-primary-600 hover:bg-brand-primary-700 text-white focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed">
+                                <svg class="w-5 h-5 mr-2" data-lucide="save"></svg>
+                                Update Criticality Level
+                            </button>
+                            <button type="button" id="btn-cancel-edit"
+                                class="px-4 py-2 rounded-md border border-neutral-200 bg-white text-neutral-900 hover:bg-neutral-50 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2">
+                                Cancel
+                            </button>
+                        </div>
+                    </form>
                 </div>
-              </th>
-              <th class="text-left font-semibold px-6 py-3 border-b border-neutral-200 cursor-pointer hover:bg-neutral-100" data-sort="status">
-                <div class="flex items-center gap-2">
-                  <span>Status</span>
-                  <svg class="w-4 h-4 text-neutral-400" data-lucide="chevrons-up-down"></svg>
-                </div>
-              </th>
-              <th class="text-left font-semibold px-6 py-3 border-b border-neutral-200 cursor-pointer hover:bg-neutral-100" data-sort="skillsCount">
-                <div class="flex items-center gap-2">
-                  <span>Skills Count</span>
-                  <svg class="w-4 h-4 text-neutral-400" data-lucide="chevrons-up-down"></svg>
-                </div>
-              </th>
-              <th class="text-left font-semibold px-6 py-3 border-b border-neutral-200 cursor-pointer hover:bg-neutral-100" data-sort="createdTimestamp">
-                <div class="flex items-center gap-2">
-                  <span>Created Date</span>
-                  <svg class="w-4 h-4 text-neutral-400" data-lucide="chevrons-up-down"></svg>
-                </div>
-              </th>
-              <th class="text-right font-semibold px-6 py-3 border-b border-neutral-200">Actions</th>
-            </tr>
-          </thead>
-          <tbody id="table-body" class="divide-y divide-neutral-200">
-            <!-- Dynamic content -->
-          </tbody>
-        </table>
-      </div>
-    </div>
-
-    <!-- Empty State -->
-    <div id="empty-state" class="hidden p-8 text-center">
-      <div class="flex flex-col items-center gap-4">
-        <svg class="w-12 h-12 text-neutral-400" data-lucide="sliders"></svg>
-        <div>
-          <h3 class="text-base font-semibold text-neutral-900">No criticality levels found</h3>
-          <p class="text-sm text-neutral-500 mt-1">Get started by creating your first criticality level.</p>
-        </div>
-        <button id="btn-add-from-empty" class="inline-flex items-center gap-2 px-4 py-2 rounded-md bg-brand-primary-600 hover:bg-brand-primary-700 text-white focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2">
-          <svg class="w-4 h-4" data-lucide="plus"></svg>
-          Add Criticality Level
-        </button>
-      </div>
-    </div>
-
-    <!-- Pagination -->
-    <div id="pagination-container" class="hidden bg-neutral-50 px-6 py-3 border-t border-neutral-200">
-      <div class="flex items-center justify-between">
-        <div class="text-sm text-neutral-700">
-          Showing <span id="pagination-start">0</span> to <span id="pagination-end">0</span> of <span id="pagination-total">0</span> results
-        </div>
-        <div class="flex gap-2">
-          <button id="btn-prev-page" class="inline-flex items-center px-3 py-2 rounded-md border border-neutral-200 bg-white text-sm text-neutral-700 hover:bg-neutral-50 disabled:opacity-50 disabled:cursor-not-allowed">
-            <svg class="w-4 h-4" data-lucide="chevron-left"></svg>
-            Previous
-          </button>
-          <button id="btn-next-page" class="inline-flex items-center px-3 py-2 rounded-md border border-neutral-200 bg-white text-sm text-neutral-700 hover:bg-neutral-50 disabled:opacity-50 disabled:cursor-not-allowed">
-            Next
-            <svg class="w-4 h-4" data-lucide="chevron-right"></svg>
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- Add Criticality Modal -->
-<div id="modal-add-criticality" class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-  <div class="bg-white rounded-lg shadow-lg max-w-md w-full">
-    <div class="flex items-center justify-between p-6 border-b border-neutral-200">
-      <h3 class="text-base leading-6 font-semibold text-neutral-950">Add Criticality Level</h3>
-      <button id="btn-close-add-modal" class="text-neutral-400 hover:text-neutral-600 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 rounded-md p-1">
-        <svg class="w-5 h-5" data-lucide="x"></svg>
-      </button>
-    </div>
-    <form id="form-add-criticality" class="p-6 space-y-4">
-      <div>
-        <label class="block text-sm font-medium text-neutral-900 mb-1">Criticality Name <span class="text-danger-600">*</span></label>
-        <input 
-          type="text" 
-          id="add-criticality-name"
-          name="criticalityName"
-          required
-          maxlength="100"
-          placeholder="e.g., Critical, High, Medium, Low"
-          class="w-full border border-neutral-200 rounded-sm px-3 py-2 text-sm leading-5 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2"
-        />
-        <p class="mt-1 text-xs text-neutral-500">Must be unique among active criticality levels</p>
-      </div>
-      
-      <div>
-        <label class="block text-sm font-medium text-neutral-900 mb-1">Weight <span class="text-danger-600">*</span></label>
-        <input 
-          type="number" 
-          id="add-weight"
-          name="weight"
-          required
-          min="0.1"
-          max="10"
-          step="0.1"
-          placeholder="1.0"
-          class="w-full border border-neutral-200 rounded-sm px-3 py-2 text-sm leading-5 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2"
-        />
-        <p class="mt-1 text-xs text-neutral-500">Numeric weight for TNI prioritization (0.1 - 10)</p>
-      </div>
-
-      <div class="flex gap-3 pt-4">
-        <button 
-          type="submit" 
-          class="flex-1 inline-flex items-center justify-center h-11 px-4 rounded-md bg-brand-primary-600 hover:bg-brand-primary-700 text-white focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          <svg class="w-5 h-5 mr-2" data-lucide="save"></svg>
-          Save Criticality Level
-        </button>
-        <button 
-          type="button" 
-          id="btn-cancel-add"
-          class="px-4 py-2 rounded-md border border-neutral-200 bg-white text-neutral-900 hover:bg-neutral-50 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2"
-        >
-          Cancel
-        </button>
-      </div>
-    </form>
-  </div>
-</div>
-
-<!-- Edit Criticality Modal -->
-<div id="modal-edit-criticality" class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-  <div class="bg-white rounded-lg shadow-lg max-w-md w-full">
-    <div class="flex items-center justify-between p-6 border-b border-neutral-200">
-      <h3 class="text-base leading-6 font-semibold text-neutral-950">Edit Criticality Level</h3>
-      <button id="btn-close-edit-modal" class="text-neutral-400 hover:text-neutral-600 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 rounded-md p-1">
-        <svg class="w-5 h-5" data-lucide="x"></svg>
-      </button>
-    </div>
-    <form id="form-edit-criticality" class="p-6 space-y-4">
-      <!-- Warning for active skills -->
-      <div id="edit-warning" class="hidden bg-warning-50 border border-warning-200 rounded-md p-3">
-        <div class="flex gap-3">
-          <svg class="w-5 h-5 text-warning-600 flex-shrink-0 mt-0.5" data-lucide="alert-triangle"></svg>
-          <div class="text-sm">
-            <p class="font-medium text-warning-800">Active Skills Warning</p>
-            <p class="text-warning-700 mt-1">This criticality level is currently used by <span id="active-skills-count">0</span> active skills. Changes will affect their priority calculations.</p>
-          </div>
-        </div>
-      </div>
-
-      <div>
-        <label class="block text-sm font-medium text-neutral-900 mb-1">Criticality Name <span class="text-danger-600">*</span></label>
-        <input 
-          type="text" 
-          id="edit-criticality-name"
-          name="criticalityName"
-          required
-          maxlength="100"
-          class="w-full border border-neutral-200 rounded-sm px-3 py-2 text-sm leading-5 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2"
-        />
-      </div>
-      
-      <div>
-        <label class="block text-sm font-medium text-neutral-900 mb-1">Weight <span class="text-danger-600">*</span></label>
-        <input 
-          type="number" 
-          id="edit-weight"
-          name="weight"
-          required
-          min="0.1"
-          max="10"
-          step="0.1"
-          class="w-full border border-neutral-200 rounded-sm px-3 py-2 text-sm leading-5 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2"
-        />
-        <p class="mt-1 text-xs text-neutral-500">Numeric weight for TNI prioritization (0.1 - 10)</p>
-      </div>
-
-      <div>
-        <label class="block text-sm font-medium text-neutral-900 mb-1">Status <span class="text-danger-600">*</span></label>
-        <select 
-          id="edit-status"
-          name="status"
-          required
-          class="w-full border border-neutral-200 rounded-sm px-3 py-2 bg-white text-sm leading-5 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2"
-        >
-          <option value="active">Active</option>
-          <option value="inactive">Inactive</option>
-        </select>
-      </div>
-
-      <div class="flex gap-3 pt-4">
-        <button 
-          type="submit" 
-          class="flex-1 inline-flex items-center justify-center h-11 px-4 rounded-md bg-brand-primary-600 hover:bg-brand-primary-700 text-white focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          <svg class="w-5 h-5 mr-2" data-lucide="save"></svg>
-          Update Criticality Level
-        </button>
-        <button 
-          type="button" 
-          id="btn-cancel-edit"
-          class="px-4 py-2 rounded-md border border-neutral-200 bg-white text-neutral-900 hover:bg-neutral-50 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2"
-        >
-          Cancel
-        </button>
-      </div>
-    </form>
-  </div>
-</div>
+            </div>
 
         </main>
     </div>
@@ -619,7 +647,7 @@
                 e.preventDefault();
                 const children = toggle.nextElementSibling;
                 const icon = toggle.querySelector('svg:last-child');
-                
+
                 children.classList.toggle('hidden');
                 icon.classList.toggle('rotate-90');
             });
@@ -664,10 +692,10 @@
                 const userData = userDoc.exists() ? userDoc.data() : null;
 
                 // Update UI with user data
-                const displayName = userData?.firstName && userData?.lastName 
+                const displayName = userData?.firstName && userData?.lastName
                     ? `${userData.firstName} ${userData.lastName}`
                     : user.displayName || 'John Doe';
-                
+
                 const email = user.email || 'johndoe@example.com';
                 const initials = displayName.split(' ').map(n => n[0]).join('').toUpperCase();
 
@@ -688,13 +716,13 @@
         function setActiveNavItem() {
             const currentPath = window.location.pathname;
             const navItems = document.querySelectorAll('.nav-item');
-            
+
             navItems.forEach(item => {
                 const href = item.getAttribute('href');
                 if (href && currentPath.includes(href.split('?')[0])) {
                     item.classList.add('bg-accent-gold-50', 'text-brand-primary-600', 'border-l-2', 'border-brand-primary-600');
                     item.classList.remove('text-neutral-700', 'text-neutral-600');
-                    
+
                     // Expand parent group if needed
                     const parentGroup = item.closest('.nav-group');
                     if (parentGroup) {
@@ -711,210 +739,210 @@
         setActiveNavItem();
     </script>
 
-    
-<script id="data-script" type="module" data-tiramai="web-gen">
-import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.12.4/firebase-auth.js';
-import { 
-  collection, getDocs, addDoc, doc, getDoc, updateDoc, deleteDoc, writeBatch,
-  query, where, orderBy, limit, startAfter, Timestamp, getCountFromServer
-} from 'https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js';
-import { auth, getDb } from "./scripts/firebase.js";
-import { showToast, showLoader, hideLoader } from "./scripts/main.js";
 
-// Initialize
-const db = getDb();
-let criticalities = [];
-let filteredCriticalities = [];
-let currentPage = 1;
-const pageSize = 10;
-let sortConfig = { field: 'createdTimestamp', direction: 'desc' };
-let currentAbort;
+    <script id="data-script" type="module" data-tiramai="web-gen">
+        import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.12.4/firebase-auth.js';
+        import {
+            collection, getDocs, addDoc, doc, getDoc, updateDoc, deleteDoc, writeBatch,
+            query, where, orderBy, limit, startAfter, Timestamp, getCountFromServer
+        } from 'https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js';
+        import { auth, getDb } from "./scripts/firebase.js";
+        import { showToast, showLoader, hideLoader } from "./scripts/main.js";
 
-// Auth check
-onAuthStateChanged(auth, user => {
-  if (!user) {
-    location.href = "auth.html?redirect=" + encodeURIComponent(location.pathname);
-  } else {
-    funInitialLoad();
-  }
-});
+        // Initialize
+        const db = getDb();
+        let criticalities = [];
+        let filteredCriticalities = [];
+        let currentPage = 1;
+        const pageSize = 10;
+        let sortConfig = { field: 'createdTimestamp', direction: 'desc' };
+        const abortControllers = {};
 
-// Abortable reads utility
-function createSemaphore(max = 2) {
-  const queue = [];
-  let active = 0;
-  const next = () => {
-    if (active >= max || queue.length === 0) return;
-    active++;
-    const { fn, res, rej } = queue.shift();
-    Promise.resolve()
-      .then(fn)
-      .then(v => res(v))
-      .catch(e => rej(e))
-      .finally(() => { active--; next(); });
-  };
-  return (fn) => new Promise((res, rej) => { queue.push({ fn, res, rej }); next(); });
-}
-const withLimit = createSemaphore(2);
+        // Auth check
+        onAuthStateChanged(auth, user => {
+            if (!user) {
+                location.href = "auth.html?redirect=" + encodeURIComponent(location.pathname);
+            } else {
+                funInitialLoad();
+            }
+        });
 
-async function funAbortableFetch(buildQuery) {
-  if (currentAbort) currentAbort.abort();
-  currentAbort = new AbortController();
-  const signal = currentAbort.signal;
+        // Abortable reads utility
+        function createSemaphore(max = 2) {
+            const queue = [];
+            let active = 0;
+            const next = () => {
+                if (active >= max || queue.length === 0) return;
+                active++;
+                const { fn, res, rej } = queue.shift();
+                Promise.resolve()
+                    .then(fn)
+                    .then(v => res(v))
+                    .catch(e => rej(e))
+                    .finally(() => { active--; next(); });
+            };
+            return (fn) => new Promise((res, rej) => { queue.push({ fn, res, rej }); next(); });
+        }
+        const withLimit = createSemaphore(2);
 
-  try {
-    const q = buildQuery();
-    const snapshot = await getDocs(q);
-    if (signal.aborted) return { items: [], count: 0 };
-    return {
-      items: snapshot.docs.map(d => ({ id: d.id, ...d.data() })),
-      count: snapshot.docs.length
-    };
-  } catch (err) {
-    if (signal.aborted) return { items: [], count: 0 };
-    console.error('Fetch error:', err);
-    showToast(err?.message || "Failed to load data", 'error');
-    return { items: [], count: 0 };
-  }
-}
+        async function funAbortableFetch(buildQuery, context = 'default') {
+            if (abortControllers[context]) abortControllers[context].abort();
+            abortControllers[context] = new AbortController();
+            const signal = abortControllers[context].signal;
 
-// Load data with proper error handling
-async function funInitialLoad(forceRefresh = false) {
-  try {
-    funShowSkeleton();
-    
-    await Promise.all([
-      withLimit(() => funLoadCriticalities(forceRefresh)),
-      withLimit(() => funLoadSkillsCounts())
-    ]);
-    
-    funApplyFilters();
-    funRenderTable();
-    funHideSkeleton();
-  } catch (error) {
-    console.error('Initial load error:', error);
-    showToast('Failed to load criticality levels', 'error');
-    funHideSkeleton();
-  }
-}
+            try {
+                const q = buildQuery();
+                const snapshot = await getDocs(q);
+                if (signal.aborted) return { items: [], count: 0 };
+                return {
+                    items: snapshot.docs.map(d => ({ id: d.id, ...d.data() })),
+                    count: snapshot.docs.length
+                };
+            } catch (err) {
+                if (signal.aborted) return { items: [], count: 0 };
+                console.error('Fetch error:', err);
+                showToast(err?.message || "Failed to load data", 'error');
+                return { items: [], count: 0 };
+            }
+        }
 
-async function funLoadCriticalities(forceRefresh = false) {
-  try {
-    const result = await funAbortableFetch(() => 
-      query(
-        collection(db, 'skillCriticalities'),
-        orderBy('createdTimestamp', 'desc')
-      )
-    );
-    
-    criticalities = result.items.map(item => ({
-      ...item,
-      skillsCount: 0, // Will be populated separately
-      createdTimestamp: item.createdTimestamp ? new Date(item.createdTimestamp) : new Date(),
-      weight: Number(item.weight) || 0
-    }));
-    
-  } catch (error) {
-    console.error('Error loading criticalities:', error);
-    criticalities = [];
-    throw error;
-  }
-}
+        // Load data with proper error handling
+        async function funInitialLoad(forceRefresh = false) {
+            try {
+                funShowSkeleton();
 
-async function funLoadSkillsCounts() {
-  try {
-    // Get count of skills for each criticality
-    const skillsResult = await funAbortableFetch(() => 
-      query(collection(db, 'skills'))
-    );
-    
-    const skillsCounts = skillsResult.items.reduce((acc, skill) => {
-      if (skill.criticalityId && skill.status === 'active') {
-        acc[skill.criticalityId] = (acc[skill.criticalityId] || 0) + 1;
-      }
-      return acc;
-    }, {});
-    
-    // Update criticalities with skills counts
-    criticalities = criticalities.map(crit => ({
-      ...crit,
-      skillsCount: skillsCounts[crit.id] || 0
-    }));
-    
-  } catch (error) {
-    console.error('Error loading skills counts:', error);
-    // Don't throw - this is supplementary data
-  }
-}
+                await Promise.all([
+                    withLimit(() => funLoadCriticalities(forceRefresh)),
+                    withLimit(() => funLoadSkillsCounts())
+                ]);
 
-// Filtering and searching
-function funApplyFilters() {
-  const statusFilter = document.getElementById('filter-status').value;
-  const searchTerm = document.getElementById('search-input').value.toLowerCase().trim();
-  
-  filteredCriticalities = criticalities.filter(crit => {
-    const matchesStatus = !statusFilter || crit.status === statusFilter;
-    const matchesSearch = !searchTerm || 
-      (crit.criticalityName && crit.criticalityName.toLowerCase().includes(searchTerm));
-    
-    return matchesStatus && matchesSearch;
-  });
-  
-  // Apply sorting
-  funApplySort();
-  
-  // Reset pagination
-  currentPage = 1;
-}
+                funApplyFilters();
+                funRenderTable();
+                funHideSkeleton();
+            } catch (error) {
+                console.error('Initial load error:', error);
+                showToast('Failed to load criticality levels', 'error');
+                funHideSkeleton();
+            }
+        }
 
-function funApplySort() {
-  filteredCriticalities.sort((a, b) => {
-    const { field, direction } = sortConfig;
-    let aVal = a[field];
-    let bVal = b[field];
-    
-    // Handle different data types
-    if (field === 'createdTimestamp') {
-      aVal = aVal instanceof Date ? aVal.getTime() : 0;
-      bVal = bVal instanceof Date ? bVal.getTime() : 0;
-    } else if (field === 'weight' || field === 'skillsCount') {
-      aVal = Number(aVal) || 0;
-      bVal = Number(bVal) || 0;
-    } else {
-      aVal = (aVal || '').toString().toLowerCase();
-      bVal = (bVal || '').toString().toLowerCase();
-    }
-    
-    if (aVal < bVal) return direction === 'asc' ? -1 : 1;
-    if (aVal > bVal) return direction === 'asc' ? 1 : -1;
-    return 0;
-  });
-}
+        async function funLoadCriticalities(forceRefresh = false) {
+            try {
+                const result = await funAbortableFetch(() =>
+                    query(
+                        collection(db, 'skillCriticalities'),
+                        orderBy('createdTimestamp', 'desc')
+                    ), 'criticalities'
+                );
 
-// Render table
-function funRenderTable() {
-  const tableBody = document.getElementById('table-body');
-  const emptyState = document.getElementById('empty-state');
-  const dataTable = document.getElementById('data-table');
-  const paginationContainer = document.getElementById('pagination-container');
-  
-  if (filteredCriticalities.length === 0) {
-    dataTable.classList.add('hidden');
-    paginationContainer.classList.add('hidden');
-    emptyState.classList.remove('hidden');
-    return;
-  }
-  
-  emptyState.classList.add('hidden');
-  dataTable.classList.remove('hidden');
-  
-  // Pagination
-  const start = (currentPage - 1) * pageSize;
-  const end = Math.min(start + pageSize, filteredCriticalities.length);
-  const pageData = filteredCriticalities.slice(start, end);
-  
-  // Render rows
-  tableBody.innerHTML = pageData.map(crit => `
+                criticalities = result.items.map(item => ({
+                    ...item,
+                    skillsCount: 0, // Will be populated separately
+                    createdTimestamp: item.createdTimestamp ? new Date(item.createdTimestamp) : new Date(),
+                    weight: Number(item.weight) || 0
+                }));
+
+            } catch (error) {
+                console.error('Error loading criticalities:', error);
+                criticalities = [];
+                throw error;
+            }
+        }
+
+        async function funLoadSkillsCounts() {
+            try {
+                // Get count of skills for each criticality
+                const skillsResult = await funAbortableFetch(() =>
+                    query(collection(db, 'skills')), 'skills'
+                );
+
+                const skillsCounts = skillsResult.items.reduce((acc, skill) => {
+                    if (skill.criticalityId && skill.status === 'active') {
+                        acc[skill.criticalityId] = (acc[skill.criticalityId] || 0) + 1;
+                    }
+                    return acc;
+                }, {});
+
+                // Update criticalities with skills counts
+                criticalities = criticalities.map(crit => ({
+                    ...crit,
+                    skillsCount: skillsCounts[crit.id] || 0
+                }));
+
+            } catch (error) {
+                console.error('Error loading skills counts:', error);
+                // Don't throw - this is supplementary data
+            }
+        }
+
+        // Filtering and searching
+        function funApplyFilters() {
+            const statusFilter = document.getElementById('filter-status').value;
+            const searchTerm = document.getElementById('search-input').value.toLowerCase().trim();
+
+            filteredCriticalities = criticalities.filter(crit => {
+                const matchesStatus = !statusFilter || crit.status === statusFilter;
+                const matchesSearch = !searchTerm ||
+                    (crit.criticalityName && crit.criticalityName.toLowerCase().includes(searchTerm));
+
+                return matchesStatus && matchesSearch;
+            });
+
+            // Apply sorting
+            funApplySort();
+
+            // Reset pagination
+            currentPage = 1;
+        }
+
+        function funApplySort() {
+            filteredCriticalities.sort((a, b) => {
+                const { field, direction } = sortConfig;
+                let aVal = a[field];
+                let bVal = b[field];
+
+                // Handle different data types
+                if (field === 'createdTimestamp') {
+                    aVal = aVal instanceof Date ? aVal.getTime() : 0;
+                    bVal = bVal instanceof Date ? bVal.getTime() : 0;
+                } else if (field === 'weight' || field === 'skillsCount') {
+                    aVal = Number(aVal) || 0;
+                    bVal = Number(bVal) || 0;
+                } else {
+                    aVal = (aVal || '').toString().toLowerCase();
+                    bVal = (bVal || '').toString().toLowerCase();
+                }
+
+                if (aVal < bVal) return direction === 'asc' ? -1 : 1;
+                if (aVal > bVal) return direction === 'asc' ? 1 : -1;
+                return 0;
+            });
+        }
+
+        // Render table
+        function funRenderTable() {
+            const tableBody = document.getElementById('table-body');
+            const emptyState = document.getElementById('empty-state');
+            const dataTable = document.getElementById('data-table');
+            const paginationContainer = document.getElementById('pagination-container');
+
+            if (filteredCriticalities.length === 0) {
+                dataTable.classList.add('hidden');
+                paginationContainer.classList.add('hidden');
+                emptyState.classList.remove('hidden');
+                return;
+            }
+
+            emptyState.classList.add('hidden');
+            dataTable.classList.remove('hidden');
+
+            // Pagination
+            const start = (currentPage - 1) * pageSize;
+            const end = Math.min(start + pageSize, filteredCriticalities.length);
+            const pageData = filteredCriticalities.slice(start, end);
+
+            // Render rows
+            tableBody.innerHTML = pageData.map(crit => `
     <tr class="hover:bg-neutral-50 focus-within:bg-neutral-50">
       <td class="px-6 py-3">
         <div class="font-medium text-neutral-900">${funEscape(crit.criticalityName || 'N/A')}</div>
@@ -953,341 +981,342 @@ function funRenderTable() {
       </td>
     </tr>
   `).join('');
-  
-  // Update pagination
-  funUpdatePagination();
-  
-  // Update sort indicators
-  funUpdateSortIndicators();
-  
-  // Re-initialize Lucide icons
-  lucide.createIcons();
-}
 
-function funRenderStatusBadge(status) {
-  const statusClasses = {
-    active: 'bg-success-600 text-white',
-    inactive: 'bg-neutral-500 text-white'
-  };
-  
-  const classes = statusClasses[status] || 'bg-neutral-400 text-white';
-  const label = status === 'active' ? 'Active' : 'Inactive';
-  
-  return `<span class="inline-flex items-center px-2 py-1 text-xs rounded-full font-medium ${classes}">${label}</span>`;
-}
+            // Update pagination
+            funUpdatePagination();
 
-function funUpdatePagination() {
-  const paginationContainer = document.getElementById('pagination-container');
-  const start = (currentPage - 1) * pageSize + 1;
-  const end = Math.min(currentPage * pageSize, filteredCriticalities.length);
-  const total = filteredCriticalities.length;
-  
-  document.getElementById('pagination-start').textContent = start;
-  document.getElementById('pagination-end').textContent = end;
-  document.getElementById('pagination-total').textContent = total;
-  
-  document.getElementById('btn-prev-page').disabled = currentPage === 1;
-  document.getElementById('btn-next-page').disabled = currentPage * pageSize >= total;
-  
-  paginationContainer.classList.toggle('hidden', total <= pageSize);
-}
+            // Update sort indicators
+            funUpdateSortIndicators();
 
-function funUpdateSortIndicators() {
-  document.querySelectorAll('[data-sort] svg').forEach(icon => {
-    icon.setAttribute('data-lucide', 'chevrons-up-down');
-  });
-  
-  const activeHeader = document.querySelector(`[data-sort="${sortConfig.field}"] svg`);
-  if (activeHeader) {
-    const iconName = sortConfig.direction === 'asc' ? 'chevron-up' : 'chevron-down';
-    activeHeader.setAttribute('data-lucide', iconName);
-  }
-  
-  lucide.createIcons();
-}
+            // Re-initialize Lucide icons
+            lucide.createIcons();
+        }
 
-// Modal management
-function funOpenAddModal() {
-  document.getElementById('modal-add-criticality').classList.remove('hidden');
-  document.getElementById('add-criticality-name').focus();
-}
+        function funRenderStatusBadge(status) {
+            const statusClasses = {
+                active: 'bg-success-600 text-white',
+                inactive: 'bg-neutral-500 text-white'
+            };
 
-async function funOpenEditModal(criticalityId) {
-  const criticality = criticalities.find(c => c.id === criticalityId);
-  if (!criticality) {
-    showToast('Criticality level not found', 'error');
-    return;
-  }
-  
-  // Populate form
-  document.getElementById('edit-criticality-name').value = criticality.criticalityName || '';
-  document.getElementById('edit-weight').value = criticality.weight || '';
-  document.getElementById('edit-status').value = criticality.status || 'active';
-  
-  // Show warning if has active skills
-  const activeSkillsCount = criticality.skillsCount || 0;
-  const warningDiv = document.getElementById('edit-warning');
-  const activeSkillsSpan = document.getElementById('active-skills-count');
-  
-  if (activeSkillsCount > 0) {
-    activeSkillsSpan.textContent = activeSkillsCount;
-    warningDiv.classList.remove('hidden');
-  } else {
-    warningDiv.classList.add('hidden');
-  }
-  
-  // Store ID for form submission
-  document.getElementById('form-edit-criticality').dataset.criticalityId = criticalityId;
-  
-  document.getElementById('modal-edit-criticality').classList.remove('hidden');
-  document.getElementById('edit-criticality-name').focus();
-}
+            const classes = statusClasses[status] || 'bg-neutral-400 text-white';
+            const label = status === 'active' ? 'Active' : 'Inactive';
 
-function funCloseModals() {
-  document.getElementById('modal-add-criticality').classList.add('hidden');
-  document.getElementById('modal-edit-criticality').classList.add('hidden');
-  
-  // Reset forms
-  document.getElementById('form-add-criticality').reset();
-  document.getElementById('form-edit-criticality').reset();
-}
+            return `<span class="inline-flex items-center px-2 py-1 text-xs rounded-full font-medium ${classes}">${label}</span>`;
+        }
 
-// CRUD operations
-async function funAddCriticality(formData) {
-  showLoader();
-  try {
-    const data = {
-      criticalityName: formData.get('criticalityName').trim(),
-      weight: parseFloat(formData.get('weight')),
-      status: 'active',
-      createdTimestamp: new Date().toISOString(),
-      modifiedTimestamp: new Date().toISOString()
-    };
-    
-    // Check uniqueness among active criticalities
-    const existingActive = criticalities.some(c => 
-      c.status === 'active' && 
-      c.criticalityName && 
-      c.criticalityName.toLowerCase() === data.criticalityName.toLowerCase()
-    );
-    
-    if (existingActive) {
-      showToast('A criticality level with this name already exists among active levels', 'error');
-      return false;
-    }
-    
-    await addDoc(collection(db, 'skillCriticalities'), data);
-    showToast('Criticality level added successfully', 'success');
-    funCloseModals();
-    await funInitialLoad(true);
-    return true;
-    
-  } catch (error) {
-    console.error('Error adding criticality:', error);
-    showToast('Failed to add criticality level', 'error');
-    return false;
-  } finally {
-    hideLoader();
-  }
-}
+        function funUpdatePagination() {
+            const paginationContainer = document.getElementById('pagination-container');
+            const start = (currentPage - 1) * pageSize + 1;
+            const end = Math.min(currentPage * pageSize, filteredCriticalities.length);
+            const total = filteredCriticalities.length;
 
-async function funUpdateCriticality(criticalityId, formData) {
-  showLoader();
-  try {
-    const data = {
-      criticalityName: formData.get('criticalityName').trim(),
-      weight: parseFloat(formData.get('weight')),
-      status: formData.get('status'),
-      modifiedTimestamp: new Date().toISOString()
-    };
-    
-    // Check uniqueness among active criticalities (exclude current)
-    if (data.status === 'active') {
-      const existingActive = criticalities.some(c => 
-        c.id !== criticalityId &&
-        c.status === 'active' && 
-        c.criticalityName && 
-        c.criticalityName.toLowerCase() === data.criticalityName.toLowerCase()
-      );
-      
-      if (existingActive) {
-        showToast('A criticality level with this name already exists among active levels', 'error');
-        return false;
-      }
-    }
-    
-    await updateDoc(doc(db, 'skillCriticalities', criticalityId), data);
-    showToast('Criticality level updated successfully', 'success');
-    funCloseModals();
-    await funInitialLoad(true);
-    return true;
-    
-  } catch (error) {
-    console.error('Error updating criticality:', error);
-    showToast('Failed to update criticality level', 'error');
-    return false;
-  } finally {
-    hideLoader();
-  }
-}
+            document.getElementById('pagination-start').textContent = start;
+            document.getElementById('pagination-end').textContent = end;
+            document.getElementById('pagination-total').textContent = total;
 
-async function funDeactivateCriticality(criticalityId) {
-  if (!confirm('Are you sure you want to deactivate this criticality level?')) {
-    return;
-  }
-  
-  showLoader();
-  try {
-    await updateDoc(doc(db, 'skillCriticalities', criticalityId), {
-      status: 'inactive',
-      modifiedTimestamp: new Date().toISOString()
-    });
-    
-    showToast('Criticality level deactivated successfully', 'success');
-    await funInitialLoad(true);
-    
-  } catch (error) {
-    console.error('Error deactivating criticality:', error);
-    showToast('Failed to deactivate criticality level', 'error');
-  } finally {
-    hideLoader();
-  }
-}
+            document.getElementById('btn-prev-page').disabled = currentPage === 1;
+            document.getElementById('btn-next-page').disabled = currentPage * pageSize >= total;
 
-// UI state management
-function funShowSkeleton() {
-  document.getElementById('skeleton-loading').classList.remove('hidden');
-  document.getElementById('data-table').classList.add('hidden');
-  document.getElementById('empty-state').classList.add('hidden');
-  document.getElementById('table-loading').classList.add('hidden');
-}
+            paginationContainer.classList.toggle('hidden', total <= pageSize);
+        }
 
-function funHideSkeleton() {
-  document.getElementById('skeleton-loading').classList.add('hidden');
-  document.getElementById('table-loading').classList.add('hidden');
-}
+        function funUpdateSortIndicators() {
+            document.querySelectorAll('[data-sort] svg').forEach(icon => {
+                icon.setAttribute('data-lucide', 'chevrons-up-down');
+            });
 
-// Utility functions
-function funEscape(text) {
-  if (!text) return '';
-  const div = document.createElement('div');
-  div.textContent = text;
-  return div.innerHTML;
-}
+            const activeHeader = document.querySelector(`[data-sort="${sortConfig.field}"] svg`);
+            if (activeHeader) {
+                const iconName = sortConfig.direction === 'asc' ? 'chevron-up' : 'chevron-down';
+                activeHeader.setAttribute('data-lucide', iconName);
+            }
 
-function funFormatDate(date) {
-  if (!date) return 'N/A';
-  try {
-    const d = date instanceof Date ? date : new Date(date);
-    return d.toLocaleDateString('en-US', { 
-      year: 'numeric', 
-      month: 'short', 
-      day: 'numeric' 
-    });
-  } catch {
-    return 'N/A';
-  }
-}
+            lucide.createIcons();
+        }
 
-// Debounced search
-let searchTimeout;
-function funDebounceSearch(func, delay) {
-  clearTimeout(searchTimeout);
-  searchTimeout = setTimeout(func, delay);
-}
+        // Modal management
+        function funOpenAddModal() {
+            document.getElementById('modal-add-criticality').classList.remove('hidden');
+            document.getElementById('add-criticality-name').focus();
+        }
 
-// Event listeners
-document.addEventListener('DOMContentLoaded', () => {
-  // Add criticality buttons
-  document.getElementById('btn-add-criticality').addEventListener('click', funOpenAddModal);
-  document.getElementById('btn-add-from-empty').addEventListener('click', funOpenAddModal);
-  
-  // Modal close buttons
-  document.getElementById('btn-close-add-modal').addEventListener('click', funCloseModals);
-  document.getElementById('btn-close-edit-modal').addEventListener('click', funCloseModals);
-  document.getElementById('btn-cancel-add').addEventListener('click', funCloseModals);
-  document.getElementById('btn-cancel-edit').addEventListener('click', funCloseModals);
-  
-  // Close modals on backdrop click
-  document.getElementById('modal-add-criticality').addEventListener('click', (e) => {
-    if (e.target === e.currentTarget) funCloseModals();
-  });
-  document.getElementById('modal-edit-criticality').addEventListener('click', (e) => {
-    if (e.target === e.currentTarget) funCloseModals();
-  });
-  
-  // ESC to close modals
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') funCloseModals();
-  });
-  
-  // Form submissions
-  document.getElementById('form-add-criticality').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const formData = new FormData(e.target);
-    await funAddCriticality(formData);
-  });
-  
-  document.getElementById('form-edit-criticality').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const criticalityId = e.target.dataset.criticalityId;
-    const formData = new FormData(e.target);
-    await funUpdateCriticality(criticalityId, formData);
-  });
-  
-  // Filters
-  document.getElementById('filter-status').addEventListener('change', () => {
-    funApplyFilters();
-    funRenderTable();
-  });
-  
-  document.getElementById('search-input').addEventListener('input', (e) => {
-    funDebounceSearch(() => {
-      funApplyFilters();
-      funRenderTable();
-    }, 300);
-  });
-  
-  // Refresh button
-  document.getElementById('btn-refresh').addEventListener('click', () => {
-    funInitialLoad(true);
-  });
-  
-  // Pagination
-  document.getElementById('btn-prev-page').addEventListener('click', () => {
-    if (currentPage > 1) {
-      currentPage--;
-      funRenderTable();
-    }
-  });
-  
-  document.getElementById('btn-next-page').addEventListener('click', () => {
-    if (currentPage * pageSize < filteredCriticalities.length) {
-      currentPage++;
-      funRenderTable();
-    }
-  });
-  
-  // Sorting
-  document.querySelectorAll('[data-sort]').forEach(header => {
-    header.addEventListener('click', () => {
-      const field = header.getAttribute('data-sort');
-      if (sortConfig.field === field) {
-        sortConfig.direction = sortConfig.direction === 'asc' ? 'desc' : 'asc';
-      } else {
-        sortConfig.field = field;
-        sortConfig.direction = 'asc';
-      }
-      funApplyFilters();
-      funRenderTable();
-    });
-  });
-});
+        async function funOpenEditModal(criticalityId) {
+            const criticality = criticalities.find(c => c.id === criticalityId);
+            if (!criticality) {
+                showToast('Criticality level not found', 'error');
+                return;
+            }
 
-// Global functions for inline handlers
-window.funOpenEditModal = funOpenEditModal;
-window.funDeactivateCriticality = funDeactivateCriticality;
-</script>
+            // Populate form
+            document.getElementById('edit-criticality-name').value = criticality.criticalityName || '';
+            document.getElementById('edit-weight').value = criticality.weight || '';
+            document.getElementById('edit-status').value = criticality.status || 'active';
+
+            // Show warning if has active skills
+            const activeSkillsCount = criticality.skillsCount || 0;
+            const warningDiv = document.getElementById('edit-warning');
+            const activeSkillsSpan = document.getElementById('active-skills-count');
+
+            if (activeSkillsCount > 0) {
+                activeSkillsSpan.textContent = activeSkillsCount;
+                warningDiv.classList.remove('hidden');
+            } else {
+                warningDiv.classList.add('hidden');
+            }
+
+            // Store ID for form submission
+            document.getElementById('form-edit-criticality').dataset.criticalityId = criticalityId;
+
+            document.getElementById('modal-edit-criticality').classList.remove('hidden');
+            document.getElementById('edit-criticality-name').focus();
+        }
+
+        function funCloseModals() {
+            document.getElementById('modal-add-criticality').classList.add('hidden');
+            document.getElementById('modal-edit-criticality').classList.add('hidden');
+
+            // Reset forms
+            document.getElementById('form-add-criticality').reset();
+            document.getElementById('form-edit-criticality').reset();
+        }
+
+        // CRUD operations
+        async function funAddCriticality(formData) {
+            showLoader();
+            try {
+                const data = {
+                    criticalityName: formData.get('criticalityName').trim(),
+                    weight: parseFloat(formData.get('weight')),
+                    status: 'active',
+                    createdTimestamp: new Date().toISOString(),
+                    modifiedTimestamp: new Date().toISOString()
+                };
+
+                // Check uniqueness among active criticalities
+                const existingActive = criticalities.some(c =>
+                    c.status === 'active' &&
+                    c.criticalityName &&
+                    c.criticalityName.toLowerCase() === data.criticalityName.toLowerCase()
+                );
+
+                if (existingActive) {
+                    showToast('A criticality level with this name already exists among active levels', 'error');
+                    return false;
+                }
+
+                await addDoc(collection(db, 'skillCriticalities'), data);
+                showToast('Criticality level added successfully', 'success');
+                funCloseModals();
+                await funInitialLoad(true);
+                return true;
+
+            } catch (error) {
+                console.error('Error adding criticality:', error);
+                showToast('Failed to add criticality level', 'error');
+                return false;
+            } finally {
+                hideLoader();
+            }
+        }
+
+        async function funUpdateCriticality(criticalityId, formData) {
+            showLoader();
+            try {
+                const data = {
+                    criticalityName: formData.get('criticalityName').trim(),
+                    weight: parseFloat(formData.get('weight')),
+                    status: formData.get('status'),
+                    modifiedTimestamp: new Date().toISOString()
+                };
+
+                // Check uniqueness among active criticalities (exclude current)
+                if (data.status === 'active') {
+                    const existingActive = criticalities.some(c =>
+                        c.id !== criticalityId &&
+                        c.status === 'active' &&
+                        c.criticalityName &&
+                        c.criticalityName.toLowerCase() === data.criticalityName.toLowerCase()
+                    );
+
+                    if (existingActive) {
+                        showToast('A criticality level with this name already exists among active levels', 'error');
+                        return false;
+                    }
+                }
+
+                await updateDoc(doc(db, 'skillCriticalities', criticalityId), data);
+                showToast('Criticality level updated successfully', 'success');
+                funCloseModals();
+                await funInitialLoad(true);
+                return true;
+
+            } catch (error) {
+                console.error('Error updating criticality:', error);
+                showToast('Failed to update criticality level', 'error');
+                return false;
+            } finally {
+                hideLoader();
+            }
+        }
+
+        async function funDeactivateCriticality(criticalityId) {
+            if (!confirm('Are you sure you want to deactivate this criticality level?')) {
+                return;
+            }
+
+            showLoader();
+            try {
+                await updateDoc(doc(db, 'skillCriticalities', criticalityId), {
+                    status: 'inactive',
+                    modifiedTimestamp: new Date().toISOString()
+                });
+
+                showToast('Criticality level deactivated successfully', 'success');
+                await funInitialLoad(true);
+
+            } catch (error) {
+                console.error('Error deactivating criticality:', error);
+                showToast('Failed to deactivate criticality level', 'error');
+            } finally {
+                hideLoader();
+            }
+        }
+
+        // UI state management
+        function funShowSkeleton() {
+            document.getElementById('skeleton-loading').classList.remove('hidden');
+            document.getElementById('data-table').classList.add('hidden');
+            document.getElementById('empty-state').classList.add('hidden');
+            document.getElementById('table-loading').classList.add('hidden');
+        }
+
+        function funHideSkeleton() {
+            document.getElementById('skeleton-loading').classList.add('hidden');
+            document.getElementById('table-loading').classList.add('hidden');
+        }
+
+        // Utility functions
+        function funEscape(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function funFormatDate(date) {
+            if (!date) return 'N/A';
+            try {
+                const d = date instanceof Date ? date : new Date(date);
+                return d.toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric'
+                });
+            } catch {
+                return 'N/A';
+            }
+        }
+
+        // Debounced search
+        let searchTimeout;
+        function funDebounceSearch(func, delay) {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(func, delay);
+        }
+
+        // Event listeners
+        document.addEventListener('DOMContentLoaded', () => {
+            // Add criticality buttons
+            document.getElementById('btn-add-criticality').addEventListener('click', funOpenAddModal);
+            document.getElementById('btn-add-from-empty').addEventListener('click', funOpenAddModal);
+
+            // Modal close buttons
+            document.getElementById('btn-close-add-modal').addEventListener('click', funCloseModals);
+            document.getElementById('btn-close-edit-modal').addEventListener('click', funCloseModals);
+            document.getElementById('btn-cancel-add').addEventListener('click', funCloseModals);
+            document.getElementById('btn-cancel-edit').addEventListener('click', funCloseModals);
+
+            // Close modals on backdrop click
+            document.getElementById('modal-add-criticality').addEventListener('click', (e) => {
+                if (e.target === e.currentTarget) funCloseModals();
+            });
+            document.getElementById('modal-edit-criticality').addEventListener('click', (e) => {
+                if (e.target === e.currentTarget) funCloseModals();
+            });
+
+            // ESC to close modals
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') funCloseModals();
+            });
+
+            // Form submissions
+            document.getElementById('form-add-criticality').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const formData = new FormData(e.target);
+                await funAddCriticality(formData);
+            });
+
+            document.getElementById('form-edit-criticality').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const criticalityId = e.target.dataset.criticalityId;
+                const formData = new FormData(e.target);
+                await funUpdateCriticality(criticalityId, formData);
+            });
+
+            // Filters
+            document.getElementById('filter-status').addEventListener('change', () => {
+                funApplyFilters();
+                funRenderTable();
+            });
+
+            document.getElementById('search-input').addEventListener('input', (e) => {
+                funDebounceSearch(() => {
+                    funApplyFilters();
+                    funRenderTable();
+                }, 300);
+            });
+
+            // Refresh button
+            document.getElementById('btn-refresh').addEventListener('click', () => {
+                funInitialLoad(true);
+            });
+
+            // Pagination
+            document.getElementById('btn-prev-page').addEventListener('click', () => {
+                if (currentPage > 1) {
+                    currentPage--;
+                    funRenderTable();
+                }
+            });
+
+            document.getElementById('btn-next-page').addEventListener('click', () => {
+                if (currentPage * pageSize < filteredCriticalities.length) {
+                    currentPage++;
+                    funRenderTable();
+                }
+            });
+
+            // Sorting
+            document.querySelectorAll('[data-sort]').forEach(header => {
+                header.addEventListener('click', () => {
+                    const field = header.getAttribute('data-sort');
+                    if (sortConfig.field === field) {
+                        sortConfig.direction = sortConfig.direction === 'asc' ? 'desc' : 'asc';
+                    } else {
+                        sortConfig.field = field;
+                        sortConfig.direction = 'asc';
+                    }
+                    funApplyFilters();
+                    funRenderTable();
+                });
+            });
+        });
+
+        // Global functions for inline handlers
+        window.funOpenEditModal = funOpenEditModal;
+        window.funDeactivateCriticality = funDeactivateCriticality;
+    </script>
 
 </body>
+
 </html>
