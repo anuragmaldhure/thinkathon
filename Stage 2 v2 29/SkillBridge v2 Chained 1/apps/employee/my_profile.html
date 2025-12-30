@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -15,7 +16,7 @@
     <script src="https://unpkg.com/lucide@latest" data-tiramai="web-gen"></script>
 
     <!-- Required: Favicon -->
-    <link rel="icon" href="assets/imgs/logo.ico" type="image/x-icon" data-tiramai="web-gen"/>
+    <link rel="icon" href="assets/imgs/logo.ico" type="image/x-icon" data-tiramai="web-gen" />
 
     <!-- ECharts Support (for charts/graphs) -->
     <script defer src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js" data-tiramai="web-gen"></script>
@@ -54,43 +55,51 @@
         }
     </script>
 </head>
+
 <body class="bg-neutral-50 min-h-screen text-neutral-900 text-sm leading-5">
     <!-- Top Navigation -->
-    <header class="fixed top-0 left-0 right-0 bg-brand-primary-800 border-b border-neutral-200 flex items-center justify-between px-6 py-4 z-30 h-16">
+    <header
+        class="fixed top-0 left-0 right-0 bg-brand-primary-800 border-b border-neutral-200 flex items-center justify-between px-6 py-4 z-30 h-16">
         <div class="flex items-center gap-4">
-            <svg width="32" height="32" viewBox="0 0 400 400" fill="none" xmlns="http://www.w3.org/2000/svg" class="h-8 w-8">
-                <rect x="84" y="116" width="56" height="168" rx="8" fill="#1E40AF"/>
-                <rect x="176" y="84" width="56" height="200" rx="8" fill="#059669"/>
-                <rect x="268" y="156" width="48" height="128" rx="8" fill="#1E40AF"/>
-                <rect x="114" y="180" width="172" height="20" rx="10" fill="#F59E0B"/>
+            <svg width="32" height="32" viewBox="0 0 400 400" fill="none" xmlns="http://www.w3.org/2000/svg"
+                class="h-8 w-8">
+                <rect x="84" y="116" width="56" height="168" rx="8" fill="#1E40AF" />
+                <rect x="176" y="84" width="56" height="200" rx="8" fill="#059669" />
+                <rect x="268" y="156" width="48" height="128" rx="8" fill="#1E40AF" />
+                <rect x="114" y="180" width="172" height="20" rx="10" fill="#F59E0B" />
             </svg>
             <span class="text-xl leading-7 font-semibold text-white">SkillBridge</span>
         </div>
-        
+
         <!-- Mobile Menu Button -->
-        <button id="mobile-menu-btn" class="md:hidden text-white hover:bg-brand-primary-700 p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2">
+        <button id="mobile-menu-btn"
+            class="md:hidden text-white hover:bg-brand-primary-700 p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2">
             <i data-lucide="menu" class="w-5 h-5"></i>
         </button>
 
         <div class="hidden md:flex items-center gap-4">
             <!-- User Profile Dropdown -->
             <div class="relative">
-                <button id="user-profile-btn" class="flex items-center gap-2 text-white hover:bg-brand-primary-700 px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2">
-                    <div id="user-avatar" class="w-8 h-8 bg-accent-gold-500 rounded-full flex items-center justify-center text-brand-primary-800 font-semibold text-xs">
+                <button id="user-profile-btn"
+                    class="flex items-center gap-2 text-white hover:bg-brand-primary-700 px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2">
+                    <div id="user-avatar"
+                        class="w-8 h-8 bg-accent-gold-500 rounded-full flex items-center justify-center text-brand-primary-800 font-semibold text-xs">
                         JD
                     </div>
                     <span id="user-name" class="text-sm">John Doe</span>
                     <i data-lucide="chevron-down" class="w-4 h-4"></i>
                 </button>
-                
+
                 <!-- Dropdown Menu -->
-                <div id="user-dropdown" class="hidden absolute right-0 mt-2 w-48 bg-white border border-neutral-200 rounded-md shadow-lg z-50">
+                <div id="user-dropdown"
+                    class="hidden absolute right-0 mt-2 w-48 bg-white border border-neutral-200 rounded-md shadow-lg z-50">
                     <div class="px-4 py-3 border-b border-neutral-200">
                         <p class="text-sm font-medium text-neutral-900" id="dropdown-user-name">John Doe</p>
                         <p class="text-xs text-neutral-500" id="dropdown-user-email">johndoe@example.com</p>
                     </div>
                     <div class="py-1">
-                        <button id="sign-out-btn" class="block w-full text-left px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50 focus:outline-none focus:bg-neutral-50">
+                        <button id="sign-out-btn"
+                            class="block w-full text-left px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50 focus:outline-none focus:bg-neutral-50">
                             <i data-lucide="log-out" class="w-4 h-4 inline mr-2"></i>
                             Sign Out
                         </button>
@@ -102,17 +111,24 @@
 
     <div class="flex pt-16">
         <!-- Side Navigation -->
-        <aside id="sidebar" class="fixed md:static inset-y-0 left-0 z-20 w-64 bg-white border-r border-neutral-200 transform -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out pt-16 md:pt-0 overflow-y-auto" style="height: calc(100vh - 4rem);">
+        <aside id="sidebar"
+            class="fixed md:static inset-y-0 left-0 z-20 w-64 bg-white border-r border-neutral-200 transform -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out pt-16 md:pt-0 overflow-y-auto"
+            style="height: calc(100vh - 4rem);">
             <nav class="p-4 space-y-1">
                 <!-- Employee Dashboard -->
-                <a href="employee_dashboard.html" class="nav-link flex items-center gap-3 px-3 py-2 text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-700 rounded-md group" data-page="employee_dashboard">
-                    <i data-lucide="layout-dashboard" class="w-5 h-5 text-neutral-500 group-hover:text-brand-primary-700"></i>
+                <a href="employee_dashboard.html"
+                    class="nav-link flex items-center gap-3 px-3 py-2 text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-700 rounded-md group"
+                    data-page="employee_dashboard">
+                    <i data-lucide="layout-dashboard"
+                        class="w-5 h-5 text-neutral-500 group-hover:text-brand-primary-700"></i>
                     <span class="font-medium">Employee Dashboard</span>
                 </a>
 
                 <!-- My Skills with Children -->
                 <div class="space-y-1">
-                    <a href="my_skills.html" class="nav-link flex items-center gap-3 px-3 py-2 text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-700 rounded-md group" data-page="my_skills">
+                    <a href="my_skills.html"
+                        class="nav-link flex items-center gap-3 px-3 py-2 text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-700 rounded-md group"
+                        data-page="my_skills">
                         <i data-lucide="list" class="w-5 h-5 text-neutral-500 group-hover:text-brand-primary-700"></i>
                         <span class="font-medium">My Skills</span>
                     </a>
@@ -120,27 +136,38 @@
 
                 <!-- My Training Sessions with Children -->
                 <div class="space-y-1">
-                    <a href="my_training_sessions.html" class="nav-link flex items-center gap-3 px-3 py-2 text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-700 rounded-md group" data-page="my_training_sessions">
-                        <i data-lucide="calendar" class="w-5 h-5 text-neutral-500 group-hover:text-brand-primary-700"></i>
+                    <a href="my_training_sessions.html"
+                        class="nav-link flex items-center gap-3 px-3 py-2 text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-700 rounded-md group"
+                        data-page="my_training_sessions">
+                        <i data-lucide="calendar"
+                            class="w-5 h-5 text-neutral-500 group-hover:text-brand-primary-700"></i>
                         <span class="font-medium">My Training Sessions</span>
                     </a>
                 </div>
 
                 <!-- My Disputes with Children -->
                 <div class="space-y-1">
-                    <button class="nav-group-btn flex items-center justify-between w-full px-3 py-2 text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-700 rounded-md group" data-group="disputes">
+                    <button
+                        class="nav-group-btn flex items-center justify-between w-full px-3 py-2 text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-700 rounded-md group"
+                        data-group="disputes">
                         <div class="flex items-center gap-3">
-                            <i data-lucide="flag" class="w-5 h-5 text-neutral-500 group-hover:text-brand-primary-700"></i>
+                            <i data-lucide="flag"
+                                class="w-5 h-5 text-neutral-500 group-hover:text-brand-primary-700"></i>
                             <span class="font-medium">My Disputes</span>
                         </div>
-                        <i data-lucide="chevron-down" class="w-4 h-4 text-neutral-500 group-hover:text-brand-primary-700 transition-transform duration-200"></i>
+                        <i data-lucide="chevron-down"
+                            class="w-4 h-4 text-neutral-500 group-hover:text-brand-primary-700 transition-transform duration-200"></i>
                     </button>
                     <div class="nav-group-children ml-8 space-y-1 hidden" data-group-target="disputes">
-                        <a href="my_disputes.html" class="nav-link flex items-center gap-3 px-3 py-2 text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-700 rounded-md text-xs" data-page="my_disputes">
+                        <a href="my_disputes.html"
+                            class="nav-link flex items-center gap-3 px-3 py-2 text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-700 rounded-md text-xs"
+                            data-page="my_disputes">
                             <i data-lucide="flag" class="w-4 h-4"></i>
                             <span>View Disputes</span>
                         </a>
-                        <a href="raise_dispute.html" class="nav-link flex items-center gap-3 px-3 py-2 text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-700 rounded-md text-xs" data-page="raise_dispute">
+                        <a href="raise_dispute.html"
+                            class="nav-link flex items-center gap-3 px-3 py-2 text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-700 rounded-md text-xs"
+                            data-page="raise_dispute">
                             <i data-lucide="plus-circle" class="w-4 h-4"></i>
                             <span>Raise Dispute</span>
                         </a>
@@ -148,7 +175,9 @@
                 </div>
 
                 <!-- My Profile -->
-                <a href="my_profile.html" class="nav-link flex items-center gap-3 px-3 py-2 text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-700 rounded-md group" data-page="my_profile">
+                <a href="my_profile.html"
+                    class="nav-link flex items-center gap-3 px-3 py-2 text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-700 rounded-md group"
+                    data-page="my_profile">
                     <i data-lucide="user" class="w-5 h-5 text-neutral-500 group-hover:text-brand-primary-700"></i>
                     <span class="font-medium">My Profile</span>
                 </a>
@@ -165,200 +194,209 @@
 
         <!-- Main Content -->
         <main id="pageContent" class="flex-1 p-6 overflow-y-auto min-h-screen">
-            
-<!-- Breadcrumb Navigation -->
-<div class="mb-6">
-    <nav class="flex" aria-label="Breadcrumb">
-        <ol class="flex items-center space-x-2">
-            <li>
-                <button id="back-to-dashboard" class="text-sm text-neutral-500 hover:text-brand-primary-700 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2 rounded">
-                    Dashboard
-                </button>
-            </li>
-            <li>
-                <i data-lucide="chevron-right" class="w-4 h-4 text-neutral-500"></i>
-            </li>
-            <li>
-                <span class="text-sm text-neutral-900 font-medium">My Profile</span>
-            </li>
-        </ol>
-    </nav>
-</div>
 
-<!-- Profile Header -->
-<div class="bg-white border border-neutral-200 rounded-md p-6 shadow-sm mb-6">
-    <div class="flex items-start gap-4">
-        <!-- Avatar -->
-        <div id="profile-avatar" class="w-16 h-16 bg-accent-gold-500 rounded-full flex items-center justify-center text-brand-primary-800 font-bold text-xl">
-            JD
-        </div>
-        
-        <!-- Profile Info -->
-        <div class="flex-1 min-w-0">
-            <div class="flex items-center gap-3 mb-2">
-                <h1 id="profile-name" class="text-2xl leading-8 font-bold text-neutral-950">John Doe</h1>
-                <span id="profile-status" class="inline-flex items-center px-2 py-1 text-xs rounded-full bg-success-600 text-white">Active</span>
+            <!-- Breadcrumb Navigation -->
+            <div class="mb-6">
+                <nav class="flex" aria-label="Breadcrumb">
+                    <ol class="flex items-center space-x-2">
+                        <li>
+                            <button id="back-to-dashboard"
+                                class="text-sm text-neutral-500 hover:text-brand-primary-700 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2 rounded">
+                                Dashboard
+                            </button>
+                        </li>
+                        <li>
+                            <i data-lucide="chevron-right" class="w-4 h-4 text-neutral-500"></i>
+                        </li>
+                        <li>
+                            <span class="text-sm text-neutral-900 font-medium">My Profile</span>
+                        </li>
+                    </ol>
+                </nav>
             </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm">
-                <div class="text-neutral-700">
-                    <span class="font-medium">Job Title:</span>
-                    <span id="profile-job-title" class="ml-1">Loading...</span>
-                </div>
-                <div class="text-neutral-700">
-                    <span class="font-medium">Department:</span>
-                    <span id="profile-department" class="ml-1">Loading...</span>
-                </div>
-            </div>
-        </div>
 
-        <!-- Refresh Button -->
-        <button id="refresh-profile" class="inline-flex items-center gap-2 text-sm text-neutral-500 hover:text-neutral-700 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2 rounded-md p-2" aria-label="Refresh profile">
-            <i data-lucide="refresh-cw" class="w-4 h-4"></i>
-            Refresh
-        </button>
-    </div>
-</div>
+            <!-- Profile Header -->
+            <div class="bg-white border border-neutral-200 rounded-md p-6 shadow-sm mb-6">
+                <div class="flex items-start gap-4">
+                    <!-- Avatar -->
+                    <div id="profile-avatar"
+                        class="w-16 h-16 bg-accent-gold-500 rounded-full flex items-center justify-center text-brand-primary-800 font-bold text-xl">
+                        JD
+                    </div>
 
-<!-- Profile Cards Grid -->
-<div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-    <!-- Personal Information Card -->
-    <div class="bg-white border border-neutral-200 rounded-md p-4 shadow-sm">
-        <h3 class="text-base leading-6 font-semibold mb-3 text-neutral-950">Personal Information</h3>
-        <div class="space-y-3">
-            <div id="personal-skeleton" class="space-y-3">
-                <div class="animate-pulse">
-                    <div class="h-4 bg-neutral-200 rounded w-3/4"></div>
-                </div>
-                <div class="animate-pulse">
-                    <div class="h-4 bg-neutral-200 rounded w-1/2"></div>
-                </div>
-                <div class="animate-pulse">
-                    <div class="h-4 bg-neutral-200 rounded w-2/3"></div>
-                </div>
-            </div>
-            <div id="personal-content" class="space-y-3 hidden">
-                <div>
-                    <span class="text-xs font-medium text-neutral-700">Full Name</span>
-                    <p id="personal-name" class="text-sm text-neutral-900">N/A</p>
-                </div>
-                <div>
-                    <span class="text-xs font-medium text-neutral-700">Email Address</span>
-                    <p id="personal-email" class="text-sm text-neutral-900">N/A</p>
-                </div>
-                <div>
-                    <span class="text-xs font-medium text-neutral-700">Employee ID</span>
-                    <p id="personal-employee-id" class="text-sm text-neutral-900">N/A</p>
-                </div>
-            </div>
-        </div>
-    </div>
+                    <!-- Profile Info -->
+                    <div class="flex-1 min-w-0">
+                        <div class="flex items-center gap-3 mb-2">
+                            <h1 id="profile-name" class="text-2xl leading-8 font-bold text-neutral-950">John Doe</h1>
+                            <span id="profile-status"
+                                class="inline-flex items-center px-2 py-1 text-xs rounded-full bg-success-600 text-white">Active</span>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm">
+                            <div class="text-neutral-700">
+                                <span class="font-medium">Job Title:</span>
+                                <span id="profile-job-title" class="ml-1">Loading...</span>
+                            </div>
+                            <div class="text-neutral-700">
+                                <span class="font-medium">Department:</span>
+                                <span id="profile-department" class="ml-1">Loading...</span>
+                            </div>
+                        </div>
+                    </div>
 
-    <!-- Job Information Card -->
-    <div class="bg-white border border-neutral-200 rounded-md p-4 shadow-sm">
-        <h3 class="text-base leading-6 font-semibold mb-3 text-neutral-950">Job Information</h3>
-        <div class="space-y-3">
-            <div id="job-skeleton" class="space-y-3">
-                <div class="animate-pulse">
-                    <div class="h-4 bg-neutral-200 rounded w-3/4"></div>
-                </div>
-                <div class="animate-pulse">
-                    <div class="h-4 bg-neutral-200 rounded w-1/2"></div>
-                </div>
-                <div class="animate-pulse">
-                    <div class="h-4 bg-neutral-200 rounded w-2/3"></div>
+                    <!-- Refresh Button -->
+                    <button id="refresh-profile"
+                        class="inline-flex items-center gap-2 text-sm text-neutral-500 hover:text-neutral-700 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2 rounded-md p-2"
+                        aria-label="Refresh profile">
+                        <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+                        Refresh
+                    </button>
                 </div>
             </div>
-            <div id="job-content" class="space-y-3 hidden">
-                <div>
-                    <span class="text-xs font-medium text-neutral-700">Job Title</span>
-                    <p id="job-title" class="text-sm text-neutral-900">N/A</p>
-                </div>
-                <div>
-                    <span class="text-xs font-medium text-neutral-700">Department</span>
-                    <p id="job-department" class="text-sm text-neutral-900">N/A</p>
-                </div>
-                <div>
-                    <span class="text-xs font-medium text-neutral-700">Team Lead</span>
-                    <p id="job-team-lead" class="text-sm text-neutral-900">N/A</p>
-                </div>
-            </div>
-        </div>
-    </div>
 
-    <!-- Account Information Card -->
-    <div class="bg-white border border-neutral-200 rounded-md p-4 shadow-sm">
-        <h3 class="text-base leading-6 font-semibold mb-3 text-neutral-950">Account Information</h3>
-        <div class="space-y-3">
-            <div id="account-skeleton" class="space-y-3">
-                <div class="animate-pulse">
-                    <div class="h-4 bg-neutral-200 rounded w-3/4"></div>
+            <!-- Profile Cards Grid -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Personal Information Card -->
+                <div class="bg-white border border-neutral-200 rounded-md p-4 shadow-sm">
+                    <h3 class="text-base leading-6 font-semibold mb-3 text-neutral-950">Personal Information</h3>
+                    <div class="space-y-3">
+                        <div id="personal-skeleton" class="space-y-3">
+                            <div class="animate-pulse">
+                                <div class="h-4 bg-neutral-200 rounded w-3/4"></div>
+                            </div>
+                            <div class="animate-pulse">
+                                <div class="h-4 bg-neutral-200 rounded w-1/2"></div>
+                            </div>
+                            <div class="animate-pulse">
+                                <div class="h-4 bg-neutral-200 rounded w-2/3"></div>
+                            </div>
+                        </div>
+                        <div id="personal-content" class="space-y-3 hidden">
+                            <div>
+                                <span class="text-xs font-medium text-neutral-700">Full Name</span>
+                                <p id="personal-name" class="text-sm text-neutral-900">N/A</p>
+                            </div>
+                            <div>
+                                <span class="text-xs font-medium text-neutral-700">Email Address</span>
+                                <p id="personal-email" class="text-sm text-neutral-900">N/A</p>
+                            </div>
+                            <div>
+                                <span class="text-xs font-medium text-neutral-700">Employee ID</span>
+                                <p id="personal-employee-id" class="text-sm text-neutral-900">N/A</p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="animate-pulse">
-                    <div class="h-4 bg-neutral-200 rounded w-1/2"></div>
-                </div>
-                <div class="animate-pulse">
-                    <div class="h-4 bg-neutral-200 rounded w-2/3"></div>
-                </div>
-            </div>
-            <div id="account-content" class="space-y-3 hidden">
-                <div>
-                    <span class="text-xs font-medium text-neutral-700">Status</span>
-                    <p id="account-status" class="text-sm text-neutral-900">N/A</p>
-                </div>
-                <div>
-                    <span class="text-xs font-medium text-neutral-700">System Role</span>
-                    <p id="account-system-role" class="text-sm text-neutral-900">N/A</p>
-                </div>
-                <div>
-                    <span class="text-xs font-medium text-neutral-700">Member Since</span>
-                    <p id="account-created" class="text-sm text-neutral-900">N/A</p>
-                </div>
-                <div>
-                    <span class="text-xs font-medium text-neutral-700">Last Updated</span>
-                    <p id="account-modified" class="text-sm text-neutral-900">N/A</p>
-                </div>
-            </div>
-        </div>
-    </div>
 
-    <!-- Skills Summary Card -->
-    <div class="bg-white border border-neutral-200 rounded-md p-4 shadow-sm">
-        <div class="flex items-center justify-between mb-3">
-            <h3 class="text-base leading-6 font-semibold text-neutral-950">Skills Summary</h3>
-            <button id="view-all-skills" class="inline-flex items-center gap-1 text-sm text-brand-primary-600 hover:text-brand-primary-700 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2 rounded-md">
-                View All Skills
-                <i data-lucide="external-link" class="w-4 h-4"></i>
-            </button>
-        </div>
-        <div class="space-y-3">
-            <div id="skills-skeleton" class="space-y-3">
-                <div class="animate-pulse">
-                    <div class="h-4 bg-neutral-200 rounded w-3/4"></div>
+                <!-- Job Information Card -->
+                <div class="bg-white border border-neutral-200 rounded-md p-4 shadow-sm">
+                    <h3 class="text-base leading-6 font-semibold mb-3 text-neutral-950">Job Information</h3>
+                    <div class="space-y-3">
+                        <div id="job-skeleton" class="space-y-3">
+                            <div class="animate-pulse">
+                                <div class="h-4 bg-neutral-200 rounded w-3/4"></div>
+                            </div>
+                            <div class="animate-pulse">
+                                <div class="h-4 bg-neutral-200 rounded w-1/2"></div>
+                            </div>
+                            <div class="animate-pulse">
+                                <div class="h-4 bg-neutral-200 rounded w-2/3"></div>
+                            </div>
+                        </div>
+                        <div id="job-content" class="space-y-3 hidden">
+                            <div>
+                                <span class="text-xs font-medium text-neutral-700">Job Title</span>
+                                <p id="job-title" class="text-sm text-neutral-900">N/A</p>
+                            </div>
+                            <div>
+                                <span class="text-xs font-medium text-neutral-700">Department</span>
+                                <p id="job-department" class="text-sm text-neutral-900">N/A</p>
+                            </div>
+                            <div>
+                                <span class="text-xs font-medium text-neutral-700">Team Lead</span>
+                                <p id="job-team-lead" class="text-sm text-neutral-900">N/A</p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="animate-pulse">
-                    <div class="h-4 bg-neutral-200 rounded w-1/2"></div>
+
+                <!-- Account Information Card -->
+                <div class="bg-white border border-neutral-200 rounded-md p-4 shadow-sm">
+                    <h3 class="text-base leading-6 font-semibold mb-3 text-neutral-950">Account Information</h3>
+                    <div class="space-y-3">
+                        <div id="account-skeleton" class="space-y-3">
+                            <div class="animate-pulse">
+                                <div class="h-4 bg-neutral-200 rounded w-3/4"></div>
+                            </div>
+                            <div class="animate-pulse">
+                                <div class="h-4 bg-neutral-200 rounded w-1/2"></div>
+                            </div>
+                            <div class="animate-pulse">
+                                <div class="h-4 bg-neutral-200 rounded w-2/3"></div>
+                            </div>
+                        </div>
+                        <div id="account-content" class="space-y-3 hidden">
+                            <div>
+                                <span class="text-xs font-medium text-neutral-700">Status</span>
+                                <p id="account-status" class="text-sm text-neutral-900">N/A</p>
+                            </div>
+                            <div>
+                                <span class="text-xs font-medium text-neutral-700">System Role</span>
+                                <p id="account-system-role" class="text-sm text-neutral-900">N/A</p>
+                            </div>
+                            <div>
+                                <span class="text-xs font-medium text-neutral-700">Member Since</span>
+                                <p id="account-created" class="text-sm text-neutral-900">N/A</p>
+                            </div>
+                            <div>
+                                <span class="text-xs font-medium text-neutral-700">Last Updated</span>
+                                <p id="account-modified" class="text-sm text-neutral-900">N/A</p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="animate-pulse">
-                    <div class="h-4 bg-neutral-200 rounded w-2/3"></div>
+
+                <!-- Skills Summary Card -->
+                <div class="bg-white border border-neutral-200 rounded-md p-4 shadow-sm">
+                    <div class="flex items-center justify-between mb-3">
+                        <h3 class="text-base leading-6 font-semibold text-neutral-950">Skills Summary</h3>
+                        <button id="view-all-skills"
+                            class="inline-flex items-center gap-1 text-sm text-brand-primary-600 hover:text-brand-primary-700 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2 rounded-md">
+                            View All Skills
+                            <i data-lucide="external-link" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+                    <div class="space-y-3">
+                        <div id="skills-skeleton" class="space-y-3">
+                            <div class="animate-pulse">
+                                <div class="h-4 bg-neutral-200 rounded w-3/4"></div>
+                            </div>
+                            <div class="animate-pulse">
+                                <div class="h-4 bg-neutral-200 rounded w-1/2"></div>
+                            </div>
+                            <div class="animate-pulse">
+                                <div class="h-4 bg-neutral-200 rounded w-2/3"></div>
+                            </div>
+                        </div>
+                        <div id="skills-content" class="space-y-3 hidden">
+                            <div class="flex items-center justify-between">
+                                <span class="text-sm font-medium text-neutral-700">Total Skills Assigned</span>
+                                <span id="total-skills"
+                                    class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-accent-gold-50 text-neutral-900 border border-accent-gold-500">0</span>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <span class="text-sm font-medium text-neutral-700">Meeting Benchmark</span>
+                                <span id="skills-meeting"
+                                    class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-success-600 text-white">0</span>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <span class="text-sm font-medium text-neutral-700">Need Improvement</span>
+                                <span id="skills-needing"
+                                    class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-warning-600 text-white">0</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div id="skills-content" class="space-y-3 hidden">
-                <div class="flex items-center justify-between">
-                    <span class="text-sm font-medium text-neutral-700">Total Skills Assigned</span>
-                    <span id="total-skills" class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-accent-gold-50 text-neutral-900 border border-accent-gold-500">0</span>
-                </div>
-                <div class="flex items-center justify-between">
-                    <span class="text-sm font-medium text-neutral-700">Meeting Benchmark</span>
-                    <span id="skills-meeting" class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-success-600 text-white">0</span>
-                </div>
-                <div class="flex items-center justify-between">
-                    <span class="text-sm font-medium text-neutral-700">Need Improvement</span>
-                    <span id="skills-needing" class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-warning-600 text-white">0</span>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
 
         </main>
     </div>
@@ -392,7 +430,7 @@
                 const groupName = btn.getAttribute('data-group');
                 const children = document.querySelector(`[data-group-target="${groupName}"]`);
                 const chevron = btn.querySelector('[data-lucide="chevron-down"]');
-                
+
                 children?.classList.toggle('hidden');
                 chevron?.classList.toggle('rotate-180');
             });
@@ -416,7 +454,7 @@
         // Active navigation highlighting
         function updateActiveNav() {
             const currentPage = window.location.pathname.split('/').pop()?.replace('.html', '') || 'employee_dashboard';
-            
+
             document.querySelectorAll('.nav-link').forEach(link => {
                 const page = link.getAttribute('data-page');
                 if (page === currentPage) {
@@ -440,7 +478,7 @@
             if (userData) {
                 const displayName = `${userData.firstName || ''} ${userData.lastName || ''}`.trim() || 'User';
                 const initials = displayName.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
-                
+
                 userAvatar.textContent = initials;
                 userName.textContent = displayName;
                 dropdownUserName.textContent = displayName;
@@ -449,7 +487,7 @@
                 // Fallback to auth data
                 const displayName = user.displayName || user.email.split('@')[0];
                 const initials = displayName.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
-                
+
                 userAvatar.textContent = initials;
                 userName.textContent = displayName;
                 dropdownUserName.textContent = displayName;
@@ -461,7 +499,7 @@
             try {
                 const userDocRef = doc(db, 'users', user.uid);
                 const userDoc = await getDoc(userDocRef);
-                
+
                 if (userDoc.exists()) {
                     return userDoc.data();
                 } else {
@@ -511,333 +549,339 @@
         });
     </script>
 
-    
-<script id="data-script" type="module" data-tiramai="web-gen">
-import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.12.4/firebase-auth.js';
-import { 
-  collection, getDocs, getDoc, doc, query, where, orderBy, limit, getCountFromServer
-} from 'https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js';
-import { auth, getDb } from "./scripts/firebase.js";
-import { showToast, showLoader, hideLoader } from "./scripts/main.js";
 
-const db = getDb();
-let currentUser = null;
-let currentAbort;
+    <script id="data-script" type="module" data-tiramai="web-gen">
+        import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.12.4/firebase-auth.js';
+        import {
+            collection, getDocs, getDoc, doc, query, where, orderBy, limit, getCountFromServer
+        } from 'https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js';
+        import { auth, getDb } from "./scripts/firebase.js";
+        import { showToast, showLoader, hideLoader } from "./scripts/main.js";
 
-// Create concurrency semaphore
-function createSemaphore(max = 2) {
-  const queue = [];
-  let active = 0;
-  const next = () => {
-    if (active >= max || queue.length === 0) return;
-    active++;
-    const { fn, res, rej } = queue.shift();
-    Promise.resolve()
-      .then(fn)
-      .then(v => res(v))
-      .catch(e => rej(e))
-      .finally(() => { active--; next(); });
-  };
-  return (fn) => new Promise((res, rej) => { queue.push({ fn, res, rej }); next(); });
-}
+        const db = getDb();
+        let currentUser = null;
+        let currentAbort;
 
-const withLimit = createSemaphore(2);
+        // Create concurrency semaphore
+        function createSemaphore(max = 2) {
+            const queue = [];
+            let active = 0;
+            const next = () => {
+                if (active >= max || queue.length === 0) return;
+                active++;
+                const { fn, res, rej } = queue.shift();
+                Promise.resolve()
+                    .then(fn)
+                    .then(v => res(v))
+                    .catch(e => rej(e))
+                    .finally(() => { active--; next(); });
+            };
+            return (fn) => new Promise((res, rej) => { queue.push({ fn, res, rej }); next(); });
+        }
 
-// Utility function to format date
-function formatDate(dateString) {
-  if (!dateString) return 'N/A';
-  try {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
-    });
-  } catch (error) {
-    return 'N/A';
-  }
-}
+        const withLimit = createSemaphore(2);
 
-// Get user initials
-function getInitials(firstName, lastName) {
-  if (!firstName && !lastName) return 'N/A';
-  const first = (firstName || '').charAt(0);
-  const last = (lastName || '').charAt(0);
-  return (first + last).toUpperCase();
-}
+        // Utility function to format date
+        function formatDate(dateString) {
+            if (!dateString) return 'N/A';
+            try {
+                const date = new Date(dateString);
+                return date.toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                });
+            } catch (error) {
+                return 'N/A';
+            }
+        }
 
-// Generate full name
-function getFullName(firstName, lastName) {
-  if (!firstName && !lastName) return 'N/A';
-  return `${firstName || ''} ${lastName || ''}`.trim();
-}
+        // Get user initials
+        function getInitials(firstName, lastName) {
+            if (!firstName && !lastName) return 'N/A';
+            const first = (firstName || '').charAt(0);
+            const last = (lastName || '').charAt(0);
+            return (first + last).toUpperCase();
+        }
 
-// Show skeleton loaders
-function showSkeletons() {
-  document.getElementById('personal-skeleton')?.classList.remove('hidden');
-  document.getElementById('personal-content')?.classList.add('hidden');
-  document.getElementById('job-skeleton')?.classList.remove('hidden');
-  document.getElementById('job-content')?.classList.add('hidden');
-  document.getElementById('account-skeleton')?.classList.remove('hidden');
-  document.getElementById('account-content')?.classList.add('hidden');
-  document.getElementById('skills-skeleton')?.classList.remove('hidden');
-  document.getElementById('skills-content')?.classList.add('hidden');
-}
+        // Generate full name
+        function getFullName(firstName, lastName) {
+            if (!firstName && !lastName) return 'N/A';
+            return `${firstName || ''} ${lastName || ''}`.trim();
+        }
 
-// Hide skeleton loaders
-function hideSkeletons() {
-  document.getElementById('personal-skeleton')?.classList.add('hidden');
-  document.getElementById('personal-content')?.classList.remove('hidden');
-  document.getElementById('job-skeleton')?.classList.add('hidden');
-  document.getElementById('job-content')?.classList.remove('hidden');
-  document.getElementById('account-skeleton')?.classList.add('hidden');
-  document.getElementById('account-content')?.classList.remove('hidden');
-  document.getElementById('skills-skeleton')?.classList.add('hidden');
-  document.getElementById('skills-content')?.classList.remove('hidden');
-}
+        // Show skeleton loaders
+        function showSkeletons() {
+            document.getElementById('personal-skeleton')?.classList.remove('hidden');
+            document.getElementById('personal-content')?.classList.add('hidden');
+            document.getElementById('job-skeleton')?.classList.remove('hidden');
+            document.getElementById('job-content')?.classList.add('hidden');
+            document.getElementById('account-skeleton')?.classList.remove('hidden');
+            document.getElementById('account-content')?.classList.add('hidden');
+            document.getElementById('skills-skeleton')?.classList.remove('hidden');
+            document.getElementById('skills-content')?.classList.add('hidden');
+        }
 
-// Fetch user profile data
-async function funFetchUserProfile(userId) {
-  try {
-    const userDoc = await withLimit(() => getDoc(doc(db, 'users', userId)));
-    if (!userDoc.exists()) {
-      throw new Error('User profile not found');
-    }
-    return { id: userDoc.id, ...userDoc.data() };
-  } catch (error) {
-    console.error('Error fetching user profile:', error);
-    throw error;
-  }
-}
+        // Hide skeleton loaders
+        function hideSkeletons() {
+            document.getElementById('personal-skeleton')?.classList.add('hidden');
+            document.getElementById('personal-content')?.classList.remove('hidden');
+            document.getElementById('job-skeleton')?.classList.add('hidden');
+            document.getElementById('job-content')?.classList.remove('hidden');
+            document.getElementById('account-skeleton')?.classList.add('hidden');
+            document.getElementById('account-content')?.classList.remove('hidden');
+            document.getElementById('skills-skeleton')?.classList.add('hidden');
+            document.getElementById('skills-content')?.classList.remove('hidden');
+        }
 
-// Fetch department data
-async function funFetchDepartment(departmentId) {
-  if (!departmentId) return null;
-  try {
-    const deptDoc = await withLimit(() => getDoc(doc(db, 'departments', departmentId)));
-    if (!deptDoc.exists()) return null;
-    return { id: deptDoc.id, ...deptDoc.data() };
-  } catch (error) {
-    console.error('Error fetching department:', error);
-    return null;
-  }
-}
+        // Fetch user profile data
+        async function funFetchUserProfile(userId) {
+            try {
+                // Query by uid field since document ID may not be the same as auth uid
+                const userQuery = query(collection(db, 'users'), where('uid', '==', userId), limit(1));
+                const userSnapshot = await withLimit(() => getDocs(userQuery));
 
-// Fetch team lead data
-async function funFetchTeamLead(teamLeadId) {
-  if (!teamLeadId) return null;
-  try {
-    const leadDoc = await withLimit(() => getDoc(doc(db, 'users', teamLeadId)));
-    if (!leadDoc.exists()) return null;
-    return { id: leadDoc.id, ...leadDoc.data() };
-  } catch (error) {
-    console.error('Error fetching team lead:', error);
-    return null;
-  }
-}
+                if (userSnapshot.empty) {
+                    throw new Error('User profile not found');
+                }
 
-// Fetch skills summary with counts
-async function funFetchSkillsSummary(employeeId) {
-  try {
-    // Get total assigned skills count
-    const skillMappingsQuery = query(
-      collection(db, 'skillMappings'),
-      where('employeeId', '==', employeeId),
-      where('status', '==', 'active')
-    );
-    const totalSkillsSnapshot = await withLimit(() => getCountFromServer(skillMappingsQuery));
-    const totalSkills = totalSkillsSnapshot.data().count || 0;
+                const userDoc = userSnapshot.docs[0];
+                return { id: userDoc.id, ...userDoc.data() };
+            } catch (error) {
+                console.error('Error fetching user profile:', error);
+                throw error;
+            }
+        }
 
-    if (totalSkills === 0) {
-      return { totalSkills: 0, skillsMeetingBenchmark: 0, skillsNeedingImprovement: 0 };
-    }
+        // Fetch department data
+        async function funFetchDepartment(departmentId) {
+            if (!departmentId) return null;
+            try {
+                const deptDoc = await withLimit(() => getDoc(doc(db, 'departments', departmentId)));
+                if (!deptDoc.exists()) return null;
+                return { id: deptDoc.id, ...deptDoc.data() };
+            } catch (error) {
+                console.error('Error fetching department:', error);
+                return null;
+            }
+        }
 
-    // Get latest assessments for this employee
-    const assessmentsQuery = query(
-      collection(db, 'assessments'),
-      where('employeeId', '==', employeeId),
-      where('status', '==', 'active'),
-      orderBy('assessmentTimestamp', 'desc'),
-      limit(100) // Cap to avoid large reads
-    );
-    
-    const assessmentsSnapshot = await withLimit(() => getDocs(assessmentsQuery));
-    const assessments = assessmentsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        // Fetch team lead data
+        async function funFetchTeamLead(teamLeadId) {
+            if (!teamLeadId) return null;
+            try {
+                const leadDoc = await withLimit(() => getDoc(doc(db, 'users', teamLeadId)));
+                if (!leadDoc.exists()) return null;
+                return { id: leadDoc.id, ...leadDoc.data() };
+            } catch (error) {
+                console.error('Error fetching team lead:', error);
+                return null;
+            }
+        }
 
-    // Group by skillId to get latest assessment per skill
-    const latestAssessments = {};
-    assessments.forEach(assessment => {
-      const skillId = assessment.skillId;
-      if (!latestAssessments[skillId] || 
-          new Date(assessment.assessmentTimestamp) > new Date(latestAssessments[skillId].assessmentTimestamp)) {
-        latestAssessments[skillId] = assessment;
-      }
-    });
+        // Fetch skills summary with counts
+        async function funFetchSkillsSummary(employeeId) {
+            try {
+                // Get total assigned skills count
+                const skillMappingsQuery = query(
+                    collection(db, 'skillMappings'),
+                    where('employeeId', '==', employeeId),
+                    where('status', '==', 'active')
+                );
+                const totalSkillsSnapshot = await withLimit(() => getCountFromServer(skillMappingsQuery));
+                const totalSkills = totalSkillsSnapshot.data().count || 0;
 
-    // Calculate gaps and counts
-    let skillsMeetingBenchmark = 0;
-    let skillsNeedingImprovement = 0;
-    
-    Object.values(latestAssessments).forEach(assessment => {
-      const gap = (assessment.benchmarkAtTimeOfAssessment || 0) - (assessment.score || 0);
-      if (gap <= 0) {
-        skillsMeetingBenchmark++;
-      } else {
-        skillsNeedingImprovement++;
-      }
-    });
+                if (totalSkills === 0) {
+                    return { totalSkills: 0, skillsMeetingBenchmark: 0, skillsNeedingImprovement: 0 };
+                }
 
-    return {
-      totalSkills,
-      skillsMeetingBenchmark,
-      skillsNeedingImprovement
-    };
-  } catch (error) {
-    console.error('Error fetching skills summary:', error);
-    return { totalSkills: 0, skillsMeetingBenchmark: 0, skillsNeedingImprovement: 0 };
-  }
-}
+                // Get latest assessments for this employee
+                const assessmentsQuery = query(
+                    collection(db, 'assessments'),
+                    where('employeeId', '==', employeeId),
+                    where('status', '==', 'active'),
+                    orderBy('assessmentTimestamp', 'desc'),
+                    limit(100) // Cap to avoid large reads
+                );
 
-// Update profile header
-function updateProfileHeader(userData) {
-  const fullName = getFullName(userData.firstName, userData.lastName);
-  const initials = getInitials(userData.firstName, userData.lastName);
-  
-  document.getElementById('profile-avatar').textContent = initials;
-  document.getElementById('profile-name').textContent = fullName;
-  document.getElementById('profile-job-title').textContent = userData.jobTitle || 'N/A';
-  
-  // Status badge
-  const statusEl = document.getElementById('profile-status');
-  if (userData.employeeStatus === 'active') {
-    statusEl.textContent = 'Active';
-    statusEl.className = 'inline-flex items-center px-2 py-1 text-xs rounded-full bg-success-600 text-white';
-  } else {
-    statusEl.textContent = 'Inactive';
-    statusEl.className = 'inline-flex items-center px-2 py-1 text-xs rounded-full bg-neutral-500 text-white';
-  }
-}
+                const assessmentsSnapshot = await withLimit(() => getDocs(assessmentsQuery));
+                const assessments = assessmentsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 
-// Update personal info card
-function updatePersonalInfo(userData) {
-  document.getElementById('personal-name').textContent = getFullName(userData.firstName, userData.lastName);
-  document.getElementById('personal-email').textContent = userData.email || 'N/A';
-  document.getElementById('personal-employee-id').textContent = userData.employeeId || 'N/A';
-}
+                // Group by skillId to get latest assessment per skill
+                const latestAssessments = {};
+                assessments.forEach(assessment => {
+                    const skillId = assessment.skillId;
+                    if (!latestAssessments[skillId] ||
+                        new Date(assessment.assessmentTimestamp) > new Date(latestAssessments[skillId].assessmentTimestamp)) {
+                        latestAssessments[skillId] = assessment;
+                    }
+                });
 
-// Update job info card
-function updateJobInfo(userData, department, teamLead) {
-  document.getElementById('job-title').textContent = userData.jobTitle || 'N/A';
-  document.getElementById('job-department').textContent = department?.name || 'N/A';
-  document.getElementById('job-team-lead').textContent = 
-    teamLead ? getFullName(teamLead.firstName, teamLead.lastName) : 'Not Assigned';
-}
+                // Calculate gaps and counts
+                let skillsMeetingBenchmark = 0;
+                let skillsNeedingImprovement = 0;
 
-// Update account info card
-function updateAccountInfo(userData) {
-  const statusEl = document.getElementById('account-status');
-  if (userData.employeeStatus === 'active') {
-    statusEl.innerHTML = '<span class="h-2 w-2 rounded-full bg-success-600 inline-block mr-2"></span>Active';
-  } else {
-    statusEl.innerHTML = '<span class="h-2 w-2 rounded-full bg-neutral-500 inline-block mr-2"></span>Inactive';
-  }
-  
-  document.getElementById('account-system-role').textContent = 
-    userData.systemRole === 'systemAdmin' ? 'System Administrator' : 'Employee';
-  document.getElementById('account-created').textContent = formatDate(userData.createdTimestamp);
-  document.getElementById('account-modified').textContent = formatDate(userData.modifiedTimestamp);
-}
+                Object.values(latestAssessments).forEach(assessment => {
+                    const gap = (assessment.benchmarkAtTimeOfAssessment || 0) - (assessment.score || 0);
+                    if (gap <= 0) {
+                        skillsMeetingBenchmark++;
+                    } else {
+                        skillsNeedingImprovement++;
+                    }
+                });
 
-// Update skills summary card
-function updateSkillsSummary(skillsData) {
-  document.getElementById('total-skills').textContent = skillsData.totalSkills;
-  document.getElementById('skills-meeting').textContent = skillsData.skillsMeetingBenchmark;
-  document.getElementById('skills-needing').textContent = skillsData.skillsNeedingImprovement;
-}
+                return {
+                    totalSkills,
+                    skillsMeetingBenchmark,
+                    skillsNeedingImprovement
+                };
+            } catch (error) {
+                console.error('Error fetching skills summary:', error);
+                return { totalSkills: 0, skillsMeetingBenchmark: 0, skillsNeedingImprovement: 0 };
+            }
+        }
 
-// Main load function
-async function funLoadProfile(isRefresh = false) {
-  if (!currentUser) return;
+        // Update profile header
+        function updateProfileHeader(userData) {
+            const fullName = getFullName(userData.firstName, userData.lastName);
+            const initials = getInitials(userData.firstName, userData.lastName);
 
-  // Abort previous request if exists
-  if (currentAbort) currentAbort.abort();
-  currentAbort = new AbortController();
-  
-  try {
-    if (!isRefresh) {
-      showSkeletons();
-    }
+            document.getElementById('profile-avatar').textContent = initials;
+            document.getElementById('profile-name').textContent = fullName;
+            document.getElementById('profile-job-title').textContent = userData.jobTitle || 'N/A';
 
-    // Fetch user profile data
-    const userData = await funFetchUserProfile(currentUser.uid);
-    
-    // Update profile header immediately
-    updateProfileHeader(userData);
-    
-    // Yield to main thread before continuing
-    await new Promise(r => requestAnimationFrame(() => r()));
-    await new Promise(r => setTimeout(r, 0));
-    
-    // Fetch related data in sequence with caps
-    const [department, teamLead, skillsData] = await Promise.all([
-      funFetchDepartment(userData.departmentId),
-      funFetchTeamLead(userData.teamLeadId),
-      funFetchSkillsSummary(userData.id || currentUser.uid)
-    ]);
+            // Status badge
+            const statusEl = document.getElementById('profile-status');
+            if (userData.employeeStatus === 'active') {
+                statusEl.textContent = 'Active';
+                statusEl.className = 'inline-flex items-center px-2 py-1 text-xs rounded-full bg-success-600 text-white';
+            } else {
+                statusEl.textContent = 'Inactive';
+                statusEl.className = 'inline-flex items-center px-2 py-1 text-xs rounded-full bg-neutral-500 text-white';
+            }
+        }
 
-    // Update all sections
-    updatePersonalInfo(userData);
-    updateJobInfo(userData, department, teamLead);
-    updateAccountInfo(userData);
-    updateSkillsSummary(skillsData);
-    
-    // Update department in header
-    document.getElementById('profile-department').textContent = department?.name || 'N/A';
-    
-    hideSkeletons();
+        // Update personal info card
+        function updatePersonalInfo(userData) {
+            document.getElementById('personal-name').textContent = getFullName(userData.firstName, userData.lastName);
+            document.getElementById('personal-email').textContent = userData.email || 'N/A';
+            document.getElementById('personal-employee-id').textContent = userData.employeeId || 'N/A';
+        }
 
-    if (isRefresh) {
-      showToast('Profile refreshed successfully', 'success');
-    }
+        // Update job info card
+        function updateJobInfo(userData, department, teamLead) {
+            document.getElementById('job-title').textContent = userData.jobTitle || 'N/A';
+            document.getElementById('job-department').textContent = department?.name || 'N/A';
+            document.getElementById('job-team-lead').textContent =
+                teamLead ? getFullName(teamLead.firstName, teamLead.lastName) : 'Not Assigned';
+        }
 
-  } catch (error) {
-    console.error('Error loading profile:', error);
-    showToast('Failed to load profile data', 'error');
-    hideSkeletons();
-  }
-}
+        // Update account info card
+        function updateAccountInfo(userData) {
+            const statusEl = document.getElementById('account-status');
+            if (userData.employeeStatus === 'active') {
+                statusEl.innerHTML = '<span class="h-2 w-2 rounded-full bg-success-600 inline-block mr-2"></span>Active';
+            } else {
+                statusEl.innerHTML = '<span class="h-2 w-2 rounded-full bg-neutral-500 inline-block mr-2"></span>Inactive';
+            }
 
-// Event listeners
-document.getElementById('back-to-dashboard')?.addEventListener('click', () => {
-  window.location.href = 'employee_dashboard.html';
-});
+            document.getElementById('account-system-role').textContent =
+                userData.systemRole === 'systemAdmin' ? 'System Administrator' : 'Employee';
+            document.getElementById('account-created').textContent = formatDate(userData.createdTimestamp);
+            document.getElementById('account-modified').textContent = formatDate(userData.modifiedTimestamp);
+        }
 
-document.getElementById('refresh-profile')?.addEventListener('click', () => {
-  funLoadProfile(true);
-});
+        // Update skills summary card
+        function updateSkillsSummary(skillsData) {
+            document.getElementById('total-skills').textContent = skillsData.totalSkills;
+            document.getElementById('skills-meeting').textContent = skillsData.skillsMeetingBenchmark;
+            document.getElementById('skills-needing').textContent = skillsData.skillsNeedingImprovement;
+        }
 
-document.getElementById('view-all-skills')?.addEventListener('click', () => {
-  window.location.href = 'my_skills.html';
-});
+        // Main load function
+        async function funLoadProfile(isRefresh = false) {
+            if (!currentUser) return;
 
-// Auth state management
-onAuthStateChanged(auth, user => {
-  if (!user) {
-    window.location.href = "/auth.html?redirect=" + encodeURIComponent(location.pathname);
-    return;
-  }
-  
-  currentUser = user;
-  funLoadProfile();
-});
+            // Abort previous request if exists
+            if (currentAbort) currentAbort.abort();
+            currentAbort = new AbortController();
 
-// Initialize lucide icons
-document.addEventListener('DOMContentLoaded', () => {
-  if (typeof lucide !== 'undefined') {
-    lucide.createIcons();
-  }
-});
-</script>
+            try {
+                if (!isRefresh) {
+                    showSkeletons();
+                }
+
+                // Fetch user profile data
+                const userData = await funFetchUserProfile(currentUser.uid);
+
+                // Update profile header immediately
+                updateProfileHeader(userData);
+
+                // Yield to main thread before continuing
+                await new Promise(r => requestAnimationFrame(() => r()));
+                await new Promise(r => setTimeout(r, 0));
+
+                // Fetch related data in sequence with caps
+                const [department, teamLead, skillsData] = await Promise.all([
+                    funFetchDepartment(userData.departmentId),
+                    funFetchTeamLead(userData.teamLeadId),
+                    funFetchSkillsSummary(userData.id || currentUser.uid)
+                ]);
+
+                // Update all sections
+                updatePersonalInfo(userData);
+                updateJobInfo(userData, department, teamLead);
+                updateAccountInfo(userData);
+                updateSkillsSummary(skillsData);
+
+                // Update department in header
+                document.getElementById('profile-department').textContent = department?.name || 'N/A';
+
+                hideSkeletons();
+
+                if (isRefresh) {
+                    showToast('Profile refreshed successfully', 'success');
+                }
+
+            } catch (error) {
+                console.error('Error loading profile:', error);
+                showToast('Failed to load profile data', 'error');
+                hideSkeletons();
+            }
+        }
+
+        // Event listeners
+        document.getElementById('back-to-dashboard')?.addEventListener('click', () => {
+            window.location.href = 'employee_dashboard.html';
+        });
+
+        document.getElementById('refresh-profile')?.addEventListener('click', () => {
+            funLoadProfile(true);
+        });
+
+        document.getElementById('view-all-skills')?.addEventListener('click', () => {
+            window.location.href = 'my_skills.html';
+        });
+
+        // Auth state management
+        onAuthStateChanged(auth, user => {
+            if (!user) {
+                window.location.href = "/auth.html?redirect=" + encodeURIComponent(location.pathname);
+                return;
+            }
+
+            currentUser = user;
+            funLoadProfile();
+        });
+
+        // Initialize lucide icons
+        document.addEventListener('DOMContentLoaded', () => {
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            }
+        });
+    </script>
 
 </body>
+
 </html>
