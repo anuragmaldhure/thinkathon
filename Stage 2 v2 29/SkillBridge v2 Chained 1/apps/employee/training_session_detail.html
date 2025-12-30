@@ -1,968 +1,1053 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>SkillBridge</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SkillBridge</title>
 
-    <!-- Required: Main JS Script -->
-    <script type="module" src="scripts/main.js" data-tiramai="web-gen"></script>
+  <!-- Required: Main JS Script -->
+  <script type="module" src="scripts/main.js" data-tiramai="web-gen"></script>
 
-    <!-- Required: TailwindCSS -->
-    <script src="./lib/tailwindcss/tailwindcss.js" fetchpriority="high" data-tiramai="web-gen"></script>
+  <!-- Required: TailwindCSS -->
+  <script src="./lib/tailwindcss/tailwindcss.js" fetchpriority="high" data-tiramai="web-gen"></script>
 
-    <!-- Required: Lucide Icons -->
-    <script src="https://unpkg.com/lucide@latest" data-tiramai="web-gen"></script>
+  <!-- Required: Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest" data-tiramai="web-gen"></script>
 
-    <!-- Required: Favicon -->
-    <link rel="icon" href="assets/imgs/logo.ico" type="image/x-icon" data-tiramai="web-gen"/>
+  <!-- Required: Favicon -->
+  <link rel="icon" href="assets/imgs/logo.ico" type="image/x-icon" data-tiramai="web-gen" />
 
-    <!-- ECharts Support (for charts/graphs) -->
-    <script defer src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js" data-tiramai="web-gen"></script>
+  <!-- ECharts Support (for charts/graphs) -->
+  <script defer src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js" data-tiramai="web-gen"></script>
 
-    <!-- Markdown Support (for content rendering) -->
-    <script defer src="https://cdn.jsdelivr.net/npm/marked/marked.min.js" data-tiramai="web-gen"></script>
+  <!-- Markdown Support (for content rendering) -->
+  <script defer src="https://cdn.jsdelivr.net/npm/marked/marked.min.js" data-tiramai="web-gen"></script>
 
-    <!-- Custom Tailwind Config -->
-    <script data-tiramai="web-gen">
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        'brand-primary-600': '#1B2A44',
-                        'brand-primary-700': '#14233A',
-                        'brand-primary-800': '#0E1A2B',
-                        'accent-gold-50': '#FFF7E6',
-                        'accent-gold-500': '#C59D42',
-                        'accent-gold-600': '#A97D22',
-                        'success-600': '#16A34A',
-                        'warning-600': '#D97706',
-                        'danger-600': '#DC2626',
-                        'info-600': '#2563EB',
-                        'heat-green': '#16A34A',
-                        'heat-amber': '#F59E0B',
-                        'heat-red': '#DC2626',
-                        'neutral-50': '#F8FAFC',
-                        'neutral-200': '#E2E8F0',
-                        'neutral-500': '#64748B',
-                        'neutral-700': '#334155',
-                        'neutral-900': '#111827',
-                        'neutral-950': '#0B1220',
-                    }
-                }
-            }
+  <!-- Custom Tailwind Config -->
+  <script data-tiramai="web-gen">
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'brand-primary-600': '#1B2A44',
+            'brand-primary-700': '#14233A',
+            'brand-primary-800': '#0E1A2B',
+            'accent-gold-50': '#FFF7E6',
+            'accent-gold-500': '#C59D42',
+            'accent-gold-600': '#A97D22',
+            'success-600': '#16A34A',
+            'warning-600': '#D97706',
+            'danger-600': '#DC2626',
+            'info-600': '#2563EB',
+            'heat-green': '#16A34A',
+            'heat-amber': '#F59E0B',
+            'heat-red': '#DC2626',
+            'neutral-50': '#F8FAFC',
+            'neutral-200': '#E2E8F0',
+            'neutral-500': '#64748B',
+            'neutral-700': '#334155',
+            'neutral-900': '#111827',
+            'neutral-950': '#0B1220',
+          }
         }
-    </script>
+      }
+    }
+  </script>
 </head>
+
 <body class="bg-neutral-50 min-h-screen text-neutral-900 text-sm leading-5">
-    <!-- Top Navigation -->
-    <header class="fixed top-0 left-0 right-0 bg-brand-primary-800 border-b border-neutral-200 flex items-center justify-between px-6 py-4 z-30 h-16">
-        <div class="flex items-center gap-4">
-            <svg width="32" height="32" viewBox="0 0 400 400" fill="none" xmlns="http://www.w3.org/2000/svg" class="h-8 w-8">
-                <rect x="84" y="116" width="56" height="168" rx="8" fill="#1E40AF"/>
-                <rect x="176" y="84" width="56" height="200" rx="8" fill="#059669"/>
-                <rect x="268" y="156" width="48" height="128" rx="8" fill="#1E40AF"/>
-                <rect x="114" y="180" width="172" height="20" rx="10" fill="#F59E0B"/>
-            </svg>
-            <span class="text-xl leading-7 font-semibold text-white">SkillBridge</span>
-        </div>
-        
-        <!-- Mobile Menu Button -->
-        <button id="mobile-menu-btn" class="md:hidden text-white hover:bg-brand-primary-700 p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2">
-            <i data-lucide="menu" class="w-5 h-5"></i>
+  <!-- Top Navigation -->
+  <header
+    class="fixed top-0 left-0 right-0 bg-brand-primary-800 border-b border-neutral-200 flex items-center justify-between px-6 py-4 z-30 h-16">
+    <div class="flex items-center gap-4">
+      <svg width="32" height="32" viewBox="0 0 400 400" fill="none" xmlns="http://www.w3.org/2000/svg" class="h-8 w-8">
+        <rect x="84" y="116" width="56" height="168" rx="8" fill="#1E40AF" />
+        <rect x="176" y="84" width="56" height="200" rx="8" fill="#059669" />
+        <rect x="268" y="156" width="48" height="128" rx="8" fill="#1E40AF" />
+        <rect x="114" y="180" width="172" height="20" rx="10" fill="#F59E0B" />
+      </svg>
+      <span class="text-xl leading-7 font-semibold text-white">SkillBridge</span>
+    </div>
+
+    <!-- Mobile Menu Button -->
+    <button id="mobile-menu-btn"
+      class="md:hidden text-white hover:bg-brand-primary-700 p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2">
+      <i data-lucide="menu" class="w-5 h-5"></i>
+    </button>
+
+    <div class="hidden md:flex items-center gap-4">
+      <!-- User Profile Dropdown -->
+      <div class="relative">
+        <button id="user-profile-btn"
+          class="flex items-center gap-2 text-white hover:bg-brand-primary-700 px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2">
+          <div id="user-avatar"
+            class="w-8 h-8 bg-accent-gold-500 rounded-full flex items-center justify-center text-brand-primary-800 font-semibold text-xs">
+
+          </div>
+          <span id="user-name" class="text-sm"></span>
+          <i data-lucide="chevron-down" class="w-4 h-4"></i>
         </button>
 
-        <div class="hidden md:flex items-center gap-4">
-            <!-- User Profile Dropdown -->
-            <div class="relative">
-                <button id="user-profile-btn" class="flex items-center gap-2 text-white hover:bg-brand-primary-700 px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2">
-                    <div id="user-avatar" class="w-8 h-8 bg-accent-gold-500 rounded-full flex items-center justify-center text-brand-primary-800 font-semibold text-xs">
-                         
-                    </div>
-                    <span id="user-name" class="text-sm"></span>
-                    <i data-lucide="chevron-down" class="w-4 h-4"></i>
-                </button>
-                
-                <!-- Dropdown Menu -->
-                <div id="user-dropdown" class="hidden absolute right-0 mt-2 w-48 bg-white border border-neutral-200 rounded-md shadow-lg z-50">
-                    <div class="px-4 py-3 border-b border-neutral-200">
-                        <p class="text-sm font-medium text-neutral-900" id="dropdown-user-name"></p>
-                        <p class="text-xs text-neutral-500" id="dropdown-user-email"></p>
-                    </div>
-                    <div class="py-1">
-                        <button id="sign-out-btn" class="block w-full text-left px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50 focus:outline-none focus:bg-neutral-50">
-                            <i data-lucide="log-out" class="w-4 h-4 inline mr-2"></i>
-                            Sign Out
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </header>
-
-    <div class="flex pt-16">
-        <!-- Side Navigation -->
-        <aside id="sidebar" class="fixed md:static inset-y-0 left-0 z-20 w-64 bg-white border-r border-neutral-200 transform -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out pt-16 md:pt-0 overflow-y-auto" style="height: calc(100vh - 4rem);">
-            <nav class="p-4 space-y-1">
-                <!-- Employee Dashboard -->
-                <a href="employee_dashboard.html" class="nav-link flex items-center gap-3 px-3 py-2 text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-700 rounded-md group" data-page="employee_dashboard">
-                    <i data-lucide="layout-dashboard" class="w-5 h-5 text-neutral-500 group-hover:text-brand-primary-700"></i>
-                    <span class="font-medium">Employee Dashboard</span>
-                </a>
-
-                <!-- My Skills with Children -->
-                <div class="space-y-1">
-                    <a href="my_skills.html" class="nav-link flex items-center gap-3 px-3 py-2 text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-700 rounded-md group" data-page="my_skills">
-                        <i data-lucide="list" class="w-5 h-5 text-neutral-500 group-hover:text-brand-primary-700"></i>
-                        <span class="font-medium">My Skills</span>
-                    </a>
-                </div>
-
-                <!-- My Training Sessions with Children -->
-                <div class="space-y-1">
-                    <a href="my_training_sessions.html" class="nav-link flex items-center gap-3 px-3 py-2 text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-700 rounded-md group" data-page="my_training_sessions">
-                        <i data-lucide="calendar" class="w-5 h-5 text-neutral-500 group-hover:text-brand-primary-700"></i>
-                        <span class="font-medium">My Training Sessions</span>
-                    </a>
-                </div>
-
-                <!-- My Disputes with Children -->
-                <div class="space-y-1">
-                    <button class="nav-group-btn flex items-center justify-between w-full px-3 py-2 text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-700 rounded-md group" data-group="disputes">
-                        <div class="flex items-center gap-3">
-                            <i data-lucide="flag" class="w-5 h-5 text-neutral-500 group-hover:text-brand-primary-700"></i>
-                            <span class="font-medium">My Disputes</span>
-                        </div>
-                        <i data-lucide="chevron-down" class="w-4 h-4 text-neutral-500 group-hover:text-brand-primary-700 transition-transform duration-200"></i>
-                    </button>
-                    <div class="nav-group-children ml-8 space-y-1 hidden" data-group-target="disputes">
-                        <a href="my_disputes.html" class="nav-link flex items-center gap-3 px-3 py-2 text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-700 rounded-md text-xs" data-page="my_disputes">
-                            <i data-lucide="flag" class="w-4 h-4"></i>
-                            <span>View Disputes</span>
-                        </a>
-                        <a href="raise_dispute.html" class="nav-link flex items-center gap-3 px-3 py-2 text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-700 rounded-md text-xs" data-page="raise_dispute">
-                            <i data-lucide="plus-circle" class="w-4 h-4"></i>
-                            <span>Raise Dispute</span>
-                        </a>
-                    </div>
-                </div>
-
-                <!-- My Profile -->
-                <a href="my_profile.html" class="nav-link flex items-center gap-3 px-3 py-2 text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-700 rounded-md group" data-page="my_profile">
-                    <i data-lucide="user" class="w-5 h-5 text-neutral-500 group-hover:text-brand-primary-700"></i>
-                    <span class="font-medium">My Profile</span>
-                </a>
-            </nav>
-
-            <!-- Footer -->
-            <div class="absolute bottom-4 left-0 right-0 text-center text-xs text-neutral-500 bg-white px-4">
-                Made with ❤️ by TiramAi
-            </div>
-        </aside>
-
-        <!-- Mobile Overlay -->
-        <div id="mobile-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-10 hidden md:hidden"></div>
-
-        <!-- Main Content -->
-        <main id="pageContent" class="flex-1 p-6 overflow-y-auto min-h-screen">
-            
-<!-- Breadcrumbs -->
-<div class="mb-6">
-  <nav class="flex items-center gap-2 text-sm leading-5 text-neutral-500">
-    <a href="employee_dashboard.html" class="hover:text-brand-primary-700">Dashboard</a>
-    <i data-lucide="chevron-right" class="w-4 h-4"></i>
-    <a href="my_training_sessions.html" class="hover:text-brand-primary-700">My Training</a>
-    <i data-lucide="chevron-right" class="w-4 h-4"></i>
-    <span class="text-neutral-900" id="session-skill-name">Loading...</span>
-  </nav>
-</div>
-
-<!-- Header -->
-<div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
-  <div class="flex items-center gap-4">
-    <button onclick="history.back()" class="inline-flex items-center justify-center w-10 h-10 text-neutral-700 hover:bg-neutral-100 rounded-md focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2" aria-label="Go back">
-      <i data-lucide="arrow-left" class="w-5 h-5"></i>
-    </button>
-    <div>
-      <h1 class="text-2xl leading-8 font-bold text-neutral-950">Training Session Detail</h1>
-      <p class="text-sm leading-5 text-neutral-500 mt-1">Review your training session information and provide feedback</p>
-    </div>
-  </div>
-  <div id="session-status-badge" class="flex items-center">
-    <!-- Status badge will be populated by JS -->
-  </div>
-</div>
-
-<!-- Session Information Card -->
-<div class="bg-white border border-neutral-200 rounded-md p-6 shadow-sm mb-6">
-  <h2 class="text-xl leading-7 font-semibold mb-4">Session Information</h2>
-  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-    <!-- Left Column -->
-    <div class="space-y-4">
-      <div>
-        <dt class="text-xs leading-4 font-medium text-neutral-700 uppercase tracking-wide">Skill</dt>
-        <dd class="text-sm leading-5 text-neutral-900 mt-1">
-          <a href="#" id="skill-link" class="text-brand-primary-600 hover:text-brand-primary-700 font-medium">
-            <span id="session-skill-detail">Loading...</span>
-            <i data-lucide="external-link" class="w-4 h-4 inline ml-1"></i>
-          </a>
-        </dd>
-      </div>
-      
-      <div>
-        <dt class="text-xs leading-4 font-medium text-neutral-700 uppercase tracking-wide">Category</dt>
-        <dd class="text-sm leading-5 text-neutral-900 mt-1" id="session-category">Loading...</dd>
-      </div>
-      
-      <div>
-        <dt class="text-xs leading-4 font-medium text-neutral-700 uppercase tracking-wide">Mode</dt>
-        <dd class="text-sm leading-5 text-neutral-900 mt-1">
-          <span id="session-mode" class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-neutral-100 text-neutral-900">Loading...</span>
-        </dd>
-      </div>
-      
-      <div>
-        <dt class="text-xs leading-4 font-medium text-neutral-700 uppercase tracking-wide">Trainer</dt>
-        <dd class="text-sm leading-5 text-neutral-900 mt-1" id="session-trainer">Loading...</dd>
-      </div>
-    </div>
-    
-    <!-- Right Column -->
-    <div class="space-y-4">
-      <div>
-        <dt class="text-xs leading-4 font-medium text-neutral-700 uppercase tracking-wide">Start Date</dt>
-        <dd class="text-sm leading-5 text-neutral-900 mt-1" id="session-start-date">Loading...</dd>
-      </div>
-      
-      <div>
-        <dt class="text-xs leading-4 font-medium text-neutral-700 uppercase tracking-wide">End Date</dt>
-        <dd class="text-sm leading-5 text-neutral-900 mt-1" id="session-end-date">Loading...</dd>
-      </div>
-      
-      <div>
-        <dt class="text-xs leading-4 font-medium text-neutral-700 uppercase tracking-wide">Duration</dt>
-        <dd class="text-sm leading-5 text-neutral-900 mt-1" id="session-duration">Loading...</dd>
-      </div>
-      
-      <div>
-        <dt class="text-xs leading-4 font-medium text-neutral-700 uppercase tracking-wide">Your Attendance</dt>
-        <dd class="text-sm leading-5 text-neutral-900 mt-1">
-          <span id="attendance-status" class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium">Loading...</span>
-        </dd>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- Skill Context -->
-<div class="bg-white border border-neutral-200 rounded-md p-6 shadow-sm mb-6">
-  <div class="flex items-center justify-between mb-4">
-    <h2 class="text-xl leading-7 font-semibold">Skill Performance Context</h2>
-    <a href="#" id="skill-history-link" class="inline-flex items-center gap-2 text-sm text-brand-primary-600 hover:text-brand-primary-700">
-      View Full Skill History
-      <i data-lucide="external-link" class="w-4 h-4"></i>
-    </a>
-  </div>
-  
-  <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-    <div class="text-center p-4 bg-neutral-50 rounded-md">
-      <dt class="text-xs leading-4 font-medium text-neutral-700 uppercase tracking-wide">Latest Score</dt>
-      <dd class="text-2xl font-bold text-neutral-950 mt-1" id="latest-score">-</dd>
-    </div>
-    
-    <div class="text-center p-4 bg-neutral-50 rounded-md">
-      <dt class="text-xs leading-4 font-medium text-neutral-700 uppercase tracking-wide">Benchmark</dt>
-      <dd class="text-2xl font-bold text-neutral-950 mt-1" id="benchmark-score">-</dd>
-    </div>
-    
-    <div class="text-center p-4 bg-neutral-50 rounded-md">
-      <dt class="text-xs leading-4 font-medium text-neutral-700 uppercase tracking-wide">Gap</dt>
-      <dd class="text-2xl font-bold mt-1" id="gap-score">-</dd>
-    </div>
-  </div>
-  
-  <div class="mt-4 flex items-center justify-center" id="tni-flag-container">
-    <!-- TNI flag will be populated by JS if applicable -->
-  </div>
-</div>
-
-<!-- Timeline Visualization -->
-<div class="bg-white border border-neutral-200 rounded-md p-6 shadow-sm mb-6">
-  <h2 class="text-xl leading-7 font-semibold mb-4">Timeline</h2>
-  <div class="relative">
-    <!-- Timeline line -->
-    <div class="absolute left-0 right-0 top-6 h-0.5 bg-neutral-200"></div>
-    
-    <div class="flex justify-between items-center relative">
-      <!-- Start Date -->
-      <div class="flex flex-col items-center">
-        <div class="w-3 h-3 rounded-full bg-brand-primary-600 border-2 border-white shadow-sm"></div>
-        <div class="mt-2 text-center">
-          <p class="text-xs font-medium text-neutral-900">Start</p>
-          <p class="text-xs text-neutral-500" id="timeline-start">-</p>
-        </div>
-      </div>
-      
-      <!-- End Date -->
-      <div class="flex flex-col items-center">
-        <div class="w-3 h-3 rounded-full bg-brand-primary-600 border-2 border-white shadow-sm"></div>
-        <div class="mt-2 text-center">
-          <p class="text-xs font-medium text-neutral-900">End</p>
-          <p class="text-xs text-neutral-500" id="timeline-end">-</p>
-        </div>
-      </div>
-      
-      <!-- Reassessment Window -->
-      <div class="flex flex-col items-center">
-        <div class="w-3 h-3 rounded-full bg-accent-gold-500 border-2 border-white shadow-sm"></div>
-        <div class="mt-2 text-center">
-          <p class="text-xs font-medium text-neutral-900">Reassessment</p>
-          <p class="text-xs text-neutral-500" id="timeline-reassessment">-</p>
-        </div>
-      </div>
-      
-      <!-- Today Marker -->
-      <div class="flex flex-col items-center" id="today-marker">
-        <div class="w-3 h-3 rounded-full bg-success-600 border-2 border-white shadow-sm"></div>
-        <div class="mt-2 text-center">
-          <p class="text-xs font-medium text-neutral-900">Today</p>
-          <p class="text-xs text-neutral-500" id="timeline-today">-</p>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- Feedback Section -->
-<div class="bg-white border border-neutral-200 rounded-md p-6 shadow-sm">
-  <h2 class="text-xl leading-7 font-semibold mb-4">Training Feedback</h2>
-  
-  <!-- Feedback content will be dynamically populated -->
-  <div id="feedback-content">
-    <!-- Loading state -->
-    <div class="flex items-center justify-center py-8">
-      <div class="animate-pulse text-neutral-500">Loading feedback information...</div>
-    </div>
-  </div>
-</div>
-
-<!-- Training Feedback Modal -->
-<div id="feedback-modal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden">
-  <div class="flex items-center justify-center min-h-screen p-4">
-    <div class="bg-white rounded-lg shadow-lg max-w-lg w-full mx-auto">
-      <div class="p-6">
-        <div class="flex items-center justify-between mb-6">
-          <h3 class="text-xl leading-7 font-semibold">Submit Training Feedback</h3>
-          <button id="close-modal" class="text-neutral-500 hover:text-neutral-700 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2 rounded-md p-1">
-            <i data-lucide="x" class="w-5 h-5"></i>
-          </button>
-        </div>
-        
-        <form id="feedback-form">
-          <!-- Session Context -->
-          <div class="mb-4 p-3 bg-neutral-50 rounded-md">
-            <p class="text-xs leading-4 font-medium text-neutral-700 uppercase tracking-wide mb-1">Session</p>
-            <p class="text-sm font-medium text-neutral-900" id="modal-skill-name">Loading...</p>
-            <p class="text-xs text-neutral-500" id="modal-session-dates">Loading...</p>
+        <!-- Dropdown Menu -->
+        <div id="user-dropdown"
+          class="hidden absolute right-0 mt-2 w-48 bg-white border border-neutral-200 rounded-md shadow-lg z-50">
+          <div class="px-4 py-3 border-b border-neutral-200">
+            <p class="text-sm font-medium text-neutral-900" id="dropdown-user-name"></p>
+            <p class="text-xs text-neutral-500" id="dropdown-user-email"></p>
           </div>
-          
-          <!-- Rating -->
-          <div class="mb-6">
-            <label class="block text-sm font-medium text-neutral-900 mb-2">
-              Rating <span class="text-danger-600">*</span>
-            </label>
-            <div class="flex items-center gap-2">
-              <div class="flex items-center gap-1" id="star-rating">
-                <button type="button" class="star-btn text-neutral-300 hover:text-accent-gold-500 focus:outline-none focus:text-accent-gold-500" data-rating="1">
-                  <i data-lucide="star" class="w-6 h-6"></i>
-                </button>
-                <button type="button" class="star-btn text-neutral-300 hover:text-accent-gold-500 focus:outline-none focus:text-accent-gold-500" data-rating="2">
-                  <i data-lucide="star" class="w-6 h-6"></i>
-                </button>
-                <button type="button" class="star-btn text-neutral-300 hover:text-accent-gold-500 focus:outline-none focus:text-accent-gold-500" data-rating="3">
-                  <i data-lucide="star" class="w-6 h-6"></i>
-                </button>
-                <button type="button" class="star-btn text-neutral-300 hover:text-accent-gold-500 focus:outline-none focus:text-accent-gold-500" data-rating="4">
-                  <i data-lucide="star" class="w-6 h-6"></i>
-                </button>
-                <button type="button" class="star-btn text-neutral-300 hover:text-accent-gold-500 focus:outline-none focus:text-accent-gold-500" data-rating="5">
-                  <i data-lucide="star" class="w-6 h-6"></i>
+          <div class="py-1">
+            <button id="sign-out-btn"
+              class="block w-full text-left px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50 focus:outline-none focus:bg-neutral-50">
+              <i data-lucide="log-out" class="w-4 h-4 inline mr-2"></i>
+              Sign Out
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="flex pt-16">
+    <!-- Side Navigation -->
+    <aside id="sidebar"
+      class="fixed md:static inset-y-0 left-0 z-20 w-64 bg-white border-r border-neutral-200 transform -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out pt-16 md:pt-0 overflow-y-auto"
+      style="height: calc(100vh - 4rem);">
+      <nav class="p-4 space-y-1">
+        <!-- Employee Dashboard -->
+        <a href="employee_dashboard.html"
+          class="nav-link flex items-center gap-3 px-3 py-2 text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-700 rounded-md group"
+          data-page="employee_dashboard">
+          <i data-lucide="layout-dashboard" class="w-5 h-5 text-neutral-500 group-hover:text-brand-primary-700"></i>
+          <span class="font-medium">Employee Dashboard</span>
+        </a>
+
+        <!-- My Skills with Children -->
+        <div class="space-y-1">
+          <a href="my_skills.html"
+            class="nav-link flex items-center gap-3 px-3 py-2 text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-700 rounded-md group"
+            data-page="my_skills">
+            <i data-lucide="list" class="w-5 h-5 text-neutral-500 group-hover:text-brand-primary-700"></i>
+            <span class="font-medium">My Skills</span>
+          </a>
+        </div>
+
+        <!-- My Training Sessions with Children -->
+        <div class="space-y-1">
+          <a href="my_training_sessions.html"
+            class="nav-link flex items-center gap-3 px-3 py-2 text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-700 rounded-md group"
+            data-page="my_training_sessions">
+            <i data-lucide="calendar" class="w-5 h-5 text-neutral-500 group-hover:text-brand-primary-700"></i>
+            <span class="font-medium">My Training Sessions</span>
+          </a>
+        </div>
+
+        <!-- My Disputes with Children -->
+        <div class="space-y-1">
+          <button
+            class="nav-group-btn flex items-center justify-between w-full px-3 py-2 text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-700 rounded-md group"
+            data-group="disputes">
+            <div class="flex items-center gap-3">
+              <i data-lucide="flag" class="w-5 h-5 text-neutral-500 group-hover:text-brand-primary-700"></i>
+              <span class="font-medium">My Disputes</span>
+            </div>
+            <i data-lucide="chevron-down"
+              class="w-4 h-4 text-neutral-500 group-hover:text-brand-primary-700 transition-transform duration-200"></i>
+          </button>
+          <div class="nav-group-children ml-8 space-y-1 hidden" data-group-target="disputes">
+            <a href="my_disputes.html"
+              class="nav-link flex items-center gap-3 px-3 py-2 text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-700 rounded-md text-xs"
+              data-page="my_disputes">
+              <i data-lucide="flag" class="w-4 h-4"></i>
+              <span>View Disputes</span>
+            </a>
+            <a href="raise_dispute.html"
+              class="nav-link flex items-center gap-3 px-3 py-2 text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-700 rounded-md text-xs"
+              data-page="raise_dispute">
+              <i data-lucide="plus-circle" class="w-4 h-4"></i>
+              <span>Raise Dispute</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- My Profile -->
+        <a href="my_profile.html"
+          class="nav-link flex items-center gap-3 px-3 py-2 text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-700 rounded-md group"
+          data-page="my_profile">
+          <i data-lucide="user" class="w-5 h-5 text-neutral-500 group-hover:text-brand-primary-700"></i>
+          <span class="font-medium">My Profile</span>
+        </a>
+      </nav>
+
+      <!-- Footer -->
+      <div class="absolute bottom-4 left-0 right-0 text-center text-xs text-neutral-500 bg-white px-4">
+        Made with ❤️ by TiramAi
+      </div>
+    </aside>
+
+    <!-- Mobile Overlay -->
+    <div id="mobile-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-10 hidden md:hidden"></div>
+
+    <!-- Main Content -->
+    <main id="pageContent" class="flex-1 p-6 overflow-y-auto min-h-screen">
+
+      <!-- Breadcrumbs -->
+      <div class="mb-6">
+        <nav class="flex items-center gap-2 text-sm leading-5 text-neutral-500">
+          <a href="employee_dashboard.html" class="hover:text-brand-primary-700">Dashboard</a>
+          <i data-lucide="chevron-right" class="w-4 h-4"></i>
+          <a href="my_training_sessions.html" class="hover:text-brand-primary-700">My Training</a>
+          <i data-lucide="chevron-right" class="w-4 h-4"></i>
+          <span class="text-neutral-900" id="session-skill-name">Loading...</span>
+        </nav>
+      </div>
+
+      <!-- Header -->
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+        <div class="flex items-center gap-4">
+          <button onclick="history.back()"
+            class="inline-flex items-center justify-center w-10 h-10 text-neutral-700 hover:bg-neutral-100 rounded-md focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2"
+            aria-label="Go back">
+            <i data-lucide="arrow-left" class="w-5 h-5"></i>
+          </button>
+          <div>
+            <h1 class="text-2xl leading-8 font-bold text-neutral-950">Training Session Detail</h1>
+            <p class="text-sm leading-5 text-neutral-500 mt-1">Review your training session information and provide
+              feedback</p>
+          </div>
+        </div>
+        <div id="session-status-badge" class="flex items-center">
+          <!-- Status badge will be populated by JS -->
+        </div>
+      </div>
+
+      <!-- Session Information Card -->
+      <div class="bg-white border border-neutral-200 rounded-md p-6 shadow-sm mb-6">
+        <h2 class="text-xl leading-7 font-semibold mb-4">Session Information</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <!-- Left Column -->
+          <div class="space-y-4">
+            <div>
+              <dt class="text-xs leading-4 font-medium text-neutral-700 uppercase tracking-wide">Skill</dt>
+              <dd class="text-sm leading-5 text-neutral-900 mt-1">
+                <a href="#" id="skill-link" class="text-brand-primary-600 hover:text-brand-primary-700 font-medium">
+                  <span id="session-skill-detail">Loading...</span>
+                  <i data-lucide="external-link" class="w-4 h-4 inline ml-1"></i>
+                </a>
+              </dd>
+            </div>
+
+            <div>
+              <dt class="text-xs leading-4 font-medium text-neutral-700 uppercase tracking-wide">Category</dt>
+              <dd class="text-sm leading-5 text-neutral-900 mt-1" id="session-category">Loading...</dd>
+            </div>
+
+            <div>
+              <dt class="text-xs leading-4 font-medium text-neutral-700 uppercase tracking-wide">Mode</dt>
+              <dd class="text-sm leading-5 text-neutral-900 mt-1">
+                <span id="session-mode"
+                  class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-neutral-100 text-neutral-900">Loading...</span>
+              </dd>
+            </div>
+
+            <div>
+              <dt class="text-xs leading-4 font-medium text-neutral-700 uppercase tracking-wide">Trainer</dt>
+              <dd class="text-sm leading-5 text-neutral-900 mt-1" id="session-trainer">Loading...</dd>
+            </div>
+          </div>
+
+          <!-- Right Column -->
+          <div class="space-y-4">
+            <div>
+              <dt class="text-xs leading-4 font-medium text-neutral-700 uppercase tracking-wide">Start Date</dt>
+              <dd class="text-sm leading-5 text-neutral-900 mt-1" id="session-start-date">Loading...</dd>
+            </div>
+
+            <div>
+              <dt class="text-xs leading-4 font-medium text-neutral-700 uppercase tracking-wide">End Date</dt>
+              <dd class="text-sm leading-5 text-neutral-900 mt-1" id="session-end-date">Loading...</dd>
+            </div>
+
+            <div>
+              <dt class="text-xs leading-4 font-medium text-neutral-700 uppercase tracking-wide">Duration</dt>
+              <dd class="text-sm leading-5 text-neutral-900 mt-1" id="session-duration">Loading...</dd>
+            </div>
+
+            <div>
+              <dt class="text-xs leading-4 font-medium text-neutral-700 uppercase tracking-wide">Your Attendance</dt>
+              <dd class="text-sm leading-5 text-neutral-900 mt-1">
+                <span id="attendance-status"
+                  class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium">Loading...</span>
+              </dd>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Skill Context -->
+      <div class="bg-white border border-neutral-200 rounded-md p-6 shadow-sm mb-6">
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="text-xl leading-7 font-semibold">Skill Performance Context</h2>
+          <a href="#" id="skill-history-link"
+            class="inline-flex items-center gap-2 text-sm text-brand-primary-600 hover:text-brand-primary-700">
+            View Full Skill History
+            <i data-lucide="external-link" class="w-4 h-4"></i>
+          </a>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div class="text-center p-4 bg-neutral-50 rounded-md">
+            <dt class="text-xs leading-4 font-medium text-neutral-700 uppercase tracking-wide">Latest Score</dt>
+            <dd class="text-2xl font-bold text-neutral-950 mt-1" id="latest-score">-</dd>
+          </div>
+
+          <div class="text-center p-4 bg-neutral-50 rounded-md">
+            <dt class="text-xs leading-4 font-medium text-neutral-700 uppercase tracking-wide">Benchmark</dt>
+            <dd class="text-2xl font-bold text-neutral-950 mt-1" id="benchmark-score">-</dd>
+          </div>
+
+          <div class="text-center p-4 bg-neutral-50 rounded-md">
+            <dt class="text-xs leading-4 font-medium text-neutral-700 uppercase tracking-wide">Gap</dt>
+            <dd class="text-2xl font-bold mt-1" id="gap-score">-</dd>
+          </div>
+        </div>
+
+        <div class="mt-4 flex items-center justify-center" id="tni-flag-container">
+          <!-- TNI flag will be populated by JS if applicable -->
+        </div>
+      </div>
+
+      <!-- Timeline Visualization -->
+      <div class="bg-white border border-neutral-200 rounded-md p-6 shadow-sm mb-6">
+        <h2 class="text-xl leading-7 font-semibold mb-4">Timeline</h2>
+        <div class="relative">
+          <!-- Timeline line -->
+          <div class="absolute left-0 right-0 top-6 h-0.5 bg-neutral-200"></div>
+
+          <div class="flex justify-between items-center relative">
+            <!-- Start Date -->
+            <div class="flex flex-col items-center">
+              <div class="w-3 h-3 rounded-full bg-brand-primary-600 border-2 border-white shadow-sm"></div>
+              <div class="mt-2 text-center">
+                <p class="text-xs font-medium text-neutral-900">Start</p>
+                <p class="text-xs text-neutral-500" id="timeline-start">-</p>
+              </div>
+            </div>
+
+            <!-- End Date -->
+            <div class="flex flex-col items-center">
+              <div class="w-3 h-3 rounded-full bg-brand-primary-600 border-2 border-white shadow-sm"></div>
+              <div class="mt-2 text-center">
+                <p class="text-xs font-medium text-neutral-900">End</p>
+                <p class="text-xs text-neutral-500" id="timeline-end">-</p>
+              </div>
+            </div>
+
+            <!-- Reassessment Window -->
+            <div class="flex flex-col items-center">
+              <div class="w-3 h-3 rounded-full bg-accent-gold-500 border-2 border-white shadow-sm"></div>
+              <div class="mt-2 text-center">
+                <p class="text-xs font-medium text-neutral-900">Reassessment</p>
+                <p class="text-xs text-neutral-500" id="timeline-reassessment">-</p>
+              </div>
+            </div>
+
+            <!-- Today Marker -->
+            <div class="flex flex-col items-center" id="today-marker">
+              <div class="w-3 h-3 rounded-full bg-success-600 border-2 border-white shadow-sm"></div>
+              <div class="mt-2 text-center">
+                <p class="text-xs font-medium text-neutral-900">Today</p>
+                <p class="text-xs text-neutral-500" id="timeline-today">-</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Feedback Section -->
+      <div class="bg-white border border-neutral-200 rounded-md p-6 shadow-sm">
+        <h2 class="text-xl leading-7 font-semibold mb-4">Training Feedback</h2>
+
+        <!-- Feedback content will be dynamically populated -->
+        <div id="feedback-content">
+          <!-- Loading state -->
+          <div class="flex items-center justify-center py-8">
+            <div class="animate-pulse text-neutral-500">Loading feedback information...</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Training Feedback Modal -->
+      <div id="feedback-modal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden">
+        <div class="flex items-center justify-center min-h-screen p-4">
+          <div class="bg-white rounded-lg shadow-lg max-w-lg w-full mx-auto">
+            <div class="p-6">
+              <div class="flex items-center justify-between mb-6">
+                <h3 class="text-xl leading-7 font-semibold">Submit Training Feedback</h3>
+                <button id="close-modal"
+                  class="text-neutral-500 hover:text-neutral-700 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2 rounded-md p-1">
+                  <i data-lucide="x" class="w-5 h-5"></i>
                 </button>
               </div>
-              <span id="rating-text" class="text-sm text-neutral-500 ml-2">Select a rating</span>
+
+              <form id="feedback-form">
+                <!-- Session Context -->
+                <div class="mb-4 p-3 bg-neutral-50 rounded-md">
+                  <p class="text-xs leading-4 font-medium text-neutral-700 uppercase tracking-wide mb-1">Session</p>
+                  <p class="text-sm font-medium text-neutral-900" id="modal-skill-name">Loading...</p>
+                  <p class="text-xs text-neutral-500" id="modal-session-dates">Loading...</p>
+                </div>
+
+                <!-- Rating -->
+                <div class="mb-6">
+                  <label class="block text-sm font-medium text-neutral-900 mb-2">
+                    Rating <span class="text-danger-600">*</span>
+                  </label>
+                  <div class="flex items-center gap-2">
+                    <div class="flex items-center gap-1" id="star-rating">
+                      <button type="button"
+                        class="star-btn text-neutral-300 hover:text-accent-gold-500 focus:outline-none focus:text-accent-gold-500"
+                        data-rating="1">
+                        <i data-lucide="star" class="w-6 h-6"></i>
+                      </button>
+                      <button type="button"
+                        class="star-btn text-neutral-300 hover:text-accent-gold-500 focus:outline-none focus:text-accent-gold-500"
+                        data-rating="2">
+                        <i data-lucide="star" class="w-6 h-6"></i>
+                      </button>
+                      <button type="button"
+                        class="star-btn text-neutral-300 hover:text-accent-gold-500 focus:outline-none focus:text-accent-gold-500"
+                        data-rating="3">
+                        <i data-lucide="star" class="w-6 h-6"></i>
+                      </button>
+                      <button type="button"
+                        class="star-btn text-neutral-300 hover:text-accent-gold-500 focus:outline-none focus:text-accent-gold-500"
+                        data-rating="4">
+                        <i data-lucide="star" class="w-6 h-6"></i>
+                      </button>
+                      <button type="button"
+                        class="star-btn text-neutral-300 hover:text-accent-gold-500 focus:outline-none focus:text-accent-gold-500"
+                        data-rating="5">
+                        <i data-lucide="star" class="w-6 h-6"></i>
+                      </button>
+                    </div>
+                    <span id="rating-text" class="text-sm text-neutral-500 ml-2">Select a rating</span>
+                  </div>
+                  <input type="hidden" id="rating-input" name="rating" required>
+                  <div id="rating-error" class="hidden text-xs text-danger-600 mt-1">Please select a rating</div>
+                </div>
+
+                <!-- Comments -->
+                <div class="mb-6">
+                  <label for="comments" class="block text-sm font-medium text-neutral-900 mb-2">
+                    Comments <span class="text-neutral-500">(Optional)</span>
+                  </label>
+                  <textarea id="comments" name="comments" rows="4" maxlength="1000"
+                    class="w-full border border-neutral-200 rounded-sm px-3 py-2 text-sm leading-5 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2"
+                    placeholder="Share your thoughts about the training session..."></textarea>
+                  <p class="text-xs text-neutral-500 mt-1">
+                    <span id="char-count">0</span>/1000 characters
+                  </p>
+                  <div id="comments-error" class="hidden text-xs text-danger-600 mt-1">Comments must be 1000 characters
+                    or less</div>
+                </div>
+
+                <!-- Actions -->
+                <div class="flex justify-end gap-3">
+                  <button type="button" id="cancel-feedback"
+                    class="inline-flex items-center h-11 px-4 rounded-md border border-neutral-200 bg-white text-neutral-900 hover:bg-neutral-50 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2">
+                    Cancel
+                  </button>
+                  <button type="submit" id="submit-feedback"
+                    class="inline-flex items-center justify-center h-11 px-4 rounded-md bg-brand-primary-600 hover:bg-brand-primary-700 text-white focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed">
+                    <span class="submit-text">Submit Feedback</span>
+                    <span class="submit-loading hidden">Submitting...</span>
+                  </button>
+                </div>
+              </form>
             </div>
-            <input type="hidden" id="rating-input" name="rating" required>
-            <div id="rating-error" class="hidden text-xs text-danger-600 mt-1">Please select a rating</div>
           </div>
-          
-          <!-- Comments -->
-          <div class="mb-6">
-            <label for="comments" class="block text-sm font-medium text-neutral-900 mb-2">
-              Comments <span class="text-neutral-500">(Optional)</span>
-            </label>
-            <textarea 
-              id="comments" 
-              name="comments" 
-              rows="4" 
-              maxlength="1000"
-              class="w-full border border-neutral-200 rounded-sm px-3 py-2 text-sm leading-5 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2"
-              placeholder="Share your thoughts about the training session..."
-            ></textarea>
-            <p class="text-xs text-neutral-500 mt-1">
-              <span id="char-count">0</span>/1000 characters
-            </p>
-            <div id="comments-error" class="hidden text-xs text-danger-600 mt-1">Comments must be 1000 characters or less</div>
-          </div>
-          
-          <!-- Actions -->
-          <div class="flex justify-end gap-3">
-            <button type="button" id="cancel-feedback" class="inline-flex items-center h-11 px-4 rounded-md border border-neutral-200 bg-white text-neutral-900 hover:bg-neutral-50 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2">
-              Cancel
-            </button>
-            <button type="submit" id="submit-feedback" class="inline-flex items-center justify-center h-11 px-4 rounded-md bg-brand-primary-600 hover:bg-brand-primary-700 text-white focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed">
-              <span class="submit-text">Submit Feedback</span>
-              <span class="submit-loading hidden">Submitting...</span>
-            </button>
-          </div>
-        </form>
+        </div>
       </div>
-    </div>
+
+    </main>
   </div>
-</div>
 
-        </main>
-    </div>
+  <!-- Required: JavaScript -->
+  <script type="module" data-tiramai="web-gen">
+    import { showToast, showLoader, hideLoader, env } from "./scripts/main.js";
+    import { auth, db, storage } from "./scripts/firebase.js";
+    import { onAuthStateChanged, getAuth, signOut } from 'https://www.gstatic.com/firebasejs/10.12.4/firebase-auth.js';
+    import { doc, getDoc, collection, query, where, getDocs } from 'https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js';
 
-    <!-- Required: JavaScript -->
-    <script type="module" data-tiramai="web-gen">
-        import { showToast, showLoader, hideLoader, env } from "./scripts/main.js";
-        import { auth, db, storage } from "./scripts/firebase.js";
-        import { onAuthStateChanged, getAuth, signOut } from 'https://www.gstatic.com/firebasejs/10.12.4/firebase-auth.js';
-        import { doc, getDoc, collection, query, where, getDocs } from 'https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js';
+    // Initialize Lucide icons
+    lucide.createIcons();
 
-        // Initialize Lucide icons
-        lucide.createIcons();
+    // Mobile menu functionality
+    const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+    const sidebar = document.getElementById('sidebar');
+    const mobileOverlay = document.getElementById('mobile-overlay');
 
-        // Mobile menu functionality
-        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
-        const sidebar = document.getElementById('sidebar');
-        const mobileOverlay = document.getElementById('mobile-overlay');
+    function toggleMobileMenu() {
+      sidebar.classList.toggle('-translate-x-full');
+      mobileOverlay.classList.toggle('hidden');
+    }
 
-        function toggleMobileMenu() {
-            sidebar.classList.toggle('-translate-x-full');
-            mobileOverlay.classList.toggle('hidden');
-        }
+    mobileMenuBtn?.addEventListener('click', toggleMobileMenu);
+    mobileOverlay?.addEventListener('click', toggleMobileMenu);
 
-        mobileMenuBtn?.addEventListener('click', toggleMobileMenu);
-        mobileOverlay?.addEventListener('click', toggleMobileMenu);
+    // Navigation group toggle functionality
+    document.querySelectorAll('.nav-group-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const groupName = btn.getAttribute('data-group');
+        const children = document.querySelector(`[data-group-target="${groupName}"]`);
+        const chevron = btn.querySelector('[data-lucide="chevron-down"]');
 
-        // Navigation group toggle functionality
-        document.querySelectorAll('.nav-group-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                const groupName = btn.getAttribute('data-group');
-                const children = document.querySelector(`[data-group-target="${groupName}"]`);
-                const chevron = btn.querySelector('[data-lucide="chevron-down"]');
-                
-                children?.classList.toggle('hidden');
-                chevron?.classList.toggle('rotate-180');
-            });
-        });
-
-        // User profile dropdown
-        const userProfileBtn = document.getElementById('user-profile-btn');
-        const userDropdown = document.getElementById('user-dropdown');
-
-        userProfileBtn?.addEventListener('click', (e) => {
-            e.stopPropagation();
-            userDropdown?.classList.toggle('hidden');
-        });
-
-        document.addEventListener('click', (e) => {
-            if (!userProfileBtn?.contains(e.target)) {
-                userDropdown?.classList.add('hidden');
-            }
-        });
-
-        // Active navigation highlighting
-        function updateActiveNav() {
-            const currentPage = window.location.pathname.split('/').pop()?.replace('.html', '') || 'employee_dashboard';
-            
-            document.querySelectorAll('.nav-link').forEach(link => {
-                const page = link.getAttribute('data-page');
-                if (page === currentPage) {
-                    link.classList.add('bg-accent-gold-50', 'text-brand-primary-700', 'border-l-4', 'border-accent-gold-500');
-                    link.classList.remove('text-neutral-700', 'text-neutral-600');
-                } else {
-                    link.classList.remove('bg-accent-gold-50', 'text-brand-primary-700', 'border-l-4', 'border-accent-gold-500');
-                }
-            });
-        }
-
-        // Auth state management
-        let currentUser = null;
-
-        function updateUserProfile(user, userData = null) {
-            const userAvatar = document.getElementById('user-avatar');
-            const userName = document.getElementById('user-name');
-            const dropdownUserName = document.getElementById('dropdown-user-name');
-            const dropdownUserEmail = document.getElementById('dropdown-user-email');
-
-            if (userData) {
-                const displayName = `${userData.firstName || ''} ${userData.lastName || ''}`.trim() || 'User';
-                const initials = displayName.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
-                
-                userAvatar.textContent = initials;
-                userName.textContent = displayName;
-                dropdownUserName.textContent = displayName;
-                dropdownUserEmail.textContent = userData.email || user.email;
-            } else {
-                // Fallback to auth data
-                const displayName = user.displayName || user.email.split('@')[0];
-                const initials = displayName.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
-                
-                userAvatar.textContent = initials;
-                userName.textContent = displayName;
-                dropdownUserName.textContent = displayName;
-                dropdownUserEmail.textContent = user.email;
-            }
-        }
-
-        async function loadUserData(user) {
-            try {
-                const usersQuery = query(collection(db, 'users'), where('uid', '==', user.uid), where('employeeStatus', '==', 'active'));
-                const usersSnapshot = await getDocs(usersQuery);
-                
-                if (!usersSnapshot.empty) {
-                    return usersSnapshot.docs[0].data();
-                } else {
-                    // Fallback data
-                    return {
-                        firstName: 'John',
-                        lastName: 'Doe',
-                        email: user.email
-                    };
-                }
-            } catch (error) {
-                console.error('Error loading user data:', error);
-                return null;
-            }
-        }
-
-        // Sign out functionality
-        document.getElementById('sign-out-btn')?.addEventListener('click', async () => {
-            try {
-                showLoader();
-                await signOut(auth);
-                showToast('Signed out successfully', 'success');
-                window.location.href = '/auth.html';
-            } catch (error) {
-                console.error('Sign out error:', error);
-                showToast('Error signing out', 'error');
-            } finally {
-                hideLoader();
-            }
-        });
-
-        // Initialize auth state listener
-        onAuthStateChanged(auth, async (user) => {
-            if (user) {
-                currentUser = user;
-                const userData = await loadUserData(user);
-                updateUserProfile(user, userData);
-                updateActiveNav();
-            } else {
-                window.location.href = '/auth.html';
-            }
-        });
-
-        // Initialize page
-        document.addEventListener('DOMContentLoaded', () => {
-            updateActiveNav();
-        });
-    </script>
-
-    
-<script id="data-script" type="module" data-tiramai="web-gen">
-import { 
-  collection, getDocs, setDoc, addDoc, doc, getDoc, updateDoc, deleteDoc, 
-  query, where, orderBy, limit, onSnapshot, Timestamp
-} from 'https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js';
-import { onAuthStateChanged, getAuth } from 'https://www.gstatic.com/firebasejs/10.12.4/firebase-auth.js';
-import { auth, getDb } from "./scripts/firebase.js";
-import { showToast, showLoader, hideLoader } from "./scripts/main.js";
-
-const db = getDb();
-let currentUser = null;
-let currentSession = null;
-let skillData = null;
-let feedbackData = null;
-
-// Get session ID from URL parameters
-const urlParams = new URLSearchParams(window.location.search);
-const sessionId = urlParams.get('sessionId');
-
-if (!sessionId) {
-  showToast('Session ID not provided', 'error');
-  window.location.href = 'my_training_sessions.html';
-}
-
-// Auth state management
-onAuthStateChanged(auth, user => {
-  if (!user) {
-    location.href = "/auth.html?redirect=" + encodeURIComponent(location.pathname + location.search);
-  } else {
-    currentUser = user;
-    funInitialLoad();
-  }
-});
-
-// Helper functions
-const formatDate = (dateString) => {
-  if (!dateString) return 'N/A';
-  try {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric'
+        children?.classList.toggle('hidden');
+        chevron?.classList.toggle('rotate-180');
+      });
     });
-  } catch (error) {
-    return 'N/A';
-  }
-};
 
-const calculateDuration = (startDate, endDate) => {
-  if (!startDate || !endDate) return 'N/A';
-  try {
-    const start = new Date(startDate);
-    const end = new Date(endDate);
-    const diffTime = Math.abs(end - start);
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
-    return `${diffDays} day${diffDays !== 1 ? 's' : ''}`;
-  } catch (error) {
-    return 'N/A';
-  }
-};
+    // User profile dropdown
+    const userProfileBtn = document.getElementById('user-profile-btn');
+    const userDropdown = document.getElementById('user-dropdown');
 
-const getGapColor = (gap) => {
-  if (gap === null || gap === undefined) return 'text-neutral-500';
-  if (gap >= 4) return 'text-heat-red';
-  if (gap >= 2) return 'text-heat-amber';
-  return 'text-heat-green';
-};
+    userProfileBtn?.addEventListener('click', (e) => {
+      e.stopPropagation();
+      userDropdown?.classList.toggle('hidden');
+    });
 
-// Main data loading function
-async function funInitialLoad() {
-  try {
-    showLoader();
-    
-    // Load session data
-    const sessionDoc = await getDoc(doc(db, 'trainingSessions', sessionId));
-    if (!sessionDoc.exists()) {
-      showToast('Training session not found', 'error');
+    document.addEventListener('click', (e) => {
+      if (!userProfileBtn?.contains(e.target)) {
+        userDropdown?.classList.add('hidden');
+      }
+    });
+
+    // Active navigation highlighting
+    function updateActiveNav() {
+      const currentPage = window.location.pathname.split('/').pop()?.replace('.html', '') || 'employee_dashboard';
+
+      document.querySelectorAll('.nav-link').forEach(link => {
+        const page = link.getAttribute('data-page');
+        if (page === currentPage) {
+          link.classList.add('bg-accent-gold-50', 'text-brand-primary-700', 'border-l-4', 'border-accent-gold-500');
+          link.classList.remove('text-neutral-700', 'text-neutral-600');
+        } else {
+          link.classList.remove('bg-accent-gold-50', 'text-brand-primary-700', 'border-l-4', 'border-accent-gold-500');
+        }
+      });
+    }
+
+    // Auth state management
+    let currentUser = null;
+
+    function updateUserProfile(user, userData = null) {
+      const userAvatar = document.getElementById('user-avatar');
+      const userName = document.getElementById('user-name');
+      const dropdownUserName = document.getElementById('dropdown-user-name');
+      const dropdownUserEmail = document.getElementById('dropdown-user-email');
+
+      if (userData) {
+        const displayName = `${userData.firstName || ''} ${userData.lastName || ''}`.trim() || 'User';
+        const initials = displayName.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
+
+        userAvatar.textContent = initials;
+        userName.textContent = displayName;
+        dropdownUserName.textContent = displayName;
+        dropdownUserEmail.textContent = userData.email || user.email;
+      } else {
+        // Fallback to auth data
+        const displayName = user.displayName || user.email.split('@')[0];
+        const initials = displayName.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
+
+        userAvatar.textContent = initials;
+        userName.textContent = displayName;
+        dropdownUserName.textContent = displayName;
+        dropdownUserEmail.textContent = user.email;
+      }
+    }
+
+    async function loadUserData(user) {
+      try {
+        const usersQuery = query(collection(db, 'users'), where('uid', '==', user.uid), where('employeeStatus', '==', 'active'));
+        const usersSnapshot = await getDocs(usersQuery);
+
+        if (!usersSnapshot.empty) {
+          return usersSnapshot.docs[0].data();
+        } else {
+          // Fallback data
+          return {
+            firstName: 'John',
+            lastName: 'Doe',
+            email: user.email
+          };
+        }
+      } catch (error) {
+        console.error('Error loading user data:', error);
+        return null;
+      }
+    }
+
+    // Sign out functionality
+    document.getElementById('sign-out-btn')?.addEventListener('click', async () => {
+      try {
+        showLoader();
+        await signOut(auth);
+        showToast('Signed out successfully', 'success');
+        window.location.href = '/auth.html';
+      } catch (error) {
+        console.error('Sign out error:', error);
+        showToast('Error signing out', 'error');
+      } finally {
+        hideLoader();
+      }
+    });
+
+    // Initialize auth state listener
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        currentUser = user;
+        const userData = await loadUserData(user);
+        updateUserProfile(user, userData);
+        updateActiveNav();
+      } else {
+        window.location.href = '/auth.html';
+      }
+    });
+
+    // Initialize page
+    document.addEventListener('DOMContentLoaded', () => {
+      updateActiveNav();
+    });
+  </script>
+
+
+  <script id="data-script" type="module" data-tiramai="web-gen">
+    import {
+      collection, getDocs, setDoc, addDoc, doc, getDoc, updateDoc, deleteDoc,
+      query, where, orderBy, limit, onSnapshot, Timestamp
+    } from 'https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js';
+    import { onAuthStateChanged, getAuth } from 'https://www.gstatic.com/firebasejs/10.12.4/firebase-auth.js';
+    import { auth, getDb } from "./scripts/firebase.js";
+    import { showToast, showLoader, hideLoader } from "./scripts/main.js";
+
+    const db = getDb();
+    let currentUser = null;
+    let currentEmployeeDocId = null; // Store Firestore Document ID
+    let currentSession = null;
+    let skillData = null;
+    let feedbackData = null;
+
+    // Helper function to get the employee's Firestore document ID
+    async function funGetEmployeeDocId(authUid) {
+      // Try query by uid field first
+      const userQuery = query(collection(db, 'users'), where('uid', '==', authUid), limit(1));
+      let userSnapshot = await getDocs(userQuery);
+
+      if (!userSnapshot.empty) {
+        return userSnapshot.docs[0].id;
+      }
+
+      // Try query by firebaseUid field as fallback
+      const firebaseUidQuery = query(collection(db, 'users'), where('firebaseUid', '==', authUid), limit(1));
+      userSnapshot = await getDocs(firebaseUidQuery);
+
+      if (!userSnapshot.empty) {
+        return userSnapshot.docs[0].id;
+      }
+
+      // Try direct document lookup as final fallback
+      const userDocRef = doc(db, 'users', authUid);
+      const userDoc = await getDoc(userDocRef);
+
+      if (userDoc.exists()) {
+        return userDoc.id;
+      }
+
+      return null;
+    }
+
+    // Get session ID from URL parameters
+    const urlParams = new URLSearchParams(window.location.search);
+    const sessionId = urlParams.get('sessionId');
+
+    if (!sessionId) {
+      showToast('Session ID not provided', 'error');
       window.location.href = 'my_training_sessions.html';
-      return;
     }
-    
-    currentSession = { id: sessionDoc.id, ...sessionDoc.data() };
-    
-    // Load related data concurrently
-    await Promise.all([
-      funLoadSkillData(),
-      funLoadTrainerData(), 
-      funLoadAssessmentData(),
-      funLoadFeedbackData(),
-      funLoadActiveCycle()
-    ]);
-    
-    // Update UI
-    funUpdateSessionInfo();
-    funUpdateSkillContext();
-    funUpdateTimeline();
-    funUpdateFeedbackSection();
-    
-  } catch (error) {
-    console.error('Error loading session data:', error);
-    showToast('Error loading session data: ' + (error?.message || 'Unknown error'), 'error');
-  } finally {
-    hideLoader();
-  }
-}
 
-// Load skill and category data
-async function funLoadSkillData() {
-  if (!currentSession?.skillId) return;
-  
-  try {
-    const [skillDoc, categoryDocs] = await Promise.all([
-      getDoc(doc(db, 'skills', currentSession.skillId)),
-      getDocs(collection(db, 'skillCategories'))
-    ]);
-    
-    if (skillDoc.exists()) {
-      skillData = { id: skillDoc.id, ...skillDoc.data() };
-      
-      // Find matching category
-      const categoryDoc = categoryDocs.docs.find(doc => doc.id === skillData.categoryId);
-      if (categoryDoc) {
-        skillData.categoryName = categoryDoc.data().categoryName;
+    // Auth state management
+    onAuthStateChanged(auth, async user => {
+      if (!user) {
+        location.href = "/auth.html?redirect=" + encodeURIComponent(location.pathname + location.search);
+      } else {
+        currentUser = user;
+
+        // Get the employee's Firestore document ID
+        try {
+          const employeeId = await funGetEmployeeDocId(user.uid);
+          if (employeeId) {
+            currentEmployeeDocId = employeeId;
+            console.log('Employee Document ID:', currentEmployeeDocId);
+            funInitialLoad();
+          } else {
+            console.error('Could not find employee document for user:', user.uid);
+            showToast('User profile not found', 'error');
+          }
+        } catch (error) {
+          console.error('Error fetching employee document ID:', error);
+          showToast('Failed to load user profile', 'error');
+        }
+      }
+    });
+
+    // Helper functions
+    const formatDate = (dateString) => {
+      if (!dateString) return 'N/A';
+      try {
+        return new Date(dateString).toLocaleDateString('en-US', {
+          year: 'numeric',
+          month: 'short',
+          day: 'numeric'
+        });
+      } catch (error) {
+        return 'N/A';
+      }
+    };
+
+    const calculateDuration = (startDate, endDate) => {
+      if (!startDate || !endDate) return 'N/A';
+      try {
+        const start = new Date(startDate);
+        const end = new Date(endDate);
+        const diffTime = Math.abs(end - start);
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
+        return `${diffDays} day${diffDays !== 1 ? 's' : ''}`;
+      } catch (error) {
+        return 'N/A';
+      }
+    };
+
+    const getGapColor = (gap) => {
+      if (gap === null || gap === undefined) return 'text-neutral-500';
+      if (gap >= 4) return 'text-heat-red';
+      if (gap >= 2) return 'text-heat-amber';
+      return 'text-heat-green';
+    };
+
+    // Main data loading function
+    async function funInitialLoad() {
+      try {
+        showLoader();
+
+        // Load session data
+        const sessionDoc = await getDoc(doc(db, 'trainingSessions', sessionId));
+        if (!sessionDoc.exists()) {
+          showToast('Training session not found', 'error');
+          window.location.href = 'my_training_sessions.html';
+          return;
+        }
+
+        currentSession = { id: sessionDoc.id, ...sessionDoc.data() };
+
+        // Load related data concurrently
+        await Promise.all([
+          funLoadSkillData(),
+          funLoadTrainerData(),
+          funLoadAssessmentData(),
+          funLoadFeedbackData(),
+          funLoadActiveCycle()
+        ]);
+
+        // Update UI
+        funUpdateSessionInfo();
+        funUpdateSkillContext();
+        funUpdateTimeline();
+        funUpdateFeedbackSection();
+
+      } catch (error) {
+        console.error('Error loading session data:', error);
+        showToast('Error loading session data: ' + (error?.message || 'Unknown error'), 'error');
+      } finally {
+        hideLoader();
       }
     }
-  } catch (error) {
-    console.error('Error loading skill data:', error);
-  }
-}
 
-// Load trainer data
-async function funLoadTrainerData() {
-  if (!currentSession?.trainerId || !currentSession?.trainerType) return;
-  
-  try {
-    if (currentSession.trainerType === 'internal') {
-      const trainerDoc = await getDoc(doc(db, 'users', currentSession.trainerId));
-      if (trainerDoc.exists()) {
-        const trainerData = trainerDoc.data();
-        currentSession.trainerName = `${trainerData.firstName || ''} ${trainerData.lastName || ''}`.trim();
+    // Load skill and category data
+    async function funLoadSkillData() {
+      if (!currentSession?.skillId) return;
+
+      try {
+        const [skillDoc, categoryDocs] = await Promise.all([
+          getDoc(doc(db, 'skills', currentSession.skillId)),
+          getDocs(collection(db, 'skillCategories'))
+        ]);
+
+        if (skillDoc.exists()) {
+          skillData = { id: skillDoc.id, ...skillDoc.data() };
+
+          // Find matching category
+          const categoryDoc = categoryDocs.docs.find(doc => doc.id === skillData.categoryId);
+          if (categoryDoc) {
+            skillData.categoryName = categoryDoc.data().categoryName;
+          }
+        }
+      } catch (error) {
+        console.error('Error loading skill data:', error);
       }
-    } else if (currentSession.trainerType === 'external') {
-      const trainerDoc = await getDoc(doc(db, 'externalTrainers', currentSession.trainerId));
-      if (trainerDoc.exists()) {
-        currentSession.trainerName = trainerDoc.data().name;
+    }
+
+    // Load trainer data
+    async function funLoadTrainerData() {
+      if (!currentSession?.trainerId || !currentSession?.trainerType) return;
+
+      try {
+        if (currentSession.trainerType === 'internal') {
+          const trainerDoc = await getDoc(doc(db, 'users', currentSession.trainerId));
+          if (trainerDoc.exists()) {
+            const trainerData = trainerDoc.data();
+            currentSession.trainerName = `${trainerData.firstName || ''} ${trainerData.lastName || ''}`.trim();
+          }
+        } else if (currentSession.trainerType === 'external') {
+          const trainerDoc = await getDoc(doc(db, 'externalTrainers', currentSession.trainerId));
+          if (trainerDoc.exists()) {
+            currentSession.trainerName = trainerDoc.data().name;
+          }
+        }
+      } catch (error) {
+        console.error('Error loading trainer data:', error);
       }
     }
-  } catch (error) {
-    console.error('Error loading trainer data:', error);
-  }
-}
 
-// Load latest assessment data
-async function funLoadAssessmentData() {
-  if (!currentUser || !currentSession?.skillId) return;
-  
-  try {
-    const q = query(
-      collection(db, 'assessments'),
-      where('employeeId', '==', currentUser.uid),
-      where('skillId', '==', currentSession.skillId),
-      orderBy('assessmentTimestamp', 'desc'),
-      limit(1)
-    );
-    
-    const snapshot = await getDocs(q);
-    if (!snapshot.empty) {
-      currentSession.latestAssessment = { id: snapshot.docs[0].id, ...snapshot.docs[0].data() };
-    }
-  } catch (error) {
-    console.error('Error loading assessment data:', error);
-  }
-}
+    // Load latest assessment data
+    async function funLoadAssessmentData() {
+      if (!currentUser || !currentEmployeeDocId || !currentSession?.skillId) return;
 
-// Load existing feedback
-async function funLoadFeedbackData() {
-  if (!currentUser || !sessionId) return;
-  
-  try {
-    const q = query(
-      collection(db, 'trainingFeedback'),
-      where('sessionId', '==', sessionId),
-      where('employeeId', '==', currentUser.uid)
-    );
-    
-    const snapshot = await getDocs(q);
-    if (!snapshot.empty) {
-      feedbackData = { id: snapshot.docs[0].id, ...snapshot.docs[0].data() };
-    }
-  } catch (error) {
-    console.error('Error loading feedback data:', error);
-  }
-}
+      try {
+        const q = query(
+          collection(db, 'assessments'),
+          where('employeeId', '==', currentEmployeeDocId),
+          where('skillId', '==', currentSession.skillId),
+          orderBy('assessmentTimestamp', 'desc'),
+          limit(1)
+        );
 
-// Load active cycle for reassessment calculation
-async function funLoadActiveCycle() {
-  try {
-    const q = query(
-      collection(db, 'assessmentCycles'),
-      where('isActiveCycle', '==', true),
-      limit(1)
-    );
-    
-    const snapshot = await getDocs(q);
-    if (!snapshot.empty) {
-      currentSession.activeCycle = { id: snapshot.docs[0].id, ...snapshot.docs[0].data() };
+        const snapshot = await getDocs(q);
+        if (!snapshot.empty) {
+          currentSession.latestAssessment = { id: snapshot.docs[0].id, ...snapshot.docs[0].data() };
+        }
+      } catch (error) {
+        console.error('Error loading assessment data:', error);
+      }
     }
-  } catch (error) {
-    console.error('Error loading active cycle:', error);
-  }
-}
 
-// Update session information UI
-function funUpdateSessionInfo() {
-  if (!currentSession || !skillData) return;
-  
-  // Update breadcrumb and header
-  document.getElementById('session-skill-name').textContent = skillData.name || 'Unknown Skill';
-  document.getElementById('session-skill-detail').textContent = skillData.name || 'Unknown Skill';
-  document.getElementById('session-category').textContent = skillData.categoryName || 'N/A';
-  
-  // Update skill link
-  const skillLink = document.getElementById('skill-link');
-  if (skillLink) {
-    skillLink.href = `/skill_growth_detail.html?skillId=${currentSession.skillId}`;
-  }
-  
-  // Update mode
-  const modeElement = document.getElementById('session-mode');
-  if (modeElement && currentSession.mode) {
-    modeElement.textContent = currentSession.mode.charAt(0).toUpperCase() + currentSession.mode.slice(1);
-    modeElement.className = currentSession.mode === 'online' 
-      ? 'inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-info-600 text-white'
-      : 'inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-accent-gold-500 text-white';
-  }
-  
-  // Update trainer
-  document.getElementById('session-trainer').textContent = currentSession.trainerName || 'N/A';
-  
-  // Update dates and duration
-  document.getElementById('session-start-date').textContent = formatDate(currentSession.scheduledDate);
-  document.getElementById('session-end-date').textContent = formatDate(currentSession.endDate);
-  document.getElementById('session-duration').textContent = calculateDuration(currentSession.scheduledDate, currentSession.endDate);
-  
-  // Update attendance status
-  const attendanceElement = document.getElementById('attendance-status');
-  if (attendanceElement && currentSession.assignedEmployees && currentUser) {
-    const userAssignment = currentSession.assignedEmployees.find(emp => emp.employeeId === currentUser.uid);
-    const status = userAssignment?.attendanceStatus || 'not_assigned';
-    
-    let statusText, statusClass;
-    switch (status) {
-      case 'attended':
-        statusText = 'Attended';
-        statusClass = 'bg-success-600 text-white';
-        break;
-      case 'absent':
-        statusText = 'Absent';
-        statusClass = 'bg-danger-600 text-white';
-        break;
-      case 'pending':
-        statusText = 'Pending';
-        statusClass = 'bg-warning-600 text-white';
-        break;
-      default:
-        statusText = 'Not Assigned';
-        statusClass = 'bg-neutral-500 text-white';
-    }
-    
-    attendanceElement.textContent = statusText;
-    attendanceElement.className = `inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${statusClass}`;
-    
-    currentSession.userAttendanceStatus = status;
-  }
-  
-  // Update status badge
-  const statusBadge = document.getElementById('session-status-badge');
-  if (statusBadge && currentSession.status) {
-    let statusText, statusClass;
-    switch (currentSession.status) {
-      case 'completed':
-        statusText = 'Completed';
-        statusClass = 'bg-success-600 text-white';
-        break;
-      case 'scheduled':
-        statusText = 'Scheduled';
-        statusClass = 'bg-info-600 text-white';
-        break;
-      case 'cancelled':
-        statusText = 'Cancelled';
-        statusClass = 'bg-danger-600 text-white';
-        break;
-      default:
-        statusText = currentSession.status;
-        statusClass = 'bg-neutral-500 text-white';
-    }
-    
-    statusBadge.innerHTML = `<span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${statusClass}">${statusText}</span>`;
-  }
-}
+    // Load existing feedback
+    async function funLoadFeedbackData() {
+      if (!currentUser || !sessionId) return;
 
-// Update skill context UI
-function funUpdateSkillContext() {
-  if (!currentSession?.latestAssessment) {
-    document.getElementById('latest-score').textContent = 'N/A';
-    document.getElementById('benchmark-score').textContent = 'N/A';
-    document.getElementById('gap-score').textContent = 'N/A';
-    return;
-  }
-  
-  const assessment = currentSession.latestAssessment;
-  const score = assessment.score || 0;
-  const benchmark = assessment.benchmarkAtTimeOfAssessment || 0;
-  const gap = benchmark - score;
-  
-  document.getElementById('latest-score').textContent = score;
-  document.getElementById('benchmark-score').textContent = benchmark;
-  
-  const gapElement = document.getElementById('gap-score');
-  gapElement.textContent = gap > 0 ? `+${gap}` : gap.toString();
-  gapElement.className = `text-2xl font-bold mt-1 ${getGapColor(gap)}`;
-  
-  // Update skill history link
-  const historyLink = document.getElementById('skill-history-link');
-  if (historyLink) {
-    historyLink.href = `/skill_growth_detail.html?skillId=${currentSession.skillId}`;
-  }
-  
-  // Update TNI flag
-  const tniContainer = document.getElementById('tni-flag-container');
-  if (assessment.tniFlag) {
-    tniContainer.innerHTML = `
+      try {
+        const q = query(
+          collection(db, 'trainingFeedback'),
+          where('sessionId', '==', sessionId),
+          where('employeeId', '==', currentUser.uid)
+        );
+
+        const snapshot = await getDocs(q);
+        if (!snapshot.empty) {
+          feedbackData = { id: snapshot.docs[0].id, ...snapshot.docs[0].data() };
+        }
+      } catch (error) {
+        console.error('Error loading feedback data:', error);
+      }
+    }
+
+    // Load active cycle for reassessment calculation
+    async function funLoadActiveCycle() {
+      try {
+        const q = query(
+          collection(db, 'assessmentCycles'),
+          where('isActiveCycle', '==', true),
+          limit(1)
+        );
+
+        const snapshot = await getDocs(q);
+        if (!snapshot.empty) {
+          currentSession.activeCycle = { id: snapshot.docs[0].id, ...snapshot.docs[0].data() };
+        }
+      } catch (error) {
+        console.error('Error loading active cycle:', error);
+      }
+    }
+
+    // Update session information UI
+    function funUpdateSessionInfo() {
+      if (!currentSession || !skillData) return;
+
+      // Update breadcrumb and header
+      document.getElementById('session-skill-name').textContent = skillData.name || 'Unknown Skill';
+      document.getElementById('session-skill-detail').textContent = skillData.name || 'Unknown Skill';
+      document.getElementById('session-category').textContent = skillData.categoryName || 'N/A';
+
+      // Update skill link
+      const skillLink = document.getElementById('skill-link');
+      if (skillLink) {
+        skillLink.href = `/skill_growth_detail.html?skillId=${currentSession.skillId}`;
+      }
+
+      // Update mode
+      const modeElement = document.getElementById('session-mode');
+      if (modeElement && currentSession.mode) {
+        modeElement.textContent = currentSession.mode.charAt(0).toUpperCase() + currentSession.mode.slice(1);
+        modeElement.className = currentSession.mode === 'online'
+          ? 'inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-info-600 text-white'
+          : 'inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-accent-gold-500 text-white';
+      }
+
+      // Update trainer
+      document.getElementById('session-trainer').textContent = currentSession.trainerName || 'N/A';
+
+      // Update dates and duration
+      document.getElementById('session-start-date').textContent = formatDate(currentSession.scheduledDate);
+      document.getElementById('session-end-date').textContent = formatDate(currentSession.endDate);
+      document.getElementById('session-duration').textContent = calculateDuration(currentSession.scheduledDate, currentSession.endDate);
+
+      // Update attendance status
+      const attendanceElement = document.getElementById('attendance-status');
+      if (attendanceElement && currentSession.assignedEmployees && currentUser) {
+        const userAssignment = currentSession.assignedEmployees.find(emp => emp.employeeId === currentUser.uid);
+        const status = userAssignment?.attendanceStatus || 'not_assigned';
+
+        let statusText, statusClass;
+        switch (status) {
+          case 'attended':
+            statusText = 'Attended';
+            statusClass = 'bg-success-600 text-white';
+            break;
+          case 'absent':
+            statusText = 'Absent';
+            statusClass = 'bg-danger-600 text-white';
+            break;
+          case 'pending':
+            statusText = 'Pending';
+            statusClass = 'bg-warning-600 text-white';
+            break;
+          default:
+            statusText = 'Not Assigned';
+            statusClass = 'bg-neutral-500 text-white';
+        }
+
+        attendanceElement.textContent = statusText;
+        attendanceElement.className = `inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${statusClass}`;
+
+        currentSession.userAttendanceStatus = status;
+      }
+
+      // Update status badge
+      const statusBadge = document.getElementById('session-status-badge');
+      if (statusBadge && currentSession.status) {
+        let statusText, statusClass;
+        switch (currentSession.status) {
+          case 'completed':
+            statusText = 'Completed';
+            statusClass = 'bg-success-600 text-white';
+            break;
+          case 'scheduled':
+            statusText = 'Scheduled';
+            statusClass = 'bg-info-600 text-white';
+            break;
+          case 'cancelled':
+            statusText = 'Cancelled';
+            statusClass = 'bg-danger-600 text-white';
+            break;
+          default:
+            statusText = currentSession.status;
+            statusClass = 'bg-neutral-500 text-white';
+        }
+
+        statusBadge.innerHTML = `<span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${statusClass}">${statusText}</span>`;
+      }
+    }
+
+    // Update skill context UI
+    function funUpdateSkillContext() {
+      if (!currentSession?.latestAssessment) {
+        document.getElementById('latest-score').textContent = 'N/A';
+        document.getElementById('benchmark-score').textContent = 'N/A';
+        document.getElementById('gap-score').textContent = 'N/A';
+        return;
+      }
+
+      const assessment = currentSession.latestAssessment;
+      const score = assessment.score || 0;
+      const benchmark = assessment.benchmarkAtTimeOfAssessment || 0;
+      const gap = benchmark - score;
+
+      document.getElementById('latest-score').textContent = score;
+      document.getElementById('benchmark-score').textContent = benchmark;
+
+      const gapElement = document.getElementById('gap-score');
+      gapElement.textContent = gap > 0 ? `+${gap}` : gap.toString();
+      gapElement.className = `text-2xl font-bold mt-1 ${getGapColor(gap)}`;
+
+      // Update skill history link
+      const historyLink = document.getElementById('skill-history-link');
+      if (historyLink) {
+        historyLink.href = `/skill_growth_detail.html?skillId=${currentSession.skillId}`;
+      }
+
+      // Update TNI flag
+      const tniContainer = document.getElementById('tni-flag-container');
+      if (assessment.tniFlag) {
+        tniContainer.innerHTML = `
       <div class="inline-flex items-center gap-2 px-3 py-2 bg-warning-600 text-white rounded-md">
         <i data-lucide="flag" class="w-4 h-4"></i>
         <span class="text-sm font-medium">Training Need Identified</span>
       </div>
     `;
-  } else {
-    tniContainer.innerHTML = '';
-  }
-}
-
-// Update timeline UI
-function funUpdateTimeline() {
-  if (!currentSession) return;
-  
-  document.getElementById('timeline-start').textContent = formatDate(currentSession.scheduledDate);
-  document.getElementById('timeline-end').textContent = formatDate(currentSession.endDate);
-  
-  // Calculate reassessment date
-  let reassessmentDate = 'N/A';
-  if (currentSession.endDate && currentSession.activeCycle?.reassessmentDelayDays) {
-    try {
-      const endDate = new Date(currentSession.endDate);
-      endDate.setDate(endDate.getDate() + currentSession.activeCycle.reassessmentDelayDays);
-      reassessmentDate = formatDate(endDate.toISOString());
-    } catch (error) {
-      reassessmentDate = 'N/A';
+      } else {
+        tniContainer.innerHTML = '';
+      }
     }
-  }
-  document.getElementById('timeline-reassessment').textContent = reassessmentDate;
-  
-  // Today's date
-  document.getElementById('timeline-today').textContent = formatDate(new Date().toISOString());
-}
 
-// Update feedback section UI
-function funUpdateFeedbackSection() {
-  const feedbackContent = document.getElementById('feedback-content');
-  if (!feedbackContent) return;
-  
-  const isEligibleForFeedback = funCheckFeedbackEligibility();
-  
-  if (feedbackData) {
-    // Show existing feedback
-    const rating = feedbackData.rating || 0;
-    const stars = Array.from({length: 5}, (_, i) => 
-      `<i data-lucide="${i < rating ? 'star' : 'star'}" class="w-4 h-4 ${i < rating ? 'text-accent-gold-500 fill-current' : 'text-neutral-300'}"></i>`
-    ).join('');
-    
-    feedbackContent.innerHTML = `
+    // Update timeline UI
+    function funUpdateTimeline() {
+      if (!currentSession) return;
+
+      document.getElementById('timeline-start').textContent = formatDate(currentSession.scheduledDate);
+      document.getElementById('timeline-end').textContent = formatDate(currentSession.endDate);
+
+      // Calculate reassessment date
+      let reassessmentDate = 'N/A';
+      if (currentSession.endDate && currentSession.activeCycle?.reassessmentDelayDays) {
+        try {
+          const endDate = new Date(currentSession.endDate);
+          endDate.setDate(endDate.getDate() + currentSession.activeCycle.reassessmentDelayDays);
+          reassessmentDate = formatDate(endDate.toISOString());
+        } catch (error) {
+          reassessmentDate = 'N/A';
+        }
+      }
+      document.getElementById('timeline-reassessment').textContent = reassessmentDate;
+
+      // Today's date
+      document.getElementById('timeline-today').textContent = formatDate(new Date().toISOString());
+    }
+
+    // Update feedback section UI
+    function funUpdateFeedbackSection() {
+      const feedbackContent = document.getElementById('feedback-content');
+      if (!feedbackContent) return;
+
+      const isEligibleForFeedback = funCheckFeedbackEligibility();
+
+      if (feedbackData) {
+        // Show existing feedback
+        const rating = feedbackData.rating || 0;
+        const stars = Array.from({ length: 5 }, (_, i) =>
+          `<i data-lucide="${i < rating ? 'star' : 'star'}" class="w-4 h-4 ${i < rating ? 'text-accent-gold-500 fill-current' : 'text-neutral-300'}"></i>`
+        ).join('');
+
+        feedbackContent.innerHTML = `
       <div class="border border-neutral-200 rounded-md p-4 bg-neutral-50">
         <div class="flex items-center justify-between mb-3">
           <h3 class="text-base font-semibold text-neutral-900">Your Feedback</h3>
@@ -985,9 +1070,9 @@ function funUpdateFeedbackSection() {
         ` : ''}
       </div>
     `;
-  } else if (isEligibleForFeedback) {
-    // Show submit feedback button
-    feedbackContent.innerHTML = `
+      } else if (isEligibleForFeedback) {
+        // Show submit feedback button
+        feedbackContent.innerHTML = `
       <div class="text-center py-6">
         <i data-lucide="star" class="w-12 h-12 text-accent-gold-500 mx-auto mb-4"></i>
         <h3 class="text-base font-semibold text-neutral-900 mb-2">Share Your Experience</h3>
@@ -998,224 +1083,225 @@ function funUpdateFeedbackSection() {
         </button>
       </div>
     `;
-    
-    // Add event listener for submit feedback button
-    document.getElementById('submit-feedback-btn')?.addEventListener('click', funOpenFeedbackModal);
-  } else {
-    // Show guidance message
-    let message = '';
-    if (!currentSession.endDate || new Date(currentSession.endDate) >= new Date()) {
-      message = 'Feedback will be available after the training session is completed.';
-    } else if (currentSession.userAttendanceStatus !== 'attended') {
-      message = 'Feedback is only available for attended sessions.';
-    } else {
-      message = 'Feedback is not available for this session.';
-    }
-    
-    feedbackContent.innerHTML = `
+
+        // Add event listener for submit feedback button
+        document.getElementById('submit-feedback-btn')?.addEventListener('click', funOpenFeedbackModal);
+      } else {
+        // Show guidance message
+        let message = '';
+        if (!currentSession.endDate || new Date(currentSession.endDate) >= new Date()) {
+          message = 'Feedback will be available after the training session is completed.';
+        } else if (currentSession.userAttendanceStatus !== 'attended') {
+          message = 'Feedback is only available for attended sessions.';
+        } else {
+          message = 'Feedback is not available for this session.';
+        }
+
+        feedbackContent.innerHTML = `
       <div class="text-center py-6">
         <i data-lucide="info" class="w-12 h-12 text-neutral-400 mx-auto mb-4"></i>
         <p class="text-sm text-neutral-600">${message}</p>
       </div>
     `;
-  }
-  
-  // Reinitialize Lucide icons
-  lucide.createIcons();
-}
+      }
 
-// Check feedback eligibility
-function funCheckFeedbackEligibility() {
-  if (!currentSession || !currentUser) return false;
-  
-  const today = new Date();
-  const endDate = currentSession.endDate ? new Date(currentSession.endDate) : null;
-  
-  return endDate && 
-         endDate < today && 
-         currentSession.userAttendanceStatus === 'attended' && 
-         !feedbackData;
-}
+      // Reinitialize Lucide icons
+      lucide.createIcons();
+    }
 
-// Modal functions
-function funOpenFeedbackModal() {
-  const modal = document.getElementById('feedback-modal');
-  if (!modal) return;
-  
-  // Update modal content
-  document.getElementById('modal-skill-name').textContent = skillData?.name || 'Unknown Skill';
-  document.getElementById('modal-session-dates').textContent = 
-    `${formatDate(currentSession.scheduledDate)} - ${formatDate(currentSession.endDate)}`;
-  
-  // Reset form
-  funResetFeedbackForm();
-  
-  // Show modal
-  modal.classList.remove('hidden');
-  
-  // Focus trap
-  const firstInput = modal.querySelector('button[data-rating="1"]');
-  firstInput?.focus();
-}
+    // Check feedback eligibility
+    function funCheckFeedbackEligibility() {
+      if (!currentSession || !currentUser) return false;
 
-function funCloseFeedbackModal() {
-  const modal = document.getElementById('feedback-modal');
-  modal?.classList.add('hidden');
-}
+      const today = new Date();
+      const endDate = currentSession.endDate ? new Date(currentSession.endDate) : null;
 
-function funResetFeedbackForm() {
-  // Reset rating
-  document.querySelectorAll('.star-btn').forEach(btn => {
-    btn.classList.remove('text-accent-gold-500');
-    btn.classList.add('text-neutral-300');
-  });
-  document.getElementById('rating-input').value = '';
-  document.getElementById('rating-text').textContent = 'Select a rating';
-  
-  // Reset comments
-  document.getElementById('comments').value = '';
-  document.getElementById('char-count').textContent = '0';
-  
-  // Reset errors
-  document.getElementById('rating-error').classList.add('hidden');
-  document.getElementById('comments-error').classList.add('hidden');
-}
+      return endDate &&
+        endDate < today &&
+        currentSession.userAttendanceStatus === 'attended' &&
+        !feedbackData;
+    }
 
-// Modal event listeners
-document.getElementById('close-modal')?.addEventListener('click', funCloseFeedbackModal);
-document.getElementById('cancel-feedback')?.addEventListener('click', funCloseFeedbackModal);
+    // Modal functions
+    function funOpenFeedbackModal() {
+      const modal = document.getElementById('feedback-modal');
+      if (!modal) return;
 
-// ESC key to close modal
-document.addEventListener('keydown', (e) => {
-  if (e.key === 'Escape') {
-    funCloseFeedbackModal();
-  }
-});
+      // Update modal content
+      document.getElementById('modal-skill-name').textContent = skillData?.name || 'Unknown Skill';
+      document.getElementById('modal-session-dates').textContent =
+        `${formatDate(currentSession.scheduledDate)} - ${formatDate(currentSession.endDate)}`;
 
-// Backdrop click to close modal
-document.getElementById('feedback-modal')?.addEventListener('click', (e) => {
-  if (e.target.id === 'feedback-modal') {
-    funCloseFeedbackModal();
-  }
-});
+      // Reset form
+      funResetFeedbackForm();
 
-// Star rating functionality
-document.addEventListener('DOMContentLoaded', () => {
-  const starButtons = document.querySelectorAll('.star-btn');
-  const ratingInput = document.getElementById('rating-input');
-  const ratingText = document.getElementById('rating-text');
-  
-  starButtons.forEach(btn => {
-    btn.addEventListener('click', (e) => {
-      e.preventDefault();
-      const rating = parseInt(btn.dataset.rating);
-      
-      // Update visual stars
-      starButtons.forEach((star, index) => {
-        if (index < rating) {
-          star.classList.remove('text-neutral-300');
-          star.classList.add('text-accent-gold-500');
-        } else {
-          star.classList.remove('text-accent-gold-500');
-          star.classList.add('text-neutral-300');
-        }
+      // Show modal
+      modal.classList.remove('hidden');
+
+      // Focus trap
+      const firstInput = modal.querySelector('button[data-rating="1"]');
+      firstInput?.focus();
+    }
+
+    function funCloseFeedbackModal() {
+      const modal = document.getElementById('feedback-modal');
+      modal?.classList.add('hidden');
+    }
+
+    function funResetFeedbackForm() {
+      // Reset rating
+      document.querySelectorAll('.star-btn').forEach(btn => {
+        btn.classList.remove('text-accent-gold-500');
+        btn.classList.add('text-neutral-300');
       });
-      
-      // Update hidden input and text
-      ratingInput.value = rating;
-      const ratingLabels = ['', 'Poor', 'Fair', 'Good', 'Very Good', 'Excellent'];
-      ratingText.textContent = `${rating}/5 - ${ratingLabels[rating]}`;
-      
-      // Hide error
+      document.getElementById('rating-input').value = '';
+      document.getElementById('rating-text').textContent = 'Select a rating';
+
+      // Reset comments
+      document.getElementById('comments').value = '';
+      document.getElementById('char-count').textContent = '0';
+
+      // Reset errors
       document.getElementById('rating-error').classList.add('hidden');
+      document.getElementById('comments-error').classList.add('hidden');
+    }
+
+    // Modal event listeners
+    document.getElementById('close-modal')?.addEventListener('click', funCloseFeedbackModal);
+    document.getElementById('cancel-feedback')?.addEventListener('click', funCloseFeedbackModal);
+
+    // ESC key to close modal
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        funCloseFeedbackModal();
+      }
     });
-  });
-});
 
-// Comments character counter
-document.getElementById('comments')?.addEventListener('input', (e) => {
-  const count = e.target.value.length;
-  document.getElementById('char-count').textContent = count;
-  
-  const errorElement = document.getElementById('comments-error');
-  if (count > 1000) {
-    errorElement.classList.remove('hidden');
-  } else {
-    errorElement.classList.add('hidden');
-  }
-});
+    // Backdrop click to close modal
+    document.getElementById('feedback-modal')?.addEventListener('click', (e) => {
+      if (e.target.id === 'feedback-modal') {
+        funCloseFeedbackModal();
+      }
+    });
 
-// Form submission
-document.getElementById('feedback-form')?.addEventListener('submit', async (e) => {
-  e.preventDefault();
-  
-  const rating = document.getElementById('rating-input').value;
-  const comments = document.getElementById('comments').value.trim();
-  
-  // Validation
-  let hasError = false;
-  
-  if (!rating) {
-    document.getElementById('rating-error').classList.remove('hidden');
-    hasError = true;
-  }
-  
-  if (comments.length > 1000) {
-    document.getElementById('comments-error').classList.remove('hidden');
-    hasError = true;
-  }
-  
-  if (hasError) return;
-  
-  try {
-    // Update button state
-    const submitBtn = document.getElementById('submit-feedback');
-    const submitText = submitBtn.querySelector('.submit-text');
-    const submitLoading = submitBtn.querySelector('.submit-loading');
-    
-    submitBtn.disabled = true;
-    submitText.classList.add('hidden');
-    submitLoading.classList.remove('hidden');
-    
-    // Create feedback document
-    const feedbackDoc = {
-      id: crypto.randomUUID(),
-      sessionId: sessionId,
-      employeeId: currentUser.uid,
-      rating: parseInt(rating),
-      comments: comments || null,
-      submissionDate: new Date().toISOString()
-    };
-    
-    await setDoc(doc(db, 'trainingFeedback', feedbackDoc.id), feedbackDoc);
-    
-    // Update local state
-    feedbackData = feedbackDoc;
-    
-    // Close modal and update UI
-    funCloseFeedbackModal();
-    funUpdateFeedbackSection();
-    
-    showToast('Feedback submitted successfully', 'success');
-    
-  } catch (error) {
-    console.error('Error submitting feedback:', error);
-    showToast('Error submitting feedback: ' + (error?.message || 'Unknown error'), 'error');
-    
-    // Reset button state
-    const submitBtn = document.getElementById('submit-feedback');
-    const submitText = submitBtn.querySelector('.submit-text');
-    const submitLoading = submitBtn.querySelector('.submit-loading');
-    
-    submitBtn.disabled = false;
-    submitText.classList.remove('hidden');
-    submitLoading.classList.add('hidden');
-  }
-});
+    // Star rating functionality
+    document.addEventListener('DOMContentLoaded', () => {
+      const starButtons = document.querySelectorAll('.star-btn');
+      const ratingInput = document.getElementById('rating-input');
+      const ratingText = document.getElementById('rating-text');
 
-// Initialize Lucide icons
-lucide.createIcons();
-</script>
+      starButtons.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.preventDefault();
+          const rating = parseInt(btn.dataset.rating);
+
+          // Update visual stars
+          starButtons.forEach((star, index) => {
+            if (index < rating) {
+              star.classList.remove('text-neutral-300');
+              star.classList.add('text-accent-gold-500');
+            } else {
+              star.classList.remove('text-accent-gold-500');
+              star.classList.add('text-neutral-300');
+            }
+          });
+
+          // Update hidden input and text
+          ratingInput.value = rating;
+          const ratingLabels = ['', 'Poor', 'Fair', 'Good', 'Very Good', 'Excellent'];
+          ratingText.textContent = `${rating}/5 - ${ratingLabels[rating]}`;
+
+          // Hide error
+          document.getElementById('rating-error').classList.add('hidden');
+        });
+      });
+    });
+
+    // Comments character counter
+    document.getElementById('comments')?.addEventListener('input', (e) => {
+      const count = e.target.value.length;
+      document.getElementById('char-count').textContent = count;
+
+      const errorElement = document.getElementById('comments-error');
+      if (count > 1000) {
+        errorElement.classList.remove('hidden');
+      } else {
+        errorElement.classList.add('hidden');
+      }
+    });
+
+    // Form submission
+    document.getElementById('feedback-form')?.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const rating = document.getElementById('rating-input').value;
+      const comments = document.getElementById('comments').value.trim();
+
+      // Validation
+      let hasError = false;
+
+      if (!rating) {
+        document.getElementById('rating-error').classList.remove('hidden');
+        hasError = true;
+      }
+
+      if (comments.length > 1000) {
+        document.getElementById('comments-error').classList.remove('hidden');
+        hasError = true;
+      }
+
+      if (hasError) return;
+
+      try {
+        // Update button state
+        const submitBtn = document.getElementById('submit-feedback');
+        const submitText = submitBtn.querySelector('.submit-text');
+        const submitLoading = submitBtn.querySelector('.submit-loading');
+
+        submitBtn.disabled = true;
+        submitText.classList.add('hidden');
+        submitLoading.classList.remove('hidden');
+
+        // Create feedback document
+        const feedbackDoc = {
+          id: crypto.randomUUID(),
+          sessionId: sessionId,
+          employeeId: currentUser.uid,
+          rating: parseInt(rating),
+          comments: comments || null,
+          submissionDate: new Date().toISOString()
+        };
+
+        await setDoc(doc(db, 'trainingFeedback', feedbackDoc.id), feedbackDoc);
+
+        // Update local state
+        feedbackData = feedbackDoc;
+
+        // Close modal and update UI
+        funCloseFeedbackModal();
+        funUpdateFeedbackSection();
+
+        showToast('Feedback submitted successfully', 'success');
+
+      } catch (error) {
+        console.error('Error submitting feedback:', error);
+        showToast('Error submitting feedback: ' + (error?.message || 'Unknown error'), 'error');
+
+        // Reset button state
+        const submitBtn = document.getElementById('submit-feedback');
+        const submitText = submitBtn.querySelector('.submit-text');
+        const submitLoading = submitBtn.querySelector('.submit-loading');
+
+        submitBtn.disabled = false;
+        submitText.classList.remove('hidden');
+        submitLoading.classList.add('hidden');
+      }
+    });
+
+    // Initialize Lucide icons
+    lucide.createIcons();
+  </script>
 
 </body>
+
 </html>
