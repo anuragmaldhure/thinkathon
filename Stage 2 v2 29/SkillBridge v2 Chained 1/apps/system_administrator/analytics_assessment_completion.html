@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
@@ -676,7 +676,7 @@ const preselectedDepartmentId = urlParams.get('departmentId');
 // Initialize page
 onAuthStateChanged(auth, user => {
   if (!user) {
-    location.href = "auth.html?redirect=" + encodeURIComponent(location.pathname);
+    location.href = "/auth.html?redirect=" + encodeURIComponent(location.pathname);
   } else {
     funInitializePage();
   }

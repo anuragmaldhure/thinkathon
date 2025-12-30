@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
@@ -648,7 +648,7 @@ let state = {
 // Auth guard
 onAuthStateChanged(auth, user => {
   if (!user) {
-    location.href = "auth.html?redirect=" + encodeURIComponent(location.pathname);
+    location.href = "/auth.html?redirect=" + encodeURIComponent(location.pathname);
   }
 });
 

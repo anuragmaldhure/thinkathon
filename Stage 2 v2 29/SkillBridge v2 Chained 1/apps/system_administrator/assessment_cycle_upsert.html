@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
@@ -638,7 +638,7 @@ let isSubmitting = false;
 // Initialize page
 onAuthStateChanged(auth, user => {
   if (!user) {
-    location.href = "auth.html?redirect=" + encodeURIComponent(location.pathname + location.search);
+    location.href = "/auth.html?redirect=" + encodeURIComponent(location.pathname + location.search);
   } else {
     currentUser = user;
     funInitializePage();

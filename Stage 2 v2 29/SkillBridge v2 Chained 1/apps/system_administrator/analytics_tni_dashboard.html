@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
@@ -739,7 +739,7 @@ const yieldToFrame = () => new Promise(r => requestAnimationFrame(() => r()));
 
 // Auth check
 onAuthStateChanged(auth, user => {
-  if (!user) location.href = "auth.html?redirect=" + encodeURIComponent(location.pathname);
+  if (!user) location.href = "/auth.html?redirect=" + encodeURIComponent(location.pathname);
 });
 
 // Initialize page
@@ -1792,7 +1792,7 @@ function funCloseAssignModal() {
 // Handle auth state change redirect
 onAuthStateChanged(auth, user => {
   if (!user) {
-    window.location.href = "auth.html?redirect=" + encodeURIComponent(window.location.pathname);
+    window.location.href = "/auth.html?redirect=" + encodeURIComponent(window.location.pathname);
   }
 });
 

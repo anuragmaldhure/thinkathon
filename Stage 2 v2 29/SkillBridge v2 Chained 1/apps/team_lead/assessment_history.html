@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
@@ -1263,7 +1263,7 @@ function funSetupEventListeners() {
 onAuthStateChanged(auth, user => {
   if (!user) {
     const currentPath = window.location.pathname + window.location.search;
-    window.location.href = `auth.html?redirect=${encodeURIComponent(currentPath)}`;
+    window.location.href = `/auth.html?redirect=${encodeURIComponent(currentPath)}`;
     return;
   }
   

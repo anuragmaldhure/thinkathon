@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
@@ -1124,7 +1124,7 @@
   onAuthStateChanged(auth, (user) => {
     if (!user) {
       const currentPath = encodeURIComponent(window.location.pathname + window.location.search);
-      window.location.href = `auth.html?redirect=${currentPath}`;
+      window.location.href = `/auth.html?redirect=${currentPath}`;
     } else {
       currentUser = user;
       funInitializeApp();

@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
@@ -1062,7 +1062,7 @@ onAuthStateChanged(auth, (user) => {
     funInitialLoad();
   } else {
     const redirect = encodeURIComponent(window.location.pathname + window.location.search);
-    window.location.href = `auth.html?redirect=${redirect}`;
+    window.location.href = `/auth.html?redirect=${redirect}`;
   }
 });
 

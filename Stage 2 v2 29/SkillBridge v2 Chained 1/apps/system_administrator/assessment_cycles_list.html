@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
@@ -622,7 +622,7 @@ let selectedCycleForActive = null;
 // Auth state management
 onAuthStateChanged(auth, user => {
   if (!user) {
-    location.href = "auth.html?redirect=" + encodeURIComponent(location.pathname);
+    location.href = "/auth.html?redirect=" + encodeURIComponent(location.pathname);
   } else {
     funInitialize();
   }

@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
@@ -671,7 +671,7 @@ function debounceSearch(callback, delay = 300) {
 // Auth check
 onAuthStateChanged(auth, user => {
   if (!user) {
-    location.href = "auth.html?redirect=" + encodeURIComponent(location.pathname);
+    location.href = "/auth.html?redirect=" + encodeURIComponent(location.pathname);
   } else {
     currentUser = user;
     funInitialLoad();
