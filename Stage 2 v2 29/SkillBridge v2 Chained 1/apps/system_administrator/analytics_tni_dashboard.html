@@ -1191,7 +1191,7 @@ function funInitCriticalityChart(data) {
     criticalityCounts[criticalityName] = (criticalityCounts[criticalityName] || 0) + 1;
   });
   
-  const data = Object.entries(criticalityCounts).map(([name, value]) => ({ name, value }));
+  data = Object.entries(criticalityCounts).map(([name, value]) => ({ name, value }));
   
   const option = {
     tooltip: {
