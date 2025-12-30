@@ -1014,6 +1014,10 @@ async function funRenderHighDemandChart(demandData) {
 
   const chartContainer = document.getElementById('high-demand-chart');
   
+  // IMPORTANT: Make container visible BEFORE initializing chart
+  // ECharts cannot calculate dimensions for hidden elements
+  chartContainer.classList.remove('hidden');
+  
   // Initialize chart
   demandChart = echarts.init(chartContainer);
   
@@ -1060,7 +1064,9 @@ async function funRenderHighDemandChart(demandData) {
   };
 
   demandChart.setOption(option);
-  chartContainer.classList.remove('hidden');
+  
+  // Force resize to ensure proper rendering
+  demandChart.resize();
 
   // Handle chart clicks to show employee modal
   demandChart.on('click', params => {

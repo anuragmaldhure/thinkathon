@@ -703,19 +703,8 @@ let criticalities = [];
 let skillsChart = null;
 let criticalityChart = null;
 
-// Web Worker for data processing
-const worker = new Worker(new URL("./workers/data-shaper.js", import.meta.url), { type: "module" });
-const shapeData = (raw) => new Promise((resolve) => {
-  const id = crypto.randomUUID();
-  const handler = (e) => { 
-    if (e.data?.id === id) { 
-      worker.removeEventListener("message", handler); 
-      resolve(e.data.out); 
-    } 
-  };
-  worker.addEventListener("message", handler);
-  worker.postMessage({ id, raw }, { transfer: [] });
-});
+// Data processing function (replaced web worker for simplicity)
+const shapeData = (raw) => Promise.resolve(raw);
 
 // Concurrency control
 function createSemaphore(max = 2) {
@@ -757,10 +746,11 @@ document.addEventListener('DOMContentLoaded', async () => {
 // Initial data loading
 async function funInitialLoad(forceRefresh = false) {
   try {
-    await Promise.all([
-      withLimit(() => funLoadFilterOptions()),
-      withLimit(() => funLoadTNIData()),
-    ]);
+    // Load filter options first (departments, criticalities, etc.) - TNI data depends on these
+    await funLoadFilterOptions();
+    
+    // Then load TNI data which uses the filter data for lookups
+    await funLoadTNIData();
     
     await funCalculateKPIs();
     await funRenderCharts();
@@ -1070,12 +1060,15 @@ async function funRenderCharts() {
   await yieldToFrame();
   
   try {
-    // Process data for charts
-    const chartData = await shapeData(tniData);
+    // Check if we have data to render
+    if (!tniData || tniData.length === 0) {
+      console.log('No TNI data available for charts');
+      return;
+    }
     
     await Promise.all([
-      funMountChart(() => funInitSkillsChart(chartData)),
-      funMountChart(() => funInitCriticalityChart(chartData))
+      funMountChart(() => funInitSkillsChart()),
+      funMountChart(() => funInitCriticalityChart())
     ]);
     
   } catch (error) {
@@ -1092,7 +1085,7 @@ async function funMountChart(init) {
 }
 
 // Initialize skills chart
-function funInitSkillsChart(data) {
+function funInitSkillsChart() {
   const container = document.getElementById('skills-chart');
   if (!container || typeof echarts === 'undefined') return;
 
@@ -1159,10 +1152,13 @@ function funInitSkillsChart(data) {
   };
   
   skillsChart.setOption(option);
+  
+  // Force resize to ensure proper rendering
+  skillsChart.resize();
 }
 
 // Initialize criticality chart
-function funInitCriticalityChart(data) {
+function funInitCriticalityChart() {
   const container = document.getElementById('criticality-chart');
   if (!container || typeof echarts === 'undefined') return;
 
@@ -1178,7 +1174,7 @@ function funInitCriticalityChart(data) {
     criticalityCounts[criticalityName] = (criticalityCounts[criticalityName] || 0) + 1;
   });
   
-  data = Object.entries(criticalityCounts).map(([name, value]) => ({ name, value }));
+  const chartData = Object.entries(criticalityCounts).map(([name, value]) => ({ name, value }));
   
   const option = {
     tooltip: {
@@ -1194,7 +1190,7 @@ function funInitCriticalityChart(data) {
       type: 'pie',
       radius: ['40%', '70%'],
       center: ['50%', '45%'],
-      data: data,
+      data: chartData,
       emphasis: {
         itemStyle: {
           shadowBlur: 10,
@@ -1212,6 +1208,9 @@ function funInitCriticalityChart(data) {
   };
   
   criticalityChart.setOption(option);
+  
+  // Force resize to ensure proper rendering
+  criticalityChart.resize();
 }
 
 // Populate filter dropdowns
