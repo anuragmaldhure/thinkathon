@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SkillBridge - Authentication</title>
+    <link rel="stylesheet" href="./lib/toast/toast.css">
+    <style>
+        :root {
+            --primary-color: #374151;
+            --primary-hover: #1f2937;
+            --primary-light: #6b7280;
+            --secondary-color: #0ea5e9;
+            --success-color: #10b981;
+            --error-color: #ef4444;
+            --gray-50: #f9fafb;
+            --gray-100: #f3f4f6;
+            --gray-200: #e5e7eb;
+            --gray-300: #d1d5db;
+            --gray-400: #9ca3af;
+            --gray-500: #6b7280;
+            --gray-600: #4b5563;
+            --gray-700: #374151;
+            --gray-800: #1f2937;
+            --gray-900: #111827;
+            --white: #ffffff;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, var(--gray-50) 0%, var(--gray-100) 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .auth-container {
+            background: var(--white);
+            border-radius: 20px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            max-width: 440px;
+            width: 100%;
+            overflow: hidden;
+        }
+
+        .auth-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+            color: var(--white);
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .auth-header h1 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .auth-header p {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .auth-body {
+            padding: 2rem;
+        }
+
+        .form-tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            background: var(--gray-100);
+            padding: 0.25rem;
+            border-radius: 10px;
+        }
+
+        .tab-button {
+            flex: 1;
+            padding: 0.75rem;
+            border: none;
+            background: transparent;
+            color: var(--gray-600);
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .tab-button.active {
+            background: var(--white);
+            color: var(--primary-color);
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+        }
+
+        .form-panel {
+            display: none;
+        }
+
+        .form-panel.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--gray-700);
+            margin-bottom: 0.5rem;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 2px solid var(--gray-200);
+            border-radius: 10px;
+            font-size: 0.95rem;
+            transition: all 0.2s ease;
+            font-family: inherit;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(55, 65, 81, 0.1);
+        }
+
+        .form-input::placeholder {
+            color: var(--gray-400);
+        }
+
+        .form-button {
+            width: 100%;
+            padding: 0.875rem;
+            border: none;
+            border-radius: 10px;
+            background: var(--primary-color);
+            color: var(--white);
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-top: 0.5rem;
+        }
+
+        .form-button:hover {
+            background: var(--primary-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(55, 65, 81, 0.3);
+        }
+
+        .form-button:active {
+            transform: translateY(0);
+        }
+
+        .form-button:disabled {
+            background: var(--gray-300);
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .form-divider {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin: 1.5rem 0;
+            color: var(--gray-500);
+            font-size: 0.875rem;
+        }
+
+        .form-divider::before,
+        .form-divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--gray-200);
+        }
+
+        .form-link {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.875rem;
+            transition: color 0.2s ease;
+        }
+
+        .form-link:hover {
+            color: var(--primary-hover);
+            text-decoration: underline;
+        }
+
+        .form-footer {
+            text-align: center;
+            padding-top: 1rem;
+            border-top: 1px solid var(--gray-200);
+            color: var(--gray-600);
+            font-size: 0.875rem;
+        }
+
+        .password-requirements {
+            margin-top: 0.5rem;
+            padding: 0.75rem;
+            background: var(--gray-50);
+            border-radius: 8px;
+            font-size: 0.8rem;
+            color: var(--gray-600);
+        }
+
+        .password-requirements ul {
+            list-style: none;
+            padding-left: 0;
+            margin: 0.5rem 0 0 0;
+        }
+
+        .password-requirements li {
+            padding: 0.25rem 0;
+        }
+
+        .password-requirements li::before {
+            content: '•';
+            color: var(--primary-color);
+            font-weight: bold;
+            margin-right: 0.5rem;
+        }
+
+        @media (max-width: 480px) {
+            .auth-container {
+                border-radius: 16px;
+            }
+
+            .auth-header {
+                padding: 1.5rem;
+            }
+
+            .auth-header h1 {
+                font-size: 1.5rem;
+            }
+
+            .auth-body {
+                padding: 1.5rem;
+            }
+
+            .form-group {
+                margin-bottom: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="auth-container">
+        <div class="auth-header">
+            <h1>SkillBridge</h1>
+            <p>Sign in to access your account</p>
+        </div>
+
+        <div class="auth-body">
+            <!-- No tabs needed, only Sign In -->
+
+            <!-- Sign In Form -->
+            <div class="form-panel active" id="signin-panel">
+                <form id="signin-form">
+                    <div class="form-group">
+                        <label class="form-label" for="signin-email">Email Address</label>
+                        <input 
+                            type="email" 
+                            id="signin-email" 
+                            class="form-input" 
+                            placeholder="you@example.com"
+                            required
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="signin-password">Password</label>
+                        <input 
+                            type="password" 
+                            id="signin-password" 
+                            class="form-input" 
+                            placeholder="••••••••"
+                            required
+                        >
+                    </div>
+
+                    <div class="form-group" style="text-align: right;">
+                        <a href="#" class="form-link" id="forgot-password-link">Forgot Password?</a>
+                    </div>
+
+                    <button type="submit" class="form-button">Sign In</button>
+                </form>
+            </div>
+
+
+
+            <!-- Password Reset Form (Hidden by Default) -->
+            <div class="form-panel" id="reset-panel" style="display: none;">
+                <form id="reset-form">
+                    <p style="color: var(--gray-600); font-size: 0.9rem; margin-bottom: 1.5rem;">
+                        Enter your email address and we'll send you a link to reset your password.
+                    </p>
+
+                    <div class="form-group">
+                        <label class="form-label" for="reset-email">Email Address</label>
+                        <input 
+                            type="email" 
+                            id="reset-email" 
+                            class="form-input" 
+                            placeholder="you@example.com"
+                            required
+                        >
+                    </div>
+
+                    <button type="submit" class="form-button">Send Reset Link</button>
+
+                    <div class="form-divider">or</div>
+
+                    <button type="button" class="form-button" id="back-to-signin" style="background: var(--gray-200); color: var(--gray-700);">
+                        Back to Sign In
+                    </button>
+                </form>
+            </div>
+
+            <div class="form-footer">
+                <p>Built with ❤️ by Tiram AI</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script type="module">
+        import { auth } from './scripts/firebase.js';
+        import { 
+            signInWithEmailAndPassword, 
+            sendPasswordResetEmail
+        } from 'https://www.gstatic.com/firebasejs/10.12.4/firebase-auth.js';
+        import { showSuccess, showError, showWarning, showInfo } from './lib/toast/toast.js';
+        import { showLoader, hideLoader } from './scripts/loader.js';
+
+        const formPanels = document.querySelectorAll('.form-panel');
+
+        // Forgot password link
+        document.getElementById('forgot-password-link').addEventListener('click', (e) => {
+            e.preventDefault();
+            
+            // Hide all panels
+            formPanels.forEach(panel => {
+                panel.classList.remove('active');
+                panel.style.display = 'none';
+            });
+            
+            // Show reset panel
+            document.getElementById('reset-panel').style.display = 'block';
+            setTimeout(() => {
+                document.getElementById('reset-panel').classList.add('active');
+            }, 10);
+        });
+
+        // Back to sign in
+        document.getElementById('back-to-signin').addEventListener('click', () => {
+            // Hide reset panel
+            document.getElementById('reset-panel').classList.remove('active');
+            document.getElementById('reset-panel').style.display = 'none';
+            
+            // Show sign in panel
+            document.getElementById('signin-panel').style.display = 'block';
+            setTimeout(() => {
+                document.getElementById('signin-panel').classList.add('active');
+            }, 10);
+        });
+
+        // Sign In Handler
+        document.getElementById('signin-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const email = document.getElementById('signin-email').value;
+            const password = document.getElementById('signin-password').value;
+            
+            try {
+                showLoader('Signing in...');
+                
+                const userCredential = await signInWithEmailAndPassword(auth, email, password);
+                const user = userCredential.user;
+                
+                hideLoader();
+                showSuccess('Sign in successful! Redirecting...');
+                
+                // Get redirect URL from query parameter or default to navigator
+                const urlParams = new URLSearchParams(window.location.search);
+                const redirectUrl = urlParams.get('redirect') || './navigator.html';
+                
+                setTimeout(() => {
+                    window.location.href = redirectUrl;
+                }, 1000);
+                
+            } catch (error) {
+                hideLoader();
+                console.error('Sign in error:', error);
+                
+                if (error.code === 'auth/invalid-credential' || error.code === 'auth/wrong-password' || error.code === 'auth/user-not-found') {
+                    showError('Invalid email or password. Please try again.');
+                } else if (error.code === 'auth/too-many-requests') {
+                    showError('Too many failed attempts. Please try again later.');
+                } else {
+                    showError('Sign in failed. Please try again.');
+                }
+            }
+        });
+
+
+
+        // Password Reset Handler
+        document.getElementById('reset-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const email = document.getElementById('reset-email').value;
+            
+            try {
+                showLoader('Sending reset link...');
+                
+                await sendPasswordResetEmail(auth, email);
+                
+                hideLoader();
+                showSuccess('Password reset link sent! Check your email.');
+                
+                // Clear form
+                document.getElementById('reset-email').value = '';
+                
+                // Go back to sign in after 3 seconds
+                setTimeout(() => {
+                    document.getElementById('back-to-signin').click();
+                }, 3000);
+                
+            } catch (error) {
+                hideLoader();
+                console.error('Password reset error:', error);
+                
+                if (error.code === 'auth/user-not-found') {
+                    showError('No account found with this email address.');
+                } else if (error.code === 'auth/invalid-email') {
+                    showError('Invalid email address.');
+                } else {
+                    showError('Failed to send reset link. Please try again.');
+                }
+            }
+        });
+    </script>
+</body>
+</html>

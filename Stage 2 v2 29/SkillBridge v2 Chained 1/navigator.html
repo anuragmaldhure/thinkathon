@@ -271,14 +271,19 @@
   <body>
       <div class="container">
           <div class="header">
-              
+              <div style="position: absolute; top: 2rem; right: 2rem;">
+                  <button id="signout-button" style="padding: 0.75rem 1.5rem; border: none; border-radius: 8px; background: var(--primary-color); color: var(--white); font-weight: 600; cursor: pointer; transition: all 0.2s ease; box-shadow: var(--shadow-sm);">
+                      Sign Out
+                  </button>
+              </div>
               <h1>SkillBridge</h1>
               <p>Choose an application to explore. Each app is designed for specific user personas and business workflows.</p>
+              <p id="user-greeting" style="margin-top: 0.5rem; color: var(--gray-700); font-weight: 600; display: none;"></p>
           </div>
   
           <div class="apps-grid">
               
-          <div class="app-card">
+          <div class="app-card" data-app-type="system_administrator" style="display: none;">
             <div class="app-content">
               <div class="app-info">
                 <div class="app-title-container">
@@ -297,7 +302,7 @@
             </div>
           </div>
         
-          <div class="app-card">
+          <div class="app-card" data-app-type="team_lead" style="display: none;">
             <div class="app-content">
               <div class="app-info">
                 <div class="app-title-container">
@@ -316,7 +321,7 @@
             </div>
           </div>
         
-          <div class="app-card">
+          <div class="app-card" data-app-type="employee" style="display: none;">
             <div class="app-content">
               <div class="app-info">
                 <div class="app-title-container">
@@ -342,20 +347,116 @@
           </div>
       </div>
   
-      <script>
-          function navigateToApp(appFolderName, firstPage) {
+      <script type="module">
+          // Import authentication utilities
+          import { setupAutoAuthProtection, getUserData, getUserAccessibleApps, signOutUser } from './lib/auth/index.js';
+          import { showLoader, hideLoader } from './scripts/loader.js';
+          import { showSuccess, showError, showInfo } from './lib/toast/toast.js';
+          import { auth } from './scripts/firebase.js';
+          import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.12.4/firebase-auth.js';
+
+          // Expose functions globally for inline onclick handlers
+          window.navigateToApp = function(appFolderName, firstPage) {
               const appUrl = `./apps/${appFolderName}/${firstPage}`;
               window.open(appUrl, '_blank');
-          }
+          };
   
-          function openFeedback() {
+          window.openFeedback = function() {
               // This would integrate with your feedback system
               alert('Feedback system integration - to be implemented');
+          };
+
+          // Display accessible app cards based on user role
+          async function displayAccessibleApps(user) {
+              try {
+                  showLoader('Loading your applications...');
+                  
+                  // Fetch user data from Firestore
+                  const userData = await getUserData(user.uid, user.email);
+                  
+                  if (!userData) {
+                      hideLoader();
+                      showError('User data not found. Please contact administrator.');
+                      setTimeout(() => signOutUser(), 2000);
+                      return;
+                  }
+                  
+                  // Display user greeting
+                  const greetingElement = document.getElementById('user-greeting');
+                  if (greetingElement) {
+                      greetingElement.textContent = `Welcome, ${userData.firstName} ${userData.lastName}!`;
+                      greetingElement.style.display = 'block';
+                  }
+                  
+                  // Get accessible apps based on user role
+                  const accessibleApps = await getUserAccessibleApps(userData);
+                  
+                  console.log('User role:', userData.role);
+                  console.log('Accessible apps:', accessibleApps);
+                  
+                  // Show only accessible app cards
+                  const allAppCards = document.querySelectorAll('.app-card');
+                  allAppCards.forEach(card => {
+                      const appType = card.getAttribute('data-app-type');
+                      if (accessibleApps.includes(appType)) {
+                          card.style.display = 'block';
+                      } else {
+                          card.style.display = 'none';
+                      }
+                  });
+                  
+                  hideLoader();
+                  
+                  // Show info about accessible apps
+                  if (accessibleApps.length === 1) {
+                      showInfo(`You have access to ${accessibleApps.length} application.`);
+                  } else {
+                      showInfo(`You have access to ${accessibleApps.length} applications.`);
+                  }
+                  
+              } catch (error) {
+                  hideLoader();
+                  console.error('Error loading applications:', error);
+                  showError('Failed to load applications. Please refresh the page.');
+              }
           }
   
-          // Initialize navigator with modal functionality
-          document.addEventListener('DOMContentLoaded', function() {
-              console.log('Navigator page loaded with 3 applications');
+          // Initialize navigator with authentication
+          document.addEventListener('DOMContentLoaded', async function() {
+              console.log('Navigator page loaded - initializing authentication...');
+              
+              // Set up authentication protection
+              const unsubscribe = setupAutoAuthProtection();
+              
+              // Listen for auth state changes
+              onAuthStateChanged(auth, async (user) => {
+                  if (user) {
+                      // User is signed in - display apps
+                      await displayAccessibleApps(user);
+                  }
+                  // If no user, setupAutoAuthProtection will handle redirect
+              });
+              
+              // Sign out button handler
+              const signOutButton = document.getElementById('signout-button');
+              if (signOutButton) {
+                  signOutButton.addEventListener('click', async () => {
+                      showLoader('Signing out...');
+                      await signOutUser();
+                  });
+                  
+                  // Hover effect
+                  signOutButton.addEventListener('mouseenter', () => {
+                      signOutButton.style.background = 'var(--primary-hover)';
+                      signOutButton.style.transform = 'translateY(-2px)';
+                      signOutButton.style.boxShadow = 'var(--shadow-md)';
+                  });
+                  signOutButton.addEventListener('mouseleave', () => {
+                      signOutButton.style.background = 'var(--primary-color)';
+                      signOutButton.style.transform = 'translateY(0)';
+                      signOutButton.style.boxShadow = 'var(--shadow-sm)';
+                  });
+              }
               
               // Initialize feedback module for navigator
               initialiseFeedback();
