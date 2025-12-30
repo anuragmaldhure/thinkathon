@@ -394,6 +394,26 @@
                   console.log('User role:', userData.role);
                   console.log('Accessible apps:', accessibleApps);
                   
+                  // If user has only one app, navigate directly to it
+                  if (accessibleApps.length === 1) {
+                      const singleApp = accessibleApps[0];
+                      hideLoader();
+                      
+                      // Map app types to their dashboard pages
+                      const appRoutes = {
+                          'system_administrator': 'apps/system_administrator/dashboard.html',
+                          'team_lead': 'apps/team_lead/team_dashboard.html',
+                          'employee': 'apps/employee/employee_dashboard.html'
+                      };
+                      
+                      const appUrl = appRoutes[singleApp];
+                      if (appUrl) {
+                          console.log('[Navigator] Redirecting to single accessible app:', singleApp);
+                          window.location.href = appUrl;
+                          return;
+                      }
+                  }
+                  
                   // Show only accessible app cards
                   const allAppCards = document.querySelectorAll('.app-card');
                   allAppCards.forEach(card => {
@@ -408,11 +428,7 @@
                   hideLoader();
                   
                   // Show info about accessible apps
-                  if (accessibleApps.length === 1) {
-                      showInfo(`You have access to ${accessibleApps.length} application.`);
-                  } else {
-                      showInfo(`You have access to ${accessibleApps.length} applications.`);
-                  }
+                  showInfo(`You have access to ${accessibleApps.length} applications.`);
                   
               } catch (error) {
                   hideLoader();

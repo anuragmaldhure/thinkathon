@@ -59,7 +59,7 @@ export function setupAutoAuthProtection(onAuthenticatedCallback) {
           const currentPage = window.location.pathname.split('/').pop() || 'navigator.html';
           
           // Redirect to auth page with current page as redirect parameter
-          window.location.href = `auth.html?redirect=${encodeURIComponent(currentPage)}`;
+          window.location.href = `/auth.html?redirect=${encodeURIComponent(currentPage)}`;
         }
       },
       (error) => {
@@ -207,7 +207,7 @@ export async function signOutUser() {
     console.log('[Auth] User signed out successfully');
     
     // Redirect to auth page
-    window.location.href = 'auth.html';
+    window.location.href = '/auth.html';
   } catch (error) {
     console.error('[Auth] Error signing out:', error);
     showError('Failed to sign out. Please try again.');

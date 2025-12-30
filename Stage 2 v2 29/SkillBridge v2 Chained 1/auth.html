@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SkillBridge - Authentication</title>
+    <!-- Required: TailwindCSS -->
+    <script src="./lib/tailwindcss/tailwindcss.js" fetchpriority="high"></script>
     <link rel="stylesheet" href="./lib/toast/toast.css">
     <style>
         :root {
@@ -40,6 +42,15 @@
             align-items: center;
             justify-content: center;
             padding: 1rem;
+            position: relative;
+        }
+
+        /* Ensure toast appears above everything */
+        .toast-container {
+            position: fixed !important;
+            top: 1rem !important;
+            right: 1rem !important;
+            z-index: 99999 !important;
         }
 
         .auth-container {
@@ -259,6 +270,9 @@
     </style>
 </head>
 <body>
+    <!-- Toast Container -->
+    <div id="toast-container" class="toast-container"></div>
+    
     <div class="auth-container">
         <div class="auth-header">
             <h1>SkillBridge</h1>

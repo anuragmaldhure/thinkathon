@@ -206,7 +206,7 @@ export async function handleUnauthorized() {
     showToast?.('Session expired. Redirecting…', 'error');
   } catch {}
   setTimeout(() => {
-    window.location.href = 'auth.html';
+    window.location.href = '/auth.html';
   }, 300);
 }
 
@@ -326,7 +326,7 @@ async function initializeEnhancedAuthGuard(options = {}) {
     console.error('Enhanced auth guard failed:', error);
     // On error, redirect to auth for safety
     if (immediateRedirect) {
-      window.location.href = 'auth.html';
+      window.location.href = '/auth.html';
     } else {
       onUnauthenticated();
     }

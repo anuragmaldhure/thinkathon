@@ -446,7 +446,7 @@
                 showLoader();
                 await signOut(auth);
                 showToast('Signed out successfully', 'success');
-                window.location.href = 'auth.html';
+                window.location.href = '/auth.html';
             } catch (error) {
                 console.error('Sign out error:', error);
                 showToast('Error signing out', 'error');
@@ -463,7 +463,7 @@
                 updateUserProfile(user, userData);
                 updateActiveNav();
             } else {
-                window.location.href = 'auth.html';
+                window.location.href = '/auth.html';
             }
         });
 

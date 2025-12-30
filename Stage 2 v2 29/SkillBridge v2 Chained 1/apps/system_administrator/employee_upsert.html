@@ -593,7 +593,7 @@
         document.getElementById('signOutButton')?.addEventListener('click', async () => {
             try {
                 await signOut(auth);
-                window.location.href = 'auth.html';
+                window.location.href = '/auth.html';
             } catch (error) {
                 console.error('Sign out error:', error);
                 showToast('Failed to sign out', 'error');
@@ -603,8 +603,7 @@
         // Auth state management
         onAuthStateChanged(auth, async (user) => {
             if (!user) {
-                window.location.href = 'auth.html';
-                return;
+                window.location.href = '/auth.html';
             }
 
             // Load user profile data
@@ -691,7 +690,7 @@
   // Auth check and redirect
   onAuthStateChanged(auth, user => {
     if (!user) {
-      location.href = "auth.html?redirect=" + encodeURIComponent(location.pathname + location.search);
+      location.href = "/auth.html?redirect=" + encodeURIComponent(location.pathname + location.search);
     }
   });
 

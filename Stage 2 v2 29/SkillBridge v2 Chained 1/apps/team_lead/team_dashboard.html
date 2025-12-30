@@ -460,7 +460,7 @@
         async function initializeUser() {
             onAuthStateChanged(auth, async (user) => {
                 if (!user) {
-                    window.location.href = 'auth.html';
+                    window.location.href = '/auth.html';
                     return;
                 }
 
@@ -524,7 +524,7 @@
             signOutBtn?.addEventListener('click', async () => {
                 try {
                     await signOut(auth);
-                    window.location.href = 'auth.html';
+                    window.location.href = '/auth.html';
                 } catch (error) {
                     console.error('Sign out error:', error);
                     showToast('Error signing out', 'error');
@@ -651,7 +651,7 @@ const withLimit = createSemaphore(2);
 // Authentication check
 onAuthStateChanged(auth, user => {
   if (!user) {
-    location.href = "auth.html?redirect=" + encodeURIComponent(location.pathname);
+    location.href = "/auth.html?redirect=" + encodeURIComponent(location.pathname);
     return;
   }
   funInitializeUser(user);
