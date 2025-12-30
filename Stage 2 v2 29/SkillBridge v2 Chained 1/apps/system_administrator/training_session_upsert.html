@@ -1337,12 +1337,14 @@ async function funLoadAvailableEmployees() {
     const needsQuery = query(
       collection(db, 'trainingNeeds'),
       where('skillId', '==', sessionData.skillId),
-      where('tniStatus', '==', 'trainingRequired'),
-      orderBy('gap', 'desc')
+      where('tniStatus', '==', 'trainingRequired')
     );
 
     const needsSnapshot = await getDocs(needsQuery);
     const trainingNeeds = needsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    
+    // Sort by gap in descending order (client-side)
+    trainingNeeds.sort((a, b) => (b.gap || 0) - (a.gap || 0));
 
     if (trainingNeeds.length === 0) {
       container.innerHTML = `

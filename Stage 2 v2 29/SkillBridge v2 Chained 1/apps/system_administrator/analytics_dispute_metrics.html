@@ -280,25 +280,23 @@
 <!-- Tab Navigation -->
 <div class="bg-white border border-neutral-200 rounded-md mb-6">
   <nav class="flex" role="tablist">
-    <button id="tab-team-lead" class="tab-button active flex-1 px-6 py-3 text-sm font-medium text-brand-primary-600 border-b-2 border-brand-primary-600 bg-accent-gold-50" role="tab" aria-selected="true" aria-controls="panel-team-lead">
+    <!-- <button id="tab-team-lead" class="tab-button active flex-1 px-6 py-3 text-sm font-medium text-brand-primary-600 border-b-2 border-brand-primary-600 bg-accent-gold-50" role="tab" aria-selected="true" aria-controls="panel-team-lead">
       Team Lead Analysis
-    </button>
-    <button id="tab-resolution" class="tab-button flex-1 px-6 py-3 text-sm font-medium text-neutral-700 border-b-2 border-transparent hover:text-brand-primary-600 hover:border-neutral-200" role="tab" aria-selected="false" aria-controls="panel-resolution">
+    </button> -->
+    <button id="tab-resolution" class="tab-button active flex-1 px-6 py-3 text-sm font-medium text-brand-primary-600 border-b-2 border-brand-primary-600 bg-accent-gold-50" role="tab" aria-selected="true" aria-controls="panel-resolution">
       Resolution Metrics
     </button>
   </nav>
 </div>
 
 <!-- Team Lead Analysis Tab -->
-<div id="panel-team-lead" class="tab-panel" role="tabpanel" aria-labelledby="tab-team-lead">
-  <!-- Team Lead Performance Table -->
+<!-- <div id="panel-team-lead" class="tab-panel" role="tabpanel" aria-labelledby="tab-team-lead">
   <div class="bg-white border border-neutral-200 rounded-md shadow-sm">
     <div class="px-6 py-4 border-b border-neutral-200">
       <h2 class="text-base leading-6 font-semibold text-neutral-950">Team Lead Dispute Performance</h2>
       <p class="text-xs leading-4 text-neutral-500 mt-1">Click on a team lead name to view details or dispute counts for drill-down analysis</p>
     </div>
     
-    <!-- Table Skeleton -->
     <div id="team-lead-skeleton" class="p-6">
       <div class="space-y-3">
         <div class="h-4 bg-neutral-200 rounded animate-pulse"></div>
@@ -308,7 +306,6 @@
       </div>
     </div>
     
-    <!-- Actual Table -->
     <div id="team-lead-table-container" class="hidden">
       <div class="overflow-x-auto">
         <table class="w-full text-sm leading-5">
@@ -325,12 +322,10 @@
             </tr>
           </thead>
           <tbody id="team-lead-table-body" class="divide-y divide-neutral-200">
-            <!-- Dynamic content -->
           </tbody>
         </table>
       </div>
       
-      <!-- Empty State -->
       <div id="team-lead-empty" class="hidden text-center py-12">
         <svg class="mx-auto h-12 w-12 text-neutral-400" data-lucide="users"></svg>
         <h3 class="mt-2 text-sm font-medium text-neutral-900">No team lead data</h3>
@@ -338,10 +333,10 @@
       </div>
     </div>
   </div>
-</div>
+</div> -->
 
 <!-- Resolution Metrics Tab -->
-<div id="panel-resolution" class="tab-panel hidden" role="tabpanel" aria-labelledby="tab-resolution">
+<div id="panel-resolution" class="tab-panel" role="tabpanel" aria-labelledby="tab-resolution">
   <!-- KPI Cards -->
   <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
     <!-- Avg Resolution Time -->

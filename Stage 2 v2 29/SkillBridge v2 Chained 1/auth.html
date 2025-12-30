@@ -401,13 +401,11 @@
             const password = document.getElementById('signin-password').value;
             
             try {
-                showLoader('Signing in...');
                 
                 const userCredential = await signInWithEmailAndPassword(auth, email, password);
                 const user = userCredential.user;
                 
                 hideLoader();
-                showSuccess('Sign in successful! Redirecting...');
                 
                 // Get redirect URL from query parameter or default to navigator
                 const urlParams = new URLSearchParams(window.location.search);

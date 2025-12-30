@@ -266,9 +266,57 @@
                   padding: 0.75rem 1.5rem;
               }
           }
+          /* Auth Loading Overlay */
+          #auth-loading-overlay {
+              position: fixed;
+              top: 0;
+              left: 0;
+              width: 100%;
+              height: 100%;
+              background: rgba(255, 255, 255, 0.95);
+              backdrop-filter: blur(10px);
+              z-index: 9999;
+              display: flex;
+              flex-direction: column;
+              justify-content: center;
+              align-items: center;
+              gap: 1.5rem;
+              transition: opacity 0.3s ease;
+          }
+
+          #auth-loading-overlay.hidden {
+              opacity: 0;
+              pointer-events: none;
+          }
+
+          .loader-spinner {
+              width: 60px;
+              height: 60px;
+              border: 4px solid var(--gray-200);
+              border-top: 4px solid var(--primary-color);
+              border-radius: 50%;
+              animation: spin 1s linear infinite;
+          }
+
+          .loader-text {
+              font-size: 1.1rem;
+              color: var(--gray-700);
+              font-weight: 500;
+          }
+
+          @keyframes spin {
+              0% { transform: rotate(0deg); }
+              100% { transform: rotate(360deg); }
+          }
       </style>
   </head>
   <body>
+      <!-- Auth Loading Overlay -->
+      <div id="auth-loading-overlay">
+          <div class="loader-spinner"></div>
+          <div class="loader-text">Identifying your role and applications...</div>
+      </div>
+
       <div class="container">
           <div class="header">
               <div style="position: absolute; top: 2rem; right: 2rem;">
@@ -369,6 +417,9 @@
           // Display accessible app cards based on user role
           async function displayAccessibleApps(user) {
               try {
+                  // Keep auth loading overlay visible
+                  const authOverlay = document.getElementById('auth-loading-overlay');
+                  
                   showLoader('Loading your applications...');
                   
                   // Fetch user data from Firestore
@@ -376,6 +427,7 @@
                   
                   if (!userData) {
                       hideLoader();
+                      if (authOverlay) authOverlay.classList.add('hidden');
                       showError('User data not found. Please contact administrator.');
                       setTimeout(() => signOutUser(), 2000);
                       return;
@@ -409,6 +461,7 @@
                       const appUrl = appRoutes[singleApp];
                       if (appUrl) {
                           console.log('[Navigator] Redirecting to single accessible app:', singleApp);
+                          // Keep overlay visible during redirect
                           window.location.href = appUrl;
                           return;
                       }
@@ -427,11 +480,26 @@
                   
                   hideLoader();
                   
+                  // Hide auth loading overlay after everything is ready
+                  if (authOverlay) {
+                      authOverlay.classList.add('hidden');
+                  }
+                  
+                  // Show confirmation modal after loading is complete (if not confirmed before)
+                  if (!localStorage.getItem('prototype_confirmed')) {
+                      // Small delay to ensure smooth transition
+                      setTimeout(() => {
+                          showConfirmationModal();
+                      }, 300);
+                  }
+                  
                   // Show info about accessible apps
                   showInfo(`You have access to ${accessibleApps.length} applications.`);
                   
               } catch (error) {
                   hideLoader();
+                  const authOverlay = document.getElementById('auth-loading-overlay');
+                  if (authOverlay) authOverlay.classList.add('hidden');
                   console.error('Error loading applications:', error);
                   showError('Failed to load applications. Please refresh the page.');
               }
@@ -447,8 +515,20 @@
               // Listen for auth state changes
               onAuthStateChanged(auth, async (user) => {
                   if (user) {
-                      // User is signed in - display apps
+                      // User is signed in - show auth loading overlay
+                      const authOverlay = document.getElementById('auth-loading-overlay');
+                      if (authOverlay) {
+                          authOverlay.classList.remove('hidden');
+                      }
+                      
+                      // Display apps (will hide overlay when done)
                       await displayAccessibleApps(user);
+                  } else {
+                      // No user - hide overlay if shown
+                      const authOverlay = document.getElementById('auth-loading-overlay');
+                      if (authOverlay) {
+                          authOverlay.classList.add('hidden');
+                      }
                   }
                   // If no user, setupAutoAuthProtection will handle redirect
               });
@@ -477,10 +557,8 @@
               // Initialize feedback module for navigator
               initialiseFeedback();
               
-              // Show modal if not confirmed before (using same storage key as individual apps)
-              if (!localStorage.getItem('prototype_confirmed')) {
-                  showConfirmationModal();
-              }
+              // Note: Confirmation modal will be shown after app loading completes
+              // See displayAccessibleApps function
           });
   
           // Reuse existing modal functionality with same storage key
@@ -1199,7 +1277,6 @@
           <div id="confirmation-modal-content">
             <div class="modal-header">
               <h2>
-                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-circle-alert-icon lucide-circle-alert"><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/></svg>
                   Disclaimer!
               </h2>
             </div>
