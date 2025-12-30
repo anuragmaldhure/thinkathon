@@ -98,7 +98,7 @@ export function initializeAuthGuard() {
       if (env.AUTH_ENABLED && !window.location.pathname.includes('auth.html')) {
         if (!user) {
           console.log(
-            'Auth Guard: No user signed in, redirecting to root auth.html',
+            'Auth Guard: No user signed in, redirecting to auth.html',
           );
           handleUnauthorized(); // Use the common unauthorized handler
         }
@@ -206,7 +206,7 @@ export async function handleUnauthorized() {
     showToast?.('Session expired. Redirecting…', 'error');
   } catch {}
   setTimeout(() => {
-    window.location.href = '../../auth.html';
+    window.location.href = 'auth.html';
   }, 300);
 }
 

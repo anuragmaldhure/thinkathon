@@ -461,18 +461,6 @@
         import { onAuthStateChanged, getAuth, signOut } from 'https://www.gstatic.com/firebasejs/10.12.4/firebase-auth.js';
         import { doc, getDoc } from 'https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js';
 
-        // Auth Guard - Check authentication before initializing page
-        onAuthStateChanged(auth, (user) => {
-            if (!user) {
-                window.location.href = 'auth.html';
-                return;
-            }
-            // User is authenticated, proceed with page initialization
-            initializePage();
-        });
-
-        // Wrap existing initialization code in this function
-        function initializePage() {
         // Initialize Lucide icons
         lucide.createIcons();
 
@@ -529,12 +517,15 @@
             }
         });
 
-        // Load user profile data
-        async function loadUserProfile() {
-            try {
-                const user = auth.currentUser;
-                if (!user) return;
+        // Auth state management
+        onAuthStateChanged(auth, async (user) => {
+            if (!user) {
+                window.location.href = 'auth.html';
+                return;
+            }
 
+            // Load user profile data
+            try {
                 const userDoc = await getDoc(doc(db, 'users', user.uid));
                 const userData = userDoc.exists() ? userDoc.data() : null;
 
@@ -553,12 +544,11 @@
             } catch (error) {
                 console.error('Error loading user data:', error);
                 // Fallback to default values
-                const user = auth.currentUser;
                 document.getElementById('userDisplayName').textContent = 'John Doe';
-                document.getElementById('userEmail').textContent = user?.email || 'johndoe@example.com';
+                document.getElementById('userEmail').textContent = user.email || 'johndoe@example.com';
                 document.getElementById('userInitials').textContent = 'JD';
             }
-        }
+        });
 
         // Set active navigation item based on current page
         function setActiveNavItem() {
@@ -583,10 +573,8 @@
             });
         }
 
-        // Load user profile and initialize active nav state
-        loadUserProfile();
+        // Initialize active nav state
         setActiveNavItem();
-        } // End initializePage
     </script>
 
     
