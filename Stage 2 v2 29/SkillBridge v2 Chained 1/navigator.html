@@ -63,68 +63,11 @@
               margin-bottom: 1rem;
           }
   
-          .header {
-              position: relative;
-          }
-
           .header p {
               font-size: 1.1rem;
               color: var(--gray-600);
               max-width: 600px;
               margin: 0 auto;
-          }
-
-          .user-profile {
-              position: absolute;
-              top: 0;
-              right: 0;
-              display: none;
-              align-items: center;
-              gap: 1rem;
-              background: white;
-              padding: 0.75rem 1.5rem;
-              border-radius: 50px;
-              box-shadow: var(--shadow-md);
-          }
-
-          .user-info {
-              display: flex;
-              flex-direction: column;
-              align-items: flex-end;
-          }
-
-          .user-name {
-              font-weight: 600;
-              color: var(--gray-900);
-              font-size: 0.9rem;
-          }
-
-          .user-role {
-              font-size: 0.75rem;
-              color: var(--gray-500);
-              background: var(--gray-100);
-              padding: 0.25rem 0.5rem;
-              border-radius: 12px;
-              margin-top: 0.25rem;
-          }
-
-          .sign-out-btn {
-              background: var(--primary-color);
-              color: white;
-              border: none;
-              padding: 0.5rem 1rem;
-              border-radius: 8px;
-              font-size: 0.85rem;
-              cursor: pointer;
-              display: flex;
-              align-items: center;
-              gap: 0.5rem;
-              transition: all 0.3s ease;
-          }
-
-          .sign-out-btn:hover {
-              background: var(--primary-hover);
-              transform: translateY(-2px);
           }
   
           .prototype-badge {
@@ -328,21 +271,6 @@
   <body>
       <div class="container">
           <div class="header">
-              <!-- User Profile Section -->
-              <div class="user-profile" id="user-profile">
-                  <div class="user-info">
-                      <span class="user-name" id="user-name"></span>
-                      <span class="user-role" id="user-role"></span>
-                  </div>
-                  <button class="sign-out-btn" onclick="handleSignOut()">
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
-                          <polyline points="16 17 21 12 16 7"/>
-                          <line x1="21" y1="12" x2="9" y2="12"/>
-                      </svg>
-                      Sign Out
-                  </button>
-              </div>
               
               <h1>SkillBridge</h1>
               <p>Choose an application to explore. Each app is designed for specific user personas and business workflows.</p>
@@ -414,167 +342,28 @@
           </div>
       </div>
   
-      <script type="module">
-          import { auth, db } from './apps/system_administrator/scripts/firebase.js';
-          import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.12.4/firebase-auth.js';
-          import { getUserRoleAndReportees, signOut } from './apps/shared/auth-utils.js';
-
+      <script>
           function navigateToApp(appFolderName, firstPage) {
               const appUrl = `./apps/${appFolderName}/${firstPage}`;
               window.open(appUrl, '_blank');
           }
-          
-          // Make navigateToApp available globally
-          window.navigateToApp = navigateToApp;
   
           function openFeedback() {
               // This would integrate with your feedback system
               alert('Feedback system integration - to be implemented');
           }
-
-          // Display user profile information
-          function displayUserProfile(employeeData) {
-              const userProfile = document.getElementById('user-profile');
-              const userName = document.getElementById('user-name');
-              const userRole = document.getElementById('user-role');
-              
-              userName.textContent = `${employeeData.firstName} ${employeeData.lastName}`;
-              
-              // Display systemRole if admin, otherwise show role
-              const displayRole = employeeData.systemRole === 'systemAdmin' 
-                  ? 'System Administrator' 
-                  : employeeData.role;
-              userRole.textContent = displayRole.replace('_', ' ').toUpperCase();
-              
-              userProfile.style.display = 'flex';
-          }
-
-          // Handle sign out
-          async function handleSignOut() {
-              try {
-                  await signOut();
-                  window.location.href = './auth.html';
-              } catch (error) {
-                  console.error('Sign out error:', error);
-                  alert('Error signing out. Please try again.');
-              }
-          }
-          
-          // Make handleSignOut available globally
-          window.handleSignOut = handleSignOut;
-
-          // Render app cards based on user role
-          function renderAppCards(userRole) {
-              const { isAdmin, hasReportees, employeeData } = userRole;
-              
-              const appsGrid = document.querySelector('.apps-grid');
-              appsGrid.innerHTML = ''; // Clear existing cards
-              
-              // Define app configurations
-              const apps = {
-                  admin: {
-                      id: 'system_administrator',
-                      title: 'SkillBridge Admin Portal',
-                      description: 'Comprehensive administrative platform for managing organization-wide skill frameworks, employee hierarchies, assessment cycles, training sessions, and dispute resolution. Full access to all system features including analytics dashboards, heatmaps, and advanced reporting capabilities.',
-                      persona: 'System Administrator',
-                      dashboard: 'dashboard.html'
-                  },
-                  teamLead: {
-                      id: 'team_lead',
-                      title: 'SkillBridge Team Management Portal',
-                      description: 'Web application for Team Leads to perform skill mapping, conduct skill assessments, and access team-level analytics dashboards. Side-by-side benchmark comparison and historical growth trends for comprehensive team management.',
-                      persona: 'Team Lead',
-                      dashboard: 'team_dashboard.html'
-                  },
-                  employee: {
-                      id: 'employee',
-                      title: 'SkillBridge Employee Portal',
-                      description: 'View skill profiles, track growth timelines with benchmark comparisons, access assigned training sessions, submit feedback, and manage dispute workflows with detailed visualizations and progress tracking.',
-                      persona: 'Employee',
-                      dashboard: 'employee_dashboard.html'
-                  }
-              };
-              
-              // Determine which apps to show based on systemRole and reportees
-              let appsToShow = [];
-              
-              if (isAdmin) {
-                  appsToShow = [apps.admin];
-              } else if (hasReportees) {
-                  appsToShow = [apps.teamLead, apps.employee];
-              } else {
-                  appsToShow = [apps.employee];
-              }
-              
-              // Render cards
-              appsToShow.forEach(app => {
-                  appsGrid.appendChild(createAppCard(app));
-              });
-          }
-
-          // Create app card element
-          function createAppCard(app) {
-              const card = document.createElement('div');
-              card.className = 'app-card';
-              card.innerHTML = `
-                  <div class="app-content">
-                      <div class="app-info">
-                          <div class="app-title-container">
-                              <h3 class="app-title">${app.title}</h3>
-                              <button class="launch-icon" onclick="navigateToApp('${app.id}', '${app.dashboard}')" title="Launch App">
-                                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                      <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
-                                      <polyline points="15,3 21,3 21,9"/>
-                                      <line x1="10" y1="14" x2="21" y2="3"/>
-                                  </svg>
-                              </button>
-                          </div>
-                          <p class="app-description">${app.description}</p>
-                          <span class="app-persona">👤 ${app.persona}</span>
-                      </div>
-                  </div>
-              `;
-              return card;
-          }
   
-          // Initialize navigator with authentication
-          document.addEventListener('DOMContentLoaded', async function() {
-              console.log('Navigator page loaded - checking authentication');
+          // Initialize navigator with modal functionality
+          document.addEventListener('DOMContentLoaded', function() {
+              console.log('Navigator page loaded with 3 applications');
               
-              // Check authentication
-              onAuthStateChanged(auth, async (user) => {
-                  if (!user) {
-                      // Redirect to auth page
-                      window.location.href = './auth.html';
-                      return;
-                  }
-                  
-                  try {
-                      // Get user role and reportees
-                      const userRole = await getUserRoleAndReportees(user.uid);
-                      
-                      console.log('User role:', userRole);
-                      
-                      // Update UI with user info
-                      displayUserProfile(userRole.employeeData);
-                      
-                      // Render app cards based on role
-                      renderAppCards(userRole);
-                      
-                      // Initialize feedback module
-                      initialiseFeedback();
-                      
-                      // Show modal if not confirmed before
-                      if (!localStorage.getItem('prototype_confirmed')) {
-                          showConfirmationModal();
-                      }
-                  } catch (error) {
-                      console.error('Error loading user data:', error);
-                      alert('Error loading user data. Please try signing in again.');
-                      await signOut();
-                      window.location.href = './auth.html';
-                  }
-              });
+              // Initialize feedback module for navigator
+              initialiseFeedback();
+              
+              // Show modal if not confirmed before (using same storage key as individual apps)
+              if (!localStorage.getItem('prototype_confirmed')) {
+                  showConfirmationModal();
+              }
           });
   
           // Reuse existing modal functionality with same storage key
