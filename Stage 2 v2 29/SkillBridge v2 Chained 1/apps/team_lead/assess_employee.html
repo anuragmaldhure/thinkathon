@@ -422,177 +422,167 @@
     </div>
 
     <!-- Required: JavaScript -->
-    <script type="module" data-tiramai="web-gen">
-        import { showToast, showLoader, hideLoader, env } from "./scripts/main.js";
-        import { auth, db, storage } from "./scripts/firebase.js";
-        import { onAuthStateChanged, getAuth, signOut } from 'https://www.gstatic.com/firebasejs/10.12.4/firebase-auth.js';
-        import { doc, getDoc } from 'https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js';
 
-        // Initialize Lucide icons
-        lucide.createIcons();
 
-        // Get current page name from URL
-        function getCurrentPage() {
-            const path = window.location.pathname;
-            const filename = path.split('/').pop();
-            return filename.replace('.html', '') || 'team_dashboard';
-        }
-
-        // Set active navigation state
-        function setActiveNavigation() {
-            const currentPage = getCurrentPage();
-            const navLinks = document.querySelectorAll('.nav-link');
-            
-            navLinks.forEach(link => {
-                const pageName = link.getAttribute('data-page');
-                if (pageName === currentPage) {
-                    link.classList.add('bg-accent-gold-50', 'text-brand-primary-700', 'border-l-2', 'border-accent-gold-500');
-                    link.classList.remove('text-neutral-700');
-                } else {
-                    link.classList.remove('bg-accent-gold-50', 'text-brand-primary-700', 'border-l-2', 'border-accent-gold-500');
-                    link.classList.add('text-neutral-700');
-                }
-            });
-        }
-
-        // Initialize user profile and auth
-        async function initializeUser() {
-            onAuthStateChanged(auth, async (user) => {
-                if (!user) {
-                    window.location.href = '/auth.html';
-                    return;
-                }
-
-                try {
-                    // Try to get user data from Firestore by querying uid field
-                    const userQuery = query(collection(db, 'users'), where('uid', '==', user.uid), limit(1));
-                    const userSnapshot = await getDocs(userQuery);
-                    let userData = null;
-                    
-                    if (!userSnapshot.empty) {
-                        userData = { id: userSnapshot.docs[0].id, ...userSnapshot.docs[0].data() };
-                    }
-
-                    // Set user display data (with fallbacks)
-                    const firstName = userData?.firstName || user.displayName?.split(' ')[0] || 'User';
-                    const lastName = userData?.lastName || user.displayName?.split(' ')[1] || '';
-                    const email = userData?.email || user.email || 'johndoe@example.com';
-                    const fullName = `${firstName} ${lastName}`.trim();
-
-                    // Update UI elements
-                    const userAvatar = document.getElementById('user-avatar');
-                    const userName = document.getElementById('user-name');
-                    const dropdownUserName = document.getElementById('dropdown-user-name');
-                    const dropdownUserEmail = document.getElementById('dropdown-user-email');
-
-                    if (userAvatar) userAvatar.textContent = firstName.charAt(0).toUpperCase();
-                    if (userName) userName.textContent = fullName || email.split('@')[0];
-                    if (dropdownUserName) dropdownUserName.textContent = fullName || email.split('@')[0];
-                    if (dropdownUserEmail) dropdownUserEmail.textContent = email;
-
-                } catch (error) {
-                    console.error('Error fetching user data:', error);
-                    // Fallback to auth data
-                    const fallbackName = user.displayName || user.email.split('@')[0];
-                    document.getElementById('user-name').textContent = fallbackName;
-                    document.getElementById('dropdown-user-name').textContent = fallbackName;
-                    document.getElementById('dropdown-user-email').textContent = user.email;
-                }
-            });
-        }
-
-        // Toggle user profile dropdown
-        function initializeUserProfileDropdown() {
-            const profileBtn = document.getElementById('user-profile-btn');
-            const dropdown = document.getElementById('user-profile-dropdown');
-            const signOutBtn = document.getElementById('sign-out-btn');
-
-            profileBtn?.addEventListener('click', (e) => {
-                e.stopPropagation();
-                dropdown.classList.toggle('hidden');
-            });
-
-            // Close dropdown when clicking outside
-            document.addEventListener('click', (e) => {
-                if (!dropdown.contains(e.target) && !profileBtn.contains(e.target)) {
-                    dropdown.classList.add('hidden');
-                }
-            });
-
-            // Handle sign out
-            signOutBtn?.addEventListener('click', async () => {
-                try {
-                    await signOut(auth);
-                    window.location.href = '/auth.html';
-                } catch (error) {
-                    console.error('Sign out error:', error);
-                    showToast('Error signing out', 'error');
-                }
-            });
-        }
-
-        // Initialize mobile navigation
-        function initializeMobileNav() {
-            const mobileToggle = document.getElementById('mobile-menu-toggle');
-            const sidebar = document.getElementById('sidebar');
-            const overlay = document.getElementById('mobile-overlay');
-
-            mobileToggle?.addEventListener('click', () => {
-                sidebar.classList.toggle('-translate-x-full');
-                overlay.classList.toggle('hidden');
-            });
-
-            overlay?.addEventListener('click', () => {
-                sidebar.classList.add('-translate-x-full');
-                overlay.classList.add('hidden');
-            });
-
-            // Close mobile nav on nav link click
-            const navLinks = document.querySelectorAll('.nav-link');
-            navLinks.forEach(link => {
-                link.addEventListener('click', () => {
-                    sidebar.classList.add('-translate-x-full');
-                    overlay.classList.add('hidden');
-                });
-            });
-        }
-
-        // Initialize collapsible navigation groups
-        function initializeNavGroups() {
-            const navGroupToggles = document.querySelectorAll('.nav-group-toggle');
-            
-            navGroupToggles.forEach(toggle => {
-                toggle.addEventListener('click', () => {
-                    const content = toggle.nextElementSibling;
-                    const chevron = toggle.querySelector('.nav-group-chevron');
-                    
-                    content.classList.toggle('hidden');
-                    chevron.classList.toggle('rotate-90');
-                });
-            });
-        }
-
-        // Initialize everything on page load
-        document.addEventListener('DOMContentLoaded', () => {
-            initializeUser();
-            initializeUserProfileDropdown();
-            initializeMobileNav();
-            initializeNavGroups();
-            setActiveNavigation();
-        });
-    </script>
-
-    
 <script id="data-script" type="module" data-tiramai="web-gen">
 import {
   collection, getDocs, setDoc, addDoc, doc, getDoc, updateDoc, query, where, orderBy,
-  Timestamp, writeBatch
+  Timestamp, writeBatch, limit
 } from 'https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js';
-import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.12.4/firebase-auth.js';
+import { onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.12.4/firebase-auth.js';
 import { auth, getDb } from "./scripts/firebase.js";
 import { showToast, showLoader, hideLoader } from "./scripts/main.js";
 
 const db = getDb();
+
+// ========================================
+// General UI Functions (Navigation, Profile, etc.)
+// ========================================
+
+// Get current page name from URL
+function getCurrentPage() {
+  const path = window.location.pathname;
+  const filename = path.split('/').pop();
+  return filename.replace('.html', '') || 'team_dashboard';
+}
+
+// Set active navigation state
+function setActiveNavigation() {
+  const currentPage = getCurrentPage();
+  const navLinks = document.querySelectorAll('.nav-link');
+
+  navLinks.forEach(link => {
+    const pageName = link.getAttribute('data-page');
+    if (pageName === currentPage) {
+      link.classList.add('bg-accent-gold-50', 'text-brand-primary-700', 'border-l-2', 'border-accent-gold-500');
+      link.classList.remove('text-neutral-700');
+    } else {
+      link.classList.remove('bg-accent-gold-50', 'text-brand-primary-700', 'border-l-2', 'border-accent-gold-500');
+      link.classList.add('text-neutral-700');
+    }
+  });
+}
+
+// Initialize user profile and auth (for header display)
+async function initializeUser() {
+  onAuthStateChanged(auth, async (user) => {
+    if (!user) {
+      window.location.href = '/auth.html';
+      return;
+    }
+
+    try {
+      // Try to get user data from Firestore by querying uid field
+      const userQuery = query(collection(db, 'users'), where('uid', '==', user.uid), limit(1));
+      const userSnapshot = await getDocs(userQuery);
+      let userData = null;
+
+      if (!userSnapshot.empty) {
+        userData = { id: userSnapshot.docs[0].id, ...userSnapshot.docs[0].data() };
+      }
+
+      // Set user display data (with fallbacks)
+      const firstName = userData?.firstName || user.displayName?.split(' ')[0] || 'User';
+      const lastName = userData?.lastName || user.displayName?.split(' ')[1] || '';
+      const email = userData?.email || user.email || 'johndoe@example.com';
+      const fullName = `${firstName} ${lastName}`.trim();
+
+      // Update UI elements
+      const userAvatar = document.getElementById('user-avatar');
+      const userName = document.getElementById('user-name');
+      const dropdownUserName = document.getElementById('dropdown-user-name');
+      const dropdownUserEmail = document.getElementById('dropdown-user-email');
+
+      if (userAvatar) userAvatar.textContent = firstName.charAt(0).toUpperCase();
+      if (userName) userName.textContent = fullName || email.split('@')[0];
+      if (dropdownUserName) dropdownUserName.textContent = fullName || email.split('@')[0];
+      if (dropdownUserEmail) dropdownUserEmail.textContent = email;
+
+    } catch (error) {
+      console.error('Error fetching user data:', error);
+      // Fallback to auth data
+      const fallbackName = user.displayName || user.email.split('@')[0];
+      document.getElementById('user-name').textContent = fallbackName;
+      document.getElementById('dropdown-user-name').textContent = fallbackName;
+      document.getElementById('dropdown-user-email').textContent = user.email;
+    }
+  });
+}
+
+// Toggle user profile dropdown
+function initializeUserProfileDropdown() {
+  const profileBtn = document.getElementById('user-profile-btn');
+  const dropdown = document.getElementById('user-profile-dropdown');
+  const signOutBtn = document.getElementById('sign-out-btn');
+
+  profileBtn?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    dropdown.classList.toggle('hidden');
+  });
+
+  // Close dropdown when clicking outside
+  document.addEventListener('click', (e) => {
+    if (!dropdown.contains(e.target) && !profileBtn.contains(e.target)) {
+      dropdown.classList.add('hidden');
+    }
+  });
+
+  // Handle sign out
+  signOutBtn?.addEventListener('click', async () => {
+    try {
+      await signOut(auth);
+      window.location.href = '/auth.html';
+    } catch (error) {
+      console.error('Sign out error:', error);
+      showToast('Error signing out', 'error');
+    }
+  });
+}
+
+// Initialize mobile navigation
+function initializeMobileNav() {
+  const mobileToggle = document.getElementById('mobile-menu-toggle');
+  const sidebar = document.getElementById('sidebar');
+  const overlay = document.getElementById('mobile-overlay');
+
+  mobileToggle?.addEventListener('click', () => {
+    sidebar.classList.toggle('-translate-x-full');
+    overlay.classList.toggle('hidden');
+  });
+
+  overlay?.addEventListener('click', () => {
+    sidebar.classList.add('-translate-x-full');
+    overlay.classList.add('hidden');
+  });
+
+  // Close mobile nav on nav link click
+  const navLinks = document.querySelectorAll('.nav-link');
+  navLinks.forEach(link => {
+    link.addEventListener('click', () => {
+      sidebar.classList.add('-translate-x-full');
+      overlay.classList.add('hidden');
+    });
+  });
+}
+
+// Initialize collapsible navigation groups
+function initializeNavGroups() {
+  const navGroupToggles = document.querySelectorAll('.nav-group-toggle');
+
+  navGroupToggles.forEach(toggle => {
+    toggle.addEventListener('click', () => {
+      const content = toggle.nextElementSibling;
+      const chevron = toggle.querySelector('.nav-group-chevron');
+
+      content.classList.toggle('hidden');
+      chevron.classList.toggle('rotate-90');
+    });
+  });
+}
+
+// ========================================
+// Assessment Page State Management
+// ========================================
 
 // State management
 let currentUser = null;
@@ -638,15 +628,17 @@ async function funInitializePage() {
   }
 
   try {
-    // Pre-checks
-    const [employee, cycle, existingAssessments] = await Promise.all([
+    // Load employee and cycle first (parallel is OK)
+    const [employee, cycle] = await Promise.all([
       funLoadEmployee(),
-      funLoadActiveCycle(),
-      funCheckExistingAssessments()
+      funLoadActiveCycle()
     ]);
 
     if (!employee || !cycle) return;
-    
+
+    // Now that activeCycle is loaded, check for existing assessments
+    const existingAssessments = await funCheckExistingAssessments();
+
     if (existingAssessments.length > 0) {
       showError("Assessment Already Completed", "This employee has already been assessed in the current cycle.");
       return;
@@ -1307,7 +1299,14 @@ function showError(title, message) {
 
 // Initialize page on load
 document.addEventListener('DOMContentLoaded', () => {
-  // Initialize icons
+  // Initialize general UI features
+  initializeUser();
+  initializeUserProfileDropdown();
+  initializeMobileNav();
+  initializeNavGroups();
+  setActiveNavigation();
+
+  // Initialize Lucide icons
   lucide.createIcons();
 });
 </script>
