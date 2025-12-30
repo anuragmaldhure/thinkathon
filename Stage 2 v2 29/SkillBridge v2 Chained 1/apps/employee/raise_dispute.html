@@ -619,30 +619,46 @@
     }
 
     async function funLoadExistingDisputes() {
-      if (!currentUser || !activeCycle) return;
+      if (!currentUser || !activeCycle) {
+        console.log('funLoadExistingDisputes: No user or active cycle', { currentUser: !!currentUser, activeCycle: !!activeCycle });
+        return;
+      }
 
       try {
         const disputesRef = collection(db, 'disputes');
+        // Use currentUser.uid because disputes store the Firebase Auth UID as employeeId
+        console.log('funLoadExistingDisputes: Querying with', {
+          employeeId: currentUser.uid,
+          assessmentCycleId: activeCycle.id,
+          status: 'open'
+        });
+
         const q = query(
           disputesRef,
-          where('employeeId', '==', currentEmployeeDocId),
+          where('employeeId', '==', currentUser.uid),
           where('assessmentCycleId', '==', activeCycle.id),
           where('status', '==', 'open')
         );
 
         const snapshot = await getDocs(q);
+        console.log('funLoadExistingDisputes: Found', snapshot.docs.length, 'open disputes');
+
         existingDisputes.clear();
 
-        snapshot.docs.forEach(doc => {
-          const disputeData = doc.data();
+        snapshot.docs.forEach(docSnap => {
+          const disputeData = docSnap.data();
+          console.log('funLoadExistingDisputes: Processing dispute', docSnap.id, disputeData);
           if (disputeData.disputedSkills && Array.isArray(disputeData.disputedSkills)) {
             disputeData.disputedSkills.forEach(skill => {
               if (skill.skillId) {
+                console.log('funLoadExistingDisputes: Adding skillId to existingDisputes:', skill.skillId);
                 existingDisputes.add(skill.skillId);
               }
             });
           }
         });
+
+        console.log('funLoadExistingDisputes: existingDisputes Set:', [...existingDisputes]);
       } catch (error) {
         console.error('Error loading existing disputes:', error);
         showToast('Failed to load existing disputes', 'error');
