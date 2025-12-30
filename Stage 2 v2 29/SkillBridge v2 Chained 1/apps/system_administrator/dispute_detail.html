@@ -445,7 +445,7 @@
         import { showToast, showLoader, hideLoader, env } from "./scripts/main.js";
         import { auth, db, storage } from "./scripts/firebase.js";
         import { onAuthStateChanged, getAuth, signOut } from 'https://www.gstatic.com/firebasejs/10.12.4/firebase-auth.js';
-        import { doc, getDoc } from 'https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js';
+        import { doc, getDoc, collection, query, where, getDocs } from 'https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js';
 
         // Initialize Lucide icons
         lucide.createIcons();
@@ -620,6 +620,7 @@ async function funLoadDisputeData() {
     }
     
     currentDispute = { id: disputeDoc.id, ...disputeDoc.data() };
+    console.log('📋 Dispute data:', currentDispute);
     
     // Load related data in parallel but with concurrency limit
     await withLimit(() => funLoadEmployeeData());
@@ -645,9 +646,17 @@ async function funLoadEmployeeData() {
   if (!currentDispute?.employeeId) return;
   
   try {
-    const employeeDoc = await getDoc(doc(db, 'users', currentDispute.employeeId));
-    if (employeeDoc.exists()) {
-      currentDispute.employeeData = employeeDoc.data();
+    const usersQuery = query(
+      collection(db, 'users'),
+      where('uid', '==', currentDispute.employeeId),
+      where('employeeStatus', '==', 'active')
+    );
+    const usersSnapshot = await getDocs(usersQuery);
+    if (!usersSnapshot.empty) {
+      currentDispute.employeeData = usersSnapshot.docs[0].data();
+      console.log('✅ Employee data loaded:', currentDispute.employeeData);
+    } else {
+      console.log('❌ No employee found for UID:', currentDispute.employeeId);
     }
   } catch (error) {
     console.error('Error loading employee data:', error);
@@ -674,17 +683,55 @@ async function funLoadDisputedSkillsData() {
   
   try {
     const skillIds = currentDispute.disputedSkills.map(ds => ds.skillId).filter(Boolean);
+    console.log('🔍 Querying assessments for employeeId:', currentDispute.employeeData?.employeeId, 'or user.id:', currentDispute.employeeData?.id, 'cycleId:', currentDispute.assessmentCycleId, 'skillIds:', skillIds);
     
-    // Load skills, categories, criticalities, and assessments
-    const [skillsSnapshot, assessmentsSnapshot] = await Promise.all([
-      getDocs(query(collection(db, 'skills'), where('__name__', 'in', skillIds))),
-      getDocs(query(
+    // Try querying with both employeeId and user document ID
+    let assessmentsSnapshot;
+    try {
+      // First try with employeeId field
+      assessmentsSnapshot = await getDocs(query(
         collection(db, 'assessments'), 
-        where('employeeId', '==', currentDispute.employeeId),
+        where('employeeId', '==', currentDispute.employeeData?.employeeId),
         where('assessmentCycleId', '==', currentDispute.assessmentCycleId),
         where('skillId', 'in', skillIds)
-      ))
+      ));
+      
+      // If no results, try with user document ID
+      if (assessmentsSnapshot.empty && currentDispute.employeeData?.id) {
+        console.log('📊 Retrying assessment query with user document ID:', currentDispute.employeeData.id);
+        assessmentsSnapshot = await getDocs(query(
+          collection(db, 'assessments'), 
+          where('employeeId', '==', currentDispute.employeeData.id),
+          where('assessmentCycleId', '==', currentDispute.assessmentCycleId),
+          where('skillId', 'in', skillIds)
+        ));
+      }
+    } catch (error) {
+      console.error('Error querying assessments:', error);
+      assessmentsSnapshot = { docs: [] };
+    }
+    
+    const [skillsSnapshot] = await Promise.all([
+      getDocs(query(collection(db, 'skills'), where('__name__', 'in', skillIds)))
     ]);
+
+    // get skills benchmarks from skillbenchmarks collection
+    const skillBenchmarksSnapshot = await getDocs(query(
+      collection(db, 'skillBenchmarks'),
+      where('skillId', 'in', skillIds)
+    ));
+
+    console.log('📊 Skills benchmarks loaded:', skillBenchmarksSnapshot.size, 'benchmarks');
+    if (skillBenchmarksSnapshot.size > 0) {
+      console.log('📊 Sample benchmark:', skillBenchmarksSnapshot.docs[0].data());
+    }
+
+    // Build skill benchmarks map
+    const skillBenchmarksMap = new Map();
+    for (const benchmarkDoc of skillBenchmarksSnapshot.docs) {
+      const benchmark = benchmarkDoc.data();
+      skillBenchmarksMap.set(benchmark.skillId, benchmark);
+    }
     
     // Build skills map
     const skillsMap = new Map();
@@ -697,6 +744,11 @@ async function funLoadDisputedSkillsData() {
     for (const assessmentDoc of assessmentsSnapshot.docs) {
       const assessment = assessmentDoc.data();
       assessmentsMap.set(assessment.skillId, { id: assessmentDoc.id, ...assessment });
+    }
+    console.log('📊 Assessments loaded:', assessmentsMap.size, 'assessments');
+    if (assessmentsMap.size > 0) {
+      const firstAssessmentData = Array.from(assessmentsMap.values())[0];
+      console.log('📊 Sample assessment:', firstAssessmentData);
     }
     
     // Get unique category and criticality IDs
@@ -728,6 +780,9 @@ async function funLoadDisputedSkillsData() {
         const teamLeadDoc = await getDoc(doc(db, 'users', firstAssessment.assessedByEmployeeId));
         if (teamLeadDoc.exists()) {
           teamLeadData = teamLeadDoc.data();
+          console.log('✅ Team lead data loaded:', teamLeadData);
+        } else {
+          console.log('❌ No team lead found for ID:', firstAssessment.assessedByEmployeeId);
         }
       } catch (error) {
         console.error('Error loading team lead data:', error);
@@ -743,17 +798,27 @@ async function funLoadDisputedSkillsData() {
       const assessment = assessmentsMap.get(disputedSkill.skillId);
       const category = skill ? categoriesMap.get(skill.categoryId) : null;
       const criticality = skill ? criticalitiesMap.get(skill.criticalityId) : null;
+      const skillBenchmark = skillBenchmarksMap.get(disputedSkill.skillId);
       
-      return {
+      // Use assessment if exists, otherwise use benchmark score with default values
+      const finalAssessment = assessment || {
+        score: disputedSkill.originalScore || 0,
+        benchmarkAtTimeOfAssessment: skillBenchmark?.benchmarkScore || 0
+      };
+      
+      const skillData = {
         ...disputedSkill,
         skill: skill || { name: 'Unknown Skill' },
-        assessment: assessment || { score: 0, benchmarkAtTimeOfAssessment: 0 },
+        assessment: finalAssessment,
         category: category || { categoryName: 'Unknown Category' },
         criticality: criticality || { criticalityName: 'Unknown Criticality' },
-        gap: assessment && assessment.benchmarkAtTimeOfAssessment ? 
-          assessment.benchmarkAtTimeOfAssessment - assessment.score : 0
+        gap: finalAssessment.benchmarkAtTimeOfAssessment && finalAssessment.score !== undefined ? 
+          finalAssessment.benchmarkAtTimeOfAssessment - finalAssessment.score : 0
       };
+      console.log('🎯 Disputed skill data:', disputedSkill.skillId, skillData);
+      return skillData;
     });
+    console.log('✅ Total disputed skills processed:', disputedSkillsData.length);
     
   } catch (error) {
     console.error('Error loading disputed skills data:', error);
@@ -901,19 +966,15 @@ function funCreateSkillAccordionItem(item, index) {
           <div class="grid grid-cols-3 md:grid-cols-5 gap-4 text-sm">
             <div>
               <span class="text-neutral-500">Original Score:</span>
-              <span class="font-medium ml-1">${item.assessment?.score || 0}/10</span>
+              <span class="font-medium ml-1">${item.assessment?.score !== undefined && item.assessment?.score !== null ? item.assessment.score : 'N/A'}/10</span>
             </div>
             <div>
               <span class="text-neutral-500">Benchmark:</span>
-              <span class="font-medium ml-1">${item.assessment?.benchmarkAtTimeOfAssessment || 0}/10</span>
+              <span class="font-medium ml-1">${item.assessment?.benchmarkAtTimeOfAssessment !== undefined && item.assessment?.benchmarkAtTimeOfAssessment !== null ? item.assessment.benchmarkAtTimeOfAssessment : 'N/A'}/10</span>
             </div>
             <div>
               <span class="text-neutral-500">Gap:</span>
-              <span class="font-medium ml-1 ${item.gap > 0 ? 'text-danger-600' : 'text-success-600'}">${item.gap}</span>
-            </div>
-            <div class="col-span-2 md:col-span-1">
-              <span class="text-neutral-500">Resolution:</span>
-              <span class="font-medium ml-1" id="resolution-status-${item.skillId}">Pending</span>
+              <span class="font-medium ml-1 ${item.gap > 0 ? 'text-danger-600' : 'text-success-600'}">${item.gap !== undefined && item.gap !== null ? item.gap : 'N/A'}</span>
             </div>
           </div>
         </div>
@@ -1262,6 +1323,13 @@ async function funSubmitResolution() {
     for (const item of disputedSkillsData) {
       const resolution = resolutionActions.get(item.skillId);
       if (resolution?.action === 'editRating') {
+        // Check if assessment exists in database
+        if (!item.assessment?.id) {
+          console.error('Cannot update assessment - no assessment ID found for skill:', item.skillId);
+          showToast(`Cannot update score for ${item.skill?.name} - assessment not found`, 'error');
+          continue;
+        }
+        
         const assessmentRef = doc(db, 'assessments', item.assessment.id);
         const newScore = resolution.newScore;
         const benchmarkAtTimeOfAssessment = item.assessment.benchmarkAtTimeOfAssessment;
@@ -1275,7 +1343,7 @@ async function funSubmitResolution() {
         });
         
         assessmentUpdates.push({
-          employeeId: currentDispute.employeeId,
+          employeeId: currentDispute.employeeData?.employeeId || currentDispute.employeeId,
           skillId: item.skillId,
           newScore,
           benchmarkAtTimeOfAssessment,
@@ -1290,28 +1358,44 @@ async function funSubmitResolution() {
       action: 'resolved',
       actor: currentUser?.email || 'Unknown',
       notes: `Dispute resolved with ${overallAction} action`,
-      resolutionDetails: Array.from(resolutionActions.entries()).map(([skillId, resolution]) => ({
-        skillId,
-        action: resolution.action,
-        newScore: resolution.newScore,
-        notes: resolution.notes,
-        rejectionReason: resolution.rejectionReason
-      }))
+      resolutionDetails: Array.from(resolutionActions.entries()).map(([skillId, resolution]) => {
+        const detail = {
+          skillId,
+          action: resolution.action
+        };
+        // Only add fields that have values to avoid undefined in Firestore
+        if (resolution.newScore !== undefined && resolution.newScore !== null) {
+          detail.newScore = resolution.newScore;
+        }
+        if (resolution.notes) {
+          detail.notes = resolution.notes;
+        }
+        if (resolution.rejectionReason) {
+          detail.rejectionReason = resolution.rejectionReason;
+        }
+        return detail;
+      })
     };
     
     // Update dispute document
     const disputeRef = doc(db, 'disputes', disputeId);
-    batch.update(disputeRef, {
+    const disputeUpdate = {
       status: 'resolved',
-      resolvedByAdminId: currentUser?.uid,
       resolutionTimestamp: currentTime,
       resolutionAction: overallAction,
       resolutionNotes: Array.from(resolutionActions.values())
         .map(r => r.notes || r.rejectionReason)
         .filter(Boolean)
-        .join('; '),
+        .join('; ') || 'No notes provided',
       auditTrail: [...(currentDispute.auditTrail || []), auditEntry]
-    });
+    };
+    
+    // Only add resolvedByAdminId if currentUser exists
+    if (currentUser?.uid) {
+      disputeUpdate.resolvedByAdminId = currentUser.uid;
+    }
+    
+    batch.update(disputeRef, disputeUpdate);
     
     // Commit all changes
     await batch.commit();

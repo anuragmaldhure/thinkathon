@@ -855,26 +855,26 @@ async function funLoadSessions() {
 }
 
 async function funLoadSkills() {
-  const skillsData = await funFetchData(() => 
-    query(
-      collection(db, 'skills'),
-      where('status', '==', 'active'),
-      orderBy('name')
-    )
-  );
-  
-  allSkills = skillsData;
-  
-  // Populate skill filter
-  const skillSelect = document.getElementById('filterSkill');
-  if (skillSelect) {
-    skillSelect.innerHTML = '<option value="">All Skills</option>';
-    skillsData.forEach(skill => {
-      const option = document.createElement('option');
-      option.value = skill.id;
-      option.textContent = skill.name || 'N/A';
-      skillSelect.appendChild(option);
-    });
+  try {
+    const skillsSnapshot = await getDocs(collection(db, 'skills'));
+    const skillsData = skillsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    
+    allSkills = skillsData;
+    
+    // Populate skill filter
+    const skillSelect = document.getElementById('filterSkill');
+    if (skillSelect) {
+      skillSelect.innerHTML = '<option value="">All Skills</option>';
+      skillsData.forEach(skill => {
+        const option = document.createElement('option');
+        option.value = skill.id;
+        option.textContent = skill.name || 'N/A';
+        skillSelect.appendChild(option);
+      });
+    }
+  } catch (error) {
+    console.error('Error loading skills:', error);
+    allSkills = [];
   }
 }
 
@@ -1039,6 +1039,11 @@ function funRenderTable() {
     const trainer = allTrainers.find(t => t.id === session.trainerId && t.type === session.trainerType);
     const assignedCount = Array.isArray(session.assignedEmployees) ? session.assignedEmployees.length : 0;
     
+    // Debug logging
+    if (!skill) {
+      console.log('No skill found for session:', session.id, 'skillId:', session.skillId, 'Available skills:', allSkills.map(s => s.id));
+    }
+    
     const formattedDate = session.scheduledDate ? 
       new Date(session.scheduledDate).toLocaleDateString('en-US', { 
         month: 'short', day: 'numeric', year: 'numeric',
@@ -1054,7 +1059,7 @@ function funRenderTable() {
           <span class="font-mono text-xs">${(session.id || '').substring(0, 8)}</span>
         </td>
         <td class="px-4 py-3">
-          <span class="text-brand-primary-600 hover:text-brand-primary-700 font-medium">${skill?.name || 'N/A'}</span>
+          <span class="text-brand-primary-600 hover:text-brand-primary-700 font-medium">${skill?.name || 'Loading...'}</span>
         </td>
         <td class="px-4 py-3">
           <div>
@@ -1160,16 +1165,21 @@ function funRenderCalendar() {
     const daySessions = sessionsByDate[dateKey] || [];
     
     return `
-      <div class="h-24 border-r border-b border-neutral-200 p-1 ${isCurrentMonth ? 'bg-white' : 'bg-neutral-50'} ${isToday ? 'bg-accent-gold-50' : ''} overflow-hidden">
+      <div class="h-32 border-r border-b border-neutral-200 p-1 ${isCurrentMonth ? 'bg-white' : 'bg-neutral-50'} ${isToday ? 'bg-accent-gold-50' : ''} overflow-hidden">
         <div class="text-xs font-medium ${isCurrentMonth ? 'text-neutral-900' : 'text-neutral-400'} ${isToday ? 'text-brand-primary-600' : ''} mb-1">
           ${date.getDate()}
         </div>
         <div class="space-y-1">
           ${daySessions.slice(0, 3).map(session => {
             const skill = allSkills.find(s => s.id === session.skillId);
+            const trainer = allTrainers.find(t => t.id === session.trainerId && t.type === session.trainerType);
+            const skillName = skill?.name || 'Loading...';
+            const trainerName = trainer?.displayName || '';
+            const fullTitle = trainerName ? `${skillName} - ${trainerName}` : skillName;
             return `
-              <div onclick="funViewSession('${session.id}')" class="text-xs p-1 rounded cursor-pointer ${funGetSessionColor(session.status)} hover:opacity-80">
-                ${(skill?.name || 'N/A').substring(0, 20)}${(skill?.name || '').length > 20 ? '...' : ''}
+              <div onclick="funViewSession('${session.id}')" class="text-xs p-1 rounded cursor-pointer ${funGetSessionColor(session.status)} hover:opacity-80" title="${fullTitle}">
+                <div class="font-medium truncate">${skillName}</div>
+                ${trainerName ? `<div class="text-[10px] opacity-90 truncate">${trainerName}</div>` : ''}
               </div>
             `;
           }).join('')}

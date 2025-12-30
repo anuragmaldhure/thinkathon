@@ -363,7 +363,6 @@
       <table class="w-full text-sm leading-5">
         <thead class="bg-neutral-50 text-neutral-700">
           <tr>
-            <th class="text-left font-semibold px-3 py-3 border-b border-neutral-200">Dispute ID</th>
             <th class="text-left font-semibold px-3 py-3 border-b border-neutral-200">Employee</th>
             <th class="text-left font-semibold px-3 py-3 border-b border-neutral-200">Department</th>
             <th class="text-left font-semibold px-3 py-3 border-b border-neutral-200">Team Lead</th>
@@ -377,7 +376,6 @@
         <tbody id="disputes-table-body" class="divide-y divide-neutral-200">
           <!-- Skeleton Loading -->
           <tr class="skeleton-row">
-            <td class="px-3 py-3"><div class="skeleton-text w-16 h-4"></div></td>
             <td class="px-3 py-3"><div class="skeleton-text w-24 h-4"></div></td>
             <td class="px-3 py-3"><div class="skeleton-text w-20 h-4"></div></td>
             <td class="px-3 py-3"><div class="skeleton-text w-20 h-4"></div></td>
@@ -388,7 +386,6 @@
             <td class="px-3 py-3"><div class="skeleton-text w-12 h-6"></div></td>
           </tr>
           <tr class="skeleton-row">
-            <td class="px-3 py-3"><div class="skeleton-text w-16 h-4"></div></td>
             <td class="px-3 py-3"><div class="skeleton-text w-28 h-4"></div></td>
             <td class="px-3 py-3"><div class="skeleton-text w-24 h-4"></div></td>
             <td class="px-3 py-3"><div class="skeleton-text w-20 h-4"></div></td>
@@ -503,7 +500,7 @@
         import { showToast, showLoader, hideLoader, env } from "./scripts/main.js";
         import { auth, db, storage } from "./scripts/firebase.js";
         import { onAuthStateChanged, getAuth, signOut } from 'https://www.gstatic.com/firebasejs/10.12.4/firebase-auth.js';
-        import { doc, getDoc } from 'https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js';
+        import { doc, getDoc, collection, query, where, getDocs } from 'https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js';
 
         // Initialize Lucide icons
         lucide.createIcons();
@@ -945,9 +942,15 @@ async function funLoadDisputes(reset = false) {
       // Load employee data
       if (disputeData.employeeId) {
         try {
-          const employeeDoc = await getDoc(doc(db, 'users', disputeData.employeeId));
-          if (employeeDoc.exists()) {
-            disputeData.employee = employeeDoc.data();
+          const employeeQuery = query(
+            collection(db, 'users'),
+            where('uid', '==', disputeData.employeeId),
+            where('employeeStatus', '==', 'active'),
+            limit(1)
+          );
+          const employeeSnapshot = await getDocs(employeeQuery);
+          if (!employeeSnapshot.empty) {
+            disputeData.employee = { id: employeeSnapshot.docs[0].id, ...employeeSnapshot.docs[0].data() };
           }
         } catch (error) {
           console.warn('Failed to load employee:', error);
@@ -957,24 +960,36 @@ async function funLoadDisputes(reset = false) {
       
       // Get team lead info via assessment
       disputeData.teamLead = null;
-      if (disputeData.disputedSkills && Array.isArray(disputeData.disputedSkills) && disputeData.disputedSkills.length > 0) {
+      if (disputeData.employee?.id && disputeData.disputedSkills && Array.isArray(disputeData.disputedSkills) && disputeData.disputedSkills.length > 0) {
         try {
-          // Find assessment for first disputed skill to get team lead
-          const assessmentQuery = query(
+          // Try with user document ID first
+          let assessmentQuery = query(
             collection(db, 'assessments'),
-            where('employeeId', '==', disputeData.employeeId),
+            where('employeeId', '==', disputeData.employee.id),
             where('skillId', '==', disputeData.disputedSkills[0].skillId),
             where('assessmentCycleId', '==', disputeData.assessmentCycleId),
             limit(1)
           );
-          const assessmentSnapshot = await getDocs(assessmentQuery);
+          let assessmentSnapshot = await getDocs(assessmentQuery);
+          
+          // If no results, try with employee's employeeId field
+          if (assessmentSnapshot.empty && disputeData.employee.employeeId) {
+            assessmentQuery = query(
+              collection(db, 'assessments'),
+              where('employeeId', '==', disputeData.employee.employeeId),
+              where('skillId', '==', disputeData.disputedSkills[0].skillId),
+              where('assessmentCycleId', '==', disputeData.assessmentCycleId),
+              limit(1)
+            );
+            assessmentSnapshot = await getDocs(assessmentQuery);
+          }
           
           if (!assessmentSnapshot.empty) {
             const assessmentData = assessmentSnapshot.docs[0].data();
             if (assessmentData.assessedByEmployeeId) {
               const teamLeadDoc = await getDoc(doc(db, 'users', assessmentData.assessedByEmployeeId));
               if (teamLeadDoc.exists()) {
-                disputeData.teamLead = teamLeadDoc.data();
+                disputeData.teamLead = { id: teamLeadDoc.id, ...teamLeadDoc.data() };
               }
             }
           }
@@ -1132,10 +1147,7 @@ function funRenderDisputesTable(disputes) {
     return `
       <tr class="hover:bg-neutral-50 focus-within:bg-neutral-50 animate-fade-in">
         <td class="px-3 py-3">
-          <span class="font-mono text-xs text-neutral-600">${shortId}</span>
-        </td>
-        <td class="px-3 py-3">
-          <a href="/employee_detail.html?employeeId=${encodeURIComponent(dispute.employeeId || '')}" 
+          <a href="/employee_detail.html?employeeId=${encodeURIComponent(dispute.employee?.id || dispute.employeeId || '')}" 
              class="text-brand-primary-600 hover:text-brand-primary-700 font-medium">
             ${employeeName}
           </a>

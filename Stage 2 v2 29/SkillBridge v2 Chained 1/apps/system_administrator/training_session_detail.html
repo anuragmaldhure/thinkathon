@@ -708,10 +708,8 @@ if (!sessionId) {
 // Initialize page
 async function funInitializePage() {
   try {
-    await Promise.all([
-      funLoadSessionData(),
-      funLoadAttendees()
-    ]);
+    await funLoadSessionData();
+    await funLoadAttendees();
     
     funSetupEventListeners();
     lucide.createIcons();
@@ -762,6 +760,30 @@ async function funLoadSessionData() {
 
     // Load trainer data
     await funLoadTrainerData();
+
+    // Load created by user name
+    if (sessionData.createdBy) {
+      try {
+        const creatorQuery = query(
+          collection(db, 'users'),
+          where('uid', '==', sessionData.createdBy),
+          where('employeeStatus', '==', 'active'),
+          limit(1)
+        );
+        const creatorSnapshot = await getDocs(creatorQuery);
+        if (!creatorSnapshot.empty) {
+          const creatorData = creatorSnapshot.docs[0].data();
+          sessionData.createdByName = `${creatorData.firstName || ''} ${creatorData.lastName || ''}`.trim() || 'Unknown User';
+        } else {
+          sessionData.createdByName = 'Unknown User';
+        }
+      } catch (err) {
+        console.error('Error loading creator data:', err);
+        sessionData.createdByName = 'Unknown User';
+      }
+    } else {
+      sessionData.createdByName = 'Unknown User';
+    }
 
     // Load feedback if completed
     if (sessionData.status === 'completed') {
@@ -823,56 +845,81 @@ async function funLoadTrainerData() {
 // Load attendees data
 async function funLoadAttendees(refresh = false) {
   try {
-    if (!sessionData?.assignedEmployees) return;
+    console.log('Loading attendees. Session data:', sessionData);
+    if (!sessionData?.assignedEmployees) {
+      console.log('No assigned employees in session data');
+      return;
+    }
 
     const employeeIds = sessionData.assignedEmployees.map(emp => emp.employeeId);
+    console.log('Employee IDs to load:', employeeIds);
     if (employeeIds.length === 0) {
       funUpdateAttendeesTable([]);
       return;
     }
 
-    // Get employee details in batches (Firestore 'in' query limit is 10)
+    // Get employee details - employeeId in assignedEmployees is the document ID
     const attendeesList = [];
-    for (let i = 0; i < employeeIds.length; i += 10) {
-      const batch = employeeIds.slice(i, i + 10);
-      const employeeQuery = query(collection(db, 'users'), where('id', 'in', batch));
-      const employeeSnapshot = await getDocs(employeeQuery);
-      
-      for (const employeeDoc of employeeSnapshot.docs) {
-        const employeeData = employeeDoc.data();
+    for (const assignedEmp of sessionData.assignedEmployees) {
+      try {
+        console.log('Loading employee by document ID:', assignedEmp.employeeId);
+        const employeeDoc = await getDoc(doc(db, 'users', assignedEmp.employeeId));
+        
+        if (!employeeDoc.exists()) {
+          console.warn('Employee not found:', assignedEmp.employeeId);
+          continue;
+        }
+        
+        const employeeData = { id: employeeDoc.id, ...employeeDoc.data() };
+        console.log('Processing employee:', employeeData);
         
         // Get department name
         const deptDoc = await getDoc(doc(db, 'departments', employeeData.departmentId || 'unknown'));
         
-        // Find assignment data
-        const assignment = sessionData.assignedEmployees.find(emp => emp.employeeId === employeeData.id);
-        
-        // Get training need gap
+        // Get training need gap - try both document ID and employeeId field
         let gap = 'N/A';
         try {
-          const needQuery = query(
+          // Try with employeeId field first
+          let needQuery = query(
             collection(db, 'trainingNeeds'),
-            where('employeeId', '==', employeeData.id),
+            where('employeeId', '==', employeeData.employeeId || employeeDoc.id),
             where('skillId', '==', sessionData.skillId),
-            where('tniStatus', '==', 'trainingRequired'),
             limit(1)
           );
-          const needSnapshot = await getDocs(needQuery);
+          let needSnapshot = await getDocs(needQuery);
+          
+          // If not found, try with document ID
+          if (needSnapshot.empty) {
+            needQuery = query(
+              collection(db, 'trainingNeeds'),
+              where('employeeId', '==', employeeDoc.id),
+              where('skillId', '==', sessionData.skillId),
+              limit(1)
+            );
+            needSnapshot = await getDocs(needQuery);
+          }
+          
           if (!needSnapshot.empty) {
-            gap = needSnapshot.docs[0].data().gap || 'N/A';
+            const needData = needSnapshot.docs[0].data();
+            gap = needData.gap || needData.skillGap || 'N/A';
+            console.log('Found training need gap:', gap, 'for employee:', employeeDoc.id);
+          } else {
+            console.log('No training need found for employee:', employeeDoc.id, 'skill:', sessionData.skillId);
           }
         } catch (err) {
           console.warn('Error getting training need gap:', err);
         }
 
         attendeesList.push({
-          employeeId: employeeData.id,
+          employeeId: employeeData.employeeId || employeeDoc.id,
           name: `${employeeData.firstName || ''} ${employeeData.lastName || ''}`.trim(),
           department: deptDoc.exists() ? deptDoc.data().name : 'N/A',
           gap: gap,
-          assignmentDate: assignment?.assignmentDate ? new Date(assignment.assignmentDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : 'N/A',
-          attendanceStatus: assignment?.attendanceStatus || 'assigned'
+          assignmentDate: assignedEmp.assignmentDate ? new Date(assignedEmp.assignmentDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : 'N/A',
+          attendanceStatus: assignedEmp.attendanceStatus || 'assigned'
         });
+      } catch (err) {
+        console.error('Error loading employee:', assignedEmp.employeeId, err);
       }
     }
 
@@ -1038,7 +1085,7 @@ function funUpdateSessionDetails() {
       </div>
       <div class="space-y-1">
         <p class="text-xs font-medium text-neutral-500 uppercase tracking-wider">Created</p>
-        <p class="text-sm text-neutral-900">${sessionData.createdBy || 'N/A'} on ${sessionData.createdTimestamp ? new Date(sessionData.createdTimestamp).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : 'N/A'}</p>
+        <p class="text-sm text-neutral-900">By ${sessionData.createdByName || 'Unknown User'} on ${sessionData.createdTimestamp ? new Date(sessionData.createdTimestamp).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : 'N/A'}</p>
       </div>
     </div>
   `;
