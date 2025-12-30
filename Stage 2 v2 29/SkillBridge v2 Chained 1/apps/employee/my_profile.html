@@ -84,9 +84,9 @@
                     class="flex items-center gap-2 text-white hover:bg-brand-primary-700 px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2">
                     <div id="user-avatar"
                         class="w-8 h-8 bg-accent-gold-500 rounded-full flex items-center justify-center text-brand-primary-800 font-semibold text-xs">
-                        JD
+                         
                     </div>
-                    <span id="user-name" class="text-sm">John Doe</span>
+                    <span id="user-name" class="text-sm"></span>
                     <i data-lucide="chevron-down" class="w-4 h-4"></i>
                 </button>
 
@@ -94,7 +94,7 @@
                 <div id="user-dropdown"
                     class="hidden absolute right-0 mt-2 w-48 bg-white border border-neutral-200 rounded-md shadow-lg z-50">
                     <div class="px-4 py-3 border-b border-neutral-200">
-                        <p class="text-sm font-medium text-neutral-900" id="dropdown-user-name">John Doe</p>
+                        <p class="text-sm font-medium text-neutral-900" id="dropdown-user-name"></p>
                         <p class="text-xs text-neutral-500" id="dropdown-user-email">johndoe@example.com</p>
                     </div>
                     <div class="py-1">
@@ -221,13 +221,13 @@
                     <!-- Avatar -->
                     <div id="profile-avatar"
                         class="w-16 h-16 bg-accent-gold-500 rounded-full flex items-center justify-center text-brand-primary-800 font-bold text-xl">
-                        JD
+                         
                     </div>
 
                     <!-- Profile Info -->
                     <div class="flex-1 min-w-0">
                         <div class="flex items-center gap-3 mb-2">
-                            <h1 id="profile-name" class="text-2xl leading-8 font-bold text-neutral-950">John Doe</h1>
+                            <h1 id="profile-name" class="text-2xl leading-8 font-bold text-neutral-950"></h1>
                             <span id="profile-status"
                                 class="inline-flex items-center px-2 py-1 text-xs rounded-full bg-success-600 text-white">Active</span>
                         </div>
@@ -406,7 +406,7 @@
         import { showToast, showLoader, hideLoader, env } from "./scripts/main.js";
         import { auth, db, storage } from "./scripts/firebase.js";
         import { onAuthStateChanged, getAuth, signOut } from 'https://www.gstatic.com/firebasejs/10.12.4/firebase-auth.js';
-        import { doc, getDoc } from 'https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js';
+        import { doc, getDoc, collection, query, where, getDocs } from 'https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js';
 
         // Initialize Lucide icons
         lucide.createIcons();

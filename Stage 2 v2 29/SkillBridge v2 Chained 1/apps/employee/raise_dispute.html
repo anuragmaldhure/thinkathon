@@ -77,16 +77,16 @@
             <div class="relative">
                 <button id="user-profile-btn" class="flex items-center gap-2 text-white hover:bg-brand-primary-700 px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2">
                     <div id="user-avatar" class="w-8 h-8 bg-accent-gold-500 rounded-full flex items-center justify-center text-brand-primary-800 font-semibold text-xs">
-                        JD
+                         
                     </div>
-                    <span id="user-name" class="text-sm">John Doe</span>
+                    <span id="user-name" class="text-sm"></span>
                     <i data-lucide="chevron-down" class="w-4 h-4"></i>
                 </button>
                 
                 <!-- Dropdown Menu -->
                 <div id="user-dropdown" class="hidden absolute right-0 mt-2 w-48 bg-white border border-neutral-200 rounded-md shadow-lg z-50">
                     <div class="px-4 py-3 border-b border-neutral-200">
-                        <p class="text-sm font-medium text-neutral-900" id="dropdown-user-name">John Doe</p>
+                        <p class="text-sm font-medium text-neutral-900" id="dropdown-user-name"></p>
                         <p class="text-xs text-neutral-500" id="dropdown-user-email">johndoe@example.com</p>
                     </div>
                     <div class="py-1">
@@ -330,7 +330,7 @@
         import { showToast, showLoader, hideLoader, env } from "./scripts/main.js";
         import { auth, db, storage } from "./scripts/firebase.js";
         import { onAuthStateChanged, getAuth, signOut } from 'https://www.gstatic.com/firebasejs/10.12.4/firebase-auth.js';
-        import { doc, getDoc } from 'https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js';
+        import { doc, getDoc, collection, query, where, getDocs } from 'https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js';
 
         // Initialize Lucide icons
         lucide.createIcons();
@@ -421,11 +421,11 @@
 
         async function loadUserData(user) {
             try {
-                const userDocRef = doc(db, 'users', user.uid);
-                const userDoc = await getDoc(userDocRef);
+                const usersQuery = query(collection(db, 'users'), where('uid', '==', user.uid), where('employeeStatus', '==', 'active'));
+                const usersSnapshot = await getDocs(usersQuery);
                 
-                if (userDoc.exists()) {
-                    return userDoc.data();
+                if (!usersSnapshot.empty) {
+                    return usersSnapshot.docs[0].data();
                 } else {
                     // Fallback data
                     return {
