@@ -403,7 +403,7 @@
         import { showToast, showLoader, hideLoader, env } from "./scripts/main.js";
         import { auth, db, storage } from "./scripts/firebase.js";
         import { onAuthStateChanged, getAuth, signOut } from 'https://www.gstatic.com/firebasejs/10.12.4/firebase-auth.js';
-        import { doc, getDoc } from 'https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js';
+        import { doc, getDoc, collection, query, where, limit, getDocs } from 'https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js';
 
         // Initialize Lucide icons
         lucide.createIcons();
