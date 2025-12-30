@@ -626,7 +626,10 @@ async function funInitialLoad() {
 
     // Load team data
     await funLoadTeamData();
-    
+
+    // Initialize filteredData from teamData
+    filteredData = [...teamData];
+
     // Apply initial sort and pagination
     funApplySort();
     funUpdateDisplay();
@@ -659,7 +662,7 @@ async function funLoadTeamData() {
       where('isActiveCycle', '==', true)
     );
     const cyclesSnapshot = await getDocs(cyclesQuery);
-    activeCycle = cyclesSnapshot.empty ? null : cyclesSnapshot.docs[0].data();
+    activeCycle = cyclesSnapshot.empty ? null : { id: cyclesSnapshot.docs[0].id, ...cyclesSnapshot.docs[0].data() };
 
     // Load team members (direct reports)
     const teamQuery = query(
@@ -674,11 +677,11 @@ async function funLoadTeamData() {
     const departments = {};
     departmentsSnapshot.docs.forEach(doc => {
       const dept = doc.data();
-      departments[dept.id] = dept.name || 'Unknown Department';
+      departments[doc.id] = dept.name || 'Unknown Department';
     });
 
-    // Get all employee IDs for further queries
-    const employeeIds = teamSnapshot.docs.map(doc => doc.data().id);
+    // Get all employee IDs for further queries - use document ID or data id field
+    const employeeIds = teamSnapshot.docs.map(doc => doc.data().id || doc.id).filter(id => id);
     
     if (employeeIds.length === 0) {
       teamData = [];
@@ -910,9 +913,10 @@ function funRenderTableRows(data) {
     return `
       <tr class="hover:bg-neutral-50 focus-within:bg-neutral-50">
         <td class="px-4 py-3">
-          <button 
+          <button
             class="text-left text-brand-primary-600 hover:text-brand-primary-700 font-medium hover:underline focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2 rounded"
-            onclick="funNavigateToProfile('${employee.id}')"
+            data-action="view-profile"
+            data-employee-id="${employee.id}"
           >
             ${employee.firstName} ${employee.lastName}
           </button>
@@ -932,9 +936,10 @@ function funRenderTableRows(data) {
           </span>
         </td>
         <td class="px-4 py-3 text-right">
-          <button 
+          <button
             class="inline-flex items-center gap-1 px-2 py-1 text-sm text-neutral-700 hover:text-brand-primary-700 hover:bg-neutral-50 rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2"
-            onclick="funShowActionMenu('${employee.id}')"
+            data-action="show-menu"
+            data-employee-id="${employee.id}"
             aria-label="Actions for ${employee.firstName} ${employee.lastName}"
           >
             <i data-lucide="more-horizontal" class="w-4 h-4"></i>
@@ -967,62 +972,64 @@ function funUpdatePagination() {
 function funShowActionMenu(employeeId) {
   const employee = teamData.find(e => e.id === employeeId);
   if (!employee) return;
-  
+
   const menuItems = [];
-  
+
   // View Profile (always available)
   menuItems.push({
     icon: 'user',
     label: 'View Profile',
-    action: () => funNavigateToProfile(employeeId),
+    actionType: 'view-profile',
     enabled: true
   });
-  
+
   // Map Skills (always available)
   menuItems.push({
     icon: 'plus-circle',
     label: 'Map Skills',
-    action: () => funNavigateToAddSkills(employeeId),
+    actionType: 'map-skills',
     enabled: true
   });
-  
+
   // Assess Skills (enabled if has skills mapped and no assessment in current cycle, and active cycle exists)
   const canAssess = activeCycle && employee.hasActiveSkills && !employee.hasAssessments;
   menuItems.push({
     icon: 'check-square',
     label: 'Assess Skills',
-    action: () => funNavigateToAssess(employeeId),
+    actionType: 'assess-skills',
     enabled: canAssess,
     tooltip: !activeCycle ? 'No active assessment cycle' : !employee.hasActiveSkills ? 'No skills mapped' : employee.hasAssessments ? 'Already assessed in current cycle' : ''
   });
-  
+
   // Reassess Trained Skills (visible if has reassessment needs)
   if (employee.hasReassessmentNeeds) {
     menuItems.push({
       icon: 'rotate-cw',
       label: 'Reassess Trained Skills',
-      action: () => funNavigateToReassess(employeeId),
+      actionType: 'reassess-skills',
       enabled: true
     });
   }
-  
-  funRenderActionMenu(employee, menuItems);
+
+  funRenderActionMenu(employee, menuItems, employeeId);
   document.getElementById('action-menu').classList.remove('hidden');
 }
 
 // Render action menu
-function funRenderActionMenu(employee, items) {
+function funRenderActionMenu(employee, items, employeeId) {
   document.getElementById('action-menu-title').textContent = `${employee.firstName} ${employee.lastName}`;
-  
+
   const menuContainer = document.getElementById('action-menu-items');
   menuContainer.innerHTML = items.map(item => {
     const disabledClass = item.enabled ? '' : 'opacity-50 cursor-not-allowed';
     const hoverClass = item.enabled ? 'hover:bg-neutral-50' : '';
-    
+
     return `
-      <button 
+      <button
         class="w-full flex items-center gap-3 px-3 py-2 text-left text-sm text-neutral-700 rounded-md transition-colors ${hoverClass} ${disabledClass} focus:outline-none ${item.enabled ? 'focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2' : ''}"
-        ${item.enabled ? `onclick="funExecuteAction(() => { ${item.action.toString().slice(6, -1)} })"` : 'disabled'}
+        data-menu-action="${item.actionType}"
+        data-employee-id="${employeeId}"
+        ${!item.enabled ? 'disabled' : ''}
         ${item.tooltip ? `title="${item.tooltip}"` : ''}
       >
         <i data-lucide="${item.icon}" class="w-4 h-4"></i>
@@ -1031,19 +1038,8 @@ function funRenderActionMenu(employee, items) {
       </button>
     `;
   }).join('');
-  
-  lucide.createIcons();
-}
 
-// Execute action and close menu
-function funExecuteAction(actionFn) {
-  try {
-    actionFn();
-    funCloseActionMenu();
-  } catch (error) {
-    console.error('Error executing action:', error);
-    showToast('Action failed', 'error');
-  }
+  lucide.createIcons();
 }
 
 // Close action menu
@@ -1127,6 +1123,21 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
   
+  // Event delegation for table actions
+  document.getElementById('team-table-body').addEventListener('click', (e) => {
+    const button = e.target.closest('button[data-action]');
+    if (!button) return;
+
+    const action = button.dataset.action;
+    const employeeId = button.dataset.employeeId;
+
+    if (action === 'view-profile') {
+      funNavigateToProfile(employeeId);
+    } else if (action === 'show-menu') {
+      funShowActionMenu(employeeId);
+    }
+  });
+
   // Refresh button
   document.getElementById('btn-refresh').addEventListener('click', () => {
     funInitialLoad();
@@ -1140,7 +1151,34 @@ document.addEventListener('DOMContentLoaded', () => {
   // Action menu close events
   document.getElementById('action-menu-close').addEventListener('click', funCloseActionMenu);
   document.getElementById('action-menu-backdrop').addEventListener('click', funCloseActionMenu);
-  
+
+  // Event delegation for action menu items
+  document.getElementById('action-menu-items').addEventListener('click', (e) => {
+    const button = e.target.closest('button[data-menu-action]');
+    if (!button || button.disabled) return;
+
+    const action = button.dataset.menuAction;
+    const employeeId = button.dataset.employeeId;
+
+    // Execute the appropriate action
+    switch (action) {
+      case 'view-profile':
+        funNavigateToProfile(employeeId);
+        break;
+      case 'map-skills':
+        funNavigateToAddSkills(employeeId);
+        break;
+      case 'assess-skills':
+        funNavigateToAssess(employeeId);
+        break;
+      case 'reassess-skills':
+        funNavigateToReassess(employeeId);
+        break;
+    }
+
+    funCloseActionMenu();
+  });
+
   // ESC key to close action menu
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
@@ -1148,11 +1186,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 });
-
-// Make functions available globally for inline onclick handlers
-window.funNavigateToProfile = funNavigateToProfile;
-window.funShowActionMenu = funShowActionMenu;
-window.funExecuteAction = funExecuteAction;
 </script>
 
 </body>
