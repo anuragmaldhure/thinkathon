@@ -667,7 +667,13 @@
     query, where, orderBy, limit, startAfter, endBefore, onSnapshot, Timestamp,
     getCountFromServer, enableIndexedDbPersistence
   } from 'https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js';
-  import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.12.4/firebase-auth.js';
+  import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.4/firebase-app.js';
+  import { 
+    onAuthStateChanged, 
+    createUserWithEmailAndPassword, 
+    sendEmailVerification,
+    getAuth 
+  } from 'https://www.gstatic.com/firebasejs/10.12.4/firebase-auth.js';
   import { auth, getDb } from "./scripts/firebase.js";
   import { showToast, showLoader, hideLoader, env } from "./scripts/main.js";
 
@@ -1180,18 +1186,101 @@
       let savedEmployeeId;
 
       if (currentMode === 'create') {
-        // Generate unique ID for new employee
-        const docRef = doc(collection(db, 'users'));
-        savedEmployeeId = docRef.id;
+        // Default password for new employees
+        const defaultPassword = 'SkillBridge@123';
+        let firebaseUid = null;
         
-        employeeData.id = savedEmployeeId;
-        employeeData.uid = ''; // Will be populated when user signs up
-        employeeData.role = 'employee'; // Default role for navigation
-        employeeData.createdTimestamp = timestamp;
-        employeeData.createdBy = userId;
+        try {
+          // Step 1: Create secondary Firebase app instance for user creation
+          showLoader('Creating Firebase authentication user...');
+          
+          const firebaseConfig = {
+            apiKey: env.FIREBASE_CONFIG.FIREBASE_API_KEY,
+            authDomain: env.FIREBASE_CONFIG.FIREBASE_AUTH_DOMAIN,
+            projectId: env.FIREBASE_CONFIG.FIREBASE_PROJECT_ID,
+            storageBucket: env.FIREBASE_CONFIG.FIREBASE_STORAGE_BUCKET,
+            messagingSenderId: env.FIREBASE_CONFIG.FIREBASE_MESSAGING_SENDER_ID,
+            appId: env.FIREBASE_CONFIG.FIREBASE_APP_ID,
+            measurementId: env.FIREBASE_CONFIG.MEASUREMENT_ID,
+          };
+          
+          const secondaryApp = initializeApp(firebaseConfig, 'SecondaryApp');
+          const secondaryAuth = getAuth(secondaryApp);
+          
+          // Create user with secondary auth instance
+          const userCredential = await createUserWithEmailAndPassword(
+            secondaryAuth,
+            employeeData.email,
+            defaultPassword
+          );
+          firebaseUid = userCredential.user.uid;
+          
+          console.log('[Employee Creation] Firebase Auth user created:', firebaseUid);
+          
+          // Send email verification to new employee
+          try {
+            await sendEmailVerification(userCredential.user);
+            console.log('[Employee Creation] Verification email sent to:', employeeData.email);
+          } catch (emailError) {
+            console.error('[Employee Creation] Failed to send verification email:', emailError);
+            // Continue even if email verification fails
+          }
+          
+          // Sign out from secondary app (doesn't affect admin session)
+          await secondaryAuth.signOut();
+          console.log('[Employee Creation] Signed out from secondary app');
+          
+        } catch (authError) {
+          console.error('[Employee Creation] Firebase Auth error:', authError);
+          hideLoader();
+          
+          // Handle specific Firebase Auth errors
+          if (authError.code === 'auth/email-already-in-use') {
+            throw new Error('Email address is already registered in Firebase Authentication');
+          } else if (authError.code === 'auth/invalid-email') {
+            throw new Error('Invalid email address format');
+          } else if (authError.code === 'auth/weak-password') {
+            throw new Error('Default password is too weak');
+          } else {
+            throw new Error(`Firebase Authentication error: ${authError.message}`);
+          }
+        }
         
-        await setDoc(docRef, employeeData);
-        showToast('Employee created successfully', 'success');
+        // Step 2: Create Firestore user document with Firebase UID
+        if (firebaseUid) {
+          try {
+            showLoader('Creating employee record in database...');
+            
+            const docRef = doc(collection(db, 'users'));
+            savedEmployeeId = docRef.id;
+            
+            employeeData.id = savedEmployeeId;
+            employeeData.uid = firebaseUid; // Store Firebase Auth UID
+            employeeData.role = 'employee'; // Default role for navigation
+            employeeData.createdTimestamp = timestamp;
+            employeeData.createdBy = userId;
+            
+            console.log('[Employee Creation] Creating Firestore document:', savedEmployeeId);
+            console.log('[Employee Creation] Employee data:', employeeData);
+            
+            await setDoc(docRef, employeeData);
+            
+            console.log('[Employee Creation] Firestore document created successfully');
+            
+            showToast(
+              `Employee created! Verification email sent to ${employeeData.email}. Default password: ${defaultPassword}`,
+              'success',
+              6000
+            );
+            
+          } catch (firestoreError) {
+            console.error('[Employee Creation] Firestore error:', firestoreError);
+            hideLoader();
+            throw new Error(`Failed to create employee record: ${firestoreError.message}`);
+          }
+        } else {
+          throw new Error('Failed to create Firebase Auth user');
+        }
         
       } else {
         // Update existing employee

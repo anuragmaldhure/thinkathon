@@ -467,12 +467,13 @@
                 }
 
                 try {
-                    // Try to get user data from Firestore
-                    const userDoc = await getDoc(doc(db, 'users', user.uid));
+                    // Try to get user data from Firestore by querying uid field
+                    const userQuery = query(collection(db, 'users'), where('uid', '==', user.uid), limit(1));
+                    const userSnapshot = await getDocs(userQuery);
                     let userData = null;
                     
-                    if (userDoc.exists()) {
-                        userData = userDoc.data();
+                    if (!userSnapshot.empty) {
+                        userData = { id: userSnapshot.docs[0].id, ...userSnapshot.docs[0].data() };
                     }
 
                     // Set user display data (with fallbacks)

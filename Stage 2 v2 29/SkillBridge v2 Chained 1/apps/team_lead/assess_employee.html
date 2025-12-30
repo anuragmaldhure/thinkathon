@@ -464,12 +464,13 @@
                 }
 
                 try {
-                    // Try to get user data from Firestore
-                    const userDoc = await getDoc(doc(db, 'users', user.uid));
+                    // Try to get user data from Firestore by querying uid field
+                    const userQuery = query(collection(db, 'users'), where('uid', '==', user.uid), limit(1));
+                    const userSnapshot = await getDocs(userQuery);
                     let userData = null;
                     
-                    if (userDoc.exists()) {
-                        userData = userDoc.data();
+                    if (!userSnapshot.empty) {
+                        userData = { id: userSnapshot.docs[0].id, ...userSnapshot.docs[0].data() };
                     }
 
                     // Set user display data (with fallbacks)
@@ -613,9 +614,10 @@ onAuthStateChanged(auth, async (user) => {
   }
   
   try {
-    const userDoc = await getDoc(doc(db, 'users', user.uid));
-    if (userDoc.exists()) {
-      currentUser = { uid: user.uid, ...userDoc.data() };
+    const userQuery = query(collection(db, 'users'), where('uid', '==', user.uid), limit(1));
+    const userSnapshot = await getDocs(userQuery);
+    if (!userSnapshot.empty) {
+      currentUser = { uid: user.uid, id: userSnapshot.docs[0].id, ...userSnapshot.docs[0].data() };
       await funInitializePage();
     } else {
       showToast("User profile not found", "error");

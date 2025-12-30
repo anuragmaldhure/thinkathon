@@ -129,42 +129,42 @@
                         <a href="my_team.html" class="nav-link block px-3 py-2 text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-700 rounded-md transition-colors" data-page="my_team">
                             Team Overview
                         </a>
-                        <div class="px-3 py-2 text-xs text-neutral-500 cursor-not-allowed hover:text-neutral-400" title="Coming Soon">
+                        <a href="employee_profile.html" class="nav-link block px-3 py-2 text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-700 rounded-md transition-colors" data-page="employee_profile">
                             <div class="flex items-center gap-2">
                                 <i data-lucide="user" class="w-4 h-4"></i>
                                 <span>Employee Profile</span>
                             </div>
-                        </div>
-                        <div class="px-3 py-2 text-xs text-neutral-500 cursor-not-allowed hover:text-neutral-400" title="Coming Soon">
+                        </a>
+                        <a href="employee_skill_mappings.html" class="nav-link block px-3 py-2 text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-700 rounded-md transition-colors" data-page="employee_skill_mappings">
                             <div class="flex items-center gap-2">
                                 <i data-lucide="clipboard" class="w-4 h-4"></i>
                                 <span>Skill Mappings</span>
                             </div>
-                        </div>
-                        <div class="px-3 py-2 text-xs text-neutral-500 cursor-not-allowed hover:text-neutral-400" title="Coming Soon">
+                        </a>
+                        <a href="add_skills_to_employee.html" class="nav-link block px-3 py-2 text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-700 rounded-md transition-colors" data-page="add_skills_to_employee">
                             <div class="flex items-center gap-2">
                                 <i data-lucide="circle-plus" class="w-4 h-4"></i>
                                 <span>Add Skills</span>
                             </div>
-                        </div>
-                        <div class="px-3 py-2 text-xs text-neutral-500 cursor-not-allowed hover:text-neutral-400" title="Coming Soon">
+                        </a>
+                        <a href="assess_employee.html" class="nav-link block px-3 py-2 text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-700 rounded-md transition-colors" data-page="assess_employee">
                             <div class="flex items-center gap-2">
                                 <i data-lucide="check-square" class="w-4 h-4"></i>
                                 <span>Assess Skills</span>
                             </div>
-                        </div>
-                        <div class="px-3 py-2 text-xs text-neutral-500 cursor-not-allowed hover:text-neutral-400" title="Coming Soon">
+                        </a>
+                        <a href="assessment_history.html" class="nav-link block px-3 py-2 text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-700 rounded-md transition-colors" data-page="assessment_history">
                             <div class="flex items-center gap-2">
                                 <i data-lucide="history" class="w-4 h-4"></i>
                                 <span>Assessment History</span>
                             </div>
-                        </div>
-                        <div class="px-3 py-2 text-xs text-neutral-500 cursor-not-allowed hover:text-neutral-400" title="Coming Soon">
+                        </a>
+                        <a href="employee_growth.html" class="nav-link block px-3 py-2 text-sm text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-700 rounded-md transition-colors" data-page="employee_growth">
                             <div class="flex items-center gap-2">
                                 <i data-lucide="trending-up" class="w-4 h-4"></i>
                                 <span>Growth Tracking</span>
                             </div>
-                        </div>
+                        </a>
                     </div>
                 </div>
 
@@ -478,12 +478,13 @@
                 }
 
                 try {
-                    // Try to get user data from Firestore
-                    const userDoc = await getDoc(doc(db, 'users', user.uid));
+                    // Try to get user data from Firestore by querying uid field
+                    const userQuery = query(collection(db, 'users'), where('uid', '==', user.uid), limit(1));
+                    const userSnapshot = await getDocs(userQuery);
                     let userData = null;
                     
-                    if (userDoc.exists()) {
-                        userData = userDoc.data();
+                    if (!userSnapshot.empty) {
+                        userData = { id: userSnapshot.docs[0].id, ...userSnapshot.docs[0].data() };
                     }
 
                     // Set user display data (with fallbacks)

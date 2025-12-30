@@ -441,12 +441,13 @@
                 }
 
                 try {
-                    // Try to get user data from Firestore
-                    const userDoc = await getDoc(doc(db, 'users', user.uid));
+                    // Try to get user data from Firestore by querying uid field
+                    const userQuery = query(collection(db, 'users'), where('uid', '==', user.uid), limit(1));
+                    const userSnapshot = await getDocs(userQuery);
                     let userData = null;
                     
-                    if (userDoc.exists()) {
-                        userData = userDoc.data();
+                    if (!userSnapshot.empty) {
+                        userData = { id: userSnapshot.docs[0].id, ...userSnapshot.docs[0].data() };
                     }
 
                     // Set user display data (with fallbacks)
@@ -635,11 +636,12 @@ async function funInitialLoad() {
 // Load skills and metadata
 async function funLoadSkillsAndMetadata() {
   try {
-    // Get current user's team members first
-    const userDoc = await withLimit(() => getDoc(doc(db, 'users', currentUser.uid)));
-    if (!userDoc.exists()) throw new Error('User not found');
+    // Get current user's team members first by querying uid field
+    const userQuery = query(collection(db, 'users'), where('uid', '==', currentUser.uid), limit(1));
+    const userSnapshot = await withLimit(() => getDocs(userQuery));
+    if (userSnapshot.empty) throw new Error('User not found');
     
-    const userData = userDoc.data();
+    const userData = { id: userSnapshot.docs[0].id, ...userSnapshot.docs[0].data() };
     
     // Get team members
     const teamQuery = query(
@@ -800,10 +802,11 @@ async function funGetSkillDetails(skillId) {
 
 // Get team members
 async function funGetTeamMembers() {
-  const userDoc = await getDoc(doc(db, 'users', currentUser.uid));
-  if (!userDoc.exists()) throw new Error('User not found');
+  const userQuery = query(collection(db, 'users'), where('uid', '==', currentUser.uid), limit(1));
+  const userSnapshot = await getDocs(userQuery);
+  if (userSnapshot.empty) throw new Error('User not found');
   
-  const userData = userDoc.data();
+  const userData = { id: userSnapshot.docs[0].id, ...userSnapshot.docs[0].data() };
   const teamQuery = query(
     collection(db, 'users'),
     where('teamLeadId', '==', userData.id),
