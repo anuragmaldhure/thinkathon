@@ -545,7 +545,19 @@
         import { onAuthStateChanged, getAuth, signOut } from 'https://www.gstatic.com/firebasejs/10.12.4/firebase-auth.js';
         import { doc, getDoc } from 'https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js';
 
-        // Initialize Lucide icons
+        
+        // Auth Guard - Check authentication before initializing page
+        onAuthStateChanged(auth, (user) => {
+            if (!user) {
+                window.location.href = 'auth.html';
+                return;
+            }
+            // User is authenticated, proceed with page initialization
+            initializePage();
+        });
+
+        // Wrap existing initialization code in this function
+        function initializePage() {// Initialize Lucide icons
         lucide.createIcons();
 
         // Mobile menu toggle
@@ -659,7 +671,9 @@
 
         // Initialize active nav state
         setActiveNavItem();
-    </script>
+    
+        } // End initializePage
+</script>
 
     
 <script id="data-script" type="module" data-tiramai="web-gen">
