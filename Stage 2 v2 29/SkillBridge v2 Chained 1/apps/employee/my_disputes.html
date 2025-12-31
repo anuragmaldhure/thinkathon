@@ -296,14 +296,6 @@
                   <th class="text-left font-semibold px-4 py-3 border-b border-neutral-200">
                     <button
                       class="inline-flex items-center gap-1 hover:text-brand-primary-700 focus:outline-none focus:text-brand-primary-700"
-                      id="sort-id">
-                      Dispute ID
-                      <i data-lucide="arrow-up-down" class="w-4 h-4"></i>
-                    </button>
-                  </th>
-                  <th class="text-left font-semibold px-4 py-3 border-b border-neutral-200">
-                    <button
-                      class="inline-flex items-center gap-1 hover:text-brand-primary-700 focus:outline-none focus:text-brand-primary-700"
                       id="sort-date">
                       Submitted Date
                       <i data-lucide="arrow-up-down" class="w-4 h-4"></i>
@@ -319,7 +311,7 @@
               <tbody id="disputes-table-body" class="divide-y divide-neutral-200">
                 <!-- Loading Skeleton -->
                 <tr class="skeleton-row">
-                  <td class="px-4 py-3" colspan="7">
+                  <td class="px-4 py-3" colspan="6">
                     <div class="space-y-2">
                       <div class="h-4 bg-neutral-200 rounded animate-pulse"></div>
                       <div class="h-4 bg-neutral-200 rounded animate-pulse w-3/4"></div>
@@ -327,7 +319,7 @@
                   </td>
                 </tr>
                 <tr class="skeleton-row">
-                  <td class="px-4 py-3" colspan="7">
+                  <td class="px-4 py-3" colspan="6">
                     <div class="space-y-2">
                       <div class="h-4 bg-neutral-200 rounded animate-pulse"></div>
                       <div class="h-4 bg-neutral-200 rounded animate-pulse w-2/3"></div>
@@ -335,7 +327,7 @@
                   </td>
                 </tr>
                 <tr class="skeleton-row">
-                  <td class="px-4 py-3" colspan="7">
+                  <td class="px-4 py-3" colspan="6">
                     <div class="space-y-2">
                       <div class="h-4 bg-neutral-200 rounded animate-pulse"></div>
                       <div class="h-4 bg-neutral-200 rounded animate-pulse w-4/5"></div>
@@ -844,9 +836,7 @@
 
         return `
         <tr class="${rowClass} cursor-pointer dispute-row" data-dispute-id="${dispute.id}">
-          <td class="px-4 py-3">
-            <span class="font-mono text-xs">${getShortId(dispute.id)}</span>
-          </td>
+
           <td class="px-4 py-3">
             ${formatDate(dispute.submissionDate)}
           </td>
@@ -968,15 +958,7 @@
       });
 
       // Sort handlers
-      document.getElementById('sort-id').addEventListener('click', () => {
-        if (currentSort.field === 'id') {
-          currentSort.direction = currentSort.direction === 'asc' ? 'desc' : 'asc';
-        } else {
-          currentSort = { field: 'id', direction: 'asc' };
-        }
-        funApplySort();
-        funRenderTable();
-      });
+
 
       document.getElementById('sort-date').addEventListener('click', () => {
         if (currentSort.field === 'submissionDate') {
