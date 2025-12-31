@@ -1025,6 +1025,8 @@ async function funCreateScoreDistributionChart(assessments, benchmark) {
   });
   
   const chartElement = document.getElementById('score-distribution-chart');
+  document.getElementById('score-distribution-skeleton').classList.add('hidden');
+  chartElement.classList.remove('hidden');
   const chart = echarts.init(chartElement);
   
   const option = {
@@ -1084,9 +1086,6 @@ async function funCreateScoreDistributionChart(assessments, benchmark) {
   }
   
   chart.setOption(option);
-  
-  document.getElementById('score-distribution-skeleton').classList.add('hidden');
-  document.getElementById('score-distribution-chart').classList.remove('hidden');
 }
 
 // Create trend chart
@@ -1102,6 +1101,8 @@ async function funCreateTrendChart(trendData, benchmarkData) {
   }
   
   const chartElement = document.getElementById('trend-chart');
+  document.getElementById('trend-chart-skeleton').classList.add('hidden');
+  chartElement.classList.remove('hidden');
   const chart = echarts.init(chartElement);
   
   const categories = trendData.map(d => d.cycle);
@@ -1169,9 +1170,6 @@ async function funCreateTrendChart(trendData, benchmarkData) {
   };
   
   chart.setOption(option);
-  
-  document.getElementById('trend-chart-skeleton').classList.add('hidden');
-  document.getElementById('trend-chart').classList.remove('hidden');
 }
 
 // Update rankings table

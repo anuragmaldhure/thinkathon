@@ -1137,7 +1137,7 @@ function funSetupEventListeners() {
   document.getElementById('btn-back')?.addEventListener('click', () => {
     const employeeId = getUrlParams().employeeId;
     if (employeeId) {
-      window.location.href = `/employee_profile.html?employeeId=${employeeId}`;
+      window.location.href = `employee_profile.html?employeeId=${employeeId}`;
     } else {
       window.location.href = 'my_team.html';
     }
