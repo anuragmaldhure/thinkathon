@@ -1080,7 +1080,26 @@ async function funLoadInternalTrainers() {
       eligibleEmployeeIds.map(async (employeeId) => {
         const userDoc = await getDoc(doc(db, 'users', employeeId));
         if (userDoc.exists()) {
-          return { id: userDoc.id, ...userDoc.data() };
+          const userData = userDoc.data();
+          let departmentName = 'N/A';
+          
+          // Fetch department name if departmentId exists
+          if (userData.departmentId) {
+            try {
+              const deptDoc = await getDoc(doc(db, 'departments', userData.departmentId));
+              if (deptDoc.exists()) {
+                departmentName = deptDoc.data().name;
+              }
+            } catch (err) {
+              console.error('Error loading department:', err);
+            }
+          }
+          
+          return { 
+            id: userDoc.id, 
+            ...userData,
+            departmentName 
+          };
         }
         return null;
       })
@@ -1101,7 +1120,7 @@ async function funLoadInternalTrainers() {
             </div>
             <div>
               <h4 class="text-sm font-medium text-neutral-900">${trainer.firstName || 'N/A'} ${trainer.lastName || 'N/A'}</h4>
-              <p class="text-xs text-neutral-500">${trainer.jobTitle || 'N/A'} • ${trainer.departmentId || 'N/A'}</p>
+              <p class="text-xs text-neutral-500">${trainer.jobTitle || 'N/A'}${trainer.departmentName ? ' • ' + trainer.departmentName : ''}</p>
             </div>
           </div>
           <button class="select-trainer-btn px-3 py-1 text-xs rounded border ${
