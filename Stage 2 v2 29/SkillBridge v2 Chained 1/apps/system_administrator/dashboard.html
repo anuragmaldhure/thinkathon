@@ -860,9 +860,15 @@
 
         if (disputeData.employeeId) {
           try {
-            const employeeDoc = await getDoc(doc(db, 'users', disputeData.employeeId));
-            if (employeeDoc.exists()) {
-              employeeData = employeeDoc.data();
+            // Query by uid field since employeeId stores the Firebase Auth uid, not the document ID
+            const usersQuery = query(
+              collection(db, 'users'),
+              where('uid', '==', disputeData.employeeId),
+              limit(1)
+            );
+            const usersSnapshot = await getDocs(usersQuery);
+            if (!usersSnapshot.empty) {
+              employeeData = usersSnapshot.docs[0].data();
               if (employeeData?.departmentId) {
                 const deptDoc = await getDoc(doc(db, 'departments', employeeData.departmentId));
                 if (deptDoc.exists()) {
