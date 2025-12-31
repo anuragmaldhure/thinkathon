@@ -1216,9 +1216,9 @@
         const skillId = button.dataset.skillId;
 
         if (action === 'view-details') {
-          window.location.href = `/skill_growth_detail.html?skillId=${encodeURIComponent(skillId)}`;
+          window.location.href = `skill_growth_detail.html?skillId=${encodeURIComponent(skillId)}`;
         } else if (action === 'raise-dispute') {
-          window.location.href = `/raise_dispute.html?preselected_skill_ids=${encodeURIComponent(JSON.stringify([skillId]))}`;
+          window.location.href = `raise_dispute.html?preselected_skill_ids=${encodeURIComponent(JSON.stringify([skillId]))}`;
         }
       });
     }
