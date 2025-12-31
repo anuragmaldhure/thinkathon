@@ -361,7 +361,6 @@
             <th class="text-left font-semibold px-4 py-3 border-b border-neutral-200">Completed</th>
             <th class="text-left font-semibold px-4 py-3 border-b border-neutral-200">Expected</th>
             <th class="text-left font-semibold px-4 py-3 border-b border-neutral-200">Status</th>
-            <th class="text-left font-semibold px-4 py-3 border-b border-neutral-200">Actions</th>
           </tr>
         </thead>
         <tbody id="departmentTableBody" class="divide-y divide-neutral-200">
@@ -372,7 +371,6 @@
             <td class="px-4 py-3"><div class="h-4 bg-neutral-200 rounded w-12"></div></td>
             <td class="px-4 py-3"><div class="h-4 bg-neutral-200 rounded w-12"></div></td>
             <td class="px-4 py-3"><div class="h-6 bg-neutral-200 rounded-full w-20"></div></td>
-            <td class="px-4 py-3"><div class="h-6 bg-neutral-200 rounded w-24"></div></td>
           </tr>
           <tr class="skeleton-row">
             <td class="px-4 py-3"><div class="h-4 bg-neutral-200 rounded w-40"></div></td>
@@ -380,7 +378,6 @@
             <td class="px-4 py-3"><div class="h-4 bg-neutral-200 rounded w-12"></div></td>
             <td class="px-4 py-3"><div class="h-4 bg-neutral-200 rounded w-12"></div></td>
             <td class="px-4 py-3"><div class="h-6 bg-neutral-200 rounded-full w-20"></div></td>
-            <td class="px-4 py-3"><div class="h-6 bg-neutral-200 rounded w-24"></div></td>
           </tr>
           <tr class="skeleton-row">
             <td class="px-4 py-3"><div class="h-4 bg-neutral-200 rounded w-28"></div></td>
@@ -388,7 +385,6 @@
             <td class="px-4 py-3"><div class="h-4 bg-neutral-200 rounded w-12"></div></td>
             <td class="px-4 py-3"><div class="h-4 bg-neutral-200 rounded w-12"></div></td>
             <td class="px-4 py-3"><div class="h-6 bg-neutral-200 rounded-full w-20"></div></td>
-            <td class="px-4 py-3"><div class="h-6 bg-neutral-200 rounded w-24"></div></td>
           </tr>
         </tbody>
       </table>
@@ -416,7 +412,6 @@
             <th class="text-left font-semibold px-4 py-3 border-b border-neutral-200">Completed</th>
             <th class="text-left font-semibold px-4 py-3 border-b border-neutral-200">Expected</th>
             <th class="text-left font-semibold px-4 py-3 border-b border-neutral-200">Status</th>
-            <th class="text-left font-semibold px-4 py-3 border-b border-neutral-200">Actions</th>
           </tr>
         </thead>
         <tbody id="teamLeadTableBody" class="divide-y divide-neutral-200">
@@ -428,7 +423,6 @@
             <td class="px-4 py-3"><div class="h-4 bg-neutral-200 rounded w-12"></div></td>
             <td class="px-4 py-3"><div class="h-4 bg-neutral-200 rounded w-12"></div></td>
             <td class="px-4 py-3"><div class="h-6 bg-neutral-200 rounded-full w-20"></div></td>
-            <td class="px-4 py-3"><div class="h-6 bg-neutral-200 rounded w-32"></div></td>
           </tr>
           <tr class="skeleton-row">
             <td class="px-4 py-3"><div class="h-4 bg-neutral-200 rounded w-28"></div></td>
@@ -437,7 +431,6 @@
             <td class="px-4 py-3"><div class="h-4 bg-neutral-200 rounded w-12"></div></td>
             <td class="px-4 py-3"><div class="h-4 bg-neutral-200 rounded w-12"></div></td>
             <td class="px-4 py-3"><div class="h-6 bg-neutral-200 rounded-full w-20"></div></td>
-            <td class="px-4 py-3"><div class="h-6 bg-neutral-200 rounded w-32"></div></td>
           </tr>
           <tr class="skeleton-row">
             <td class="px-4 py-3"><div class="h-4 bg-neutral-200 rounded w-36"></div></td>
@@ -446,7 +439,6 @@
             <td class="px-4 py-3"><div class="h-4 bg-neutral-200 rounded w-12"></div></td>
             <td class="px-4 py-3"><div class="h-4 bg-neutral-200 rounded w-12"></div></td>
             <td class="px-4 py-3"><div class="h-6 bg-neutral-200 rounded-full w-20"></div></td>
-            <td class="px-4 py-3"><div class="h-6 bg-neutral-200 rounded w-32"></div></td>
           </tr>
         </tbody>
       </table>
@@ -988,26 +980,12 @@ function funUpdateDepartmentTable(departments) {
         <td class="px-4 py-3">${dept.completed}</td>
         <td class="px-4 py-3">${dept.expected}</td>
         <td class="px-4 py-3">${status}</td>
-        <td class="px-4 py-3">
-          <button class="send-reminder-btn inline-flex items-center px-3 py-1 rounded-md text-sm bg-brand-primary-600 hover:bg-brand-primary-700 text-white focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2" data-dept-id="${dept.id}">
-            <svg class="w-4 h-4 mr-1" data-lucide="send"></svg>
-            Send Reminder
-          </button>
-        </td>
       </tr>
     `;
   }).join('');
   
   // Re-initialize icons
   lucide.createIcons();
-  
-  // Add event listeners for reminder buttons
-  tbody.querySelectorAll('.send-reminder-btn').forEach(btn => {
-    btn.addEventListener('click', (e) => {
-      const deptId = e.currentTarget.dataset.deptId;
-      funSendDepartmentReminder(deptId);
-    });
-  });
 }
 
 // Update team lead table  
@@ -1037,18 +1015,6 @@ function funUpdateTeamLeadTable(teamLeads) {
         <td class="px-4 py-3">${tl.completed}</td>
         <td class="px-4 py-3">${tl.expected}</td>
         <td class="px-4 py-3">${status}</td>
-        <td class="px-4 py-3">
-          <div class="flex items-center gap-2">
-            <button class="view-details-btn inline-flex items-center px-3 py-1 rounded-md text-sm border border-neutral-200 bg-white text-neutral-700 hover:bg-neutral-50 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2" data-team-lead-id="${tl.id}">
-              <svg class="w-4 h-4 mr-1" data-lucide="eye"></svg>
-              Details
-            </button>
-            <button class="send-reminder-btn inline-flex items-center px-3 py-1 rounded-md text-sm bg-brand-primary-600 hover:bg-brand-primary-700 text-white focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2" data-team-lead-id="${tl.id}">
-              <svg class="w-4 h-4 mr-1" data-lucide="send"></svg>
-              Reminder
-            </button>
-          </div>
-        </td>
       </tr>
     `;
   }).join('');
@@ -1057,17 +1023,10 @@ function funUpdateTeamLeadTable(teamLeads) {
   lucide.createIcons();
   
   // Add event listeners
-  tbody.querySelectorAll('.team-lead-name, .view-details-btn').forEach(btn => {
+  tbody.querySelectorAll('.team-lead-name').forEach(btn => {
     btn.addEventListener('click', (e) => {
       const teamLeadId = e.currentTarget.dataset.teamLeadId;
       funShowTeamLeadDetails(teamLeadId);
-    });
-  });
-  
-  tbody.querySelectorAll('.send-reminder-btn').forEach(btn => {
-    btn.addEventListener('click', (e) => {
-      const teamLeadId = e.currentTarget.dataset.teamLeadId;
-      funSendTeamLeadReminder(teamLeadId);
     });
   });
 }
@@ -1139,8 +1098,27 @@ function funSendDepartmentReminder(departmentId) {
   const dept = departmentData.find(d => d.id === departmentId);
   if (!dept) return;
   
-  // Record the action (no external API as per spec)
-  showToast(`Reminder sent to ${dept.name} department`, 'success');
+  // Find all team leads for this department
+  const departmentTeamLeads = teamLeadData.filter(tl => tl.departmentId === departmentId);
+  
+  if (departmentTeamLeads.length === 0) {
+    showToast(`No team leads found for ${dept.name} department`, 'warning');
+    return;
+  }
+  
+  // Send email to each team lead
+  departmentTeamLeads.forEach(teamLead => {
+    // In a real implementation, this would call an email API
+    // For now, we'll simulate the email sending
+    console.log(`Sending reminder email to: ${teamLead.name} (${teamLead.email || 'no-email@example.com'})`);
+    console.log(`Department: ${dept.name}`);
+    console.log(`Assessment Cycle: ${cyclesMap.get(currentCycleId)?.name || 'Unknown'}`);
+    console.log(`Completion Rate: ${teamLead.expected > 0 ? Math.round((teamLead.completed / teamLead.expected) * 100) : 0}%`);
+  });
+  
+  // Show success message
+  const teamLeadNames = departmentTeamLeads.map(tl => tl.name).join(', ');
+  showToast(`Reminder sent to ${departmentTeamLeads.length} team lead(s) in ${dept.name}: ${teamLeadNames}`, 'success');
 }
 
 // Send team lead reminder (placeholder)

@@ -962,7 +962,30 @@ async function funLoadRecentActivity() {
       return;
     }
     
-    funRenderActivity(assessments);
+    // Get skills data
+    const skillIds = [...new Set(assessments.map(a => a.skillId))];
+    const skillsSnapshot = await getDocs(collection(db, 'skills'));
+    const skillsMap = {};
+    skillsSnapshot.docs.forEach(doc => {
+      skillsMap[doc.id] = { id: doc.id, ...doc.data() };
+    });
+    
+    // Get skill categories
+    const categoriesSnapshot = await getDocs(collection(db, 'skillCategories'));
+    const categoriesMap = {};
+    categoriesSnapshot.docs.forEach(doc => {
+      categoriesMap[doc.id] = { id: doc.id, ...doc.data() };
+    });
+    
+    // Get skill benchmarks
+    const benchmarksSnapshot = await getDocs(collection(db, 'skillBenchmarks'));
+    const benchmarksMap = {};
+    benchmarksSnapshot.docs.forEach(doc => {
+      const data = doc.data();
+      benchmarksMap[data.skillId] = data;
+    });
+    
+    funRenderActivity(assessments, skillsMap, categoriesMap, benchmarksMap);
     
   } catch (error) {
     console.error('Error loading recent activity:', error);
@@ -971,7 +994,7 @@ async function funLoadRecentActivity() {
 }
 
 // Render activity
-function funRenderActivity(assessments) {
+function funRenderActivity(assessments, skillsMap, categoriesMap, benchmarksMap) {
   const container = document.getElementById('activityContent');
   container.innerHTML = '';
   
@@ -981,12 +1004,36 @@ function funRenderActivity(assessments) {
       ? `${employee.firstName || ''} ${employee.lastName || ''}`.trim()
       : 'Unknown Employee';
     
+    const skill = skillsMap[assessment.skillId];
+    const skillName = skill?.name || 'Unknown Skill';
+    
+    const category = skill?.categoryId ? categoriesMap[skill.categoryId] : null;
+    const skillCategory = category?.categoryName || 'Unknown';
+    
+    const score = assessment.score || 0;
+    const benchmark = assessment.benchmarkAtTimeOfAssessment || benchmarksMap[assessment.skillId]?.benchmarkScore || 0;
+    const gap = benchmark - score;
+    
     const assessmentDate = assessment.assessmentTimestamp 
       ? formatDate(assessment.assessmentTimestamp)
       : 'N/A';
     
+    // Determine performance status
+    let performanceBadge = '';
+    let performanceColor = '';
+    if (gap <= 0) {
+      performanceBadge = 'Above Benchmark';
+      performanceColor = 'bg-success-600';
+    } else if (gap <= 2) {
+      performanceBadge = 'Near Benchmark';
+      performanceColor = 'bg-warning-600';
+    } else {
+      performanceBadge = 'Below Benchmark';
+      performanceColor = 'bg-danger-600';
+    }
+    
     const div = document.createElement('div');
-    div.className = 'flex items-center gap-3 p-3 border border-neutral-200 rounded-sm hover:bg-neutral-50 cursor-pointer';
+    div.className = 'flex items-start gap-3 p-3 border border-neutral-200 rounded-sm hover:bg-neutral-50 cursor-pointer';
     div.onclick = () => funNavigateToEmployee(assessment.employeeId);
     
     const initials = employeeName
@@ -1002,7 +1049,12 @@ function funRenderActivity(assessments) {
       </div>
       <div class="flex-1 min-w-0">
         <p class="text-sm font-medium text-neutral-900 truncate">${employeeName}</p>
-        <p class="text-xs text-neutral-500">Assessment submitted • ${assessmentDate}</p>
+        <p class="text-xs text-neutral-600 truncate mt-0.5">${skillName} <span class="text-neutral-400">• ${skillCategory}</span></p>
+        <div class="flex items-center gap-2 mt-1.5">
+          <span class="text-xs font-semibold ${performanceColor} text-white px-2 py-0.5 rounded">${performanceBadge}</span>
+          <span class="text-xs text-neutral-500">Score: ${score}/${benchmark}</span>
+          <span class="text-xs text-neutral-400">• ${assessmentDate}</span>
+        </div>
       </div>
       <div class="flex-shrink-0">
         <i data-lucide="chevron-right" class="w-4 h-4 text-neutral-400"></i>
