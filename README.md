@@ -1,9 +1,9 @@
-# thinkathon - threemovesahead
+# Thinkathon 2025 - ThreeMovesAhead
 
-# 🎯 SkillBridge - Intelligent Skill Management Platform
+# 🎯 SkillBridge
 
 
-> **Transform chaotic skill management into an intelligent, automated system**
+**A competency mapping and training-need identification platform that turns skill data into actionable growth plans.**
 
 SkillBridge is a comprehensive role-based skill management platform that automates the entire employee skill lifecycle - from assessment to training to growth tracking. Built for organizations that value transparency, fairness, and data-driven decision making.
 
