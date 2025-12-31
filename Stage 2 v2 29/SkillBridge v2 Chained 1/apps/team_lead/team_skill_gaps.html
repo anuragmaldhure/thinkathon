@@ -339,11 +339,11 @@
           </div>
         </div>
         <div id="heatmap-content" class="hidden">
-          <table class="min-w-full">
+          <table class="min-w-full border-collapse">
             <thead>
-              <tr>
-                <th class="sticky left-0 bg-white text-left text-xs font-semibold text-neutral-700 p-2 border-r border-neutral-200">Employee</th>
-                <th id="skill-headers" class="text-center text-xs font-semibold text-neutral-700 p-2"></th>
+              <tr id="skill-headers-row">
+                <th class="sticky left-0 bg-white text-left text-xs font-semibold text-neutral-700 p-2 border-r border-neutral-200 z-10 min-w-[100px]">Employee</th>
+                <!-- Dynamic skill headers will be appended here -->
               </tr>
             </thead>
             <tbody id="heatmap-body">
@@ -519,7 +519,7 @@
         import { showToast, showLoader, hideLoader, env } from "./scripts/main.js";
         import { auth, db, storage } from "./scripts/firebase.js";
         import { onAuthStateChanged, getAuth, signOut } from 'https://www.gstatic.com/firebasejs/10.12.4/firebase-auth.js';
-        import { doc, getDoc } from 'https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js';
+        import { doc, getDoc, query, collection, where, limit, getDocs } from 'https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js';
 
         // Initialize Lucide icons
         lucide.createIcons();
@@ -1052,7 +1052,7 @@ function funPopulateFilters() {
 }
 
 function funRenderHeatmap() {
-  const skillHeaders = document.getElementById('skill-headers');
+  const skillHeadersRow = document.getElementById('skill-headers-row');
   const heatmapBody = document.getElementById('heatmap-body');
 
   // Get filtered skills
@@ -1061,15 +1061,19 @@ function funRenderHeatmap() {
   const activeSkills = activeSkillIds.map(id => allData.skills.find(skill => skill.id === id)).filter(Boolean);
   const filteredSkills = funApplySkillFilters(activeSkills);
 
+  // Clear existing skill headers (keep the first Employee header)
+  while (skillHeadersRow.children.length > 1) {
+    skillHeadersRow.removeChild(skillHeadersRow.lastChild);
+  }
+
   // Render skill headers
-  skillHeaders.innerHTML = '';
   filteredSkills.forEach(skill => {
     const th = document.createElement('th');
     th.className = 'text-center text-xs font-semibold text-neutral-700 p-2 border-l border-neutral-200 min-w-[60px]';
     th.style.writingMode = 'vertical-rl';
     th.style.textOrientation = 'mixed';
     th.textContent = skill.name || 'Unknown Skill';
-    skillHeaders.appendChild(th);
+    skillHeadersRow.appendChild(th);
   });
 
   // Render heatmap body
