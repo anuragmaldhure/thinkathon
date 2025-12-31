@@ -1,5 +1,4 @@
-# thinkathon
-threemovesahead
+# thinkathon - threemovesahead
 
 # 🎯 SkillBridge - Intelligent Skill Management Platform
 
@@ -72,30 +71,50 @@ SkillBridge is a comprehensive role-based skill management platform that automat
 
 ---
 
-## 🏗️ Architecture
 
-SkillBridge follows a modern **multi-role SPA architecture** with clear separation of concerns:
+## 🏗️ System Architecture
 
+```mermaid
+graph TB
+    subgraph "Frontend Layer"
+        A[Navigator Portal] --> B[System Admin Portal]
+        A --> C[Team Lead Portal]
+        A --> D[Employee Portal]
+    end
+    
+    subgraph "Application Layer"
+        B --> E[Firebase SDK]
+        C --> E
+        D --> E
+        E --> F[Authentication Module]
+        E --> G[HTTP Interceptors]
+        E --> H[State Management]
+    end
+    
+    subgraph "Backend Services - Firebase"
+        F --> I[Firebase Authentication]
+        G --> J[Cloud Firestore]
+        G --> K[Cloud Storage]
+        I --> J
+    end
+    
+    subgraph "Data Layer"
+        J --> L[(Users Collection)]
+        J --> M[(Employees Collection)]
+        J --> N[(Skills Collection)]
+        J --> O[(Assessments Collection)]
+        J --> P[(Training Sessions)]
+        J --> Q[(Disputes Collection)]
+    end
+    
+    style A fill:#4CAF50
+    style B fill:#2196F3
+    style C fill:#FF9800
+    style D fill:#9C27B0
+    style I fill:#FFC107
+    style J fill:#00BCD4
 ```
-┌─────────────────────────────────────────────────────────┐
-│                   Client Layer (Browser)                 │
-│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐  │
-│  │   Employee   │  │  Team Lead   │  │ System Admin │  │
-│  │    Portal    │  │    Portal    │  │    Portal    │  │
-│  └──────────────┘  └──────────────┘  └──────────────┘  │
-└──────────────────────────┬──────────────────────────────┘
-                           │
-                ┌──────────▼───────────┐
-                │   Authentication     │
-                │  & Authorization     │
-                └──────────┬───────────┘
-                           │
-          ┌────────────────┼────────────────┐
-          │                │                │
-┌─────────▼────────┐ ┌────▼─────┐ ┌────────▼────────┐
-│ Firebase Auth    │ │ Firestore│ │ Cloud Storage   │
-└──────────────────┘ └──────────┘ └─────────────────┘
-```
+---
 
 ### Architecture Highlights
 
@@ -321,9 +340,7 @@ SkillBridge follows a modern **multi-role SPA architecture** with clear separati
 
 ---
 
-## 🔄 Key Workflows
-
-### 1. Assessment Cycle Workflow
+## key Workflow - Assessment to Training
 
 ```mermaid
 sequenceDiagram
@@ -331,6 +348,7 @@ sequenceDiagram
     participant TL as Team Lead
     participant E as Employee
     participant DB as Firestore
+    participant AN as Analytics Engine
 
     SA->>DB: Create Assessment Cycle
     TL->>DB: Fetch Team Members
@@ -338,43 +356,22 @@ sequenceDiagram
     DB->>E: Notify Assessment Complete
     E->>DB: View Results
     
-    alt Disagrees with Rating
+    alt Employee Disagrees
         E->>DB: Raise Dispute
-        DB->>TL: Notify Dispute
+        DB->>TL: Notify Team Lead
         TL->>DB: Review & Resolve
-        alt Escalate
-            DB->>SA: Escalation Notification
-            SA->>DB: Final Decision
-        end
+        DB->>E: Send Resolution
     end
+    
+    DB->>AN: Aggregate Assessment Data
+    AN->>SA: Generate Skill Gap Report
+    SA->>DB: Create Training Sessions
+    DB->>E: Notify Training Available
+    E->>DB: Enroll in Training
+    DB->>E: Track Progress & Completion
 ```
 
-### 2. Training Management Workflow
-
-1. **Gap Identification**: System Admin reviews skill gap analytics
-2. **Session Creation**: Admin creates training session with target skills
-3. **Trainer Assignment**: External/internal trainer assigned
-4. **Employee Notification**: Eligible employees notified
-5. **Enrollment**: Employees enroll (capacity-limited)
-6. **Conduct Training**: Trainer marks attendance, uploads materials
-7. **Completion & Feedback**: Employees rate training
-8. **Impact Analysis**: Before/after skill comparison
-
-### 3. Dispute Resolution Workflow
-
-```
-Employee Raises Dispute
-        ↓
-Team Lead Reviews
-        ↓
-    ┌───┴───┐
-Accept  │  Reject  │  Escalate
-    ↓       ↓         ↓
-Update  Notify   System Admin
-Rating  Employee  Final Decision
-    ↓       ↓         ↓
-   [RESOLVED]    [RESOLVED]
-```
+---
 
 
 
