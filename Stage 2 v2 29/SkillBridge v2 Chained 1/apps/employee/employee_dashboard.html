@@ -608,7 +608,7 @@
     }
 
     // Auth state management
-    let currentUser = null;
+    // let currentUser = null;
 
     function updateUserProfile(user, userData = null) {
       const userAvatar = document.getElementById('user-avatar');
@@ -1256,17 +1256,24 @@
           collection(db, 'trainingSessions'),
           where('status', '==', 'scheduled'),
           orderBy('scheduledDate', 'asc'),
-          limit(10) // Get more to filter client-side
+          limit(15) // Get more to filter client-side
         );
 
         const trainingsSnapshot = await getDocs(trainingsQuery);
         const allTrainings = trainingsSnapshot.docs.map(d => ({ id: d.id, ...d.data() }));
 
-        // Filter for user's trainings and future dates
+        // Filter for user's trainings (as attendee or host) and future dates
         const userTrainings = allTrainings.filter(training => {
           const isAssigned = training.assignedEmployees?.some(emp => emp.employeeId === currentEmployeeDocId);
+          const isTrainer = training.trainerType === 'internal' && training.trainerId === currentEmployeeDocId;
           const isScheduledDate = training.scheduledDate && new Date(training.scheduledDate) > now;
-          return isAssigned && isScheduledDate;
+          
+          if ((isAssigned || isTrainer) && isScheduledDate) {
+            // Mark the role for display
+            training.userRole = isTrainer ? 'host' : 'attendee';
+            return true;
+          }
+          return false;
         }).slice(0, 3);
 
         // Get skill details for trainings
@@ -1297,6 +1304,11 @@
             const skill = skills[training.skillId];
             const startDate = formatDate(training.scheduledDate);
             const endDate = formatDate(training.endDate);
+            
+            // Role badge
+            const roleBadge = training.userRole === 'host' 
+              ? '<span class="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-accent-gold-500 text-white">Host</span>'
+              : '<span class="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-brand-primary-600 text-white">Attendee</span>';
 
             return `
             <div class="flex items-start gap-3 p-3 border border-neutral-200 rounded-sm hover:bg-neutral-50 cursor-pointer training-item" data-session-id="${training.id}">
@@ -1304,7 +1316,10 @@
                 ${skill?.name?.charAt(0) || 'T'}
               </div>
               <div class="flex-1 min-w-0">
-                <p class="text-sm font-medium text-neutral-950 mb-1">${skill?.name || 'Training Session'}</p>
+                <div class="flex items-center gap-2 mb-1">
+                  <p class="text-sm font-medium text-neutral-950">${skill?.name || 'Training Session'}</p>
+                  ${roleBadge}
+                </div>
                 <p class="text-xs text-neutral-700 mb-1">${startDate} - ${endDate}</p>
                 <p class="text-xs text-neutral-500 capitalize">${training.mode || 'N/A'} Mode</p>
               </div>

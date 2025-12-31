@@ -365,6 +365,7 @@
               <thead class="bg-neutral-50 text-neutral-700">
                 <tr>
                   <th class="text-left font-semibold px-4 py-3 border-b border-neutral-200">Skill</th>
+                  <th class="text-left font-semibold px-4 py-3 border-b border-neutral-200">Role</th>
                   <th class="text-left font-semibold px-4 py-3 border-b border-neutral-200">Training Date</th>
                   <th class="text-left font-semibold px-4 py-3 border-b border-neutral-200">End Date</th>
                   <th class="text-left font-semibold px-4 py-3 border-b border-neutral-200">Mode</th>
@@ -503,7 +504,7 @@
     }
 
     // Auth state management
-    let currentUser = null;
+    // let currentUser = null;
 
     function updateUserProfile(user, userData = null) {
       const userAvatar = document.getElementById('user-avatar');
@@ -680,7 +681,7 @@
       if (!currentUser || !currentEmployeeDocId || (!forceRefresh && allSessions.length > 0)) return;
 
       try {
-        // Fetch training sessions where user is assigned
+        // Fetch training sessions where user is assigned or is the trainer
         const sessionsQuery = query(
           collection(db, 'trainingSessions'),
           orderBy('scheduledDate', 'desc'),
@@ -689,18 +690,29 @@
 
         const sessionsSnapshot = await getDocs(sessionsQuery);
         const rawSessions = [];
+        const addedSessionIds = new Set(); // Track added sessions to avoid duplicates
 
-        // Filter sessions where current user is assigned
+        // Filter sessions where current user is assigned OR is the trainer
         sessionsSnapshot.forEach(doc => {
           const sessionData = { id: doc.id, ...doc.data() };
           const assignedEmployees = sessionData.assignedEmployees || [];
 
-          // Check if current user is in assigned employees
-          // Check if current user is in assigned employees (using Firestore Doc ID)
+          // Check if current user is the trainer (host) - internal trainers only
+          const isTrainer = sessionData.trainerType === 'internal' && sessionData.trainerId === currentEmployeeDocId;
+          
+          // Check if current user is in assigned employees (attendee)
           const userAssignment = assignedEmployees.find(emp => emp.employeeId === currentEmployeeDocId);
-          if (userAssignment) {
+          
+          if (isTrainer && !addedSessionIds.has(sessionData.id)) {
+            sessionData.userRole = 'host';
+            sessionData.userAttendance = 'N/A'; // Trainers don't have attendance tracking
+            rawSessions.push(sessionData);
+            addedSessionIds.add(sessionData.id);
+          } else if (userAssignment && !addedSessionIds.has(sessionData.id)) {
+            sessionData.userRole = 'attendee';
             sessionData.userAttendance = userAssignment.attendanceStatus || 'pending';
             rawSessions.push(sessionData);
+            addedSessionIds.add(sessionData.id);
           }
         });
 
@@ -789,6 +801,21 @@
       const scheduledDate = new Date(session.scheduledDate);
       scheduledDate.setHours(0, 0, 0, 0);
 
+      // For hosts, use session status instead of attendance
+      if (session.userRole === 'host') {
+        if (scheduledDate > today) {
+          return 'upcoming';
+        } else if (session.status === 'completed') {
+          return 'completed';
+        } else if (session.status === 'cancelled') {
+          return 'missed';
+        } else {
+          // Past scheduled session that's not completed = completed (host conducted it)
+          return 'completed';
+        }
+      }
+
+      // For attendees, use attendance status
       if (scheduledDate > today) {
         return 'upcoming';
       } else if (session.userAttendance === 'attended') {
@@ -805,6 +832,7 @@
     // Check feedback eligibility
     function funIsEligibleForFeedback(session, existingFeedback) {
       if (!session || !session.endDate) return false;
+      if (session.userRole === 'host') return false; // Hosts don't submit feedback
       if (existingFeedback) return false; // Already submitted
 
       const today = new Date();
@@ -929,14 +957,23 @@
           year: 'numeric', month: 'short', day: 'numeric'
         }) : 'N/A';
 
+      // Role badge
+      const roleBadge = session.userRole === 'host' 
+        ? '<span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-accent-gold-500 text-white"><i data-lucide="mic" class="w-3 h-3 mr-1"></i>Host</span>'
+        : '<span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-brand-primary-600 text-white"><i data-lucide="user" class="w-3 h-3 mr-1"></i>Attendee</span>';
+
       // Status badge
       const statusBadge = funGetStatusBadge(session.status);
 
-      // Attendance badge
-      const attendanceBadge = funGetAttendanceBadge(session.userAttendance);
+      // Attendance badge (N/A for hosts)
+      const attendanceBadge = session.userRole === 'host' 
+        ? '<span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-neutral-200 text-neutral-700">N/A</span>'
+        : funGetAttendanceBadge(session.userAttendance);
 
-      // Feedback status
-      const feedbackStatus = funGetFeedbackStatus(session);
+      // Feedback status (N/A for hosts)
+      const feedbackStatus = session.userRole === 'host'
+        ? '<span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-neutral-200 text-neutral-700">N/A</span>'
+        : funGetFeedbackStatus(session);
 
       // Mode badge
       const modeBadge = session.mode ?
@@ -950,6 +987,7 @@
             ${session.skillName || 'N/A'}
           </button>
         </td>
+        <td class="px-4 py-3">${roleBadge}</td>
         <td class="px-4 py-3 text-neutral-900">${formattedStartDate}</td>
         <td class="px-4 py-3 text-neutral-900">${formattedEndDate}</td>
         <td class="px-4 py-3">${modeBadge}</td>
