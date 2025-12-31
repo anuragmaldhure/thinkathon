@@ -14,8 +14,8 @@ const env = {
   TIRAM_AI_TAG_ENABLED: true,
   CLARITY_ENABLED: false,
   app: {
-    name: 'SkillBridge  v2 Chained 1',
-    logo: 'assets/imgs/logo.png',
+    name: 'SkillBridge',
+    logo: 'assets/imgs/logo.svg',
     logoWithText: 'assets/imgs/logo-with-text.png',
     themePreset: 'default',
     navigation: 'sidenav', // Can be 'topnav' or 'sidenav'
@@ -35,7 +35,7 @@ const env = {
   //   FIRESTORE_DB_NAME: 'gen-app-db-13',
   // },
   // For Firebase JS SDK v7.20.0 and later, measurementId is optional
-    FIREBASE_CONFIG: {
+  FIREBASE_CONFIG: {
     FIREBASE_API_KEY: 'AIzaSyCmg0yw5tKI7f_OrqpK7Hm5i9jMqpShuFQ',
     FIREBASE_AUTH_DOMAIN: 'preview-stack.firebaseapp.com',
     FIREBASE_PROJECT_ID: 'preview-stack',
