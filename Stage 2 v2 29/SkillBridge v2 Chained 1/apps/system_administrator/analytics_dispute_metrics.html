@@ -1043,6 +1043,12 @@
     const skeleton = document.getElementById('team-lead-skeleton');
     const empty = document.getElementById('team-lead-empty');
 
+    // Return early if Team Lead elements don't exist (tab is commented out)
+    if (!tbody || !container || !skeleton || !empty) {
+      console.warn('Team Lead table elements not found - tab may be disabled');
+      return;
+    }
+
     skeleton.classList.add('hidden');
     
     if (!data || data.length === 0) {
@@ -1375,21 +1381,25 @@
   // Main initialization
   async function funInitialLoad(forceRefresh = false) {
     try {
-      if (!forceRefresh) {
-        // Show skeletons
-        document.getElementById('team-lead-skeleton').classList.remove('hidden');
-        document.getElementById('team-lead-table-container').classList.add('hidden');
-      }
-
-      // Load data based on active tab
-      const activeTab = document.querySelector('.tab-button.active')?.id || 'tab-team-lead';
+      // Load data based on active tab (Resolution Metrics is the only active tab now)
+      const activeTab = document.querySelector('.tab-button.active')?.id || 'tab-resolution';
       
       if (activeTab === 'tab-team-lead') {
-        const teamLeadData = await funFetchTeamLeadAnalysis();
-        if (teamLeadData) {
-          funRenderTeamLeadTable(teamLeadData);
+        // Team Lead tab is currently commented out
+        const teamLeadSkeletonEl = document.getElementById('team-lead-skeleton');
+        const teamLeadContainerEl = document.getElementById('team-lead-table-container');
+        
+        if (!forceRefresh && teamLeadSkeletonEl && teamLeadContainerEl) {
+          teamLeadSkeletonEl.classList.remove('hidden');
+          teamLeadContainerEl.classList.add('hidden');
+        }
+        
+        const teamLeadDataResult = await funFetchTeamLeadAnalysis();
+        if (teamLeadDataResult) {
+          funRenderTeamLeadTable(teamLeadDataResult);
         }
       } else {
+        // Resolution Metrics tab
         const resolutionData = await funFetchResolutionMetrics();
         if (resolutionData) {
           funRenderResolutionMetrics(resolutionData);
