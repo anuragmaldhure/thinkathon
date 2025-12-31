@@ -1,805 +1,848 @@
 ﻿<!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>SkillBridge</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SkillBridge</title>
 
-    <!-- Required: Main JS Script -->
-    <script type="module" src="scripts/main.js" data-tiramai="web-gen"></script>
+  <!-- Required: Main JS Script -->
+  <script type="module" src="scripts/main.js" data-tiramai="web-gen"></script>
 
-    <!-- Required: TailwindCSS -->
-    <script src="./lib/tailwindcss/tailwindcss.js" fetchpriority="high" data-tiramai="web-gen"></script>
+  <!-- Required: TailwindCSS -->
+  <script src="./lib/tailwindcss/tailwindcss.js" fetchpriority="high" data-tiramai="web-gen"></script>
 
-    <!-- Required: Lucide Icons -->
-    <script src="https://unpkg.com/lucide@latest" data-tiramai="web-gen"></script>
+  <!-- Required: Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest" data-tiramai="web-gen"></script>
 
-    <!-- Required: Favicon -->
-    <link rel="icon" href="assets/imgs/logo.ico" type="image/x-icon" data-tiramai="web-gen"/>
+  <!-- Required: Favicon -->
+  <link rel="icon" href="assets/imgs/logo.ico" type="image/x-icon" data-tiramai="web-gen" />
 
-    <!-- ECharts Support (for charts/graphs) -->
-    <script defer src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js" data-tiramai="web-gen"></script>
+  <!-- ECharts Support (for charts/graphs) -->
+  <script defer src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js" data-tiramai="web-gen"></script>
 
-    <!-- Markdown Support (for content rendering) -->
-    <script defer src="https://cdn.jsdelivr.net/npm/marked/marked.min.js" data-tiramai="web-gen"></script>
+  <!-- Markdown Support (for content rendering) -->
+  <script defer src="https://cdn.jsdelivr.net/npm/marked/marked.min.js" data-tiramai="web-gen"></script>
 
-    <!-- Custom Tailwind Config -->
-    <script data-tiramai="web-gen">
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        'brand-primary-600': '#1B2A44',
-                        'brand-primary-700': '#14233A',
-                        'brand-primary-800': '#0E1A2B',
-                        'accent-gold-50': '#FFF7E6',
-                        'accent-gold-500': '#C59D42',
-                        'accent-gold-600': '#A97D22',
-                        'success-600': '#16A34A',
-                        'warning-600': '#D97706',
-                        'danger-600': '#DC2626',
-                        'info-600': '#2563EB',
-                        'heat-green': '#16A34A',
-                        'heat-amber': '#F59E0B',
-                        'heat-red': '#DC2626',
-                        'neutral-50': '#F8FAFC',
-                        'neutral-200': '#E2E8F0',
-                        'neutral-500': '#64748B',
-                        'neutral-700': '#334155',
-                        'neutral-900': '#111827',
-                        'neutral-950': '#0B1220',
-                    }
-                }
-            }
-        }
-    </script>
-</head>
-<body class="bg-neutral-50 min-h-screen text-neutral-900 text-sm leading-5">
-    <!-- Top Navigation -->
-    <header class="fixed top-0 left-0 right-0 bg-brand-primary-800 border-b border-neutral-200 flex items-center justify-between px-6 py-4 z-30 h-16">
-        <div class="flex items-center gap-4">
-            <svg width="32" height="32" viewBox="0 0 400 400" fill="none" xmlns="http://www.w3.org/2000/svg" class="h-8 w-8">
-                <rect x="84" y="116" width="56" height="168" rx="8" fill="#1E40AF"/>
-                <rect x="176" y="84" width="56" height="200" rx="8" fill="#059669"/>
-                <rect x="268" y="156" width="48" height="128" rx="8" fill="#1E40AF"/>
-                <rect x="114" y="180" width="172" height="20" rx="10" fill="#F59E0B"/>
-            </svg>
-            <span class="text-xl leading-7 font-semibold text-white">SkillBridge</span>
-        </div>
-        
-        <!-- Mobile Menu Button -->
-        <button id="mobile-menu-btn" class="md:hidden text-white hover:bg-brand-primary-700 p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2">
-            <i data-lucide="menu" class="w-5 h-5"></i>
-        </button>
-
-        <div class="hidden md:flex items-center gap-4">
-            <!-- User Profile Dropdown -->
-            <div class="relative">
-                <button id="user-profile-btn" class="flex items-center gap-2 text-white hover:bg-brand-primary-700 px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2">
-                    <div id="user-avatar" class="w-8 h-8 bg-accent-gold-500 rounded-full flex items-center justify-center text-brand-primary-800 font-semibold text-xs">
-                         
-                    </div>
-                    <span id="user-name" class="text-sm"></span>
-                    <i data-lucide="chevron-down" class="w-4 h-4"></i>
-                </button>
-                
-                <!-- Dropdown Menu -->
-                <div id="user-dropdown" class="hidden absolute right-0 mt-2 w-48 bg-white border border-neutral-200 rounded-md shadow-lg z-50">
-                    <div class="px-4 py-3 border-b border-neutral-200">
-                        <p class="text-sm font-medium text-neutral-900" id="dropdown-user-name"></p>
-                        <p class="text-xs text-neutral-500" id="dropdown-user-email"></p>
-                    </div>
-                    <div class="py-1">
-                        <button id="sign-out-btn" class="block w-full text-left px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50 focus:outline-none focus:bg-neutral-50">
-                            <i data-lucide="log-out" class="w-4 h-4 inline mr-2"></i>
-                            Sign Out
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </header>
-
-    <div class="flex pt-16">
-        <!-- Side Navigation -->
-        <aside id="sidebar" class="fixed md:static inset-y-0 left-0 z-20 w-64 bg-white border-r border-neutral-200 transform -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out pt-16 md:pt-0 overflow-y-auto" style="height: calc(100vh - 4rem);">
-            <nav class="p-4 space-y-1">
-                <!-- Employee Dashboard -->
-                <a href="employee_dashboard.html" class="nav-link flex items-center gap-3 px-3 py-2 text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-700 rounded-md group" data-page="employee_dashboard">
-                    <i data-lucide="layout-dashboard" class="w-5 h-5 text-neutral-500 group-hover:text-brand-primary-700"></i>
-                    <span class="font-medium">Employee Dashboard</span>
-                </a>
-
-                <!-- My Skills with Children -->
-                <div class="space-y-1">
-                    <a href="my_skills.html" class="nav-link flex items-center gap-3 px-3 py-2 text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-700 rounded-md group" data-page="my_skills">
-                        <i data-lucide="list" class="w-5 h-5 text-neutral-500 group-hover:text-brand-primary-700"></i>
-                        <span class="font-medium">My Skills</span>
-                    </a>
-                </div>
-
-                <!-- My Training Sessions with Children -->
-                <div class="space-y-1">
-                    <a href="my_training_sessions.html" class="nav-link flex items-center gap-3 px-3 py-2 text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-700 rounded-md group" data-page="my_training_sessions">
-                        <i data-lucide="calendar" class="w-5 h-5 text-neutral-500 group-hover:text-brand-primary-700"></i>
-                        <span class="font-medium">My Training Sessions</span>
-                    </a>
-                </div>
-
-                <!-- My Disputes with Children -->
-                <div class="space-y-1">
-                    <button class="nav-group-btn flex items-center justify-between w-full px-3 py-2 text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-700 rounded-md group" data-group="disputes">
-                        <div class="flex items-center gap-3">
-                            <i data-lucide="flag" class="w-5 h-5 text-neutral-500 group-hover:text-brand-primary-700"></i>
-                            <span class="font-medium">My Disputes</span>
-                        </div>
-                        <i data-lucide="chevron-down" class="w-4 h-4 text-neutral-500 group-hover:text-brand-primary-700 transition-transform duration-200"></i>
-                    </button>
-                    <div class="nav-group-children ml-8 space-y-1 hidden" data-group-target="disputes">
-                        <a href="my_disputes.html" class="nav-link flex items-center gap-3 px-3 py-2 text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-700 rounded-md text-xs" data-page="my_disputes">
-                            <i data-lucide="flag" class="w-4 h-4"></i>
-                            <span>View Disputes</span>
-                        </a>
-                        <a href="raise_dispute.html" class="nav-link flex items-center gap-3 px-3 py-2 text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-700 rounded-md text-xs" data-page="raise_dispute">
-                            <i data-lucide="plus-circle" class="w-4 h-4"></i>
-                            <span>Raise Dispute</span>
-                        </a>
-                    </div>
-                </div>
-
-                <!-- My Profile -->
-                <a href="my_profile.html" class="nav-link flex items-center gap-3 px-3 py-2 text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-700 rounded-md group" data-page="my_profile">
-                    <i data-lucide="user" class="w-5 h-5 text-neutral-500 group-hover:text-brand-primary-700"></i>
-                    <span class="font-medium">My Profile</span>
-                </a>
-            </nav>
-
-            <!-- Footer -->
-            <div class="absolute bottom-4 left-0 right-0 text-center text-xs text-neutral-500 bg-white px-4">
-                Made with ❤️ by TiramAi
-            </div>
-        </aside>
-
-        <!-- Mobile Overlay -->
-        <div id="mobile-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-10 hidden md:hidden"></div>
-
-        <!-- Main Content -->
-        <main id="pageContent" class="flex-1 p-6 overflow-y-auto min-h-screen">
-            
-<!-- My Disputes Page -->
-<div class="max-w-[1280px] mx-auto space-y-6">
-  <!-- Page Header -->
-  <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-    <div>
-      <h1 class="text-2xl leading-8 font-bold text-neutral-950">My Disputes</h1>
-      <p class="text-sm leading-5 text-neutral-700 mt-1">Track all disputes with status, resolution info, and response requirements.</p>
-    </div>
-    <button id="btn-raise-new-dispute" class="inline-flex items-center justify-center h-11 px-4 rounded-md bg-brand-primary-600 hover:bg-brand-primary-700 text-white focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2">
-      <i data-lucide="plus-circle" class="w-5 h-5 mr-2"></i>
-      Raise New Dispute
-    </button>
-  </div>
-
-  <!-- Summary Stats -->
-  <div id="summary-stats" class="grid grid-cols-2 md:grid-cols-4 gap-4">
-    <!-- Stats will be populated via JavaScript -->
-    <div class="bg-white border border-neutral-200 rounded-md p-4 shadow-sm">
-      <div class="flex items-center gap-3">
-        <div class="w-8 h-8 bg-neutral-100 rounded-full flex items-center justify-center">
-          <i data-lucide="flag" class="w-4 h-4 text-neutral-600"></i>
-        </div>
-        <div>
-          <p class="text-xs text-neutral-500">Total Disputes</p>
-          <p id="stat-total" class="text-xl leading-7 font-semibold text-neutral-950">-</p>
-        </div>
-      </div>
-    </div>
-    <div class="bg-white border border-neutral-200 rounded-md p-4 shadow-sm">
-      <div class="flex items-center gap-3">
-        <div class="w-8 h-8 bg-warning-600 bg-opacity-10 rounded-full flex items-center justify-center">
-          <i data-lucide="clock" class="w-4 h-4 text-warning-600"></i>
-        </div>
-        <div>
-          <p class="text-xs text-neutral-500">Open</p>
-          <p id="stat-open" class="text-xl leading-7 font-semibold text-neutral-950">-</p>
-        </div>
-      </div>
-    </div>
-    <div class="bg-white border border-neutral-200 rounded-md p-4 shadow-sm">
-      <div class="flex items-center gap-3">
-        <div class="w-8 h-8 bg-success-600 bg-opacity-10 rounded-full flex items-center justify-center">
-          <i data-lucide="check-circle" class="w-4 h-4 text-success-600"></i>
-        </div>
-        <div>
-          <p class="text-xs text-neutral-500">Resolved</p>
-          <p id="stat-resolved" class="text-xl leading-7 font-semibold text-neutral-950">-</p>
-        </div>
-      </div>
-    </div>
-    <div class="bg-white border border-neutral-200 rounded-md p-4 shadow-sm">
-      <div class="flex items-center gap-3">
-        <div class="w-8 h-8 bg-danger-600 bg-opacity-10 rounded-full flex items-center justify-center">
-          <i data-lucide="alert-circle" class="w-4 h-4 text-danger-600"></i>
-        </div>
-        <div>
-          <p class="text-xs text-neutral-500">Needs Response</p>
-          <p id="stat-needs-response" class="text-xl leading-7 font-semibold text-neutral-950">-</p>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Filter Tabs -->
-  <div class="bg-white border border-neutral-200 rounded-md shadow-sm">
-    <div class="flex border-b border-neutral-200">
-      <button id="tab-all" class="filter-tab px-6 py-3 text-sm font-medium text-neutral-700 hover:text-brand-primary-700 border-b-2 border-transparent hover:border-accent-gold-500 focus:outline-none focus:border-accent-gold-500 active" data-filter="all">
-        All
-      </button>
-      <button id="tab-open" class="filter-tab px-6 py-3 text-sm font-medium text-neutral-700 hover:text-brand-primary-700 border-b-2 border-transparent hover:border-accent-gold-500 focus:outline-none focus:border-accent-gold-500" data-filter="open">
-        Open
-      </button>
-      <button id="tab-resolved" class="filter-tab px-6 py-3 text-sm font-medium text-neutral-700 hover:text-brand-primary-700 border-b-2 border-transparent hover:border-accent-gold-500 focus:outline-none focus:border-accent-gold-500" data-filter="resolved">
-        Resolved
-      </button>
-      <button id="tab-needs-response" class="filter-tab px-6 py-3 text-sm font-medium text-neutral-700 hover:text-brand-primary-700 border-b-2 border-transparent hover:border-accent-gold-500 focus:outline-none focus:border-accent-gold-500" data-filter="needs_response">
-        Needs Response
-      </button>
-      <div class="flex-1"></div>
-      <button id="btn-refresh" class="inline-flex items-center px-3 py-2 text-sm text-neutral-500 hover:text-neutral-700 focus:outline-none focus:text-brand-primary-700" aria-label="Refresh">
-        <i data-lucide="refresh-cw" class="w-4 h-4 mr-2"></i>
-        Refresh
-      </button>
-    </div>
-
-    <!-- Data Grid -->
-    <div class="overflow-x-auto">
-      <table class="w-full text-sm leading-5">
-        <thead class="bg-neutral-50 text-neutral-700">
-          <tr>
-            <th class="text-left font-semibold px-4 py-3 border-b border-neutral-200">
-              <button class="inline-flex items-center gap-1 hover:text-brand-primary-700 focus:outline-none focus:text-brand-primary-700" id="sort-id">
-                Dispute ID
-                <i data-lucide="arrow-up-down" class="w-4 h-4"></i>
-              </button>
-            </th>
-            <th class="text-left font-semibold px-4 py-3 border-b border-neutral-200">
-              <button class="inline-flex items-center gap-1 hover:text-brand-primary-700 focus:outline-none focus:text-brand-primary-700" id="sort-date">
-                Submitted Date
-                <i data-lucide="arrow-up-down" class="w-4 h-4"></i>
-              </button>
-            </th>
-            <th class="text-left font-semibold px-4 py-3 border-b border-neutral-200">Cycle</th>
-            <th class="text-left font-semibold px-4 py-3 border-b border-neutral-200">Disputed Skills</th>
-            <th class="text-left font-semibold px-4 py-3 border-b border-neutral-200">Status</th>
-            <th class="text-left font-semibold px-4 py-3 border-b border-neutral-200">Resolution</th>
-            <th class="text-left font-semibold px-4 py-3 border-b border-neutral-200">Actions</th>
-          </tr>
-        </thead>
-        <tbody id="disputes-table-body" class="divide-y divide-neutral-200">
-          <!-- Loading Skeleton -->
-          <tr class="skeleton-row">
-            <td class="px-4 py-3" colspan="7">
-              <div class="space-y-2">
-                <div class="h-4 bg-neutral-200 rounded animate-pulse"></div>
-                <div class="h-4 bg-neutral-200 rounded animate-pulse w-3/4"></div>
-              </div>
-            </td>
-          </tr>
-          <tr class="skeleton-row">
-            <td class="px-4 py-3" colspan="7">
-              <div class="space-y-2">
-                <div class="h-4 bg-neutral-200 rounded animate-pulse"></div>
-                <div class="h-4 bg-neutral-200 rounded animate-pulse w-2/3"></div>
-              </div>
-            </td>
-          </tr>
-          <tr class="skeleton-row">
-            <td class="px-4 py-3" colspan="7">
-              <div class="space-y-2">
-                <div class="h-4 bg-neutral-200 rounded animate-pulse"></div>
-                <div class="h-4 bg-neutral-200 rounded animate-pulse w-4/5"></div>
-              </div>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-
-      <!-- Empty State -->
-      <div id="empty-state" class="hidden text-center py-12">
-        <i data-lucide="flag" class="w-12 h-12 text-neutral-300 mx-auto mb-4"></i>
-        <h3 class="text-base leading-6 font-semibold text-neutral-900 mb-2">No disputes found</h3>
-        <p class="text-sm leading-5 text-neutral-600 mb-6">You haven't raised any disputes yet, or none match your current filter.</p>
-        <button id="btn-raise-new-dispute-empty" class="inline-flex items-center justify-center h-10 px-4 rounded-md bg-brand-primary-600 hover:bg-brand-primary-700 text-white text-sm focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2">
-          <i data-lucide="plus-circle" class="w-4 h-4 mr-2"></i>
-          Raise New Dispute
-        </button>
-      </div>
-    </div>
-
-    <!-- Pagination -->
-    <div id="pagination-container" class="flex items-center justify-between px-4 py-3 border-t border-neutral-200">
-      <div class="text-sm text-neutral-700">
-        Showing <span id="showing-start">1</span> to <span id="showing-end">10</span> of <span id="total-count">0</span> disputes
-      </div>
-      <div class="flex items-center gap-2">
-        <button id="btn-prev-page" class="inline-flex items-center px-3 py-1 rounded-md border border-neutral-200 text-sm text-neutral-700 hover:bg-neutral-50 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
-          <i data-lucide="chevron-left" class="w-4 h-4 mr-1"></i>
-          Previous
-        </button>
-        <span id="page-info" class="px-3 py-1 text-sm text-neutral-700">Page 1 of 1</span>
-        <button id="btn-next-page" class="inline-flex items-center px-3 py-1 rounded-md border border-neutral-200 text-sm text-neutral-700 hover:bg-neutral-50 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
-          Next
-          <i data-lucide="chevron-right" class="w-4 h-4 ml-1"></i>
-        </button>
-      </div>
-    </div>
-  </div>
-</div>
-
-        </main>
-    </div>
-
-    <!-- Required: JavaScript -->
-    <script type="module" data-tiramai="web-gen">
-        import { showToast, showLoader, hideLoader, env } from "./scripts/main.js";
-        import { auth, db, storage } from "./scripts/firebase.js";
-        import { onAuthStateChanged, getAuth, signOut } from 'https://www.gstatic.com/firebasejs/10.12.4/firebase-auth.js';
-        import { doc, getDoc, collection, query, where, getDocs } from 'https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js';
-
-        // Initialize Lucide icons
-        lucide.createIcons();
-
-        // Mobile menu functionality
-        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
-        const sidebar = document.getElementById('sidebar');
-        const mobileOverlay = document.getElementById('mobile-overlay');
-
-        function toggleMobileMenu() {
-            sidebar.classList.toggle('-translate-x-full');
-            mobileOverlay.classList.toggle('hidden');
-        }
-
-        mobileMenuBtn?.addEventListener('click', toggleMobileMenu);
-        mobileOverlay?.addEventListener('click', toggleMobileMenu);
-
-        // Navigation group toggle functionality
-        document.querySelectorAll('.nav-group-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                const groupName = btn.getAttribute('data-group');
-                const children = document.querySelector(`[data-group-target="${groupName}"]`);
-                const chevron = btn.querySelector('[data-lucide="chevron-down"]');
-                
-                children?.classList.toggle('hidden');
-                chevron?.classList.toggle('rotate-180');
-            });
-        });
-
-        // User profile dropdown
-        const userProfileBtn = document.getElementById('user-profile-btn');
-        const userDropdown = document.getElementById('user-dropdown');
-
-        userProfileBtn?.addEventListener('click', (e) => {
-            e.stopPropagation();
-            userDropdown?.classList.toggle('hidden');
-        });
-
-        document.addEventListener('click', (e) => {
-            if (!userProfileBtn?.contains(e.target)) {
-                userDropdown?.classList.add('hidden');
-            }
-        });
-
-        // Active navigation highlighting
-        function updateActiveNav() {
-            const currentPage = window.location.pathname.split('/').pop()?.replace('.html', '') || 'employee_dashboard';
-            
-            document.querySelectorAll('.nav-link').forEach(link => {
-                const page = link.getAttribute('data-page');
-                if (page === currentPage) {
-                    link.classList.add('bg-accent-gold-50', 'text-brand-primary-700', 'border-l-4', 'border-accent-gold-500');
-                    link.classList.remove('text-neutral-700', 'text-neutral-600');
-                } else {
-                    link.classList.remove('bg-accent-gold-50', 'text-brand-primary-700', 'border-l-4', 'border-accent-gold-500');
-                }
-            });
-        }
-
-        // Auth state management
-        let currentUser = null;
-
-        function updateUserProfile(user, userData = null) {
-            const userAvatar = document.getElementById('user-avatar');
-            const userName = document.getElementById('user-name');
-            const dropdownUserName = document.getElementById('dropdown-user-name');
-            const dropdownUserEmail = document.getElementById('dropdown-user-email');
-
-            if (userData) {
-                const displayName = `${userData.firstName || ''} ${userData.lastName || ''}`.trim() || 'User';
-                const initials = displayName.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
-                
-                userAvatar.textContent = initials;
-                userName.textContent = displayName;
-                dropdownUserName.textContent = displayName;
-                dropdownUserEmail.textContent = userData.email || user.email;
-            } else {
-                // Fallback to auth data
-                const displayName = user.displayName || user.email.split('@')[0];
-                const initials = displayName.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
-                
-                userAvatar.textContent = initials;
-                userName.textContent = displayName;
-                dropdownUserName.textContent = displayName;
-                dropdownUserEmail.textContent = user.email;
-            }
-        }
-
-        async function loadUserData(user) {
-            try {
-                const usersQuery = query(collection(db, 'users'), where('uid', '==', user.uid), where('employeeStatus', '==', 'active'));
-                const usersSnapshot = await getDocs(usersQuery);
-                
-                if (!usersSnapshot.empty) {
-                    return usersSnapshot.docs[0].data();
-                } else {
-                    // Fallback data
-                    return {
-                        firstName: 'John',
-                        lastName: 'Doe',
-                        email: user.email
-                    };
-                }
-            } catch (error) {
-                console.error('Error loading user data:', error);
-                return null;
-            }
-        }
-
-        // Sign out functionality
-        document.getElementById('sign-out-btn')?.addEventListener('click', async () => {
-            try {
-                showLoader();
-                await signOut(auth);
-                showToast('Signed out successfully', 'success');
-                window.location.href = '/auth.html';
-            } catch (error) {
-                console.error('Sign out error:', error);
-                showToast('Error signing out', 'error');
-            } finally {
-                hideLoader();
-            }
-        });
-
-        // Initialize auth state listener
-        onAuthStateChanged(auth, async (user) => {
-            if (user) {
-                currentUser = user;
-                const userData = await loadUserData(user);
-                updateUserProfile(user, userData);
-                updateActiveNav();
-            } else {
-                window.location.href = '/auth.html';
-            }
-        });
-
-        // Initialize page
-        document.addEventListener('DOMContentLoaded', () => {
-            updateActiveNav();
-        });
-    </script>
-
-    
-<script id="data-script" type="module" data-tiramai="web-gen">
-  import {
-    collection, getDocs, doc, getDoc, query, where, orderBy, limit, startAfter, 
-    getCountFromServer, Timestamp
-  } from 'https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js';
-  import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.12.4/firebase-auth.js';
-  import { auth, getDb } from "./scripts/firebase.js";
-  import { showToast, showLoader, hideLoader, env } from "./scripts/main.js";
-
-  // Auth state check
-  onAuthStateChanged(auth, user => {
-    if (!user) {
-      location.href = "/auth.html?redirect=" + encodeURIComponent(location.pathname);
-    } else {
-      funInitialLoad();
-    }
-  });
-
-  const db = getDb();
-  
-  // State management
-  let currentUser = null;
-  let currentFilter = 'all';
-  let currentPage = 1;
-  const itemsPerPage = 10;
-  let currentSort = { field: 'submissionDate', direction: 'desc' };
-  let allDisputes = [];
-  let filteredDisputes = [];
-  let skillsCache = {};
-  let assessmentCyclesCache = {};
-
-  // Concurrency control for reads
-  function createSemaphore(max = 2) {
-    const queue = [];
-    let active = 0;
-    const next = () => {
-      if (active >= max || queue.length === 0) return;
-      active++;
-      const { fn, res, rej } = queue.shift();
-      Promise.resolve()
-        .then(fn)
-        .then(v => res(v))
-        .catch(e => rej(e))
-        .finally(() => { active--; next(); });
-    };
-    return (fn) => new Promise((res, rej) => { queue.push({ fn, res, rej }); next(); });
-  }
-  const withLimit = createSemaphore(2);
-
-  // Utility functions
-  function formatDate(dateString) {
-    if (!dateString) return 'N/A';
-    try {
-      const date = new Date(dateString);
-      return date.toLocaleDateString('en-US', { 
-        year: 'numeric', 
-        month: 'short', 
-        day: 'numeric'
-      });
-    } catch (error) {
-      console.error('Date formatting error:', error);
-      return 'N/A';
-    }
-  }
-
-  function getShortId(fullId) {
-    if (!fullId) return 'N/A';
-    return fullId.length > 8 ? fullId.slice(-8) : fullId;
-  }
-
-  function getStatusBadge(dispute) {
-    const needsResponse = funCheckNeedsResponse(dispute);
-    
-    if (needsResponse) {
-      return `<span class="inline-flex items-center px-2 py-1 text-xs rounded-full bg-danger-600 text-white">Needs Response</span>`;
-    }
-    
-    const status = dispute.status || '';
-    switch (status.toLowerCase()) {
-      case 'open':
-        return `<span class="inline-flex items-center px-2 py-1 text-xs rounded-full bg-warning-600 text-white">Open</span>`;
-      case 'resolved':
-        return `<span class="inline-flex items-center px-2 py-1 text-xs rounded-full bg-success-600 text-white">Resolved</span>`;
-      default:
-        return `<span class="inline-flex items-center px-2 py-1 text-xs rounded-full bg-neutral-500 text-white">${status || 'Unknown'}</span>`;
-    }
-  }
-
-  function getResolutionDisplay(dispute) {
-    if (!dispute.resolutionAction) return '-';
-    
-    switch (dispute.resolutionAction) {
-      case 'editRating':
-        return 'Edit Rating';
-      case 'dismiss':
-        return 'Dismiss';
-      default:
-        return dispute.resolutionAction || '-';
-    }
-  }
-
-  function funCheckNeedsResponse(dispute) {
-    if (!dispute || dispute.status !== 'resolved' || !dispute.resolutionTimestamp) {
-      return false;
-    }
-
-    // Check if there's an employee response after resolution
-    if (dispute.auditTrail && Array.isArray(dispute.auditTrail)) {
-      const resolutionTime = new Date(dispute.resolutionTimestamp);
-      return !dispute.auditTrail.some(entry => {
-        if (!entry.actorType || entry.actorType !== 'employee') return false;
-        if (!entry.action || !['agreed', 'disagreed'].includes(entry.action)) return false;
-        if (!entry.timestamp) return false;
-        
-        const entryTime = new Date(entry.timestamp);
-        return entryTime > resolutionTime;
-      });
-    }
-    
-    return true;
-  }
-
-  // Data fetching functions
-  async function funLoadSkills(skillIds) {
-    if (!skillIds || !Array.isArray(skillIds)) return [];
-    
-    const missingIds = skillIds.filter(id => !skillsCache[id]);
-    if (missingIds.length === 0) {
-      return skillIds.map(id => skillsCache[id]).filter(Boolean);
-    }
-
-    try {
-      const skillPromises = missingIds.map(skillId => 
-        withLimit(async () => {
-          const skillDoc = await getDoc(doc(db, 'skills', skillId));
-          if (skillDoc.exists()) {
-            const skillData = { id: skillDoc.id, ...skillDoc.data() };
-            skillsCache[skillId] = skillData;
-            return skillData;
+  <!-- Custom Tailwind Config -->
+  <script data-tiramai="web-gen">
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'brand-primary-600': '#1B2A44',
+            'brand-primary-700': '#14233A',
+            'brand-primary-800': '#0E1A2B',
+            'accent-gold-50': '#FFF7E6',
+            'accent-gold-500': '#C59D42',
+            'accent-gold-600': '#A97D22',
+            'success-600': '#16A34A',
+            'warning-600': '#D97706',
+            'danger-600': '#DC2626',
+            'info-600': '#2563EB',
+            'heat-green': '#16A34A',
+            'heat-amber': '#F59E0B',
+            'heat-red': '#DC2626',
+            'neutral-50': '#F8FAFC',
+            'neutral-200': '#E2E8F0',
+            'neutral-500': '#64748B',
+            'neutral-700': '#334155',
+            'neutral-900': '#111827',
+            'neutral-950': '#0B1220',
           }
-          return null;
-        })
-      );
-
-      await Promise.all(skillPromises);
-      return skillIds.map(id => skillsCache[id]).filter(Boolean);
-    } catch (error) {
-      console.error('Error loading skills:', error);
-      return [];
-    }
-  }
-
-  async function funLoadAssessmentCycle(cycleId) {
-    if (!cycleId) return null;
-    if (assessmentCyclesCache[cycleId]) return assessmentCyclesCache[cycleId];
-
-    try {
-      return await withLimit(async () => {
-        const cycleDoc = await getDoc(doc(db, 'assessmentCycles', cycleId));
-        if (cycleDoc.exists()) {
-          const cycleData = { id: cycleDoc.id, ...cycleDoc.data() };
-          assessmentCyclesCache[cycleId] = cycleData;
-          return cycleData;
         }
-        return null;
+      }
+    }
+  </script>
+</head>
+
+<body class="bg-neutral-50 min-h-screen text-neutral-900 text-sm leading-5">
+  <!-- Top Navigation -->
+  <header
+    class="fixed top-0 left-0 right-0 bg-brand-primary-800 border-b border-neutral-200 flex items-center justify-between px-6 py-4 z-30 h-16">
+    <div class="flex items-center gap-4">
+      <svg width="32" height="32" viewBox="0 0 400 400" fill="none" xmlns="http://www.w3.org/2000/svg" class="h-8 w-8">
+        <rect x="84" y="116" width="56" height="168" rx="8" fill="#1E40AF" />
+        <rect x="176" y="84" width="56" height="200" rx="8" fill="#059669" />
+        <rect x="268" y="156" width="48" height="128" rx="8" fill="#1E40AF" />
+        <rect x="114" y="180" width="172" height="20" rx="10" fill="#F59E0B" />
+      </svg>
+      <span class="text-xl leading-7 font-semibold text-white">SkillBridge</span>
+    </div>
+
+    <!-- Mobile Menu Button -->
+    <button id="mobile-menu-btn"
+      class="md:hidden text-white hover:bg-brand-primary-700 p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2">
+      <i data-lucide="menu" class="w-5 h-5"></i>
+    </button>
+
+    <div class="hidden md:flex items-center gap-4">
+      <!-- User Profile Dropdown -->
+      <div class="relative">
+        <button id="user-profile-btn"
+          class="flex items-center gap-2 text-white hover:bg-brand-primary-700 px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2">
+          <div id="user-avatar"
+            class="w-8 h-8 bg-accent-gold-500 rounded-full flex items-center justify-center text-brand-primary-800 font-semibold text-xs">
+
+          </div>
+          <span id="user-name" class="text-sm"></span>
+          <i data-lucide="chevron-down" class="w-4 h-4"></i>
+        </button>
+
+        <!-- Dropdown Menu -->
+        <div id="user-dropdown"
+          class="hidden absolute right-0 mt-2 w-48 bg-white border border-neutral-200 rounded-md shadow-lg z-50">
+          <div class="px-4 py-3 border-b border-neutral-200">
+            <p class="text-sm font-medium text-neutral-900" id="dropdown-user-name"></p>
+            <p class="text-xs text-neutral-500" id="dropdown-user-email"></p>
+          </div>
+          <div class="py-1">
+            <button id="sign-out-btn"
+              class="block w-full text-left px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50 focus:outline-none focus:bg-neutral-50">
+              <i data-lucide="log-out" class="w-4 h-4 inline mr-2"></i>
+              Sign Out
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="flex pt-16">
+    <!-- Side Navigation -->
+    <aside id="sidebar"
+      class="fixed md:static inset-y-0 left-0 z-20 w-64 bg-white border-r border-neutral-200 transform -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out pt-16 md:pt-0 overflow-y-auto"
+      style="height: calc(100vh - 4rem);">
+      <nav class="p-4 space-y-1">
+        <!-- Employee Dashboard -->
+        <a href="employee_dashboard.html"
+          class="nav-link flex items-center gap-3 px-3 py-2 text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-700 rounded-md group"
+          data-page="employee_dashboard">
+          <i data-lucide="layout-dashboard" class="w-5 h-5 text-neutral-500 group-hover:text-brand-primary-700"></i>
+          <span class="font-medium">Employee Dashboard</span>
+        </a>
+
+        <!-- My Skills with Children -->
+        <div class="space-y-1">
+          <a href="my_skills.html"
+            class="nav-link flex items-center gap-3 px-3 py-2 text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-700 rounded-md group"
+            data-page="my_skills">
+            <i data-lucide="list" class="w-5 h-5 text-neutral-500 group-hover:text-brand-primary-700"></i>
+            <span class="font-medium">My Skills</span>
+          </a>
+        </div>
+
+        <!-- My Training Sessions with Children -->
+        <div class="space-y-1">
+          <a href="my_training_sessions.html"
+            class="nav-link flex items-center gap-3 px-3 py-2 text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-700 rounded-md group"
+            data-page="my_training_sessions">
+            <i data-lucide="calendar" class="w-5 h-5 text-neutral-500 group-hover:text-brand-primary-700"></i>
+            <span class="font-medium">My Training Sessions</span>
+          </a>
+        </div>
+
+        <!-- My Disputes with Children -->
+        <div class="space-y-1">
+          <button
+            class="nav-group-btn flex items-center justify-between w-full px-3 py-2 text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-700 rounded-md group"
+            data-group="disputes">
+            <div class="flex items-center gap-3">
+              <i data-lucide="flag" class="w-5 h-5 text-neutral-500 group-hover:text-brand-primary-700"></i>
+              <span class="font-medium">My Disputes</span>
+            </div>
+            <i data-lucide="chevron-down"
+              class="w-4 h-4 text-neutral-500 group-hover:text-brand-primary-700 transition-transform duration-200"></i>
+          </button>
+          <div class="nav-group-children ml-8 space-y-1 hidden" data-group-target="disputes">
+            <a href="my_disputes.html"
+              class="nav-link flex items-center gap-3 px-3 py-2 text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-700 rounded-md text-xs"
+              data-page="my_disputes">
+              <i data-lucide="flag" class="w-4 h-4"></i>
+              <span>View Disputes</span>
+            </a>
+            <a href="raise_dispute.html"
+              class="nav-link flex items-center gap-3 px-3 py-2 text-neutral-600 hover:bg-neutral-50 hover:text-brand-primary-700 rounded-md text-xs"
+              data-page="raise_dispute">
+              <i data-lucide="plus-circle" class="w-4 h-4"></i>
+              <span>Raise Dispute</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- My Profile -->
+        <a href="my_profile.html"
+          class="nav-link flex items-center gap-3 px-3 py-2 text-neutral-700 hover:bg-neutral-50 hover:text-brand-primary-700 rounded-md group"
+          data-page="my_profile">
+          <i data-lucide="user" class="w-5 h-5 text-neutral-500 group-hover:text-brand-primary-700"></i>
+          <span class="font-medium">My Profile</span>
+        </a>
+      </nav>
+
+      <!-- Footer -->
+      <div class="absolute bottom-4 left-0 right-0 text-center text-xs text-neutral-500 bg-white px-4">
+        Made with ❤️ by TiramAi
+      </div>
+    </aside>
+
+    <!-- Mobile Overlay -->
+    <div id="mobile-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-10 hidden md:hidden"></div>
+
+    <!-- Main Content -->
+    <main id="pageContent" class="flex-1 p-6 overflow-y-auto min-h-screen">
+
+      <!-- My Disputes Page -->
+      <div class="max-w-[1280px] mx-auto space-y-6">
+        <!-- Page Header -->
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div>
+            <h1 class="text-2xl leading-8 font-bold text-neutral-950">My Disputes</h1>
+            <p class="text-sm leading-5 text-neutral-700 mt-1">Track all disputes with status, resolution info, and
+              response requirements.</p>
+          </div>
+          <button id="btn-raise-new-dispute"
+            class="inline-flex items-center justify-center h-11 px-4 rounded-md bg-brand-primary-600 hover:bg-brand-primary-700 text-white focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2">
+            <i data-lucide="plus-circle" class="w-5 h-5 mr-2"></i>
+            Raise New Dispute
+          </button>
+        </div>
+
+        <!-- Summary Stats -->
+        <div id="summary-stats" class="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <!-- Stats will be populated via JavaScript -->
+          <div class="bg-white border border-neutral-200 rounded-md p-4 shadow-sm">
+            <div class="flex items-center gap-3">
+              <div class="w-8 h-8 bg-neutral-100 rounded-full flex items-center justify-center">
+                <i data-lucide="flag" class="w-4 h-4 text-neutral-600"></i>
+              </div>
+              <div>
+                <p class="text-xs text-neutral-500">Total Disputes</p>
+                <p id="stat-total" class="text-xl leading-7 font-semibold text-neutral-950">-</p>
+              </div>
+            </div>
+          </div>
+          <div class="bg-white border border-neutral-200 rounded-md p-4 shadow-sm">
+            <div class="flex items-center gap-3">
+              <div class="w-8 h-8 bg-warning-600 bg-opacity-10 rounded-full flex items-center justify-center">
+                <i data-lucide="clock" class="w-4 h-4 text-warning-600"></i>
+              </div>
+              <div>
+                <p class="text-xs text-neutral-500">Open</p>
+                <p id="stat-open" class="text-xl leading-7 font-semibold text-neutral-950">-</p>
+              </div>
+            </div>
+          </div>
+          <div class="bg-white border border-neutral-200 rounded-md p-4 shadow-sm">
+            <div class="flex items-center gap-3">
+              <div class="w-8 h-8 bg-success-600 bg-opacity-10 rounded-full flex items-center justify-center">
+                <i data-lucide="check-circle" class="w-4 h-4 text-success-600"></i>
+              </div>
+              <div>
+                <p class="text-xs text-neutral-500">Resolved</p>
+                <p id="stat-resolved" class="text-xl leading-7 font-semibold text-neutral-950">-</p>
+              </div>
+            </div>
+          </div>
+          <div class="bg-white border border-neutral-200 rounded-md p-4 shadow-sm">
+            <div class="flex items-center gap-3">
+              <div class="w-8 h-8 bg-danger-600 bg-opacity-10 rounded-full flex items-center justify-center">
+                <i data-lucide="alert-circle" class="w-4 h-4 text-danger-600"></i>
+              </div>
+              <div>
+                <p class="text-xs text-neutral-500">Needs Response</p>
+                <p id="stat-needs-response" class="text-xl leading-7 font-semibold text-neutral-950">-</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Filter Tabs -->
+        <div class="bg-white border border-neutral-200 rounded-md shadow-sm">
+          <div class="flex border-b border-neutral-200">
+            <button id="tab-all"
+              class="filter-tab px-6 py-3 text-sm font-medium text-neutral-700 hover:text-brand-primary-700 border-b-2 border-transparent hover:border-accent-gold-500 focus:outline-none focus:border-accent-gold-500 active"
+              data-filter="all">
+              All
+            </button>
+            <button id="tab-open"
+              class="filter-tab px-6 py-3 text-sm font-medium text-neutral-700 hover:text-brand-primary-700 border-b-2 border-transparent hover:border-accent-gold-500 focus:outline-none focus:border-accent-gold-500"
+              data-filter="open">
+              Open
+            </button>
+            <button id="tab-resolved"
+              class="filter-tab px-6 py-3 text-sm font-medium text-neutral-700 hover:text-brand-primary-700 border-b-2 border-transparent hover:border-accent-gold-500 focus:outline-none focus:border-accent-gold-500"
+              data-filter="resolved">
+              Resolved
+            </button>
+            <button id="tab-needs-response"
+              class="filter-tab px-6 py-3 text-sm font-medium text-neutral-700 hover:text-brand-primary-700 border-b-2 border-transparent hover:border-accent-gold-500 focus:outline-none focus:border-accent-gold-500"
+              data-filter="needs_response">
+              Needs Response
+            </button>
+            <div class="flex-1"></div>
+            <button id="btn-refresh"
+              class="inline-flex items-center px-3 py-2 text-sm text-neutral-500 hover:text-neutral-700 focus:outline-none focus:text-brand-primary-700"
+              aria-label="Refresh">
+              <i data-lucide="refresh-cw" class="w-4 h-4 mr-2"></i>
+              Refresh
+            </button>
+          </div>
+
+          <!-- Data Grid -->
+          <div class="overflow-x-auto">
+            <table class="w-full text-sm leading-5">
+              <thead class="bg-neutral-50 text-neutral-700">
+                <tr>
+                  <th class="text-left font-semibold px-4 py-3 border-b border-neutral-200">
+                    <button
+                      class="inline-flex items-center gap-1 hover:text-brand-primary-700 focus:outline-none focus:text-brand-primary-700"
+                      id="sort-id">
+                      Dispute ID
+                      <i data-lucide="arrow-up-down" class="w-4 h-4"></i>
+                    </button>
+                  </th>
+                  <th class="text-left font-semibold px-4 py-3 border-b border-neutral-200">
+                    <button
+                      class="inline-flex items-center gap-1 hover:text-brand-primary-700 focus:outline-none focus:text-brand-primary-700"
+                      id="sort-date">
+                      Submitted Date
+                      <i data-lucide="arrow-up-down" class="w-4 h-4"></i>
+                    </button>
+                  </th>
+                  <th class="text-left font-semibold px-4 py-3 border-b border-neutral-200">Cycle</th>
+                  <th class="text-left font-semibold px-4 py-3 border-b border-neutral-200">Disputed Skills</th>
+                  <th class="text-left font-semibold px-4 py-3 border-b border-neutral-200">Status</th>
+                  <th class="text-left font-semibold px-4 py-3 border-b border-neutral-200">Resolution</th>
+                  <th class="text-left font-semibold px-4 py-3 border-b border-neutral-200">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="disputes-table-body" class="divide-y divide-neutral-200">
+                <!-- Loading Skeleton -->
+                <tr class="skeleton-row">
+                  <td class="px-4 py-3" colspan="7">
+                    <div class="space-y-2">
+                      <div class="h-4 bg-neutral-200 rounded animate-pulse"></div>
+                      <div class="h-4 bg-neutral-200 rounded animate-pulse w-3/4"></div>
+                    </div>
+                  </td>
+                </tr>
+                <tr class="skeleton-row">
+                  <td class="px-4 py-3" colspan="7">
+                    <div class="space-y-2">
+                      <div class="h-4 bg-neutral-200 rounded animate-pulse"></div>
+                      <div class="h-4 bg-neutral-200 rounded animate-pulse w-2/3"></div>
+                    </div>
+                  </td>
+                </tr>
+                <tr class="skeleton-row">
+                  <td class="px-4 py-3" colspan="7">
+                    <div class="space-y-2">
+                      <div class="h-4 bg-neutral-200 rounded animate-pulse"></div>
+                      <div class="h-4 bg-neutral-200 rounded animate-pulse w-4/5"></div>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+
+            <!-- Empty State -->
+            <div id="empty-state" class="hidden text-center py-12">
+              <i data-lucide="flag" class="w-12 h-12 text-neutral-300 mx-auto mb-4"></i>
+              <h3 class="text-base leading-6 font-semibold text-neutral-900 mb-2">No disputes found</h3>
+              <p class="text-sm leading-5 text-neutral-600 mb-6">You haven't raised any disputes yet, or none match your
+                current filter.</p>
+              <button id="btn-raise-new-dispute-empty"
+                class="inline-flex items-center justify-center h-10 px-4 rounded-md bg-brand-primary-600 hover:bg-brand-primary-700 text-white text-sm focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2">
+                <i data-lucide="plus-circle" class="w-4 h-4 mr-2"></i>
+                Raise New Dispute
+              </button>
+            </div>
+          </div>
+
+          <!-- Pagination -->
+          <div id="pagination-container"
+            class="flex items-center justify-between px-4 py-3 border-t border-neutral-200">
+            <div class="text-sm text-neutral-700">
+              Showing <span id="showing-start">1</span> to <span id="showing-end">10</span> of <span
+                id="total-count">0</span> disputes
+            </div>
+            <div class="flex items-center gap-2">
+              <button id="btn-prev-page"
+                class="inline-flex items-center px-3 py-1 rounded-md border border-neutral-200 text-sm text-neutral-700 hover:bg-neutral-50 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                disabled>
+                <i data-lucide="chevron-left" class="w-4 h-4 mr-1"></i>
+                Previous
+              </button>
+              <span id="page-info" class="px-3 py-1 text-sm text-neutral-700">Page 1 of 1</span>
+              <button id="btn-next-page"
+                class="inline-flex items-center px-3 py-1 rounded-md border border-neutral-200 text-sm text-neutral-700 hover:bg-neutral-50 focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                disabled>
+                Next
+                <i data-lucide="chevron-right" class="w-4 h-4 ml-1"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- Required: JavaScript -->
+  <script type="module" data-tiramai="web-gen">
+    import { showToast, showLoader, hideLoader, env } from "./scripts/main.js";
+    import { auth, db, storage } from "./scripts/firebase.js";
+    import { onAuthStateChanged, getAuth, signOut } from 'https://www.gstatic.com/firebasejs/10.12.4/firebase-auth.js';
+    import { doc, getDoc, collection, query, where, getDocs } from 'https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js';
+
+    // Initialize Lucide icons
+    lucide.createIcons();
+
+    // Mobile menu functionality
+    const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+    const sidebar = document.getElementById('sidebar');
+    const mobileOverlay = document.getElementById('mobile-overlay');
+
+    function toggleMobileMenu() {
+      sidebar.classList.toggle('-translate-x-full');
+      mobileOverlay.classList.toggle('hidden');
+    }
+
+    mobileMenuBtn?.addEventListener('click', toggleMobileMenu);
+    mobileOverlay?.addEventListener('click', toggleMobileMenu);
+
+    // Navigation group toggle functionality
+    document.querySelectorAll('.nav-group-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const groupName = btn.getAttribute('data-group');
+        const children = document.querySelector(`[data-group-target="${groupName}"]`);
+        const chevron = btn.querySelector('[data-lucide="chevron-down"]');
+
+        children?.classList.toggle('hidden');
+        chevron?.classList.toggle('rotate-180');
       });
-    } catch (error) {
-      console.error('Error loading assessment cycle:', error);
-      return null;
+    });
+
+    // User profile dropdown
+    const userProfileBtn = document.getElementById('user-profile-btn');
+    const userDropdown = document.getElementById('user-dropdown');
+
+    userProfileBtn?.addEventListener('click', (e) => {
+      e.stopPropagation();
+      userDropdown?.classList.toggle('hidden');
+    });
+
+    document.addEventListener('click', (e) => {
+      if (!userProfileBtn?.contains(e.target)) {
+        userDropdown?.classList.add('hidden');
+      }
+    });
+
+    // Active navigation highlighting
+    function updateActiveNav() {
+      const currentPage = window.location.pathname.split('/').pop()?.replace('.html', '') || 'employee_dashboard';
+
+      document.querySelectorAll('.nav-link').forEach(link => {
+        const page = link.getAttribute('data-page');
+        if (page === currentPage) {
+          link.classList.add('bg-accent-gold-50', 'text-brand-primary-700', 'border-l-4', 'border-accent-gold-500');
+          link.classList.remove('text-neutral-700', 'text-neutral-600');
+        } else {
+          link.classList.remove('bg-accent-gold-50', 'text-brand-primary-700', 'border-l-4', 'border-accent-gold-500');
+        }
+      });
     }
-  }
 
-  async function funLoadDisputes() {
-    if (!currentUser) return [];
+    // Auth state management
+    let currentUser = null;
 
-    try {
-      const q = query(
-        collection(db, 'disputes'),
-        where('employeeId', '==', currentUser.uid),
-        orderBy('submissionDate', 'desc')
-      );
+    function updateUserProfile(user, userData = null) {
+      const userAvatar = document.getElementById('user-avatar');
+      const userName = document.getElementById('user-name');
+      const dropdownUserName = document.getElementById('dropdown-user-name');
+      const dropdownUserEmail = document.getElementById('dropdown-user-email');
 
-      const snapshot = await getDocs(q);
-      const disputes = snapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      }));
+      if (userData) {
+        const displayName = `${userData.firstName || ''} ${userData.lastName || ''}`.trim() || 'User';
+        const initials = displayName.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
 
-      // Load related data
-      const enrichedDisputes = await Promise.all(disputes.map(async (dispute) => {
-        const [cycle, skills] = await Promise.all([
-          funLoadAssessmentCycle(dispute.assessmentCycleId),
-          dispute.disputedSkills ? funLoadSkills(dispute.disputedSkills.map(ds => ds.skillId)) : []
-        ]);
+        userAvatar.textContent = initials;
+        userName.textContent = displayName;
+        dropdownUserName.textContent = displayName;
+        dropdownUserEmail.textContent = userData.email || user.email;
+      } else {
+        // Fallback to auth data
+        const displayName = user.displayName || user.email.split('@')[0];
+        const initials = displayName.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
 
-        return {
-          ...dispute,
-          cycle,
-          skills
-        };
-      }));
-
-      return enrichedDisputes;
-    } catch (error) {
-      console.error('Error loading disputes:', error);
-      showToast('Error loading disputes: ' + (error.message || 'Unknown error'), 'error');
-      return [];
+        userAvatar.textContent = initials;
+        userName.textContent = displayName;
+        dropdownUserName.textContent = displayName;
+        dropdownUserEmail.textContent = user.email;
+      }
     }
-  }
 
-  async function funLoadStats() {
-    if (!currentUser) return;
+    async function loadUserData(user) {
+      try {
+        const usersQuery = query(collection(db, 'users'), where('uid', '==', user.uid), where('employeeStatus', '==', 'active'));
+        const usersSnapshot = await getDocs(usersQuery);
 
-    try {
-      const statsPromises = [
-        withLimit(() => getCountFromServer(query(collection(db, 'disputes'), where('employeeId', '==', currentUser.uid)))),
-        withLimit(() => getCountFromServer(query(collection(db, 'disputes'), where('employeeId', '==', currentUser.uid), where('status', '==', 'open')))),
-        withLimit(() => getCountFromServer(query(collection(db, 'disputes'), where('employeeId', '==', currentUser.uid), where('status', '==', 'resolved'))))
-      ];
+        if (!usersSnapshot.empty) {
+          return usersSnapshot.docs[0].data();
+        } else {
+          // Fallback data
+          return {
+            firstName: 'John',
+            lastName: 'Doe',
+            email: user.email
+          };
+        }
+      } catch (error) {
+        console.error('Error loading user data:', error);
+        return null;
+      }
+    }
 
-      const [totalSnap, openSnap, resolvedSnap] = await Promise.all(statsPromises);
+    // Sign out functionality
+    document.getElementById('sign-out-btn')?.addEventListener('click', async () => {
+      try {
+        showLoader();
+        await signOut(auth);
+        showToast('Signed out successfully', 'success');
+        window.location.href = '/auth.html';
+      } catch (error) {
+        console.error('Sign out error:', error);
+        showToast('Error signing out', 'error');
+      } finally {
+        hideLoader();
+      }
+    });
 
-      const stats = {
-        total: totalSnap.data().count,
-        open: openSnap.data().count,
-        resolved: resolvedSnap.data().count
+    // Initialize auth state listener
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        currentUser = user;
+        const userData = await loadUserData(user);
+        updateUserProfile(user, userData);
+        updateActiveNav();
+      } else {
+        window.location.href = '/auth.html';
+      }
+    });
+
+    // Initialize page
+    document.addEventListener('DOMContentLoaded', () => {
+      updateActiveNav();
+    });
+  </script>
+
+
+  <script id="data-script" type="module" data-tiramai="web-gen">
+    import {
+      collection, getDocs, doc, getDoc, query, where, orderBy, limit, startAfter,
+      getCountFromServer, Timestamp
+    } from 'https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js';
+    import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.12.4/firebase-auth.js';
+    import { auth, getDb } from "./scripts/firebase.js";
+    import { showToast, showLoader, hideLoader, env } from "./scripts/main.js";
+
+    // Auth state check
+    onAuthStateChanged(auth, user => {
+      if (!user) {
+        location.href = "/auth.html?redirect=" + encodeURIComponent(location.pathname);
+      } else {
+        funInitialLoad();
+      }
+    });
+
+    const db = getDb();
+
+    // State management
+    let currentUser = null;
+    let currentFilter = 'all';
+    let currentPage = 1;
+    const itemsPerPage = 10;
+    let currentSort = { field: 'submissionDate', direction: 'desc' };
+    let allDisputes = [];
+    let filteredDisputes = [];
+    let skillsCache = {};
+    let assessmentCyclesCache = {};
+
+    // Concurrency control for reads
+    function createSemaphore(max = 2) {
+      const queue = [];
+      let active = 0;
+      const next = () => {
+        if (active >= max || queue.length === 0) return;
+        active++;
+        const { fn, res, rej } = queue.shift();
+        Promise.resolve()
+          .then(fn)
+          .then(v => res(v))
+          .catch(e => rej(e))
+          .finally(() => { active--; next(); });
       };
-
-      // Calculate needs response from loaded disputes
-      stats.needsResponse = allDisputes.filter(funCheckNeedsResponse).length;
-
-      // Update UI
-      document.getElementById('stat-total').textContent = stats.total;
-      document.getElementById('stat-open').textContent = stats.open;
-      document.getElementById('stat-resolved').textContent = stats.resolved;
-      document.getElementById('stat-needs-response').textContent = stats.needsResponse;
-    } catch (error) {
-      console.error('Error loading stats:', error);
-      showToast('Error loading statistics', 'error');
+      return (fn) => new Promise((res, rej) => { queue.push({ fn, res, rej }); next(); });
     }
-  }
+    const withLimit = createSemaphore(2);
 
-  // UI functions
-  function funApplyFilter() {
-    switch (currentFilter) {
-      case 'open':
-        filteredDisputes = allDisputes.filter(d => d.status === 'open');
-        break;
-      case 'resolved':
-        filteredDisputes = allDisputes.filter(d => d.status === 'resolved' && !funCheckNeedsResponse(d));
-        break;
-      case 'needs_response':
-        filteredDisputes = allDisputes.filter(funCheckNeedsResponse);
-        break;
-      default:
-        filteredDisputes = [...allDisputes];
+    // Utility functions
+    function formatDate(dateString) {
+      if (!dateString) return 'N/A';
+      try {
+        const date = new Date(dateString);
+        return date.toLocaleDateString('en-US', {
+          year: 'numeric',
+          month: 'short',
+          day: 'numeric'
+        });
+      } catch (error) {
+        console.error('Date formatting error:', error);
+        return 'N/A';
+      }
     }
 
-    funApplySort();
-    currentPage = 1;
-    funRenderTable();
-    funUpdatePagination();
-  }
+    function getShortId(fullId) {
+      if (!fullId) return 'N/A';
+      return fullId.length > 8 ? fullId.slice(-8) : fullId;
+    }
 
-  function funApplySort() {
-    filteredDisputes.sort((a, b) => {
-      let aVal = a[currentSort.field];
-      let bVal = b[currentSort.field];
+    function getStatusBadge(dispute) {
+      const needsResponse = funCheckNeedsResponse(dispute);
 
-      if (currentSort.field === 'submissionDate') {
-        aVal = aVal ? new Date(aVal) : new Date(0);
-        bVal = bVal ? new Date(bVal) : new Date(0);
+      if (needsResponse) {
+        return `<span class="inline-flex items-center px-2 py-1 text-xs rounded-full bg-danger-600 text-white">Needs Response</span>`;
       }
 
-      if (aVal < bVal) return currentSort.direction === 'asc' ? -1 : 1;
-      if (aVal > bVal) return currentSort.direction === 'asc' ? 1 : -1;
-      return 0;
-    });
-  }
-
-  function funRenderTable() {
-    const tableBody = document.getElementById('disputes-table-body');
-    const emptyState = document.getElementById('empty-state');
-    
-    // Clear skeleton
-    tableBody.querySelectorAll('.skeleton-row').forEach(row => row.remove());
-
-    if (filteredDisputes.length === 0) {
-      tableBody.innerHTML = '';
-      emptyState.classList.remove('hidden');
-      return;
+      const status = dispute.status || '';
+      switch (status.toLowerCase()) {
+        case 'open':
+          return `<span class="inline-flex items-center px-2 py-1 text-xs rounded-full bg-warning-600 text-white">Open</span>`;
+        case 'resolved':
+          return `<span class="inline-flex items-center px-2 py-1 text-xs rounded-full bg-success-600 text-white">Resolved</span>`;
+        default:
+          return `<span class="inline-flex items-center px-2 py-1 text-xs rounded-full bg-neutral-500 text-white">${status || 'Unknown'}</span>`;
+      }
     }
 
-    emptyState.classList.add('hidden');
+    function getResolutionDisplay(dispute) {
+      if (!dispute.resolutionAction) return '-';
 
-    const startIndex = (currentPage - 1) * itemsPerPage;
-    const endIndex = startIndex + itemsPerPage;
-    const pageItems = filteredDisputes.slice(startIndex, endIndex);
+      switch (dispute.resolutionAction) {
+        case 'editRating':
+          return 'Edit Rating';
+        case 'dismiss':
+          return 'Dismiss';
+        default:
+          return dispute.resolutionAction || '-';
+      }
+    }
 
-    tableBody.innerHTML = pageItems.map(dispute => {
-      const needsResponse = funCheckNeedsResponse(dispute);
-      const rowClass = needsResponse ? 'bg-danger-50' : 'hover:bg-neutral-50 focus-within:bg-neutral-50';
-      
-      const skillNames = dispute.skills && dispute.skills.length > 0 
-        ? dispute.skills.slice(0, 2).map(s => s.name || 'Unknown').join(', ')
-        : 'N/A';
-      
-      const extraSkillsCount = dispute.skills && dispute.skills.length > 2 
-        ? ` +${dispute.skills.length - 2}` 
-        : '';
+    function funCheckNeedsResponse(dispute) {
+      if (!dispute || dispute.status !== 'resolved' || !dispute.resolutionTimestamp) {
+        return false;
+      }
 
-      return `
+      // Check if there's an employee response after resolution
+      if (dispute.auditTrail && Array.isArray(dispute.auditTrail)) {
+        const resolutionTime = new Date(dispute.resolutionTimestamp);
+        return !dispute.auditTrail.some(entry => {
+          if (!entry.actorType || entry.actorType !== 'employee') return false;
+          if (!entry.action || !['agreed', 'disagreed'].includes(entry.action)) return false;
+          if (!entry.timestamp) return false;
+
+          const entryTime = new Date(entry.timestamp);
+          return entryTime > resolutionTime;
+        });
+      }
+
+      return true;
+    }
+
+    // Data fetching functions
+    async function funLoadSkills(skillIds) {
+      if (!skillIds || !Array.isArray(skillIds)) return [];
+
+      const missingIds = skillIds.filter(id => !skillsCache[id]);
+      if (missingIds.length === 0) {
+        return skillIds.map(id => skillsCache[id]).filter(Boolean);
+      }
+
+      try {
+        const skillPromises = missingIds.map(skillId =>
+          withLimit(async () => {
+            const skillDoc = await getDoc(doc(db, 'skills', skillId));
+            if (skillDoc.exists()) {
+              const skillData = { id: skillDoc.id, ...skillDoc.data() };
+              skillsCache[skillId] = skillData;
+              return skillData;
+            }
+            return null;
+          })
+        );
+
+        await Promise.all(skillPromises);
+        return skillIds.map(id => skillsCache[id]).filter(Boolean);
+      } catch (error) {
+        console.error('Error loading skills:', error);
+        return [];
+      }
+    }
+
+    async function funLoadAssessmentCycle(cycleId) {
+      if (!cycleId) return null;
+      if (assessmentCyclesCache[cycleId]) return assessmentCyclesCache[cycleId];
+
+      try {
+        return await withLimit(async () => {
+          const cycleDoc = await getDoc(doc(db, 'assessmentCycles', cycleId));
+          if (cycleDoc.exists()) {
+            const cycleData = { id: cycleDoc.id, ...cycleDoc.data() };
+            assessmentCyclesCache[cycleId] = cycleData;
+            return cycleData;
+          }
+          return null;
+        });
+      } catch (error) {
+        console.error('Error loading assessment cycle:', error);
+        return null;
+      }
+    }
+
+    async function funLoadDisputes() {
+      if (!currentUser) return [];
+
+      try {
+        const q = query(
+          collection(db, 'disputes'),
+          where('employeeId', '==', currentUser.uid),
+          orderBy('submissionDate', 'desc')
+        );
+
+        const snapshot = await getDocs(q);
+        const disputes = snapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        }));
+
+        // Load related data
+        const enrichedDisputes = await Promise.all(disputes.map(async (dispute) => {
+          const [cycle, skills] = await Promise.all([
+            funLoadAssessmentCycle(dispute.assessmentCycleId),
+            dispute.disputedSkills ? funLoadSkills(dispute.disputedSkills.map(ds => ds.skillId)) : []
+          ]);
+
+          return {
+            ...dispute,
+            cycle,
+            skills
+          };
+        }));
+
+        return enrichedDisputes;
+      } catch (error) {
+        console.error('Error loading disputes:', error);
+        showToast('Error loading disputes: ' + (error.message || 'Unknown error'), 'error');
+        return [];
+      }
+    }
+
+    async function funLoadStats() {
+      if (!currentUser) return;
+
+      try {
+        // Calculate stats entirely from loaded disputes to ensure consistency
+        // and proper mutual exclusivity between "Resolved" and "Needs Response"
+        const total = allDisputes.length;
+
+        const needsResponseCount = allDisputes.filter(funCheckNeedsResponse).length;
+        const openCount = allDisputes.filter(d => d.status === 'open').length;
+
+        // Resolved count should strictly EXCLUDE items that need response
+        // This prevents double counting where a dispute is both 'resolved' in DB and 'needs response' logic
+        const resolvedCount = allDisputes.filter(d => d.status === 'resolved' && !funCheckNeedsResponse(d)).length;
+
+        // Update UI
+        document.getElementById('stat-total').textContent = total;
+        document.getElementById('stat-open').textContent = openCount;
+        document.getElementById('stat-resolved').textContent = resolvedCount;
+        document.getElementById('stat-needs-response').textContent = needsResponseCount;
+      } catch (error) {
+        console.error('Error calculating stats:', error);
+        showToast('Error calculating statistics', 'error');
+      }
+    }
+
+    // UI functions
+    function funApplyFilter() {
+      switch (currentFilter) {
+        case 'open':
+          filteredDisputes = allDisputes.filter(d => d.status === 'open');
+          break;
+        case 'resolved':
+          filteredDisputes = allDisputes.filter(d => d.status === 'resolved' && !funCheckNeedsResponse(d));
+          break;
+        case 'needs_response':
+          filteredDisputes = allDisputes.filter(funCheckNeedsResponse);
+          break;
+        default:
+          filteredDisputes = [...allDisputes];
+      }
+
+      funApplySort();
+      currentPage = 1;
+      funRenderTable();
+      funUpdatePagination();
+    }
+
+    function funApplySort() {
+      filteredDisputes.sort((a, b) => {
+        let aVal = a[currentSort.field];
+        let bVal = b[currentSort.field];
+
+        if (currentSort.field === 'submissionDate') {
+          aVal = aVal ? new Date(aVal) : new Date(0);
+          bVal = bVal ? new Date(bVal) : new Date(0);
+        }
+
+        if (aVal < bVal) return currentSort.direction === 'asc' ? -1 : 1;
+        if (aVal > bVal) return currentSort.direction === 'asc' ? 1 : -1;
+        return 0;
+      });
+    }
+
+    function funRenderTable() {
+      const tableBody = document.getElementById('disputes-table-body');
+      const emptyState = document.getElementById('empty-state');
+
+      // Clear skeleton
+      tableBody.querySelectorAll('.skeleton-row').forEach(row => row.remove());
+
+      if (filteredDisputes.length === 0) {
+        tableBody.innerHTML = '';
+        emptyState.classList.remove('hidden');
+        return;
+      }
+
+      emptyState.classList.add('hidden');
+
+      const startIndex = (currentPage - 1) * itemsPerPage;
+      const endIndex = startIndex + itemsPerPage;
+      const pageItems = filteredDisputes.slice(startIndex, endIndex);
+
+      tableBody.innerHTML = pageItems.map(dispute => {
+        const needsResponse = funCheckNeedsResponse(dispute);
+        const rowClass = needsResponse ? 'bg-danger-50' : 'hover:bg-neutral-50 focus-within:bg-neutral-50';
+
+        const skillNames = dispute.skills && dispute.skills.length > 0
+          ? dispute.skills.slice(0, 2).map(s => s.name || 'Unknown').join(', ')
+          : 'N/A';
+
+        const extraSkillsCount = dispute.skills && dispute.skills.length > 2
+          ? ` +${dispute.skills.length - 2}`
+          : '';
+
+        return `
         <tr class="${rowClass} cursor-pointer dispute-row" data-dispute-id="${dispute.id}">
           <td class="px-4 py-3">
             <span class="font-mono text-xs">${getShortId(dispute.id)}</span>
@@ -827,160 +870,161 @@
           </td>
         </tr>
       `;
-    }).join('');
+      }).join('');
 
-    // Reinitialize icons
-    lucide.createIcons();
+      // Reinitialize icons
+      lucide.createIcons();
 
-    // Add click handlers
-    tableBody.querySelectorAll('.dispute-row').forEach(row => {
-      row.addEventListener('click', (e) => {
-        if (e.target.closest('.view-details-btn')) return; // Prevent double trigger
-        const disputeId = row.dataset.disputeId;
-        window.location.href = `dispute_detail.html?disputeId=${disputeId}`;
+      // Add click handlers
+      tableBody.querySelectorAll('.dispute-row').forEach(row => {
+        row.addEventListener('click', (e) => {
+          if (e.target.closest('.view-details-btn')) return; // Prevent double trigger
+          const disputeId = row.dataset.disputeId;
+          window.location.href = `dispute_detail.html?disputeId=${disputeId}`;
+        });
       });
-    });
 
-    tableBody.querySelectorAll('.view-details-btn').forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        const disputeId = btn.dataset.disputeId;
-        window.location.href = `dispute_detail.html?disputeId=${disputeId}`;
+      tableBody.querySelectorAll('.view-details-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const disputeId = btn.dataset.disputeId;
+          window.location.href = `dispute_detail.html?disputeId=${disputeId}`;
+        });
       });
-    });
-  }
-
-  function funUpdatePagination() {
-    const totalItems = filteredDisputes.length;
-    const totalPages = Math.ceil(totalItems / itemsPerPage);
-    const startItem = totalItems === 0 ? 0 : (currentPage - 1) * itemsPerPage + 1;
-    const endItem = Math.min(currentPage * itemsPerPage, totalItems);
-
-    document.getElementById('showing-start').textContent = startItem;
-    document.getElementById('showing-end').textContent = endItem;
-    document.getElementById('total-count').textContent = totalItems;
-    document.getElementById('page-info').textContent = `Page ${currentPage} of ${Math.max(1, totalPages)}`;
-
-    const prevBtn = document.getElementById('btn-prev-page');
-    const nextBtn = document.getElementById('btn-next-page');
-
-    prevBtn.disabled = currentPage <= 1;
-    nextBtn.disabled = currentPage >= totalPages;
-
-    if (totalItems === 0) {
-      document.getElementById('pagination-container').classList.add('hidden');
-    } else {
-      document.getElementById('pagination-container').classList.remove('hidden');
     }
-  }
 
-  function funUpdateActiveTab() {
-    document.querySelectorAll('.filter-tab').forEach(tab => {
-      tab.classList.remove('active', 'text-brand-primary-700', 'border-accent-gold-500');
-      tab.classList.add('text-neutral-700', 'border-transparent');
-    });
+    function funUpdatePagination() {
+      const totalItems = filteredDisputes.length;
+      const totalPages = Math.ceil(totalItems / itemsPerPage);
+      const startItem = totalItems === 0 ? 0 : (currentPage - 1) * itemsPerPage + 1;
+      const endItem = Math.min(currentPage * itemsPerPage, totalItems);
 
-    const activeTab = document.querySelector(`[data-filter="${currentFilter}"]`);
-    if (activeTab) {
-      activeTab.classList.add('active', 'text-brand-primary-700', 'border-accent-gold-500');
-      activeTab.classList.remove('text-neutral-700', 'border-transparent');
-    }
-  }
+      document.getElementById('showing-start').textContent = startItem;
+      document.getElementById('showing-end').textContent = endItem;
+      document.getElementById('total-count').textContent = totalItems;
+      document.getElementById('page-info').textContent = `Page ${currentPage} of ${Math.max(1, totalPages)}`;
 
-  // Main load function
-  async function funInitialLoad(forceRefresh = false) {
-    if (!auth.currentUser) return;
-    
-    currentUser = auth.currentUser;
+      const prevBtn = document.getElementById('btn-prev-page');
+      const nextBtn = document.getElementById('btn-next-page');
 
-    try {
-      // Show skeleton while loading
-      const tableBody = document.getElementById('disputes-table-body');
-      const emptyState = document.getElementById('empty-state');
-      emptyState.classList.add('hidden');
+      prevBtn.disabled = currentPage <= 1;
+      nextBtn.disabled = currentPage >= totalPages;
 
-      if (allDisputes.length === 0 || forceRefresh) {
-        // Load data
-        allDisputes = await funLoadDisputes();
+      if (totalItems === 0) {
+        document.getElementById('pagination-container').classList.add('hidden');
+      } else {
+        document.getElementById('pagination-container').classList.remove('hidden');
       }
-
-      // Apply current filter and update UI
-      funApplyFilter();
-      await funLoadStats();
-    } catch (error) {
-      console.error('Error in initial load:', error);
-      showToast('Error loading disputes data', 'error');
     }
-  }
 
-  // Event listeners
-  document.addEventListener('DOMContentLoaded', () => {
-    // Filter tabs
-    document.querySelectorAll('.filter-tab').forEach(tab => {
-      tab.addEventListener('click', () => {
-        currentFilter = tab.dataset.filter;
-        funUpdateActiveTab();
+    function funUpdateActiveTab() {
+      document.querySelectorAll('.filter-tab').forEach(tab => {
+        tab.classList.remove('active', 'text-brand-primary-700', 'border-accent-gold-500');
+        tab.classList.add('text-neutral-700', 'border-transparent');
+      });
+
+      const activeTab = document.querySelector(`[data-filter="${currentFilter}"]`);
+      if (activeTab) {
+        activeTab.classList.add('active', 'text-brand-primary-700', 'border-accent-gold-500');
+        activeTab.classList.remove('text-neutral-700', 'border-transparent');
+      }
+    }
+
+    // Main load function
+    async function funInitialLoad(forceRefresh = false) {
+      if (!auth.currentUser) return;
+
+      currentUser = auth.currentUser;
+
+      try {
+        // Show skeleton while loading
+        const tableBody = document.getElementById('disputes-table-body');
+        const emptyState = document.getElementById('empty-state');
+        emptyState.classList.add('hidden');
+
+        if (allDisputes.length === 0 || forceRefresh) {
+          // Load data
+          allDisputes = await funLoadDisputes();
+        }
+
+        // Apply current filter and update UI
         funApplyFilter();
+        await funLoadStats();
+      } catch (error) {
+        console.error('Error in initial load:', error);
+        showToast('Error loading disputes data', 'error');
+      }
+    }
+
+    // Event listeners
+    document.addEventListener('DOMContentLoaded', () => {
+      // Filter tabs
+      document.querySelectorAll('.filter-tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+          currentFilter = tab.dataset.filter;
+          funUpdateActiveTab();
+          funApplyFilter();
+        });
       });
-    });
 
-    // Sort handlers
-    document.getElementById('sort-id').addEventListener('click', () => {
-      if (currentSort.field === 'id') {
-        currentSort.direction = currentSort.direction === 'asc' ? 'desc' : 'asc';
-      } else {
-        currentSort = { field: 'id', direction: 'asc' };
-      }
-      funApplySort();
-      funRenderTable();
-    });
-
-    document.getElementById('sort-date').addEventListener('click', () => {
-      if (currentSort.field === 'submissionDate') {
-        currentSort.direction = currentSort.direction === 'asc' ? 'desc' : 'asc';
-      } else {
-        currentSort = { field: 'submissionDate', direction: 'desc' };
-      }
-      funApplySort();
-      funRenderTable();
-    });
-
-    // Pagination
-    document.getElementById('btn-prev-page').addEventListener('click', () => {
-      if (currentPage > 1) {
-        currentPage--;
+      // Sort handlers
+      document.getElementById('sort-id').addEventListener('click', () => {
+        if (currentSort.field === 'id') {
+          currentSort.direction = currentSort.direction === 'asc' ? 'desc' : 'asc';
+        } else {
+          currentSort = { field: 'id', direction: 'asc' };
+        }
+        funApplySort();
         funRenderTable();
-        funUpdatePagination();
-      }
-    });
+      });
 
-    document.getElementById('btn-next-page').addEventListener('click', () => {
-      const totalPages = Math.ceil(filteredDisputes.length / itemsPerPage);
-      if (currentPage < totalPages) {
-        currentPage++;
+      document.getElementById('sort-date').addEventListener('click', () => {
+        if (currentSort.field === 'submissionDate') {
+          currentSort.direction = currentSort.direction === 'asc' ? 'desc' : 'asc';
+        } else {
+          currentSort = { field: 'submissionDate', direction: 'desc' };
+        }
+        funApplySort();
         funRenderTable();
-        funUpdatePagination();
-      }
-    });
+      });
 
-    // Refresh button
-    document.getElementById('btn-refresh').addEventListener('click', () => {
-      funInitialLoad(true);
-    });
+      // Pagination
+      document.getElementById('btn-prev-page').addEventListener('click', () => {
+        if (currentPage > 1) {
+          currentPage--;
+          funRenderTable();
+          funUpdatePagination();
+        }
+      });
 
-    // Raise new dispute buttons
-    document.getElementById('btn-raise-new-dispute').addEventListener('click', () => {
-      window.location.href = 'raise_dispute.html';
-    });
+      document.getElementById('btn-next-page').addEventListener('click', () => {
+        const totalPages = Math.ceil(filteredDisputes.length / itemsPerPage);
+        if (currentPage < totalPages) {
+          currentPage++;
+          funRenderTable();
+          funUpdatePagination();
+        }
+      });
 
-    document.getElementById('btn-raise-new-dispute-empty').addEventListener('click', () => {
-      window.location.href = 'raise_dispute.html';
-    });
+      // Refresh button
+      document.getElementById('btn-refresh').addEventListener('click', () => {
+        funInitialLoad(true);
+      });
 
-    // Initialize active tab
-    funUpdateActiveTab();
-  });
-</script>
+      // Raise new dispute buttons
+      document.getElementById('btn-raise-new-dispute').addEventListener('click', () => {
+        window.location.href = 'raise_dispute.html';
+      });
+
+      document.getElementById('btn-raise-new-dispute-empty').addEventListener('click', () => {
+        window.location.href = 'raise_dispute.html';
+      });
+
+      // Initialize active tab
+      funUpdateActiveTab();
+    });
+  </script>
 
 </body>
+
 </html>
