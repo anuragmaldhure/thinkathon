@@ -46,11 +46,41 @@
         }
 
         /* Ensure toast appears above everything */
-        .toast-container {
+        #toast-container {
             position: fixed !important;
             top: 1rem !important;
             right: 1rem !important;
             z-index: 99999 !important;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            pointer-events: none;
+        }
+        
+        #toast-container > div {
+            pointer-events: auto;
+        }
+        
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        @keyframes slideOut {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateX(400px);
+                opacity: 0;
+            }
         }
 
         .auth-container {
@@ -358,8 +388,57 @@
             signInWithEmailAndPassword, 
             sendPasswordResetEmail
         } from 'https://www.gstatic.com/firebasejs/10.12.4/firebase-auth.js';
-        import { showSuccess, showError, showWarning, showInfo } from './lib/toast/toast.js';
         import { showLoader, hideLoader } from './scripts/loader.js';
+
+        // Custom toast function with inline styles
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toast-container');
+            
+            const colors = {
+                success: { bg: '#10b981', icon: '✓' },
+                error: { bg: '#ef4444', icon: '✕' },
+                warning: { bg: '#f59e0b', icon: '⚠' },
+                info: { bg: '#3b82f6', icon: 'ℹ' }
+            };
+            
+            const config = colors[type] || colors.info;
+            
+            const toast = document.createElement('div');
+            toast.style.cssText = `
+                background: ${config.bg};
+                color: white;
+                padding: 12px 20px;
+                border-radius: 8px;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                min-width: 300px;
+                max-width: 400px;
+                font-size: 14px;
+                font-weight: 500;
+                animation: slideIn 0.3s ease-out;
+                margin-bottom: 8px;
+            `;
+            
+            toast.innerHTML = `
+                <span style="font-size: 18px; font-weight: bold;">${config.icon}</span>
+                <span style="flex: 1;">${message}</span>
+                <button onclick="this.parentElement.remove()" style="background: none; border: none; color: white; cursor: pointer; font-size: 20px; padding: 0; line-height: 1; opacity: 0.8;">×</button>
+            `;
+            
+            container.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.style.animation = 'slideOut 0.3s ease-in';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+        
+        const showSuccess = (msg) => showToast(msg, 'success');
+        const showError = (msg) => showToast(msg, 'error');
+        const showWarning = (msg) => showToast(msg, 'warning');
+        const showInfo = (msg) => showToast(msg, 'info');
 
         const formPanels = document.querySelectorAll('.form-panel');
 
@@ -401,7 +480,6 @@
             const password = document.getElementById('signin-password').value;
             
             try {
-                showLoader('Signing in...');
                 
                 const userCredential = await signInWithEmailAndPassword(auth, email, password);
                 const user = userCredential.user;
@@ -440,7 +518,6 @@
             const email = document.getElementById('reset-email').value;
             
             try {
-                showLoader('Sending reset link...');
                 
                 await sendPasswordResetEmail(auth, email);
                 

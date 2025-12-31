@@ -795,7 +795,7 @@
 <script id="data-script" type="module" data-tiramai="web-gen">
 import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.12.4/firebase-auth.js';
 import {
-  collection, getDocs, query, where, orderBy, limit, startAfter, 
+  collection, getDocs, getDoc, query, where, orderBy, limit, startAfter, 
   getCountFromServer, doc, updateDoc
 } from 'https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js';
 import { auth, getDb } from "./scripts/firebase.js";
@@ -808,6 +808,7 @@ let state = {
   currentTab: 'internal',
   internal: {
     data: [],
+    allData: [],
     filters: { department: '', skill: '', search: '' },
     pagination: { page: 0, limit: 10, total: 0, cursor: null, hasNext: false }
   },
@@ -1067,6 +1068,8 @@ function funInitializeEventListeners() {
 // Load internal trainers
 async function funLoadInternalTrainers(resetCursor = false) {
   try {
+    console.log('🔍 Loading internal trainers...');
+    
     if (currentAbortController) {
       currentAbortController.abort();
     }
@@ -1082,71 +1085,63 @@ async function funLoadInternalTrainers(resetCursor = false) {
       funShowInternalSkeleton();
     }
     
-    // Build query with filters
-    const constraints = [
-      where('employeeStatus', '==', 'active')
-    ];
-    
-    if (state.internal.filters.department) {
-      constraints.push(where('departmentId', '==', state.internal.filters.department));
-    }
-    
-    constraints.push(orderBy('firstName'));
-    constraints.push(limit(state.internal.pagination.limit));
-    
-    if (state.internal.pagination.cursor) {
-      constraints.push(startAfter(state.internal.pagination.cursor));
-    }
-    
-    // Get trainer eligibilities with users
+    // Get trainer eligibilities - only filter by status (field exists in trainerEligibility)
     const eligibilityQuery = query(
       collection(db, 'trainerEligibility'),
-      where('status', '==', 'active'),
-      ...constraints
+      where('status', '==', 'active')
     );
     
     // Execute query
+    console.log('📋 Fetching trainer eligibilities...');
     const eligibilitySnapshot = await getDocs(eligibilityQuery);
+    console.log(`✅ Found ${eligibilitySnapshot.docs.length} trainer eligibility records`);
     
     if (currentAbortController.signal.aborted) return;
     
     // Get unique employee IDs
     const employeeIds = [...new Set(eligibilitySnapshot.docs.map(doc => doc.data().employeeId))];
+    console.log(`👥 Found ${employeeIds.length} unique employee IDs:`, employeeIds);
     
     if (employeeIds.length === 0) {
       state.internal.data = [];
+      state.internal.allData = [];
       funRenderInternalTrainers();
       funUpdateInternalPagination();
       return;
     }
     
     // Load users data
+    console.log('🔄 Fetching user documents...');
     const usersPromises = employeeIds.map(employeeId => 
-      getDocs(query(collection(db, 'users'), where('id', '==', employeeId)))
+      getDoc(doc(db, 'users', employeeId))
     );
     
     const usersSnapshots = await Promise.all(usersPromises);
     const users = {};
     usersSnapshots.forEach(snapshot => {
-      snapshot.docs.forEach(doc => {
-        users[doc.data().id] = doc.data();
-      });
+      if (snapshot.exists()) {
+        const userData = snapshot.data();
+        users[snapshot.id] = userData;
+      }
     });
+    console.log(`✅ Loaded ${Object.keys(users).length} user records`);
     
     if (currentAbortController.signal.aborted) return;
     
     // Load departments
     const departmentIds = [...new Set(Object.values(users).map(user => user.departmentId).filter(Boolean))];
+    console.log(`🏢 Fetching ${departmentIds.length} departments...`);
     const departmentPromises = departmentIds.map(deptId => 
-      getDocs(query(collection(db, 'departments'), where('id', '==', deptId)))
+      getDoc(doc(db, 'departments', deptId))
     );
     
     const departmentSnapshots = await Promise.all(departmentPromises);
     const departments = {};
     departmentSnapshots.forEach(snapshot => {
-      snapshot.docs.forEach(doc => {
-        departments[doc.data().id] = doc.data();
-      });
+      if (snapshot.exists()) {
+        const deptData = snapshot.data();
+        departments[snapshot.id] = deptData;
+      }
     });
     
     if (currentAbortController.signal.aborted) return;
@@ -1171,9 +1166,22 @@ async function funLoadInternalTrainers(resetCursor = false) {
       trainerData[employeeId].eligibleSkills.push(data.skillId);
     });
     
-    // Apply search filter client-side (since Firestore has limited query capabilities)
+    // Apply filters client-side
     let filteredTrainers = Object.values(trainerData);
     
+    // Filter by active employee status
+    filteredTrainers = filteredTrainers.filter(trainer => 
+      trainer.user?.employeeStatus === 'active'
+    );
+    
+    // Filter by department
+    if (state.internal.filters.department) {
+      filteredTrainers = filteredTrainers.filter(trainer => 
+        trainer.user?.departmentId === state.internal.filters.department
+      );
+    }
+    
+    // Filter by search term
     if (state.internal.filters.search) {
       const searchTerm = state.internal.filters.search.toLowerCase();
       filteredTrainers = filteredTrainers.filter(trainer => {
@@ -1182,27 +1190,43 @@ async function funLoadInternalTrainers(resetCursor = false) {
       });
     }
     
+    // Filter by skill
     if (state.internal.filters.skill) {
       filteredTrainers = filteredTrainers.filter(trainer => 
         trainer.eligibleSkills.includes(state.internal.filters.skill)
       );
     }
     
+    // Sort by first name
+    filteredTrainers.sort((a, b) => {
+      const nameA = a.user?.firstName?.toLowerCase() || '';
+      const nameB = b.user?.firstName?.toLowerCase() || '';
+      return nameA.localeCompare(nameB);
+    });
+    
     // Load session counts
     await funLoadSessionCounts(filteredTrainers, 'internal');
     
     if (currentAbortController.signal.aborted) return;
     
-    state.internal.data = filteredTrainers;
-    state.internal.pagination.hasNext = eligibilitySnapshot.docs.length === state.internal.pagination.limit;
-    state.internal.pagination.cursor = eligibilitySnapshot.docs[eligibilitySnapshot.docs.length - 1] || null;
+    // Store all filtered data and handle pagination client-side
+    state.internal.allData = filteredTrainers;
+    
+    // Implement client-side pagination
+    const startIndex = state.internal.pagination.page * state.internal.pagination.limit;
+    const endIndex = startIndex + state.internal.pagination.limit;
+    state.internal.data = filteredTrainers.slice(startIndex, endIndex);
+    state.internal.pagination.hasNext = endIndex < filteredTrainers.length;
+    
+    console.log(`✅ Loaded ${state.internal.data.length} trainers for display (total: ${filteredTrainers.length})`);
     
     funRenderInternalTrainers();
     funUpdateInternalPagination();
     
   } catch (error) {
     if (!currentAbortController?.signal.aborted) {
-      console.error('Error loading internal trainers:', error);
+      console.error('❌ Error loading internal trainers:', error);
+      console.error('Error details:', error.message, error.stack);
       showToast('Failed to load internal trainers', 'error');
     }
   }
@@ -1386,6 +1410,21 @@ function funRenderInternalTrainers() {
     const fullName = `${user.firstName || ''} ${user.lastName || ''}`.trim() || 'N/A';
     const skillsCount = trainer.eligibleSkills?.length || 0;
     
+    // Get skill names
+    const skillNames = trainer.eligibleSkills?.map(skillId => {
+      const skill = state.skills.find(s => s.id === skillId);
+      return skill?.name || 'Unknown';
+    }) || [];
+    
+    // Create skill badges (max 3 visible + count if more)
+    const visibleSkills = skillNames.slice(0, 3);
+    const remainingCount = skillNames.length - 3;
+    const skillBadges = visibleSkills.map(name => 
+      `<span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-accent-gold-50 text-brand-primary-700 border border-accent-gold-200">${name}</span>`
+    ).join(' ');
+    const moreSkills = remainingCount > 0 ? 
+      `<span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-neutral-100 text-neutral-700">+${remainingCount} more</span>` : '';
+    
     return `
       <tr class="hover:bg-neutral-50 focus-within:bg-neutral-50">
         <td class="px-3 py-3">
@@ -1397,15 +1436,10 @@ function funRenderInternalTrainers() {
         <td class="px-3 py-3 text-neutral-900">${user.jobTitle || 'N/A'}</td>
         <td class="px-3 py-3 text-neutral-900">${department.name || 'N/A'}</td>
         <td class="px-3 py-3">
-          <button 
-            class="skills-count-btn text-brand-primary-600 hover:text-brand-primary-700 font-medium focus:outline-none focus:ring-2 focus:ring-accent-gold-600 focus:ring-offset-2 rounded"
-            data-skills="${trainer.eligibleSkills?.map(skillId => {
-              const skill = state.skills.find(s => s.id === skillId);
-              return skill?.name || 'Unknown';
-            }).join(', ') || 'No skills'}"
-          >
-            ${skillsCount}
-          </button>
+          <div class="flex flex-wrap gap-1">
+            ${skillBadges || '<span class="text-neutral-500 text-xs">No skills</span>'}
+            ${moreSkills}
+          </div>
         </td>
         <td class="px-3 py-3 text-neutral-900">${trainer.upcomingSessions || 0}</td>
         <td class="px-3 py-3 text-neutral-900">${trainer.totalSessions || 0}</td>
@@ -1413,8 +1447,6 @@ function funRenderInternalTrainers() {
     `;
   }).join('');
   
-  // Add tooltip listeners
-  funAddSkillsTooltipListeners();
   lucide.createIcons();
 }
 
@@ -1553,13 +1585,13 @@ function funAddSkillsTooltipListeners() {
 
 // Update pagination for internal trainers
 function funUpdateInternalPagination() {
+  const totalRecords = state.internal.allData?.length || 0;
   const start = state.internal.pagination.page * state.internal.pagination.limit + 1;
-  const end = Math.min(start + state.internal.data.length - 1, start + state.internal.pagination.limit - 1);
-  const total = state.internal.data.length; // This is the current page size, not total count
+  const end = Math.min(start + state.internal.data.length - 1, totalRecords);
   
   document.getElementById('internal-start').textContent = state.internal.data.length ? start : 0;
   document.getElementById('internal-end').textContent = state.internal.data.length ? end : 0;
-  document.getElementById('internal-total').textContent = `${total}+`;
+  document.getElementById('internal-total').textContent = totalRecords;
   
   const prevBtn = document.getElementById('internal-prev-btn');
   const nextBtn = document.getElementById('internal-next-btn');

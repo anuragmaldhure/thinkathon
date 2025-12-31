@@ -661,10 +661,19 @@
   }
   
   // Date formatting helper
-  function formatDate(dateString) {
-    if (!dateString) return "N/A";
+  function formatDate(dateValue) {
+    if (!dateValue) return "N/A";
     try {
-      const date = new Date(dateString);
+      // Handle Firestore Timestamp objects
+      let date;
+      if (dateValue && typeof dateValue.toDate === 'function') {
+        date = dateValue.toDate();
+      } else if (dateValue instanceof Date) {
+        date = dateValue;
+      } else {
+        date = new Date(dateValue);
+      }
+      
       return date.toLocaleDateString('en-US', { 
         year: 'numeric', 
         month: 'long', 
@@ -676,25 +685,53 @@
   }
   
   // Calculate days between dates
-  function calculateDays(startDate, endDate) {
-    if (!startDate || !endDate) return 0;
-    const start = new Date(startDate);
-    const end = new Date(endDate);
-    const diffTime = Math.abs(end - start);
-    return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  function calculateDays(startDateValue, endDateValue) {
+    if (!startDateValue || !endDateValue) return 0;
+    try {
+      // Handle Firestore Timestamp objects
+      let start, end;
+      if (startDateValue && typeof startDateValue.toDate === 'function') {
+        start = startDateValue.toDate();
+      } else {
+        start = new Date(startDateValue);
+      }
+      
+      if (endDateValue && typeof endDateValue.toDate === 'function') {
+        end = endDateValue.toDate();
+      } else {
+        end = new Date(endDateValue);
+      }
+      
+      const diffTime = Math.abs(end - start);
+      return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    } catch {
+      return 0;
+    }
   }
   
   // Calculate remaining days
-  function calculateRemainingDays(endDate) {
-    if (!endDate) return 0;
-    const today = new Date();
-    const end = new Date(endDate);
-    const diffTime = end - today;
-    return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  function calculateRemainingDays(endDateValue) {
+    if (!endDateValue) return 0;
+    try {
+      // Handle Firestore Timestamp objects
+      let end;
+      if (endDateValue && typeof endDateValue.toDate === 'function') {
+        end = endDateValue.toDate();
+      } else {
+        end = new Date(endDateValue);
+      }
+      
+      const today = new Date();
+      const diffTime = end - today;
+      return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    } catch {
+      return 0;
+    }
   }
   
   // Get department status based on completion percentage
   function getDepartmentStatus(completionPercentage, daysRemaining) {
+    console.log('Calculating department status with:', { completionPercentage, daysRemaining });
     if (completionPercentage === 100) return 'Complete';
     if (daysRemaining < 0) return 'Critical';
     if (daysRemaining <= 3) return 'At Risk';
@@ -716,73 +753,94 @@
   
   // Load cycle details
   async function funLoadCycleDetails(force = false) {
-    const signal = createAbortableRead();
-    
     try {
+      console.log('🔍 Loading cycle details for ID:', currentCycleId);
+      
       const cycleDoc = await getDoc(doc(db, 'assessmentCycles', currentCycleId));
-      if (signal.aborted) return;
+      
+      console.log('📄 Cycle document exists:', cycleDoc.exists());
+      console.log('📄 Raw cycle data:', cycleDoc.data());
       
       if (!cycleDoc.exists()) {
+        console.error('❌ Cycle document not found');
         showToast('Assessment cycle not found', 'error');
         return;
       }
       
       currentCycle = { id: cycleDoc.id, ...cycleDoc.data() };
+      console.log('✅ Loaded cycle data:', currentCycle);
+      console.log('📅 Start date type:', typeof currentCycle.startDate, currentCycle.startDate);
+      console.log('📅 End date type:', typeof currentCycle.endDate, currentCycle.endDate);
       
       // Update configuration display
-      document.getElementById('cycleName').textContent = currentCycle.cycleName || 'N/A';
-      document.getElementById('startDate').textContent = formatDate(currentCycle.startDate);
-      document.getElementById('endDate').textContent = formatDate(currentCycle.endDate);
+      const cycleNameEl = document.getElementById('cycleName');
+      const startDateEl = document.getElementById('startDate');
+      const endDateEl = document.getElementById('endDate');
+      const durationEl = document.getElementById('duration');
+      
+      console.log('🔧 DOM elements found:', {
+        cycleName: !!cycleNameEl,
+        startDate: !!startDateEl,
+        endDate: !!endDateEl,
+        duration: !!durationEl
+      });
+      
+      if (cycleNameEl) cycleNameEl.textContent = currentCycle.cycleName || '-';
+      if (startDateEl) startDateEl.textContent = formatDate(currentCycle.startDate);
+      if (endDateEl) endDateEl.textContent = formatDate(currentCycle.endDate);
       
       const duration = calculateDays(currentCycle.startDate, currentCycle.endDate);
-      document.getElementById('duration').textContent = `${duration} days`;
+      if (durationEl) durationEl.textContent = duration ? `${duration} days` : '-';
       
       document.getElementById('notificationWindow').textContent = 
-        `${currentCycle.notificationWindowDays || 7} days`;
+        `${currentCycle.notificationWindowDays || '-'} days`;
       document.getElementById('reassessmentDelay').textContent = 
-        `${currentCycle.reassessmentDelayDays || 14} days`;
+        `${currentCycle.reassessmentDelayDays || '-'} days`;
       document.getElementById('commentThreshold').textContent = 
-        `Score below ${currentCycle.mandatoryCommentThreshold || 7}`;
+        currentCycle.mandatoryCommentThreshold ? `Score below ${currentCycle.mandatoryCommentThreshold}` : '-';
       
       // Calculate time status
       const remainingDays = calculateRemainingDays(currentCycle.endDate);
       const timeStatusElement = document.getElementById('timeStatus');
       
-      if (remainingDays > 0) {
-        timeStatusElement.textContent = `${remainingDays} days remaining`;
-        timeStatusElement.className = 'text-sm font-medium text-success-600';
-      } else if (remainingDays === 0) {
-        timeStatusElement.textContent = 'Ends today';
-        timeStatusElement.className = 'text-sm font-medium text-warning-600';
-      } else {
-        timeStatusElement.textContent = `Ended ${Math.abs(remainingDays)} days ago`;
-        timeStatusElement.className = 'text-sm font-medium text-danger-600';
+      if (timeStatusElement) {
+        if (remainingDays > 0) {
+          timeStatusElement.textContent = `${remainingDays} days remaining`;
+          timeStatusElement.className = 'text-sm font-medium text-success-600';
+        } else if (remainingDays === 0) {
+          timeStatusElement.textContent = 'Ends today';
+          timeStatusElement.className = 'text-sm font-medium text-warning-600';
+        } else {
+          timeStatusElement.textContent = `Ended ${Math.abs(remainingDays)} days ago`;
+          timeStatusElement.className = 'text-sm font-medium text-danger-600';
+        }
       }
+      
+      console.log('✅ Cycle details UI updated successfully');
       
       // Update action buttons
       funUpdateActionButtons();
       
     } catch (error) {
-      if (signal.aborted) return;
-      console.error('Error loading cycle details:', error);
+      console.error('❌ Error loading cycle details:', error);
+      console.error('Error stack:', error.stack);
       showToast('Failed to load cycle details', 'error');
     }
   }
   
   // Load progress data
   async function funLoadProgressData() {
-    const signal = createAbortableRead();
-    
     try {
+      console.log('📊 Loading progress data...');
+      
       // Get count of active employees
       const activeEmployeesQuery = query(
         collection(db, 'users'),
         where('employeeStatus', '==', 'active')
       );
       const employeeCountSnap = await getCountFromServer(activeEmployeesQuery);
-      if (signal.aborted) return;
-      
       const totalEmployees = employeeCountSnap.data().count;
+      console.log('👥 Total employees:', totalEmployees);
       
       // Get count of skill mappings (expected assessments)
       const skillMappingsQuery = query(
@@ -790,9 +848,8 @@
         where('status', '==', 'active')
       );
       const mappingsCountSnap = await getCountFromServer(skillMappingsQuery);
-      if (signal.aborted) return;
-      
       const expectedAssessments = mappingsCountSnap.data().count;
+      console.log('📝 Expected assessments:', expectedAssessments);
       
       // Get count of completed assessments for this cycle
       const completedAssessmentsQuery = query(
@@ -801,13 +858,15 @@
         where('status', '==', 'active')
       );
       const completedCountSnap = await getCountFromServer(completedAssessmentsQuery);
-      if (signal.aborted) return;
-      
       const completedAssessments = completedCountSnap.data().count;
+      console.log('✅ Completed assessments:', completedAssessments);
+      
       const remainingAssessments = Math.max(0, expectedAssessments - completedAssessments);
       const completionPercentage = expectedAssessments > 0 
         ? Math.round((completedAssessments / expectedAssessments) * 100) 
         : 0;
+      
+      console.log('📈 Progress stats:', { totalEmployees, expectedAssessments, completedAssessments, remainingAssessments, completionPercentage });
       
       // Update progress display
       document.getElementById('totalEmployees').textContent = totalEmployees.toLocaleString();
@@ -822,18 +881,16 @@
       const progress = (completionPercentage / 100) * circumference;
       progressCircle.style.strokeDasharray = `${progress}, ${circumference}`;
       
+      console.log('✅ Progress data UI updated');
     } catch (error) {
-      if (signal.aborted) return;
-      console.error('Error loading progress data:', error);
-      showToast('Failed to load progress data', 'error');
+      console.error('❌ Error loading progress data:', error);
     }
   }
   
   // Load department breakdown
   async function funLoadDepartmentBreakdown(force = false) {
-    const signal = createAbortableRead();
-    
     try {
+      console.log('🏢 Loading department breakdown...');
       showLoader();
       
       // Get all active departments
@@ -842,16 +899,19 @@
         where('status', '==', 'active'),
         orderBy('name')
       ));
-      if (signal.aborted) return;
       
       const departments = departmentsSnap.docs.map(doc => ({
         id: doc.id,
         ...doc.data()
       }));
       
+      console.log('🏢 Departments found:', departments.length);
+      
       departmentStats = [];
       
       for (const dept of departments) {
+        console.log(`📊 Processing department: ${dept.name}`);
+        
         // Get active employees in this department
         const employeesQuery = query(
           collection(db, 'users'),
@@ -859,13 +919,12 @@
           where('employeeStatus', '==', 'active')
         );
         const employeeCountSnap = await getCountFromServer(employeesQuery);
-        if (signal.aborted) return;
         
         const employeeCount = employeeCountSnap.data().count;
+        console.log(`  👥 Employees: ${employeeCount}`);
         
         // Get skill mappings for employees in this department
         const employeesSnap = await getDocs(employeesQuery);
-        if (signal.aborted) return;
         
         const employeeIds = employeesSnap.docs.map(doc => doc.id);
         
@@ -877,7 +936,7 @@
             expectedAssessments: 0,
             completedAssessments: 0,
             completionPercentage: 0,
-            status: 'Complete'
+            status: 'N/A'
           });
           continue;
         }
@@ -891,10 +950,11 @@
             where('status', '==', 'active')
           );
           const mappingsCountSnap = await getCountFromServer(mappingsQuery);
-          if (signal.aborted) return;
           
           expectedAssessments += mappingsCountSnap.data().count;
         }
+        
+        console.log(`  📝 Expected assessments: ${expectedAssessments}`);
         
         // Get completed assessments for this department in current cycle
         let completedAssessments = 0;
@@ -906,14 +966,15 @@
             where('status', '==', 'active')
           );
           const assessmentsCountSnap = await getCountFromServer(assessmentsQuery);
-          if (signal.aborted) return;
           
           completedAssessments += assessmentsCountSnap.data().count;
         }
         
+        console.log(`  ✅ Completed assessments: ${completedAssessments}`);
+        
         const completionPercentage = expectedAssessments > 0 
           ? Math.round((completedAssessments / expectedAssessments) * 100) 
-          : 100;
+          : 0;
         
         const remainingDays = calculateRemainingDays(currentCycle?.endDate);
         const status = getDepartmentStatus(completionPercentage, remainingDays);
@@ -929,11 +990,13 @@
         });
       }
       
+      console.log('📊 Department stats:', departmentStats);
+      console.log('🎨 Rendering department table...');
       funRenderDepartmentTable();
+      console.log('✅ Department breakdown complete');
       
     } catch (error) {
-      if (signal.aborted) return;
-      console.error('Error loading department breakdown:', error);
+      console.error('❌ Error loading department breakdown:', error);
       showToast('Failed to load department breakdown', 'error');
     } finally {
       hideLoader();
@@ -1168,10 +1231,16 @@
   
   // Initialize page
   async function funInitialLoad(force = false) {
+    console.log('🚀 Starting funInitialLoad...');
+    
     const urlParams = new URLSearchParams(window.location.search);
     currentCycleId = urlParams.get('cycleId');
     
+    console.log('📌 Current URL:', window.location.href);
+    console.log('📌 Cycle ID from URL:', currentCycleId);
+    
     if (!currentCycleId) {
+      console.error('❌ No cycle ID found in URL');
       showToast('Cycle ID is required', 'error');
       window.location.href = 'assessment_cycles_list.html';
       return;
@@ -1181,17 +1250,19 @@
     document.getElementById('mainContent').classList.add('hidden');
     
     try {
+      console.log('⏳ Loading cycle data...');
       await Promise.all([
         funLoadCycleDetails(force),
         funLoadProgressData(),
         funLoadDepartmentBreakdown(force)
       ]);
       
+      console.log('✅ All data loaded successfully');
       document.getElementById('loadingState').classList.add('hidden');
       document.getElementById('mainContent').classList.remove('hidden');
       
     } catch (error) {
-      console.error('Error during initial load:', error);
+      console.error('❌ Error during initial load:', error);
       showToast('Failed to load page data', 'error');
     }
   }
@@ -1215,10 +1286,15 @@
   
   // Auth state management
   onAuthStateChanged(auth, user => {
+    console.log('👤 Auth state changed. User:', user ? user.email : 'None');
+    
     if (!user) {
+      console.log('🔒 No user, redirecting to auth...');
       window.location.href = "/auth.html?redirect=" + encodeURIComponent(window.location.pathname);
+      return;
     }
     
+    console.log('✅ User authenticated, initializing page...');
     // Initialize page when user is authenticated
     funInitialLoad();
   });
