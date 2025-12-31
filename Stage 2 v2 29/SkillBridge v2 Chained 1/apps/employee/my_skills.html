@@ -668,7 +668,7 @@
         const isDisputeEligible = !!(
           assessment &&
           activeCycle &&
-          assessment.cycleId === activeCycle.id &&
+          assessment.assessmentCycleId === activeCycle.id &&
           !hasOpenDispute
         );
 
@@ -873,7 +873,6 @@
       const q = query(
         collection(db, 'assessments'),
         where('employeeId', '==', currentEmployeeDocId),
-        where('status', '==', 'active'),
         orderBy('assessmentTimestamp', 'desc')
       );
 
