@@ -479,7 +479,7 @@ function createGlobalAuthLoadingScreen() {
     <div id="global-auth-loading-screen">
       <div class="auth-loading-container">
         <div class="mb-6">
-          <img src="../../assets/imgs/logo.svg" alt="Logo" class="auth-loading-logo" />
+          <img src="${env.app.logo}" alt="Logo" class="auth-loading-logo" />
           <h1 class="auth-loading-title">${env.app.name}</h1>
         </div>
         <div class="auth-loading-spinner-container">
